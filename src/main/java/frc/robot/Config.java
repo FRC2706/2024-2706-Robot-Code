@@ -94,4 +94,7 @@ public final class Config {
    **/
 
    /** ADD CONSTANTS BELOW THIS LINE */
+
+  public static final boolean canCoderInvert = false;
+
 }
