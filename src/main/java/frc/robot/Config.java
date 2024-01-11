@@ -95,6 +95,8 @@ public final class Config {
 
    /** ADD CONSTANTS BELOW THIS LINE */
 
-  public static final boolean canCoderInvert = false;
+  public class Swerve {
+    public static final boolean canCoderInvert = false;
+  }
 
 }
