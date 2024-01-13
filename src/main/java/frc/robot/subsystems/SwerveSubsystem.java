@@ -137,10 +137,14 @@ public class SwerveSubsystem extends SubsystemBase {
 
   /* Used by SwerveControllerCommand in Auto */
   public void setModuleStates(SwerveModuleState[] desiredStates, boolean isOpenLoop) {
+    setModuleStates(desiredStates, isOpenLoop, false);
+  }
+
+  public void setModuleStates(SwerveModuleState[] desiredStates, boolean isOpenLoop, boolean isDisableAntiJitter) {
     SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Config.Swerve.maxSpeed);
 
     for (SwerveModule mod : mSwerveMods) {
-      mod.setDesiredState(desiredStates[mod.moduleNumber], isOpenLoop);
+      mod.setDesiredState(desiredStates[mod.moduleNumber], isOpenLoop, isDisableAntiJitter);
     }
   }
 
@@ -181,13 +185,13 @@ public class SwerveSubsystem extends SubsystemBase {
     return Commands.runOnce(() -> resetOdometry(pose));
   }
   public Command setLockWheelsInXCommand() {
-    return Commands.run(() -> setModuleStates(
+    return run(() -> setModuleStates(
       new SwerveModuleState[]{
         new SwerveModuleState(0, Rotation2d.fromDegrees(45)),
         new SwerveModuleState(0, Rotation2d.fromDegrees(-45)),
         new SwerveModuleState(0, Rotation2d.fromDegrees(-45)),
         new SwerveModuleState(0, Rotation2d.fromDegrees(45))
-      }, true)
+      }, true, true)
     );
   }
   public Command getDriveToPoseCommand(Pose2d desiredPose) {

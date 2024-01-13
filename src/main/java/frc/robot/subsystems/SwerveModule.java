@@ -106,6 +106,10 @@ public class SwerveModule {
   }
 
   public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
+    setDesiredState(desiredState, isOpenLoop, false);
+  }
+
+  public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop, boolean isDisableAntiJitter) {
     // Custom optimize command, since default WPILib optimize assumes continuous controller which
     // REV and CTRE are not
 
@@ -118,7 +122,7 @@ public class SwerveModule {
       // desiredState = new SwerveModuleState(0, lastAngle);
     }
 
-    setAngle(desiredState);
+    setAngle(desiredState, isDisableAntiJitter);
     setSpeed(desiredState, isOpenLoop);
 
 
@@ -218,12 +222,16 @@ public class SwerveModule {
    * 
    * @param desiredState 
    */
-  private void setAngle(SwerveModuleState desiredState) {
+  private void setAngle(SwerveModuleState desiredState, boolean isDisableAntiJitter) {
     // Prevent rotating module if speed is less then 1%. Prevents jittering.
     Rotation2d angle =
         (Math.abs(desiredState.speedMetersPerSecond) <= (Config.Swerve.maxSpeed * 0.01))
             ? lastAngle
             : desiredState.angle;
+
+    if (isDisableAntiJitter) {
+      angle = desiredState.angle;
+    }
 
     errSpark("Angle set reference", angleController.setReference(angle.getRadians(), CANSparkBase.ControlType.kPosition));
     lastAngle = angle;
