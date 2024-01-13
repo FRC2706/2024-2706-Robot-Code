@@ -39,6 +39,7 @@ public class SwerveModule {
   private DoublePublisher desiredSpeedEntry;
   private DoublePublisher desiredAngleEntry;
   private DoubleEntry entryAngleOffset;
+  private DoublePublisher canCoderAngle;
 
   public int moduleNumber;
   private Rotation2d lastAngle;
@@ -99,6 +100,7 @@ public class SwerveModule {
     speedError = swerveModuleTable.getDoubleTopic("Speed error (mps)").publish(PubSubOption.periodic(0.02));
     angleError = swerveModuleTable.getDoubleTopic("Angle error (deg)").publish(PubSubOption.periodic(0.02));
     entryAngleOffset = swerveModuleTable.getDoubleTopic("Angle Offset").getEntry(moduleNumber);
+    canCoderAngle = swerveModuleTable.getDoubleTopic("Cancoder.degrres").publish(PubSubOption.periodic(0.02));
     resetToAbsolute();
     burnFlash();
   }
@@ -253,6 +255,7 @@ public class SwerveModule {
     currentSpeedEntry.accept(driveEncoder.getVelocity());
     currentAngleEntry.accept(getAngle().getRadians());
     updateFeedforward.checkForUpdates();
+    canCoderAngle.accept(getCanCoder().getDegrees());
 
     if (Config.swerveTuning) {  
       angleOffset = new Rotation2d(entryAngleOffset.get());
