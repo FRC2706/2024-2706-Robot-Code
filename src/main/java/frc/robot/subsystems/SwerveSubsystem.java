@@ -180,7 +180,7 @@ public class SwerveSubsystem extends SubsystemBase {
   public Command setOdometryCommand(Pose2d pose) {
     return Commands.runOnce(() -> resetOdometry(pose));
   }
-  public Command getLockWheelsInXCommand() {
+  public Command setLockWheelsInXCommand() {
     return Commands.run(() -> setModuleStates(
       new SwerveModuleState[]{
         new SwerveModuleState(0, Rotation2d.fromDegrees(45)),
