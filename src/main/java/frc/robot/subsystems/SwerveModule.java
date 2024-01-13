@@ -117,7 +117,7 @@ public class SwerveModule {
     // REV and CTRE are not
 
     desiredState = SwerveModuleState.optimize(desiredState, getState().angle);
-    desiredState.speedMetersPerSecond *= desiredState.angle.minus(getAngle()).getCos();
+    // desiredState.speedMetersPerSecond *= desiredState.angle.minus(getAngle()).getCos();
 
     if (synchronizeEncoderQueued) {
       synchronizeEncoderQueued = false;
@@ -227,12 +227,15 @@ public class SwerveModule {
    */
   private void setAngle(SwerveModuleState desiredState, boolean isDisableAntiJitter) {
     // Prevent rotating module if speed is less then 1%. Prevents jittering.
-    Rotation2d angle =
-        (Math.abs(desiredState.speedMetersPerSecond) <= (Config.Swerve.maxSpeed * 0.01))
-            ? lastAngle
-            : desiredState.angle;
-
+    Rotation2d angle;
     if (isDisableAntiJitter) {
+      angle = desiredState.angle;
+
+    // Anti jitter check
+    } else if (Math.abs(desiredState.speedMetersPerSecond) <= (Config.Swerve.maxSpeed * 0.01)) {
+      angle = lastAngle;
+
+    } else {
       angle = desiredState.angle;
     }
 
