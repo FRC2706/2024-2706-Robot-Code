@@ -19,6 +19,8 @@ import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 //class
@@ -72,12 +74,7 @@ public class PhotonSubsystem extends SubsystemBase {
     pubSetPoint = NetworkTableInstance.getDefault().getTable(networkTableName).getDoubleArrayTopic("PhotonAprilPoint").publish(PubSubOption.periodic(0.02));
     pubRange = NetworkTableInstance.getDefault().getTable(networkTableName).getDoubleTopic("Range").publish(PubSubOption.periodic(0.02));
     pubYaw = NetworkTableInstance.getDefault().getTable(networkTableName).getDoubleTopic("Yaw").publish(PubSubOption.periodic(0.02));
-    //set target info to the robot's info
-    targetRotation = SwerveSubsystem.getInstance().getPose().getRotation();
-    targetPos = SwerveSubsystem.getInstance().getPose().getTranslation();
-    //initialize vars
-    data = 0;
-    id = -1;
+    reset(-1);
   }
 
   public void reset(int desiredId) {
@@ -92,6 +89,14 @@ public class PhotonSubsystem extends SubsystemBase {
     id = desiredId;
   }
 
+  public Command getResetCommand(int tagid){
+    return runOnce(() -> reset(tagid));
+  }
+
+  public Command getWaitForDataCommand(int tagid){
+    return new FunctionalCommand(() -> reset(tagid), ()->{}, (interrupted) ->{}, ()->hasData(), this);
+  }
+
   public Translation2d getTargetPos(){
     return targetPos;
   }
@@ -102,7 +107,7 @@ public class PhotonSubsystem extends SubsystemBase {
 
   public boolean hasData() {
     //if data is the max that the filters hold
-    return(data == maxData);
+    return(data >= maxData);
   }
 
   private TargetCorner tagXY(List<TargetCorner> corners) {
