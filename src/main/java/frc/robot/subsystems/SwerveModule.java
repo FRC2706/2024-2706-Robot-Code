@@ -3,15 +3,13 @@ package frc.robot.subsystems;
 import static frc.lib.lib2706.ErrorCheck.configureSpark;
 import static frc.lib.lib2706.ErrorCheck.errSpark;
 
-import static frc.lib.lib2706.ErrorCheck.configureSpark;
-import static frc.lib.lib2706.ErrorCheck.errSpark;
-
 import com.ctre.phoenix.sensors.CANCoder;
+import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -26,7 +24,6 @@ import frc.lib.lib2706.UpdateSimpleFeedforward;
 import frc.lib.lib3512.config.SwerveModuleConstants;
 import frc.lib.lib3512.util.CANCoderUtil;
 import frc.lib.lib3512.util.CANCoderUtil.CCUsage;
-import frc.lib.lib3512.util.CANSparkMaxUtil;
 import frc.lib.lib3512.util.CANSparkMaxUtil;
 import frc.lib.lib3512.util.CANSparkMaxUtil.Usage;
 import frc.robot.Config;
@@ -54,8 +51,8 @@ public class SwerveModule {
   private RelativeEncoder integratedAngleEncoder;
   private CANCoder angleEncoder;
 
-  private final SparkMaxPIDController driveController;
-  private final SparkMaxPIDController angleController;
+  private final SparkPIDController driveController;
+  private final SparkPIDController angleController;
 
   private boolean synchronizeEncoderQueued = false;
 
@@ -226,7 +223,7 @@ public class SwerveModule {
             ? lastAngle
             : desiredState.angle;
 
-    errSpark("Angle set reference", angleController.setReference(angle.getRadians(), ControlType.kPosition));
+    errSpark("Angle set reference", angleController.setReference(angle.getRadians(), CANSparkBase.ControlType.kPosition));
     lastAngle = angle;
   }
 
