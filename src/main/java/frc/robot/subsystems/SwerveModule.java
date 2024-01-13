@@ -113,7 +113,7 @@ public class SwerveModule {
     if (synchronizeEncoderQueued) {
       synchronizeEncoderQueued = false;
       resetToAbsolute();
-      desiredState = new SwerveModuleState(0, lastAngle);
+      // desiredState = new SwerveModuleState(0, lastAngle);
     }
 
     setAngle(desiredState);
