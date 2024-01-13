@@ -99,7 +99,7 @@ public class SwerveModule {
     currentAngleEntry = swerveModuleTable.getDoubleTopic("Current angle (rad)").publish(PubSubOption.periodic(0.02));
     speedError = swerveModuleTable.getDoubleTopic("Speed error (mps)").publish(PubSubOption.periodic(0.02));
     angleError = swerveModuleTable.getDoubleTopic("Angle error (deg)").publish(PubSubOption.periodic(0.02));
-    entryAngleOffset = swerveModuleTable.getDoubleTopic("Angle Offset (deg)").getEntry(moduleNumber);
+    entryAngleOffset = swerveModuleTable.getDoubleTopic("Angle Offset (deg)").getEntry(angleOffset.getDegrees());
     canCoderAngleEntry = swerveModuleTable.getDoubleTopic("Cancoder (deg)").publish(PubSubOption.periodic(0.02));
     resetToAbsolute();
     burnFlash();
@@ -258,7 +258,7 @@ public class SwerveModule {
     canCoderAngleEntry.accept(getCanCoder().getDegrees());
 
     if (Config.swerveTuning) {  
-      angleOffset = new Rotation2d(entryAngleOffset.get());
+      angleOffset = Rotation2d.fromDegrees(entryAngleOffset.get());
     }
   }
 
