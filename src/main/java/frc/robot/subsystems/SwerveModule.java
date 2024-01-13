@@ -101,6 +101,9 @@ public class SwerveModule {
     angleError = swerveModuleTable.getDoubleTopic("Angle error (deg)").publish(PubSubOption.periodic(0.02));
     entryAngleOffset = swerveModuleTable.getDoubleTopic("Angle Offset (deg)").getEntry(angleOffset.getDegrees());
     canCoderAngleEntry = swerveModuleTable.getDoubleTopic("Cancoder (deg)").publish(PubSubOption.periodic(0.02));
+    
+    entryAngleOffset.accept(angleOffset.getDegrees());
+
     resetToAbsolute();
     burnFlash();
   }
