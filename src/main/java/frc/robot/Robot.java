@@ -13,6 +13,7 @@ import frc.robot.robotcontainers.ClutchContainer;
 import frc.robot.robotcontainers.CosmobotContainer;
 import frc.robot.robotcontainers.PoseidonContainer;
 import frc.robot.robotcontainers.RobotContainer;
+import frc.robot.subsystems.LimeLightSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -107,6 +108,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    LimeLightSubsystem.getInstance();
   }
 
   /** This function is called periodically during operator control. */
