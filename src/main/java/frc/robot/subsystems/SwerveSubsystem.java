@@ -256,7 +256,6 @@ public class SwerveSubsystem extends SubsystemBase {
     // To ensure that everytime we initialize it works.
     if (isChassisMoving()==false && ++moduleSynchronizationCounter > 5) {
       synchronizeModuleEncoders();
-      System.out.println("motors synced");
       moduleSynchronizationCounter = 0;
     }
 
