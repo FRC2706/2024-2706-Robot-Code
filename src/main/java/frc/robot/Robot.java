@@ -15,6 +15,7 @@ import frc.lib.lib3512.config.CTREConfigs;
 import frc.robot.robotcontainers.BeetleContainer;
 import frc.robot.robotcontainers.ClutchContainer;
 import frc.robot.robotcontainers.CosmobotContainer;
+import frc.robot.robotcontainers.NewRobotContainer;
 import frc.robot.robotcontainers.PoseidonContainer;
 import frc.robot.robotcontainers.RobotContainer;
 
@@ -61,7 +62,7 @@ double x = 0;
 
     switch (Config.getRobotId()) {
       case 0:
-        m_robotContainer = new PoseidonContainer(); break;
+        m_robotContainer = new NewRobotContainer(); break;
       
       case 1:
         m_robotContainer = new ClutchContainer(); break;
@@ -73,7 +74,7 @@ double x = 0;
         m_robotContainer = new CosmobotContainer(); break;
 
       default:
-        m_robotContainer = new PoseidonContainer();
+        m_robotContainer = new NewRobotContainer();
         DriverStation.reportError(
             String.format("ISSUE WITH CONSTRUCTING THE ROBOT CONTAINER. \n " +
                           "PoseidonContainer constructed by default. RobotID: %d", Config.getRobotId()), 

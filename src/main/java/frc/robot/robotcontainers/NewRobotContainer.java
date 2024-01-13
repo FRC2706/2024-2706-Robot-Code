@@ -61,7 +61,7 @@ public class NewRobotContainer extends RobotContainer {
 
     /* Driver Controls */
     driver.start().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d(0)));
-    driver.back().whileTrue(SwerveSubsystem.getInstance().getLockWheelsInXCommand());
+    driver.back().whileTrue(SwerveSubsystem.getInstance().setLockWheelsInXCommand());
     /* Operator Controls */
   }
 
