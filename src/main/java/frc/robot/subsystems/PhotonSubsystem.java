@@ -28,11 +28,11 @@ public class PhotonSubsystem extends SubsystemBase {
 
   //constants
   private double[] APRIL_HEIGHTS = {0,0,0,0,0,1.32,1.32,0,0,0,0,1.31,1.31,1.31,1.31,1.31,1.31};
-  private double CAMERA_HEIGHT = 1;
-  private double IMAGE_HEIGHT = 100.0;
+  private double CAMERA_HEIGHT = 0.29;
+  private double IMAGE_HEIGHT = 480.0;
   private double IMAGE_WIDTH = 640.0;
   private double CAMERA_FOV_YAW = 70.0;
-  private double CAMERA_FOV_PITCH = 100.0;
+  private double CAMERA_FOV_PITCH = 93.3;
   private Rotation2d CAMERA_PITCH = Rotation2d.fromDegrees(0);
 
 

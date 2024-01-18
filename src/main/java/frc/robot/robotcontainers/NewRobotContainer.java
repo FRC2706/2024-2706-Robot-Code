@@ -5,13 +5,17 @@
 
 package frc.robot.robotcontainers;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot;
+import frc.robot.commands.PhotonMoveToTarget;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /**
@@ -62,6 +66,9 @@ public class NewRobotContainer extends RobotContainer {
     /* Driver Controls */
     driver.start().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d(0)));
     driver.back().whileTrue(SwerveSubsystem.getInstance().setLockWheelsInXCommand());
+    driver.b().onTrue(SwerveSubsystem.getInstance().setOdometryCommand(new Pose2d(3,3,new Rotation2d(0))));
+    driver.a().whileTrue(PhotonSubsystem.getInstance().getWaitForDataCommand(6).andThen(new PhotonMoveToTarget(new Translation2d(1,0), new Rotation2d(0), 0.2)));
+
     /* Operator Controls */
   }
 
