@@ -90,9 +90,6 @@ public class SwerveModule {
 
     lastAngle = getState().angle;
 
-    // NetworkTableInstance inst = NetworkTableInstance.getDefault();
-    // NetworkTable swerveModuleTable = inst.getTable("datatable");
-
     desiredSpeedEntry = swerveModuleTable.getDoubleTopic("Desired speed (mps)").publish(PubSubOption.periodic(0.02));
     desiredAngleEntry = swerveModuleTable.getDoubleTopic("Desired angle (deg)").publish(PubSubOption.periodic(0.02));
     currentSpeedEntry = swerveModuleTable.getDoubleTopic("Current speed (mps)").publish(PubSubOption.periodic(0.02));
@@ -118,13 +115,7 @@ public class SwerveModule {
 
     desiredState = SwerveModuleState.optimize(desiredState, getState().angle);
     // desiredState.speedMetersPerSecond *= desiredState.angle.minus(getAngle()).getCos();
-
-    if (synchronizeEncoderQueued) {
-      synchronizeEncoderQueued = false;
-      resetToAbsolute();
-      // desiredState = new SwerveModuleState(0, lastAngle);
-    }
-
+    
     setAngle(desiredState, isDisableAntiJitter);
     setSpeed(desiredState, isOpenLoop);
 
@@ -138,7 +129,7 @@ public class SwerveModule {
   /**
    * Resets Position Encoder
    */
-  private void resetToAbsolute() {
+  public void resetToAbsolute() {
     double absolutePosition = getCanCoder().getRadians() - angleOffset.getRadians();
     integratedAngleEncoder.setPosition(absolutePosition);
     lastAngle = getAngle();
@@ -165,7 +156,6 @@ public class SwerveModule {
     configureSpark("Angle set pid wrap max", () -> angleController.setPositionPIDWrappingMaxInput(2 * Math.PI));
     configureSpark("Angle set pid wrap", () -> angleController.setPositionPIDWrappingEnabled(true));
     configureSpark("Angle enable Volatage Compensation", () -> angleMotor.enableVoltageCompensation(Config.Swerve.voltageComp));
-    resetToAbsolute();
   }
 
   private void configDriveMotor() {
@@ -276,9 +266,13 @@ public class SwerveModule {
     }
   }
 
-  public void queueSynchronizeEncoders() {
-    if (driveEncoder != null) {
-      synchronizeEncoderQueued = true;
+  public boolean isModuleSynced(){
+    if (Math.abs(getAngle().getDegrees() - (getCanCoder().getRadians() - angleOffset.getRadians())) < Config.Swerve.synchTolerance) {
+      return true;
+    }
+    else{
+      return false;
     }
   }
+
 }
