@@ -314,4 +314,9 @@ public class SwerveSubsystem extends SubsystemBase {
     }
     return(false);
   }
+  public void synchSwerve() {
+    for (SwerveModule module : mSwerveMods) {
+      module.resetToAbsolute();
+    }
+  }
 }
