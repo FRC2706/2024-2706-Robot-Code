@@ -275,4 +275,14 @@ public class SwerveModule {
       synchronizeEncoderQueued = true;
     }
   }
+
+  public Boolean isModuleSynced(){
+    if (getAngle().getDegrees()==getCanCoder().getRadians()- angleOffset.getRadians()){
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+
 }
