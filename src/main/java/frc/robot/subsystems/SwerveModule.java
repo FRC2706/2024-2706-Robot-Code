@@ -90,9 +90,6 @@ public class SwerveModule {
 
     lastAngle = getState().angle;
 
-    // NetworkTableInstance inst = NetworkTableInstance.getDefault();
-    // NetworkTable swerveModuleTable = inst.getTable("datatable");
-
     desiredSpeedEntry = swerveModuleTable.getDoubleTopic("Desired speed (mps)").publish(PubSubOption.periodic(0.02));
     desiredAngleEntry = swerveModuleTable.getDoubleTopic("Desired angle (deg)").publish(PubSubOption.periodic(0.02));
     currentSpeedEntry = swerveModuleTable.getDoubleTopic("Current speed (mps)").publish(PubSubOption.periodic(0.02));
@@ -159,7 +156,6 @@ public class SwerveModule {
     configureSpark("Angle set pid wrap max", () -> angleController.setPositionPIDWrappingMaxInput(2 * Math.PI));
     configureSpark("Angle set pid wrap", () -> angleController.setPositionPIDWrappingEnabled(true));
     configureSpark("Angle enable Volatage Compensation", () -> angleMotor.enableVoltageCompensation(Config.Swerve.voltageComp));
-    resetToAbsolute();
   }
 
   private void configDriveMotor() {
@@ -267,12 +263,6 @@ public class SwerveModule {
 
     if (Config.swerveTuning) {  
       angleOffset = Rotation2d.fromDegrees(entryAngleOffset.get());
-    }
-  }
-
-  public void queueSynchronizeEncoders() {
-    if (driveEncoder != null) {
-      synchronizeEncoderQueued = true;
     }
   }
 
