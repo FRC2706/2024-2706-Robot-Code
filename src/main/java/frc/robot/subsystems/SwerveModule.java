@@ -266,8 +266,8 @@ public class SwerveModule {
     }
   }
 
-  public Boolean isModuleSynced(){
-    if (Math.abs(getAngle().getDegrees() - (getCanCoder().getRadians() - angleOffset.getRadians())) < 1.5) {
+  public boolean isModuleSynced(){
+    if (Math.abs(getAngle().getDegrees() - (getCanCoder().getRadians() - angleOffset.getRadians())) < Config.Swerve.synchTolerance) {
       return true;
     }
     else{

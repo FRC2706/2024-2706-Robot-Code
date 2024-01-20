@@ -309,7 +309,7 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
   }
-  public Boolean isSwerveNotSynched() {
+  public boolean isSwerveNotSynched() {
     for (SwerveModule module : mSwerveMods) {
       if (!module.isModuleSynced()) {
         return(true);
