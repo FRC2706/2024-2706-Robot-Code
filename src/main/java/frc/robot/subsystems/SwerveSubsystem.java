@@ -255,6 +255,7 @@ public class SwerveSubsystem extends SubsystemBase {
     // lib)
     // To ensure that everytime we initialize it works.
     if (isChassisMoving()==false && ++moduleSynchronizationCounter > 5 && isSwerveNotSynched()) {
+      synchSwerve();
       moduleSynchronizationCounter = 0;
     }
 
