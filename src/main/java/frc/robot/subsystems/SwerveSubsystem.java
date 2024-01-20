@@ -54,6 +54,7 @@ public class SwerveSubsystem extends SubsystemBase {
   ProfiledPIDController pidControlRotation;
   double currentRotation;
   double desiredRotation;
+  int tempSynchCounter = 0;
 
   /**
    * Counter to synchronize the modules relative encoder with absolute encoder when not moving.
@@ -256,6 +257,7 @@ public class SwerveSubsystem extends SubsystemBase {
     // To ensure that everytime we initialize it works.
     if (isChassisMoving()==false && ++moduleSynchronizationCounter > 5 && isSwerveNotSynched()) {
       synchSwerve();
+      System.out.println("Resynced" + ++tempSynchCounter);
       moduleSynchronizationCounter = 0;
     }
 
