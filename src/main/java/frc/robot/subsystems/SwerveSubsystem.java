@@ -254,8 +254,7 @@ public class SwerveSubsystem extends SubsystemBase {
     // If the robot isn't moving synchronize the encoders every 100ms (Inspired by democrat's SDS
     // lib)
     // To ensure that everytime we initialize it works.
-    if (isChassisMoving()==false && ++moduleSynchronizationCounter > 5) {
-      synchronizeModuleEncoders();
+    if (isChassisMoving()==false && ++moduleSynchronizationCounter > 5 && !isSwerveSynched()) {
       System.out.println("motors synced");
       moduleSynchronizationCounter = 0;
     }
@@ -279,14 +278,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
   public ChassisSpeeds getRobotRelativeSpeeds() {
     return Config.Swerve.swerveKinematics.toChassisSpeeds(getStates());
-  }
-
-  public void synchronizeModuleEncoders()
-  {
-    for (SwerveModule module : mSwerveMods)
-    {
-      module.queueSynchronizeEncoders();
-    }
   }
 
   public Rotation2d getHeading()
@@ -317,4 +308,9 @@ public class SwerveSubsystem extends SubsystemBase {
 
   }
 
+  public void isSwerveSynched() {
+    for (SwerveModule module : mSwerveMods) {
+      
+    }
+  }
 }

@@ -118,13 +118,7 @@ public class SwerveModule {
 
     desiredState = SwerveModuleState.optimize(desiredState, getState().angle);
     // desiredState.speedMetersPerSecond *= desiredState.angle.minus(getAngle()).getCos();
-
-    if (synchronizeEncoderQueued) {
-      synchronizeEncoderQueued = false;
-      resetToAbsolute();
-      // desiredState = new SwerveModuleState(0, lastAngle);
-    }
-
+    
     setAngle(desiredState, isDisableAntiJitter);
     setSpeed(desiredState, isOpenLoop);
 
