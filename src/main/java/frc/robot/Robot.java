@@ -28,8 +28,6 @@ import frc.robot.robotcontainers.RobotContainer;
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private RobotContainer m_robotContainer;
-  DoublePublisher xPub;
-  DoublePublisher yPub;
   public static CTREConfigs ctreConfigs = new CTREConfigs();
 
   /**
@@ -43,22 +41,12 @@ public class Robot extends TimedRobot {
     NetworkTableInstance inst = NetworkTableInstance.getDefault();
     NetworkTable table = inst.getTable("datatable");
 
-    xPub = table.getDoubleTopic("x").publish();
-    yPub = table.getDoubleTopic("y").publish();
-
     createRobotContainer();
   }
-double x = 0;
-  double y = 0;
 
   private void createRobotContainer() {
     // Instantiate the RobotContainer based on the Robot ID.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
-
-    xPub.accept(x);
-    yPub.accept(y);
-    x += 0.05;
-    y += 1.0;
 
     switch (Config.getRobotId()) {
       case 0:
