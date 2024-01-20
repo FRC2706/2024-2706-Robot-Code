@@ -32,8 +32,8 @@ public class PhotonSubsystem extends SubsystemBase {
   private double IMAGE_HEIGHT = 480.0;
   private double IMAGE_WIDTH = 640.0;
   private double CAMERA_FOV_YAW = 70.0;
-  private double CAMERA_FOV_PITCH = 93.3;
-  private Rotation2d CAMERA_PITCH = Rotation2d.fromDegrees(0);
+  private double CAMERA_FOV_PITCH = 52.5;
+  private Rotation2d CAMERA_PITCH = Rotation2d.fromRadians(0.33);
 
 
 
@@ -122,8 +122,11 @@ public class PhotonSubsystem extends SubsystemBase {
     return new TargetCorner(averageX, averageY);
   }
 
-  private double range(double y) {
+  private double range(double y, Rotation2d yaw) {
     y = (IMAGE_HEIGHT/2-y)*CAMERA_FOV_PITCH/IMAGE_HEIGHT;
+    //testing know 500 too much, 200 too little, seems like 300 best, but needs more testing
+    y -= Math.pow(yaw.getDegrees(),2)/300 ;
+
     y = Math.toRadians(y);
     y += CAMERA_PITCH.getRadians();
     return (APRIL_HEIGHTS[id]-CAMERA_HEIGHT)/Math.tan(y);
@@ -198,10 +201,10 @@ public class PhotonSubsystem extends SubsystemBase {
       //get tag info
       List<TargetCorner> corners = target.getDetectedCorners();
       TargetCorner tag = tagXY(corners);
-      //calculate range
-      double range = range(tag.y);
       //calculate yaw
       Rotation2d yaw = yaw(tag.x);
+      //calculate range
+      double range = range(tag.y, yaw);
       //convert to field quordinates
       Pose2d fieldToTarget = convertToField(range, yaw, odometryPose);
       //update rolling averages
