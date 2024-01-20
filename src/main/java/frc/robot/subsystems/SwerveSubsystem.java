@@ -255,7 +255,6 @@ public class SwerveSubsystem extends SubsystemBase {
     // lib)
     // To ensure that everytime we initialize it works.
     if (isChassisMoving()==false && ++moduleSynchronizationCounter > 5 && isSwerveNotSynched()) {
-      System.out.println("motors synced");
       moduleSynchronizationCounter = 0;
     }
 
@@ -307,8 +306,6 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
   }
-  
-
   public Boolean isSwerveNotSynched() {
     for (SwerveModule module : mSwerveMods) {
       if (!module.isModuleSynced()) {
