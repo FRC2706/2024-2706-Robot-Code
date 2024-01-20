@@ -283,7 +283,7 @@ public class SwerveModule {
   }
 
   public Boolean isModuleSynced(){
-    if (getAngle().getDegrees()==getCanCoder().getRadians()- angleOffset.getRadians()){
+    if (Math.abs(getAngle().getDegrees() - (getCanCoder().getRadians() - angleOffset.getRadians())) < 1.5) {
       return true;
     }
     else{
