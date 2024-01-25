@@ -11,6 +11,7 @@ import java.lang.Math;
 import java.lang.annotation.Target;
 
 import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.photonvision.targeting.TargetCorner;
 import edu.wpi.first.math.filter.LinearFilter;
@@ -31,9 +32,9 @@ public class PhotonSubsystem extends SubsystemBase {
   private double CAMERA_HEIGHT = 0.29;
   private double IMAGE_HEIGHT = 480.0;
   private double IMAGE_WIDTH = 640.0;
-  private double CAMERA_FOV_YAW = 70.0;
-  private double CAMERA_FOV_PITCH = 52.5;
-  private Rotation2d CAMERA_PITCH = Rotation2d.fromRadians(0.33);
+  private double CAMERA_FOV_YAW = 52.86;
+  private double CAMERA_FOV_PITCH = 40.88;
+  private Rotation2d CAMERA_PITCH = Rotation2d.fromRadians(0.305);
 
 
 
@@ -122,10 +123,8 @@ public class PhotonSubsystem extends SubsystemBase {
     return new TargetCorner(averageX, averageY);
   }
 
-  private double range(double y, Rotation2d yaw) {
-    y = (IMAGE_HEIGHT/2-y)*CAMERA_FOV_PITCH/IMAGE_HEIGHT;
-    //testing know 500 too much, 200 too little, seems like 300 best, but needs more testing
-    y -= Math.pow(yaw.getDegrees(),2)/300 ;
+  private double range(double y) {
+    //y = (IMAGE_HEIGHT/2-y)*CAMERA_FOV_PITCH/IMAGE_HEIGHT;
 
     y = Math.toRadians(y);
     y += CAMERA_PITCH.getRadians();
@@ -199,12 +198,12 @@ public class PhotonSubsystem extends SubsystemBase {
       }
       
       //get tag info
-      List<TargetCorner> corners = target.getDetectedCorners();
-      TargetCorner tag = tagXY(corners);
+      //List<TargetCorner> corners = target.getDetectedCorners();
+      //TargetCorner tag = tagXY(corners);
       //calculate yaw
-      Rotation2d yaw = yaw(tag.x);
+      Rotation2d yaw = Rotation2d.fromDegrees(-1*target.getYaw());//yaw(tag.x);
       //calculate range
-      double range = range(tag.y, yaw);
+      double range = range(target.getPitch());
       //convert to field quordinates
       Pose2d fieldToTarget = convertToField(range, yaw, odometryPose);
       //update rolling averages
