@@ -44,6 +44,13 @@ public final class Config {
    * ID of the robot that code is running on
    */
   private static int robotId = -1;
+  public static class CANID {
+    // Arm Subsystem
+    public static final int ARM_SPARK_CAN_ID = robotSpecific(5,0,0,0,0,18,18);
+    //Arm Subsystem
+    public static final int CANCODER_CAN_ID = 2;
+
+  }
 
   private static final int SIMULATION_ID = 1;
   /**
