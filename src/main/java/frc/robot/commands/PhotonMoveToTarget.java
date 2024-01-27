@@ -70,6 +70,6 @@ public class PhotonMoveToTarget extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return SwerveSubsystem.getInstance().isAtPose(tolerance, tolerance*10);
+    return SwerveSubsystem.getInstance().isAtPose(tolerance, tolerance*5);
   }
 }
