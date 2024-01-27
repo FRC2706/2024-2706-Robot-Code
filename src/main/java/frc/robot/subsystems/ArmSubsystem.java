@@ -34,7 +34,7 @@ public class ArmSubsystem extends SubsystemBase{
      private final String m_dataTable = "Arm/ArmData";
   
      //network table entries 
-     private DoubleEntry m_ArmPSubs;
+     private DoubleEntry m_armPSubs;
      private DoubleEntry m_ArmISubs;
      private DoubleEntry m_ArmDSubs;
      private DoubleEntry m_ArmIzSubs;
