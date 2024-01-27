@@ -29,7 +29,6 @@ public class PhotonSubsystem extends SubsystemBase {
 
   //constants
   private double[] APRIL_HEIGHTS = {0,0,0,0,1.32,1.32,1.32,0,0,0,0,1.31,1.31,1.31,1.31,1.31,1.31};
-  private double[] APRIL_ANGLE = {0,0,0,0,1.32,1.32,1.32,0,0,0,0,1.31,1.31,1.31,1.31,1.31,1.31};
   private double CAMERA_HEIGHT = 0.29;
   private Rotation2d CAMERA_PITCH = Rotation2d.fromRadians(0.305);
   //x is forwards, y is sideways with +y being left, rotation probobly if + left too
