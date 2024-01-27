@@ -32,7 +32,7 @@ public class PhotonSubsystem extends SubsystemBase {
   private double CAMERA_HEIGHT = 0.29;
   private Rotation2d CAMERA_PITCH = Rotation2d.fromRadians(0.305);
   //x is forwards, y is sideways with +y being left, rotation probobly if + left too
-  private Pose2d cameraOffset = new Pose2d(new Translation2d(0.24,0.3), Rotation2d.fromDegrees(0));
+  private Pose2d cameraOffset = new Pose2d(new Translation2d(0.25,0.3), Rotation2d.fromDegrees(0));
   
   //networkTableName
   private String networkTableName = "PhotonCamera";
@@ -172,7 +172,7 @@ public class PhotonSubsystem extends SubsystemBase {
       
       //get tag info
       double correctionValueYaw=1.5;
-      double correctionValuePitch=0.79;
+      double correctionValuePitch=0.92;
       //calculate yaw
       Rotation2d yaw = Rotation2d.fromDegrees(target.getYaw()*-correctionValueYaw);//yaw(tag.x);
       //calculate range
