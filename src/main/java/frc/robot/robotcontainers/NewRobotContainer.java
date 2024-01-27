@@ -71,6 +71,6 @@ public class NewRobotContainer extends RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new InstantCommand();
+    return getAutoCommandRoutine(1);
   }
 }
