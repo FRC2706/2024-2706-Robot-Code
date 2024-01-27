@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Config.Swerve.TeleopSpeeds;
 import frc.robot.Robot;
 import frc.robot.commands.PhotonMoveToTarget;
 import frc.robot.commands.TeleopSwerve;
@@ -31,10 +32,6 @@ public class NewRobotContainer extends RobotContainer {
   private final CommandXboxController driver = new CommandXboxController(0);
   private final CommandXboxController operator = new CommandXboxController(1);
 
-  private final int translationAxis = XboxController.Axis.kLeftY.value;
-  private final int strafeAxis = XboxController.Axis.kLeftX.value;
-  private final int rotationAxis = XboxController.Axis.kRightX.value;
-
   private final SwerveSubsystem s_Swerve = SwerveSubsystem.getInstance();
 
   /* Create Subsystems in a specific order */
@@ -47,9 +44,8 @@ public class NewRobotContainer extends RobotContainer {
     s_Swerve.setDefaultCommand(
         new TeleopSwerve(
             s_Swerve,
-            () -> -driver.getRawAxis(translationAxis),
-            () -> -driver.getRawAxis(strafeAxis),
-            () -> -driver.getRawAxis(rotationAxis)
+            driver,
+            TeleopSpeeds.MAX
         )
     );
     // Configure the button bindings
@@ -69,6 +65,11 @@ public class NewRobotContainer extends RobotContainer {
     driver.b().onTrue(SwerveSubsystem.getInstance().setOdometryCommand(new Pose2d(3,3,new Rotation2d(0))));
     driver.a().whileTrue(PhotonSubsystem.getInstance().getWaitForDataCommand(4).andThen(new PhotonMoveToTarget(new Translation2d(-2,0), new Rotation2d(0), 0.2)));
 
+    driver.leftBumper().whileTrue(new TeleopSwerve(
+        s_Swerve,
+        driver,
+        TeleopSpeeds.SLOW
+    ));
     /* Operator Controls */
   }
 
