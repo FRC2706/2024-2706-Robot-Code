@@ -114,7 +114,6 @@ public class SwerveModule {
     // REV and CTRE are not
 
     desiredState = SwerveModuleState.optimize(desiredState, getState().angle);
-    // desiredState.speedMetersPerSecond *= desiredState.angle.minus(getAngle()).getCos();
     
     setAngle(desiredState, isDisableAntiJitter);
     setSpeed(desiredState, isOpenLoop);
@@ -198,7 +197,10 @@ public class SwerveModule {
    */
   private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop) {
     if (isOpenLoop) {
-      double percentOutput = desiredState.speedMetersPerSecond / Config.Swerve.maxSpeed;
+      // original implementation
+      // double percentOutput = desiredState.speedMetersPerSecond / Config.Swerve.maxSpeed;
+      double speed = desiredState.speedMetersPerSecond * desiredState.angle.minus(getAngle()).getCos();
+      double percentOutput = speed / Config.Swerve.maxSpeed;
       driveMotor.set(percentOutput);
     } else {
       errSpark("Drive set FF", 
@@ -267,7 +269,7 @@ public class SwerveModule {
   }
 
   public boolean isModuleSynced(){
-    if (Math.abs(getAngle().getDegrees() - (getCanCoder().getRadians() - angleOffset.getRadians())) < Config.Swerve.synchTolerance) {
+    if (Math.abs(getAngle().getDegrees() - (getCanCoder().getDegrees() - angleOffset.getDegrees())) < Config.Swerve.synchTolerance) {
       return true;
     }
     else{
