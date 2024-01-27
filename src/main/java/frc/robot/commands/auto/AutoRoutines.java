@@ -20,6 +20,10 @@ public class AutoRoutines extends SubsystemBase {
             default: 
                 return null;
             case 1: 
+                if (path1 == null) {
+                    System.out.println("path1 path is null");
+                    return null;
+                }
                 return AutoBuilder.followPath(path1);
             case 2:
                 return AutoBuilder.followPath(path2);
