@@ -197,7 +197,10 @@ public class SwerveModule {
    */
   private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop) {
     if (isOpenLoop) {
+
+      // anti carpet burning 
       double speed = desiredState.speedMetersPerSecond * desiredState.angle.minus(getAngle()).getCos();
+      
       double percentOutput = speed / Config.Swerve.maxSpeed;
       driveMotor.set(percentOutput);
     } else {
