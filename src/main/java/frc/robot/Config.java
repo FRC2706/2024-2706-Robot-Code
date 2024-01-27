@@ -282,6 +282,9 @@ public final class Config {
 
     public static final double MAX_VEL = Math.PI * 0.5;
     public static final double MAX_ACCEL = Math.PI * 0.5;
+
+    public static final double MAX_ARM_ANGLE_DEG = 95;
+    public static final double MIN_ARM_ANGLE_DEG = 0;
     
 }
 

@@ -136,8 +136,8 @@ public class ArmSubsystem extends SubsystemBase{
   }
     //input angle_bottom in radians
     public void setJointAngle(double angle) {
-      if (angle<Math.toRadians(0) || angle>Math.toRadians(95)) {
-        angle = Math.toRadians(95);
+      if (angle<Math.toRadians(Config.ArmConfig.MIN_ARM_ANGLE_DEG) || angle>Math.toRadians(Config.ArmConfig.MAX_ARM_ANGLE_DEG)) {
+        angle = Math.toRadians(Config.ArmConfig.MAX_ARM_ANGLE_DEG);
       }
     
       double targetPos = m_profiledFFController.getNextProfiledPIDPos(getPosition(), angle);
