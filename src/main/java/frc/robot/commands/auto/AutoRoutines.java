@@ -15,14 +15,14 @@ public class AutoRoutines extends SubsystemBase {
     }
 
     public Command getAutonomousCommand(int selectAuto) {
-        System.out.println (selectAuto);
         switch (selectAuto) {
-            case 0: 
+            case 0:
+            default: 
                 return null;
             case 1: 
-                return AutoBuilder.followPathWithEvents(path1);
+                return AutoBuilder.followPath(path1);
             case 2:
-                return AutoBuilder.followPathWithEvents(path2);
+                return AutoBuilder.followPath(path2);
         }
     }
 }
