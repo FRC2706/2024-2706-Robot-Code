@@ -47,9 +47,6 @@ public final class Config {
   public static class CANID {
     // Arm Subsystem
     public static final int ARM_SPARK_CAN_ID = robotSpecific(5,0,0,0,0,18,18);
-    //Arm Subsystem
-    public static final int CANCODER_CAN_ID = 2;
-
   }
 
   private static final int SIMULATION_ID = 1;
@@ -244,4 +241,48 @@ public final class Config {
         new TrapezoidProfile.Constraints(
             kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
   }
+  public class ArmConfig {
+    public static final boolean SET_INVERTED = true;
+
+    public static final int CURRENT_LIMIT = 60;
+
+    //soft limit constant for bottom arm
+    public static final float arm_forward_limit = (float)Math.toRadians(135);
+    public static final float arm_reverse_limit = (float)Math.toRadians(40);
+    public static final boolean SOFT_LIMIT_ENABLE = true;
+    
+    //PID constants
+    public static final double arm_kP = 1.4;
+    public static final double arm_kI = 0.0003;
+    public static final double arm_kD = 0.9;
+    public static final double arm_kIz = 0.3;
+    public static final double arm_kFF = 0;
+    public static final double min_output = -1;
+    public static final double max_output = 1;
+
+    //ff calculations 
+    public static final double gravitationalConstant = 389.0886; //inches/s/s which is equal to 9.81 m/s/s
+    public static final double ARM_FORCE = 11.29 *gravitationalConstant; //11.29 lb
+
+    public static final double LENGTH_ARM_TO_COG = 14.56;
+
+    //arm offsets
+    //public static final double bottom_arm_offset = 307.800000;
+    //public static final double top_arm_offset = 0;
+
+    //syncing encoders
+    public static double ENCODER_SYNCING_TOLERANCE = 0.01; //radians
+
+
+    public static final double ARM_NEO_GEAR_RATIO =  1;
+
+    public static final double armPositionConversionFactor = 2 * Math.PI / ARM_NEO_GEAR_RATIO;
+    public static final double armVelocityConversionFactor = armPositionConversionFactor / 60.0;
+    public static final double armAbsEncoderOffset = 27;
+
+    public static final double MAX_VEL = Math.PI * 0.5;
+    public static final double MAX_ACCEL = Math.PI * 0.5;
+    
+}
+
 }

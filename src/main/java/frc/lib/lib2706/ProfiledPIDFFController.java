@@ -1,17 +1,18 @@
-package frc.robot;
+package frc.lib.lib2706;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
-import frc.robot.subsystems.ArmConfig;
+import frc.robot.Config;
+import frc.robot.Config.ArmConfig;
 
 public class ProfiledPIDFFController {
     private double lastVel = 0; 
     private double lastTime = Timer.getFPGATimestamp();
 
     private final TrapezoidProfile.Constraints m_constraints = 
-    new TrapezoidProfile.Constraints(ArmConfig.MAX_VEL, ArmConfig.MAX_ACCEL);
+    new TrapezoidProfile.Constraints(Config.ArmConfig.MAX_VEL, Config.ArmConfig.MAX_ACCEL);
     private final ProfiledPIDController m_ProfiledPIDController = 
     new ProfiledPIDController(1.6,0.002,40, m_constraints, 0.02);
 

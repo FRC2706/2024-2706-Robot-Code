@@ -20,8 +20,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.lib2706.SubsystemChecker;
 import frc.lib.lib2706.SubsystemChecker.SubsystemType;
 import frc.robot.Config;
-import frc.robot.ErrorCheck;
-import frc.robot.ProfiledPIDFFController;
+import frc.lib.lib2706.ErrorCheck;
+import frc.lib.lib2706.ProfiledPIDFFController;
 
 public class ArmSubsystem extends SubsystemBase{
      private static ArmSubsystem instance = null; //static object that contains all movement controls
@@ -31,7 +31,7 @@ public class ArmSubsystem extends SubsystemBase{
      
      //network table entry
      private final String m_tuningTable = "Arm/ArmTuning";
-     private final String m_dataTable = "Arm/BottomArmData";
+     private final String m_dataTable = "Arm/ArmData";
   
      //network table entries 
      private DoubleEntry m_ArmPSubs;
@@ -54,7 +54,7 @@ public class ArmSubsystem extends SubsystemBase{
     //spark absolute encoder
     SparkAbsoluteEncoder m_AbsEncoder;  
     //embedded relative encoder
-    //private RelativeEncoder m_bottomEncoder;
+    //private RelativeEncoder m_Encoder;
     public SparkPIDController m_pidControllerArm;  
 
     ProfiledPIDFFController m_profiledFFController = new ProfiledPIDFFController();
@@ -67,59 +67,56 @@ public class ArmSubsystem extends SubsystemBase{
       return instance;
     }
     public ArmSubsystem() {
-      m_Arm = new CANSparkMax(Config.CANID.ARM_SPARK_CAN_ID, motorType); //creates SparkMax motor controller for bottom joint
+      m_Arm = new CANSparkMax(Config.CANID.ARM_SPARK_CAN_ID, motorType); //creates SparkMax motor controller 
       ErrorCheck.errREV(m_Arm.restoreFactoryDefaults());
-      ErrorCheck.errREV(m_Arm.setSmartCurrentLimit(ArmConfig.CURRENT_LIMIT));
-      m_Arm.setInverted(ArmConfig.SET_INVERTED); //sets movement direction
+      ErrorCheck.errREV(m_Arm.setSmartCurrentLimit(Config.ArmConfig.CURRENT_LIMIT));
+      m_Arm.setInverted(Config.ArmConfig.SET_INVERTED); //sets movement direction
       ErrorCheck.errREV(m_Arm.setIdleMode(IdleMode.kBrake)); //sets brakes when there is no motion
       
-      ErrorCheck.errREV(m_Arm.setSoftLimit(SoftLimitDirection.kForward, ArmConfig.arm_forward_limit));
-      ErrorCheck.errREV(m_Arm.setSoftLimit(SoftLimitDirection.kReverse, ArmConfig.arm_reverse_limit));
-      ErrorCheck.errREV(m_Arm.enableSoftLimit(SoftLimitDirection.kForward, ArmConfig.SOFT_LIMIT_ENABLE));
-      ErrorCheck.errREV(m_Arm.enableSoftLimit(SoftLimitDirection.kReverse, ArmConfig.SOFT_LIMIT_ENABLE));
+      ErrorCheck.errREV(m_Arm.setSoftLimit(SoftLimitDirection.kForward, Config.ArmConfig.arm_forward_limit));
+      ErrorCheck.errREV(m_Arm.setSoftLimit(SoftLimitDirection.kReverse, Config.ArmConfig.arm_reverse_limit));
+      ErrorCheck.errREV(m_Arm.enableSoftLimit(SoftLimitDirection.kForward, Config.ArmConfig.SOFT_LIMIT_ENABLE));
+      ErrorCheck.errREV(m_Arm.enableSoftLimit(SoftLimitDirection.kReverse, Config.ArmConfig.SOFT_LIMIT_ENABLE));
 
       m_Arm.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);
       m_Arm.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
 
       m_AbsEncoder = m_Arm.getAbsoluteEncoder(Type.kDutyCycle);
       m_AbsEncoder.setInverted(true);
-      m_AbsEncoder.setPositionConversionFactor(2*Math.PI);
-      m_AbsEncoder.setVelocityConversionFactor(2*Math.PI/60.0);
-      m_AbsEncoder.setZeroOffset(Math.toRadians(52));
+      m_AbsEncoder.setPositionConversionFactor(Config.ArmConfig.armPositionConversionFactor);
+      m_AbsEncoder.setVelocityConversionFactor(Config.ArmConfig.armVelocityConversionFactor);
+      m_AbsEncoder.setZeroOffset(Math.toRadians(Config.ArmConfig.armAbsEncoderOffset));
 
       m_pidControllerArm = m_Arm.getPIDController();
       m_pidControllerArm.setFeedbackDevice(m_AbsEncoder);
 
       
     NetworkTable ArmTuningTable = NetworkTableInstance.getDefault().getTable(m_tuningTable);
-    m_ArmPSubs = ArmTuningTable.getDoubleTopic("P").getEntry(ArmConfig.arm_kP, PubSubOption.periodic(0.02));
-    m_ArmISubs = ArmTuningTable.getDoubleTopic("I").getEntry(ArmConfig.arm_kI);
-    m_ArmDSubs = ArmTuningTable.getDoubleTopic("D").getEntry(ArmConfig.arm_kD);
-    m_ArmIzSubs = ArmTuningTable.getDoubleTopic("IZone").getEntry(ArmConfig.arm_kIz);
-    m_ArmFFSubs = ArmTuningTable.getDoubleTopic("FF").getEntry(ArmConfig.arm_kFF);
+    m_ArmPSubs = ArmTuningTable.getDoubleTopic("P").getEntry(Config.ArmConfig.arm_kP, PubSubOption.periodic(0.02));
+    m_ArmISubs = ArmTuningTable.getDoubleTopic("I").getEntry(Config.ArmConfig.arm_kI);
+    m_ArmDSubs = ArmTuningTable.getDoubleTopic("D").getEntry(Config.ArmConfig.arm_kD);
+    m_ArmIzSubs = ArmTuningTable.getDoubleTopic("IZone").getEntry(Config.ArmConfig.arm_kIz);
+    m_ArmFFSubs = ArmTuningTable.getDoubleTopic("FF").getEntry(Config.ArmConfig.arm_kFF);
    //m_topArmOffset = topArmTuningTable.getDoubleTopic("Offset").getEntry(ArmConfig.top_arm_offset);
     momentToVoltageConversion = ArmTuningTable.getDoubleTopic("VoltageConversion").subscribe(m_VoltageConversion);
 
-    m_ArmFFSubs.accept(ArmConfig.arm_kFF);
-    m_ArmPSubs.accept(ArmConfig.arm_kP);
-    m_ArmISubs.accept(ArmConfig.arm_kI);
-    m_ArmDSubs.accept(ArmConfig.arm_kD);
-    m_ArmIzSubs.accept(ArmConfig.arm_kIz);
+    m_ArmFFSubs.setDefault(Config.ArmConfig.arm_kFF);
+    m_ArmPSubs.setDefault(Config.ArmConfig.arm_kP);
+    m_ArmISubs.setDefault(Config.ArmConfig.arm_kI);
+    m_ArmDSubs.setDefault(Config.ArmConfig.arm_kD);
+    m_ArmIzSubs.setDefault(Config.ArmConfig.arm_kIz);
 
     NetworkTable ArmDataTable = NetworkTableInstance.getDefault().getTable(m_dataTable);
 
     
-    m_ArmPosPub = ArmDataTable.getDoubleTopic("MeasuredAngle").publish(PubSubOption.periodic(0.02));
+    m_ArmPosPub = ArmDataTable.getDoubleTopic("MeasuredAngleDeg").publish(PubSubOption.periodic(0.02));
     m_TargetAngle = ArmDataTable.getDoubleTopic("TargetAngle").publish(PubSubOption.periodic(0.02));
-    m_ArmVelPub = ArmDataTable.getDoubleTopic("Vel").publish(PubSubOption.periodic(0.02));
 
-    
-    ErrorCheck.errREV(m_pidControllerArm.setFF(m_ArmFFSubs.get()));
     ErrorCheck.errREV(m_pidControllerArm.setP(m_ArmPSubs.get()));
     ErrorCheck.errREV(m_pidControllerArm.setI(m_ArmISubs.get()));
     ErrorCheck.errREV(m_pidControllerArm.setD(m_ArmDSubs.get()));
     ErrorCheck.errREV(m_pidControllerArm.setIZone(m_ArmIzSubs.get())); 
-    ErrorCheck.errREV(m_pidControllerArm.setOutputRange(ArmConfig.min_output, ArmConfig.max_output));
+    ErrorCheck.errREV(m_pidControllerArm.setOutputRange(Config.ArmConfig.min_output, Config.ArmConfig.max_output));
 
     updatePIDSettings();
     //updateFromAbsoluteBottom();
@@ -130,90 +127,40 @@ public class ArmSubsystem extends SubsystemBase{
     ErrorCheck.errREV(m_pidControllerArm.setI(m_ArmISubs.get()));
     ErrorCheck.errREV(m_pidControllerArm.setD(m_ArmDSubs.get()));
     ErrorCheck.errREV(m_pidControllerArm.setIZone(m_ArmIzSubs.get()));
-    ErrorCheck.errREV(m_pidControllerArm.setOutputRange(ArmConfig.min_output, ArmConfig.max_output));
+    ErrorCheck.errREV(m_pidControllerArm.setOutputRange(Config.ArmConfig.min_output, Config.ArmConfig.max_output));
   }
   @Override
   public void periodic() {
     m_ArmPosPub.accept(Math.toDegrees(m_AbsEncoder.getPosition()));
     m_ArmVelPub.accept(m_AbsEncoder.getVelocity());
-    m_TargetAngle.accept(Math.toDegrees(getAbsolute()));
   }
     //input angle_bottom in radians
-    public void setBottomJointAngle(double angle_bottom) {
-      if (angle_bottom<Math.toRadians(0) || angle_bottom>Math.toRadians(95)) {
-        angle_bottom = Math.toRadians(95);
+    public void setJointAngle(double angle) {
+      if (angle<Math.toRadians(0) || angle>Math.toRadians(95)) {
+        angle = Math.toRadians(95);
       }
-      //setReference angle is in radians)
-      //todo: tune FF 
-      m_pidControllerArm.setReference((angle_bottom), ControlType.kPosition, 0,0.1);
-    }
-  
-    public void setTopJointAngle(double angle_top) {
-      if (angle_top<Math.toRadians(0) || angle_top>Math.toRadians(35)) {
-        angle_top = Math.toRadians(10);
-      }
-      //setReference angle is in radians)
-      //todo: tune FF 
-      double targetPos = m_profiledFFController.getNextProfiledPIDPos(getPosition(), angle_top);
-      m_pidControllerArm.setReference((targetPos), ControlType.kPosition, 0, calculateFFTop());
+    
+      double targetPos = m_profiledFFController.getNextProfiledPIDPos(getPosition(), angle);
+      m_pidControllerArm.setReference((targetPos), ControlType.kPosition, 0, calculateFF(angle));
       m_TargetAngle.accept(Math.toDegrees(targetPos));
       System.out.println(targetPos);
-  
     }
-  
-    /*public void controlBottomArmBrake( boolean bBrakeOn) {
-      if (bBrakeOn == true) {
-        //set brake on the arm 
-        brakeSolenoidLow.set(Value.kForward);
-      }
-      else {
-        brakeSolenoidLow.set(Value.kReverse);
-      }
-    }
-    */
+
   
     //return radius
     public double getPosition() {
       return m_AbsEncoder.getPosition();
     }
   
-    public double getAbsolute() {
-      //getAbsolutePosition() return in [0,1]
-     //return Math.toRadians(m_bottomDutyCycleEncoder.getAbsolutePosition() * -360 + m_bottomArmOffset.get());
-    //double absPosition = m_bottomAbsEncoder.getPosition();
-    //double adjAbsPosition = absPosition-((int) absPosition/360)*360.0;
-     //System.out.println("Get abs position(degree) " + absPosition);
-     //System.out.println("adjusted abs position " + adjAbsPosition);
-     return m_AbsEncoder.getPosition(); //+ m_bottomArmOffset.get());
-    }
-  
-    public boolean areEncodersSynced() {
-      System.out.println("*****areEncodersSynced*****");
-      boolean syncResult;
-        //set sparkmax encoder position
-      //updateFromAbsoluteBottom();
-      System.out.println("getAbsoluteBottom " + getAbsolute());
-      System.out.println("getBottomPosition " + getPosition());
-      syncResult = Math.abs(getAbsolute() - getPosition()) < ArmConfig.ENCODER_SYNCING_TOLERANCE;
-      System.out.println("******SyncIteration****** " + "******Result******"  + syncResult);
-      return syncResult; 
-    }
     public void stopMotors() {
-      m_Arm.stopMotor();
       m_Arm.stopMotor();
     }
     public void burnFlash() {
       ErrorCheck.errREV(m_Arm.burnFlash());
-      ErrorCheck.errREV(m_Arm.burnFlash());
     }
-    private double calculateFFTop() {
-      double enc2AtHorizontal = getPosition() - (Math.PI - getPosition());
-      double voltsAtHorizontal;
-      voltsAtHorizontal = 2.0;
-      //System.out.println("top position " + getTopPosition());
-      //System.out.println("bottom position " + getBottomPosition());
-      //System.out.println("calculated position " + enc2AtHorizontal);
-      System.out.println("return voltage " + voltsAtHorizontal * Math.cos(enc2AtHorizontal));
-      return voltsAtHorizontal * Math.cos(enc2AtHorizontal);
-    } 
-}
+    private double calculateFF(double encoder1Rad) {
+      double ArmMoment = Config.ArmConfig.ARM_FORCE * (Config.ArmConfig.LENGTH_ARM_TO_COG*Math.cos(encoder1Rad));
+      return (ArmMoment) * m_ArmMomentToVoltage.get();
+    }
+  } 
+
