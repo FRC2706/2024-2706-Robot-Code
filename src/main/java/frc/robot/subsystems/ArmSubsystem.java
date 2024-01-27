@@ -27,7 +27,7 @@ public class ArmSubsystem extends SubsystemBase{
      private static ArmSubsystem instance = null; //static object that contains all movement controls
 
      private static final MotorType motorType = MotorType.kBrushless; //defines brushless motortype
-     public final CANSparkMax m_Arm; //bottom SparkMax motor controller
+     public final CANSparkMax m_arm; //bottom SparkMax motor controller
      
      //network table entry
      private final String m_tuningTable = "Arm/ArmTuning";
@@ -35,24 +35,24 @@ public class ArmSubsystem extends SubsystemBase{
   
      //network table entries 
      private DoubleEntry m_armPSubs;
-     private DoubleEntry m_ArmISubs;
-     private DoubleEntry m_ArmDSubs;
-     private DoubleEntry m_ArmIzSubs;
-     private DoubleEntry m_ArmFFSubs;
-     private DoublePublisher m_ArmSetpointPub;   
-     private DoublePublisher m_ArmVelPub;
-     private DoubleEntry m_ArmMomentToVoltage;
-     private DoublePublisher m_ArmFFTestingVolts;
-     private DoubleEntry m_ArmOffset;
-     private DoublePublisher m_TargetAngle;
-     private DoublePublisher m_ArmPosPub;
+     private DoubleEntry m_armISubs;
+     private DoubleEntry m_armDSubs;
+     private DoubleEntry m_armIzSubs;
+     private DoubleEntry m_armFFSubs;
+     private DoublePublisher m_armSetpointPub;   
+     private DoublePublisher m_armVelPub;
+     private DoubleEntry m_armMomentToVoltage;
+     private DoublePublisher m_armFFTestingVolts;
+     private DoubleEntry m_armOffset;
+     private DoublePublisher m_targetAngle;
+     private DoublePublisher m_armPosPub;
 
     //for  arm ff
     private DoubleSubscriber momentToVoltageConversion;
     private double m_VoltageConversion;
 
     //spark absolute encoder
-    SparkAbsoluteEncoder m_AbsEncoder;  
+    SparkAbsoluteEncoder m_absEncoder;  
     //embedded relative encoder
     //private RelativeEncoder m_Encoder;
     public SparkPIDController m_pidControllerArm;  
@@ -67,72 +67,66 @@ public class ArmSubsystem extends SubsystemBase{
       return instance;
     }
     public ArmSubsystem() {
-      m_Arm = new CANSparkMax(Config.CANID.ARM_SPARK_CAN_ID, motorType); //creates SparkMax motor controller 
-      ErrorCheck.errREV(m_Arm.restoreFactoryDefaults());
-      ErrorCheck.errREV(m_Arm.setSmartCurrentLimit(Config.ArmConfig.CURRENT_LIMIT));
-      m_Arm.setInverted(Config.ArmConfig.SET_INVERTED); //sets movement direction
-      ErrorCheck.errREV(m_Arm.setIdleMode(IdleMode.kBrake)); //sets brakes when there is no motion
+      m_arm = new CANSparkMax(Config.CANID.ARM_SPARK_CAN_ID, motorType); //creates SparkMax motor controller 
+      ErrorCheck.errREV(m_arm.restoreFactoryDefaults());
+      ErrorCheck.errREV(m_arm.setSmartCurrentLimit(Config.ArmConfig.CURRENT_LIMIT));
+      m_arm.setInverted(Config.ArmConfig.SET_INVERTED); //sets movement direction
+      ErrorCheck.errREV(m_arm.setIdleMode(IdleMode.kBrake)); //sets brakes when there is no motion
       
-      ErrorCheck.errREV(m_Arm.setSoftLimit(SoftLimitDirection.kForward, Config.ArmConfig.arm_forward_limit));
-      ErrorCheck.errREV(m_Arm.setSoftLimit(SoftLimitDirection.kReverse, Config.ArmConfig.arm_reverse_limit));
-      ErrorCheck.errREV(m_Arm.enableSoftLimit(SoftLimitDirection.kForward, Config.ArmConfig.SOFT_LIMIT_ENABLE));
-      ErrorCheck.errREV(m_Arm.enableSoftLimit(SoftLimitDirection.kReverse, Config.ArmConfig.SOFT_LIMIT_ENABLE));
+      ErrorCheck.errREV(m_arm.setSoftLimit(SoftLimitDirection.kForward, Config.ArmConfig.arm_forward_limit));
+      ErrorCheck.errREV(m_arm.setSoftLimit(SoftLimitDirection.kReverse, Config.ArmConfig.arm_reverse_limit));
+      ErrorCheck.errREV(m_arm.enableSoftLimit(SoftLimitDirection.kForward, Config.ArmConfig.SOFT_LIMIT_ENABLE));
+      ErrorCheck.errREV(m_arm.enableSoftLimit(SoftLimitDirection.kReverse, Config.ArmConfig.SOFT_LIMIT_ENABLE));
 
-      m_Arm.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);
-      m_Arm.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
+      m_arm.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);
+      m_arm.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
 
-      m_AbsEncoder = m_Arm.getAbsoluteEncoder(Type.kDutyCycle);
-      m_AbsEncoder.setInverted(true);
-      m_AbsEncoder.setPositionConversionFactor(Config.ArmConfig.armPositionConversionFactor);
-      m_AbsEncoder.setVelocityConversionFactor(Config.ArmConfig.armVelocityConversionFactor);
-      m_AbsEncoder.setZeroOffset(Math.toRadians(Config.ArmConfig.armAbsEncoderOffset));
+      m_absEncoder = m_arm.getAbsoluteEncoder(Type.kDutyCycle);
+      m_absEncoder.setInverted(true);
+      m_absEncoder.setPositionConversionFactor(Config.ArmConfig.armPositionConversionFactor);
+      m_absEncoder.setVelocityConversionFactor(Config.ArmConfig.armVelocityConversionFactor);
+      m_absEncoder.setZeroOffset(Math.toRadians(Config.ArmConfig.armAbsEncoderOffset));
 
-      m_pidControllerArm = m_Arm.getPIDController();
-      m_pidControllerArm.setFeedbackDevice(m_AbsEncoder);
+      m_pidControllerArm = m_arm.getPIDController();
+      m_pidControllerArm.setFeedbackDevice(m_absEncoder);
 
       
     NetworkTable ArmTuningTable = NetworkTableInstance.getDefault().getTable(m_tuningTable);
-    m_ArmPSubs = ArmTuningTable.getDoubleTopic("P").getEntry(Config.ArmConfig.arm_kP, PubSubOption.periodic(0.02));
-    m_ArmISubs = ArmTuningTable.getDoubleTopic("I").getEntry(Config.ArmConfig.arm_kI);
-    m_ArmDSubs = ArmTuningTable.getDoubleTopic("D").getEntry(Config.ArmConfig.arm_kD);
-    m_ArmIzSubs = ArmTuningTable.getDoubleTopic("IZone").getEntry(Config.ArmConfig.arm_kIz);
-    m_ArmFFSubs = ArmTuningTable.getDoubleTopic("FF").getEntry(Config.ArmConfig.arm_kFF);
+    m_armPSubs = ArmTuningTable.getDoubleTopic("P").getEntry(Config.ArmConfig.arm_kP, PubSubOption.periodic(0.02));
+    m_armISubs = ArmTuningTable.getDoubleTopic("I").getEntry(Config.ArmConfig.arm_kI);
+    m_armDSubs = ArmTuningTable.getDoubleTopic("D").getEntry(Config.ArmConfig.arm_kD);
+    m_armIzSubs = ArmTuningTable.getDoubleTopic("IZone").getEntry(Config.ArmConfig.arm_kIz);
+    m_armFFSubs = ArmTuningTable.getDoubleTopic("FF").getEntry(Config.ArmConfig.arm_kFF);
    //m_topArmOffset = topArmTuningTable.getDoubleTopic("Offset").getEntry(ArmConfig.top_arm_offset);
     momentToVoltageConversion = ArmTuningTable.getDoubleTopic("VoltageConversion").subscribe(m_VoltageConversion);
 
-    m_ArmFFSubs.setDefault(Config.ArmConfig.arm_kFF);
-    m_ArmPSubs.setDefault(Config.ArmConfig.arm_kP);
-    m_ArmISubs.setDefault(Config.ArmConfig.arm_kI);
-    m_ArmDSubs.setDefault(Config.ArmConfig.arm_kD);
-    m_ArmIzSubs.setDefault(Config.ArmConfig.arm_kIz);
+    m_armFFSubs.setDefault(Config.ArmConfig.arm_kFF);
+    m_armPSubs.setDefault(Config.ArmConfig.arm_kP);
+    m_armISubs.setDefault(Config.ArmConfig.arm_kI);
+    m_armDSubs.setDefault(Config.ArmConfig.arm_kD);
+    m_armIzSubs.setDefault(Config.ArmConfig.arm_kIz);
 
     NetworkTable ArmDataTable = NetworkTableInstance.getDefault().getTable(m_dataTable);
 
     
-    m_ArmPosPub = ArmDataTable.getDoubleTopic("MeasuredAngleDeg").publish(PubSubOption.periodic(0.02));
-    m_TargetAngle = ArmDataTable.getDoubleTopic("TargetAngle").publish(PubSubOption.periodic(0.02));
-
-    ErrorCheck.errREV(m_pidControllerArm.setP(m_ArmPSubs.get()));
-    ErrorCheck.errREV(m_pidControllerArm.setI(m_ArmISubs.get()));
-    ErrorCheck.errREV(m_pidControllerArm.setD(m_ArmDSubs.get()));
-    ErrorCheck.errREV(m_pidControllerArm.setIZone(m_ArmIzSubs.get())); 
-    ErrorCheck.errREV(m_pidControllerArm.setOutputRange(Config.ArmConfig.min_output, Config.ArmConfig.max_output));
+    m_armPosPub = ArmDataTable.getDoubleTopic("MeasuredAngleDeg").publish(PubSubOption.periodic(0.02));
+    m_targetAngle = ArmDataTable.getDoubleTopic("TargetAngle").publish(PubSubOption.periodic(0.02));
 
     updatePIDSettings();
     //updateFromAbsoluteBottom();
   }
   public void updatePIDSettings() {
-    ErrorCheck.errREV(m_pidControllerArm.setFF(m_ArmFFSubs.get()));
-    ErrorCheck.errREV(m_pidControllerArm.setP(m_ArmPSubs.get()));
-    ErrorCheck.errREV(m_pidControllerArm.setI(m_ArmISubs.get()));
-    ErrorCheck.errREV(m_pidControllerArm.setD(m_ArmDSubs.get()));
-    ErrorCheck.errREV(m_pidControllerArm.setIZone(m_ArmIzSubs.get()));
+    ErrorCheck.errREV(m_pidControllerArm.setFF(m_armFFSubs.get()));
+    ErrorCheck.errREV(m_pidControllerArm.setP(m_armPSubs.get()));
+    ErrorCheck.errREV(m_pidControllerArm.setI(m_armISubs.get()));
+    ErrorCheck.errREV(m_pidControllerArm.setD(m_armDSubs.get()));
+    ErrorCheck.errREV(m_pidControllerArm.setIZone(m_armIzSubs.get()));
     ErrorCheck.errREV(m_pidControllerArm.setOutputRange(Config.ArmConfig.min_output, Config.ArmConfig.max_output));
   }
   @Override
   public void periodic() {
-    m_ArmPosPub.accept(Math.toDegrees(m_AbsEncoder.getPosition()));
-    m_ArmVelPub.accept(m_AbsEncoder.getVelocity());
+    m_armPosPub.accept(Math.toDegrees(m_absEncoder.getPosition()));
+    m_armVelPub.accept(m_absEncoder.getVelocity());
   }
     //input angle_bottom in radians
     public void setJointAngle(double angle) {
@@ -142,25 +136,25 @@ public class ArmSubsystem extends SubsystemBase{
     
       double targetPos = m_profiledFFController.getNextProfiledPIDPos(getPosition(), angle);
       m_pidControllerArm.setReference((targetPos), ControlType.kPosition, 0, calculateFF(angle));
-      m_TargetAngle.accept(Math.toDegrees(targetPos));
+      m_targetAngle.accept(Math.toDegrees(targetPos));
       System.out.println(targetPos);
     }
 
   
     //return radius
     public double getPosition() {
-      return m_AbsEncoder.getPosition();
+      return m_absEncoder.getPosition();
     }
   
     public void stopMotors() {
-      m_Arm.stopMotor();
+      m_arm.stopMotor();
     }
     public void burnFlash() {
-      ErrorCheck.errREV(m_Arm.burnFlash());
+      ErrorCheck.errREV(m_arm.burnFlash());
     }
     private double calculateFF(double encoder1Rad) {
       double ArmMoment = Config.ArmConfig.ARM_FORCE * (Config.ArmConfig.LENGTH_ARM_TO_COG*Math.cos(encoder1Rad));
-      return (ArmMoment) * m_ArmMomentToVoltage.get();
+      return (ArmMoment) * m_armMomentToVoltage.get();
     }
   } 
 

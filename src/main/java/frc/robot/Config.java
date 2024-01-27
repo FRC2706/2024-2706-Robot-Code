@@ -285,7 +285,7 @@ public final class Config {
     public static double ENCODER_SYNCING_TOLERANCE = 0.01; //radians
 
 
-    public static final double ARM_NEO_GEAR_RATIO =  1;
+    public static final double ARM_ENCODER_GEAR_RATIO =  1;
 
     public static final double armPositionConversionFactor = 2 * Math.PI / ARM_NEO_GEAR_RATIO;
     public static final double armVelocityConversionFactor = armPositionConversionFactor / 60.0;
