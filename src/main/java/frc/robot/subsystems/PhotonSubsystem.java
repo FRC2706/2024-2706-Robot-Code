@@ -184,14 +184,13 @@ public class PhotonSubsystem extends SubsystemBase {
       //currently chooses lowest id if sees two april tags
 
       List<PhotonTrackedTarget> allTargets = result.getTargets();
-      /*if (allTargets.size()==0){
+      if (allTargets.size()==0){
         return;
       }
       if (id == -1){
         target = biggestTarget(allTargets);
         id = target.getFiducialId();
       } else{
-        */
         for (PhotonTrackedTarget t:allTargets){
           if (t.getFiducialId() == id){
            target = t;
@@ -205,7 +204,7 @@ public class PhotonSubsystem extends SubsystemBase {
       
       //get tag info
       double correctionValueYaw=1.5;
-      double correctionValuePitch=0.95;
+      double correctionValuePitch=1.048;
       //calculate yaw
       Rotation2d yaw = Rotation2d.fromDegrees(target.getYaw()*-correctionValueYaw);//yaw(tag.x);
       //calculate range
