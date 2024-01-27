@@ -18,6 +18,7 @@ import frc.robot.commands.PhotonMoveToTarget;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.PhotonSubsystem.PhotonPositions;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -63,7 +64,8 @@ public class NewRobotContainer extends RobotContainer {
     driver.start().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d(0)));
     driver.back().whileTrue(SwerveSubsystem.getInstance().setLockWheelsInXCommand());
     driver.b().onTrue(SwerveSubsystem.getInstance().setOdometryCommand(new Pose2d(3,3,new Rotation2d(0))));
-    driver.a().whileTrue(PhotonSubsystem.getInstance().getWaitForDataCommand(4).andThen(new PhotonMoveToTarget(new Translation2d(-2,0), new Rotation2d(0), 0.05)));
+    driver.a().whileTrue(PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.TEST));
+    //(PhotonSubsystem.getInstance().getWaitForDataCommand(4).andThen(new PhotonMoveToTarget(new Translation2d(-2,0), new Rotation2d(0), 0.05)));
 
     driver.leftBumper().whileTrue(new TeleopSwerve(
         s_Swerve,
