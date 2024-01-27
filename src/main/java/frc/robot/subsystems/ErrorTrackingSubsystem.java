@@ -32,7 +32,7 @@ public class ErrorTrackingSubsystem extends SubsystemBase {
     /** Creates a new ErrorTrackingSubsystem. */
     public ErrorTrackingSubsystem() {
         errorPublish = NetworkTableInstance.getDefault().getTable("CANSparkMax/Errors"); // Errors will be sent to NetworkTables
-        errorsTab = Shuffleboard.getTab("CANSparkMax Errors"); // Errors will also be displayed on Shuffleboard
+        errorsTab = Shuffleboard.getTab("CANSparkMax Status"); // Errors will also be displayed on Shuffleboard
     }
     @Override
     public void periodic() {
@@ -60,9 +60,8 @@ public class ErrorTrackingSubsystem extends SubsystemBase {
     public void register(CANSparkMax motor) {
         motorEntries.add(errorsTab
                 .add(Integer.toString(motor.getDeviceId()), false)
-                .withPosition((3 * (motors.size() % 3)), motors.size() / 3)
-                // motor 1: (0, 0), 2: (3, 0), 3: (6, 0), 4: (9, 0), 5: (0, 1), 6: (3, 1), etc
-                .withSize(3, 1).getEntry());
+                .withPosition(( (motors.size() % 9)), motors.size() / 9)
+                .withSize(1, 1).getEntry());
         motors.add(motor);
         motorPublishers.add(errorPublish.getStringTopic(Integer.toString(motor.getDeviceId())).publish());
     }
@@ -88,3 +87,11 @@ public class ErrorTrackingSubsystem extends SubsystemBase {
     }
 
 }
+
+// todo
+// would be good to log
+// they need to know different blobs of information
+// 1. something is broken
+// 2. which is failing and what errors
+// Directly log it in stringlogentry
+
