@@ -5,7 +5,6 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.networktables.*;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -17,9 +16,11 @@ public class ErrorTrackingSubsystem extends SubsystemBase {
 
     ArrayList<CANSparkMax> motors = new ArrayList<>();
     ArrayList<StringPublisher> motorPublishers = new ArrayList<>();
-    ArrayList<GenericEntry> motorEntries = new ArrayList<>();
+    ArrayList<GenericEntry> statusTabEntries = new ArrayList<>();
+    ArrayList<GenericEntry> errorsTabEntries = new ArrayList<>();
     int currentMotor = 0;
     NetworkTable errorPublish;
+    ShuffleboardTab statusTab;
     ShuffleboardTab errorsTab;
 
     private static ErrorTrackingSubsystem instance;
@@ -32,7 +33,8 @@ public class ErrorTrackingSubsystem extends SubsystemBase {
     /** Creates a new ErrorTrackingSubsystem. */
     public ErrorTrackingSubsystem() {
         errorPublish = NetworkTableInstance.getDefault().getTable("CANSparkMax/Errors"); // Errors will be sent to NetworkTables
-        errorsTab = Shuffleboard.getTab("CANSparkMax Status"); // Errors will also be displayed on Shuffleboard
+        statusTab = Shuffleboard.getTab("CANSparkMax Status"); // Status will be displayed as a boolean variable (whether the spark max is ok)
+        errorsTab = Shuffleboard.getTab("CANSparkMax Errors");
     }
     @Override
     public void periodic() {
@@ -43,8 +45,10 @@ public class ErrorTrackingSubsystem extends SubsystemBase {
             StringPublisher publisher = motorPublishers.get(currentMotor);
             String faultWords = faultWordToString(faults); // the faults are marked as IDs and must be converted to strings
             publisher.set(faultWords); // send to networktables
-            GenericEntry motorEntry = motorEntries.get(currentMotor); // Gets entry from shuffleboard
-            motorEntry.setBoolean(faultWords.isEmpty());
+            GenericEntry statusEntry = statusTabEntries.get(currentMotor); // Gets status entry from shuffleboard
+            statusEntry.setBoolean(faultWords.isEmpty());
+            GenericEntry errorsEntry = errorsTabEntries.get(currentMotor); // Gets errors tab entry from shuffleboard
+            errorsEntry.setString(faultWords);
             if (currentMotor < motors.size() - 1 ) {
                 currentMotor++; // Next, we will check the next motor, and we will keep incrementing it to not crowd the bus.
             } else {
@@ -58,10 +62,14 @@ public class ErrorTrackingSubsystem extends SubsystemBase {
      * @param motor A CANSparkMax object (the motor).
      */
     public void register(CANSparkMax motor) {
-        motorEntries.add(errorsTab
+        statusTabEntries.add(statusTab
                 .add(Integer.toString(motor.getDeviceId()), false)
                 .withPosition(( (motors.size() % 9)), motors.size() / 9)
                 .withSize(1, 1).getEntry());
+        errorsTabEntries.add(errorsTab
+                .add(Integer.toString(motor.getDeviceId()), "")
+                .withPosition(3 * (motors.size() % 3), motors.size() / 3)
+                .withSize(3, 1).getEntry());
         motors.add(motor);
         motorPublishers.add(errorPublish.getStringTopic(Integer.toString(motor.getDeviceId())).publish());
     }
@@ -88,10 +96,4 @@ public class ErrorTrackingSubsystem extends SubsystemBase {
 
 }
 
-// todo
-// would be good to log
-// they need to know different blobs of information
-// 1. something is broken
-// 2. which is failing and what errors
-// Directly log it in stringlogentry
-
+// TODO Log using a StringLogEntry
