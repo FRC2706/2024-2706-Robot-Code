@@ -45,19 +45,22 @@ public class TeleopSwerve extends Command {
     /* Get Values and apply deadband to limit unwanted movement*/
     translationVal =
         translationLimiter.calculate(
-            MathUtil.applyDeadband(-driver.getRawAxis(translationAxis), Config.Swerve.stickDeadband));
+            MathUtil.applyDeadband(-driver.getRawAxis(translationAxis), Config.Swerve.stickDeadband) 
+               * speeds.translationalSpeed);
     strafeVal =
         strafeLimiter.calculate(
-            MathUtil.applyDeadband(-driver.getRawAxis(strafeAxis), Config.Swerve.stickDeadband));
+            MathUtil.applyDeadband(-driver.getRawAxis(strafeAxis), Config.Swerve.stickDeadband)
+               * speeds.translationalSpeed);
     rotationVal =
         rotationLimiter.calculate(
-            MathUtil.applyDeadband(-driver.getRawAxis(rotationAxis), Config.Swerve.stickDeadband));
+            MathUtil.applyDeadband(-driver.getRawAxis(rotationAxis), Config.Swerve.stickDeadband)
+               * speeds.angularSpeed);
 
     s_Swerve.drive(
         new ChassisSpeeds(
-          translationVal * speeds.translationalSpeed, 
-          strafeVal * speeds.translationalSpeed,
-          rotationVal * speeds.angularSpeed),
+          translationVal, 
+          strafeVal,
+          rotationVal),
         true,
         true);
   }
