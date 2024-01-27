@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Config;
+import frc.robot.Config.Swerve;
 import frc.robot.Config.Swerve.TeleopSpeeds;
 import frc.robot.subsystems.SwerveSubsystem;
 
@@ -40,6 +41,13 @@ public class TeleopSwerve extends Command {
     this.speeds = speeds;
   }
 
+  @Override
+  public void initialize(){
+    translationLimiter.reset(s_Swerve.getFieldRelativeSpeeds().vxMetersPerSecond);
+    strafeLimiter.reset(s_Swerve.getFieldRelativeSpeeds().vyMetersPerSecond);
+    rotationLimiter.reset(s_Swerve. getFieldRelativeSpeeds().omegaRadiansPerSecond);
+  }
+  
   @Override
   public void execute() {
     /* Get Values and apply deadband to limit unwanted movement*/
