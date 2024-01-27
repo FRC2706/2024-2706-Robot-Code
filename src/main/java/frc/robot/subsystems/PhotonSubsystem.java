@@ -28,23 +28,16 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class PhotonSubsystem extends SubsystemBase {
 
   //constants
-  private double[] APRIL_HEIGHTS = {0,0,0,0,0,1.32,1.32,0,0,0,0,1.31,1.31,1.31,1.31,1.31,1.31};
+  private double[] APRIL_HEIGHTS = {0,0,0,0,1.32,1.32,1.32,0,0,0,0,1.31,1.31,1.31,1.31,1.31,1.31};
   private double CAMERA_HEIGHT = 0.29;
-  private double IMAGE_HEIGHT = 480.0;
-  private double IMAGE_WIDTH = 640.0;
-  private double CAMERA_FOV_YAW = 52.86;
-  private double CAMERA_FOV_PITCH = 40.88;
   private Rotation2d CAMERA_PITCH = Rotation2d.fromRadians(0.305);
-
-
-
   //x is forwards, y is sideways with +y being left, rotation probobly if + left too
-  private Pose2d cameraOffset = new Pose2d(new Translation2d(0.23,0.3), Rotation2d.fromDegrees(0));
+  private Pose2d cameraOffset = new Pose2d(new Translation2d(0.24,0.3), Rotation2d.fromDegrees(0));
+  
   //networkTableName
   private String networkTableName = "PhotonCamera";
   //data max
   private int maxData = 10;
-
   //declarations
   private static PhotonSubsystem instance;
   private DoubleArrayPublisher pubSetPoint;
@@ -111,30 +104,10 @@ public class PhotonSubsystem extends SubsystemBase {
     return(data >= maxData);
   }
 
-  private TargetCorner tagXY(List<TargetCorner> corners) {
-    double averageX = 0;
-    double averageY = 0;
-    for (TargetCorner c : corners){
-      averageX += c.x;
-      averageY += c.y;
-    }
-    averageX/=4;
-    averageY/=4;
-    return new TargetCorner(averageX, averageY);
-  }
-
   private double range(double y) {
-    //y = (IMAGE_HEIGHT/2-y)*CAMERA_FOV_PITCH/IMAGE_HEIGHT;
-
     y = Math.toRadians(y);
     y += CAMERA_PITCH.getRadians();
     return (APRIL_HEIGHTS[id]-CAMERA_HEIGHT)/Math.tan(y);
-  }
-  
-
-  private Rotation2d yaw(double x) {
-    x = (IMAGE_WIDTH/2-x)*CAMERA_FOV_YAW/IMAGE_WIDTH;
-    return (Rotation2d.fromDegrees(x)); 
   }
 
   private PhotonTrackedTarget biggestTarget(List<PhotonTrackedTarget> targets) {
@@ -198,12 +171,12 @@ public class PhotonSubsystem extends SubsystemBase {
       }
       
       //get tag info
-      //List<TargetCorner> corners = target.getDetectedCorners();
-      //TargetCorner tag = tagXY(corners);
+      double correctionValueYaw=1.5;
+      double correctionValuePitch=0.79;
       //calculate yaw
-      Rotation2d yaw = Rotation2d.fromDegrees(-1*target.getYaw());//yaw(tag.x);
+      Rotation2d yaw = Rotation2d.fromDegrees(target.getYaw()*-correctionValueYaw);//yaw(tag.x);
       //calculate range
-      double range = range(target.getPitch());
+      double range = range(target.getPitch())*correctionValuePitch;
       //convert to field quordinates
       Pose2d fieldToTarget = convertToField(range, yaw, odometryPose);
       //update rolling averages
