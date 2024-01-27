@@ -5,9 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotBase;
-
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -15,6 +12,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
 import frc.lib.lib3512.config.SwerveModuleConstants;
 
 public final class Config {
@@ -168,6 +167,18 @@ public final class Config {
     public static final double angleConversionFactor = 2 * Math.PI / angleGearRatio;
 
     /* Swerve Profiling Values Changed*/
+    public static enum TeleopSpeeds {
+      SLOW(0.5, 0.5*Math.PI),
+      MAX(3.0, 3.0*Math.PI);
+
+      public final double translationalSpeed;
+      public final double angularSpeed;
+
+      TeleopSpeeds(double translationalSpeed, double angularSpeed) {
+        this.translationalSpeed = translationalSpeed;
+        this.angularSpeed = angularSpeed;
+      }
+    }
     public static final double maxSpeed = 3.0; // meters per second
     public static final double maxAngularVelocity = Math.PI*3.0;
 
