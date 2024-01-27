@@ -5,6 +5,8 @@
 
 package frc.robot.robotcontainers;
 
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -71,6 +73,7 @@ public class NewRobotContainer extends RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new AutoRoutines().getAutonomousCommand(1);
+    // return new AutoRoutines().getAutonomousCommand(1);
+    return new PathPlannerAuto("testAuto");
   }
 }
