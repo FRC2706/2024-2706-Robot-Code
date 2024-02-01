@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Config.Swerve.TeleopSpeeds;
@@ -18,7 +19,7 @@ import frc.robot.commands.PhotonMoveToTarget;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.PhotonSubsystem.PhotonPositions;
+import frc.robot.Config.PhotonConfig.PhotonPositions;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -64,7 +65,7 @@ public class NewRobotContainer extends RobotContainer {
     driver.start().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d(0)));
     driver.back().whileTrue(SwerveSubsystem.getInstance().setLockWheelsInXCommand());
     driver.b().onTrue(SwerveSubsystem.getInstance().setOdometryCommand(new Pose2d(3,3,new Rotation2d(0))));
-    driver.a().whileTrue(PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.TEST));
+    driver.a().whileTrue(PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.TEST)).onFalse(Commands.runOnce(()->{},SwerveSubsystem.getInstance()));
     //(PhotonSubsystem.getInstance().getWaitForDataCommand(4).andThen(new PhotonMoveToTarget(new Translation2d(-2,0), new Rotation2d(0), 0.05)));
 
     driver.leftBumper().whileTrue(new TeleopSwerve(

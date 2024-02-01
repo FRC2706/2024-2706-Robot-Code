@@ -105,6 +105,34 @@ public final class Config {
 
   public static final Boolean swerveTuning = true;
 
+  public static final class PhotonConfig{
+    public static double[] APRIL_HEIGHTS = {0,0,0,0,1.32,1.32,1.32,0,0,0,0,1.31,1.31,1.31,1.31,1.31,1.31};
+    public static enum PhotonPositions {
+      
+      LEFT_SPEAKER_RED(4, new Translation2d(-0.937,-0.937), new Translation2d(-0.637,-0.637), Rotation2d.fromDegrees(45)),
+      RIGHT_SPEAKER_RED(4, new Translation2d(-0.937,0.937), new Translation2d(-0.637,0.637), Rotation2d.fromDegrees(-45)),
+      MIDDLE_SPEAKER_RED(4, new Translation2d(-1.20,0), new Translation2d(-0.90,0), Rotation2d.fromDegrees(0)),
+      AMP_RED(5, new Translation2d(0,-30), new Translation2d(0,0), Rotation2d.fromDegrees(90)),
+      AMP_BLUE(6, new Translation2d(0,-30), new Translation2d(0,0),  Rotation2d.fromDegrees(90)),
+      LEFT_SPEAKER_BLUE(7, new Translation2d(0.937,0.937), new Translation2d(0.637,0.637), Rotation2d.fromDegrees(-135)),
+      RIGHT_SPEAKER_BLUE(7, new Translation2d(0.937,-0.937), new Translation2d(0.637,-0.637), Rotation2d.fromDegrees(135)),
+      MIDDLE_SPEAKER_BLUE(7, new Translation2d(1.20,0), new Translation2d(0.90,0), Rotation2d.fromDegrees(180)),
+      TEST(4, new Translation2d(-2,0), new Translation2d(-1,0), Rotation2d.fromDegrees(0));
+  
+      public final int id;
+      public final Translation2d waypoint;
+      public final Translation2d destination;
+      public final Rotation2d direction;
+  
+      PhotonPositions(int id, Translation2d waypoint, Translation2d destination, Rotation2d direction) {
+        this.id = id;
+        this.waypoint = waypoint;
+        this.destination = destination;
+        this.direction = direction;
+      }
+    }  
+  }
+
   public static final class Swerve {
     public static final double stickDeadband = 0.1;
  
@@ -124,7 +152,7 @@ public final class Config {
     public static final double angleGearRatio = (12.8 / 1.0);
 
     public static final double synchTolerance = 3;
-
+    
     public static final SwerveDriveKinematics swerveKinematics =
         new SwerveDriveKinematics(
             new Translation2d(wheelBase / 2.0, trackWidth / 2.0),

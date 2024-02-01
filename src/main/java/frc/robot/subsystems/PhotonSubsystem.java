@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Optional;
 import java.lang.Math;
 import java.lang.annotation.Target;
+import frc.robot.Config;
+import frc.robot.Config.PhotonConfig.PhotonPositions;
 
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
@@ -23,6 +25,8 @@ import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.commands.PhotonMoveToTarget;
 
@@ -30,40 +34,15 @@ import frc.robot.commands.PhotonMoveToTarget;
 public class PhotonSubsystem extends SubsystemBase {
 
   //constants
-  private double[] APRIL_HEIGHTS = {0,0,0,0,1.32,1.32,1.32,0,0,0,0,1.31,1.31,1.31,1.31,1.31,1.31};
-  public static enum PhotonPositions {
-    
-    LEFTWOOFERRED(4, new Translation2d(-0.937,-0.937), new Translation2d(-0.637,-0.637), Rotation2d.fromDegrees(45)),
-    RIGHTWOOFERRED(4, new Translation2d(-0.937,0.937), new Translation2d(-0.637,0.637), Rotation2d.fromDegrees(-45)),
-    MIDDLEWOOFERRED(4, new Translation2d(-1.20,0), new Translation2d(-0.90,0), Rotation2d.fromDegrees(0)),
-    AMPRED(5, new Translation2d(0,-30), new Translation2d(0,0), Rotation2d.fromDegrees(90)),
-    AMPBLUE(6, new Translation2d(0,-30), new Translation2d(0,0),  Rotation2d.fromDegrees(90)),
-    LEFTWOOFERBLUE(7, new Translation2d(0.937,0.937), new Translation2d(0.637,0.637), Rotation2d.fromDegrees(-135)),
-    RIGHTWOOFERBLUE(7, new Translation2d(0.937,-0.937), new Translation2d(0.637,-0.637), Rotation2d.fromDegrees(135)),
-    MIDDLEWOOFERBLUE(7, new Translation2d(1.20,0), new Translation2d(0.90,0), Rotation2d.fromDegrees(180)),
-    TEST(4, new Translation2d(-2,0), new Translation2d(-1,0), Rotation2d.fromDegrees(0));
-
-    public final int id;
-    public final Translation2d waypoint;
-    public final Translation2d destination;
-    public final Rotation2d direction;
-
-    PhotonPositions(int id, Translation2d waypoint, Translation2d destination, Rotation2d direction) {
-      this.id = id;
-      this.waypoint = waypoint;
-      this.destination = destination;
-      this.direction = direction;
-    }
-  }
   private double CAMERA_HEIGHT = 0.29;
-  private Rotation2d CAMERA_PITCH = Rotation2d.fromRadians(0.305);
+  private Rotation2d CAMERA_PITCH = Rotation2d.fromDegrees(26);
   //x is forwards, y is sideways with +y being left, rotation probobly if + left too
   private Pose2d cameraOffset = new Pose2d(new Translation2d(-0.2,0.28), Rotation2d.fromDegrees(0));
   
   //networkTableName
   private String networkTableName = "PhotonCamera";
   //data max
-  private int maxData = 10;
+  private int maxNumSamples = 10;
   //declarations
   private static PhotonSubsystem instance;
   private DoubleArrayPublisher pubSetPoint;
@@ -71,10 +50,10 @@ public class PhotonSubsystem extends SubsystemBase {
   private PhotonCamera camera1;
   private Translation2d targetPos;
   private Rotation2d targetRotation;
-  private LinearFilter filteryaw = LinearFilter.movingAverage(maxData);
-  private LinearFilter filterX = LinearFilter.movingAverage(maxData);
-  private LinearFilter filterY = LinearFilter.movingAverage(maxData);
-  private int data;
+  private LinearFilter filteryaw = LinearFilter.movingAverage(maxNumSamples);
+  private LinearFilter filterX = LinearFilter.movingAverage(maxNumSamples);
+  private LinearFilter filterY = LinearFilter.movingAverage(maxNumSamples);
+  private int numSamples;
   private int id;
 
   
@@ -105,7 +84,7 @@ public class PhotonSubsystem extends SubsystemBase {
     targetRotation = SwerveSubsystem.getInstance().getPose().getRotation();
     targetPos = SwerveSubsystem.getInstance().getPose().getTranslation();
     //initialize vars
-    data = 0;
+    numSamples = 0;
     id = desiredId;
   }
 
@@ -118,10 +97,15 @@ public class PhotonSubsystem extends SubsystemBase {
   }
   public Command getAprilTagCommand(PhotonPositions spacePositions){
 
-  return Commands.sequence(
-    getWaitForDataCommand(spacePositions.id),
-    new PhotonMoveToTarget(spacePositions.waypoint,0.1),
-    new PhotonMoveToTarget(spacePositions.destination, spacePositions.direction, 0.02 ));
+    return Commands.sequence(
+      getWaitForDataCommand(spacePositions.id),
+      
+      new ScheduleCommand(Commands.sequence(
+
+        new PhotonMoveToTarget(spacePositions.waypoint,0.1),
+        new PhotonMoveToTarget(spacePositions.destination, spacePositions.direction, 0.02 )
+      ))
+    );
   }
 
   public Translation2d getTargetPos(){
@@ -134,13 +118,13 @@ public class PhotonSubsystem extends SubsystemBase {
 
   public boolean hasData() {
     //if data is the max that the filters hold
-    return(data >= maxData);
+    return(numSamples >= maxNumSamples);
   }
 
   private double range(double y) {
     y = Math.toRadians(y);
     y += CAMERA_PITCH.getRadians();
-    return (APRIL_HEIGHTS[id]-CAMERA_HEIGHT)/Math.tan(y);
+    return (Config.PhotonConfig.APRIL_HEIGHTS[id]-CAMERA_HEIGHT)/Math.tan(y);
   }
 
   private PhotonTrackedTarget biggestTarget(List<PhotonTrackedTarget> targets) {
@@ -204,17 +188,16 @@ public class PhotonSubsystem extends SubsystemBase {
       
       //get tag info
       double correctionValueYaw=1.5;
-      double correctionValuePitch=1.048;
       //calculate yaw
       Rotation2d yaw = Rotation2d.fromDegrees(target.getYaw()*-correctionValueYaw);//yaw(tag.x);
       //calculate range
-      double range = range(target.getPitch())*correctionValuePitch;
+      double range = range(target.getPitch());
       //convert to field quordinates
       Pose2d fieldToTarget = convertToField(range, yaw, odometryPose);
       //update rolling averages
       targetPos = new Translation2d(filterX.calculate(fieldToTarget.getX()),filterY.calculate(fieldToTarget.getY()));
       targetRotation = Rotation2d.fromDegrees(filteryaw.calculate(fieldToTarget.getRotation().getDegrees()));
-      data ++;
+      numSamples ++;
 
       //publish to networktables
       pubSetPoint.accept(new double[]{targetPos.getX(),targetPos.getY(),targetRotation.getRadians()});
