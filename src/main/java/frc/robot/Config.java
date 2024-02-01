@@ -301,7 +301,16 @@ public final class Config {
 
     public static final double MAX_ARM_ANGLE_DEG = 95;
     public static final double MIN_ARM_ANGLE_DEG = 0;
+
     
 }
+
+    //PCM Can ID 
+      public static final int CTRE_PCM_CAN_ID = 1;
+    
+      //Constants for arm pneumatics 
+      public static final int ARMLOW_PNEUMATIC_FORWARD_CHANNEL=0;
+      public static final int ARMLOW_PNEUMATIC_REVERSE_CHANNEL = 1;
+
 
 }
