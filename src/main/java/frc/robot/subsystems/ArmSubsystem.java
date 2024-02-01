@@ -10,6 +10,7 @@ import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkPIDController;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
@@ -17,11 +18,11 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.lib2706.ErrorCheck;
+import frc.lib.lib2706.ProfiledPIDFFController;
 import frc.lib.lib2706.SubsystemChecker;
 import frc.lib.lib2706.SubsystemChecker.SubsystemType;
 import frc.robot.Config;
-import frc.lib.lib2706.ErrorCheck;
-import frc.lib.lib2706.ProfiledPIDFFController;
 
 public class ArmSubsystem extends SubsystemBase{
      private static ArmSubsystem instance = null; //static object that contains all movement controls
@@ -41,15 +42,13 @@ public class ArmSubsystem extends SubsystemBase{
      private DoubleEntry m_armFFSubs;
      private DoublePublisher m_armSetpointPub;   
      private DoublePublisher m_armVelPub;
-     private DoubleEntry m_armMomentToVoltage;
      private DoublePublisher m_armFFTestingVolts;
      private DoubleEntry m_armOffset;
      private DoublePublisher m_targetAngle;
      private DoublePublisher m_armPosPub;
 
     //for  arm ff
-    private DoubleSubscriber momentToVoltageConversion;
-    private double m_VoltageConversion;
+    private DoubleEntry m_armMomentToVoltage;
 
     //spark absolute encoder
     SparkAbsoluteEncoder m_absEncoder;  
@@ -78,6 +77,8 @@ public class ArmSubsystem extends SubsystemBase{
       ErrorCheck.errREV(m_arm.enableSoftLimit(SoftLimitDirection.kForward, Config.ArmConfig.SOFT_LIMIT_ENABLE));
       ErrorCheck.errREV(m_arm.enableSoftLimit(SoftLimitDirection.kReverse, Config.ArmConfig.SOFT_LIMIT_ENABLE));
 
+      //SparkMax periodic status frame 5: frequency absolute encoder position data is sent over the can bus
+      //SparkMax perioidc status frame 6: frequency absolute encoder velocity data is sent over the can bus
       m_arm.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);
       m_arm.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
 
@@ -98,7 +99,7 @@ public class ArmSubsystem extends SubsystemBase{
     m_armIzSubs = ArmTuningTable.getDoubleTopic("IZone").getEntry(Config.ArmConfig.arm_kIz);
     m_armFFSubs = ArmTuningTable.getDoubleTopic("FF").getEntry(Config.ArmConfig.arm_kFF);
    //m_topArmOffset = topArmTuningTable.getDoubleTopic("Offset").getEntry(ArmConfig.top_arm_offset);
-    momentToVoltageConversion = ArmTuningTable.getDoubleTopic("VoltageConversion").subscribe(m_VoltageConversion);
+    m_armMomentToVoltage = ArmTuningTable.getDoubleTopic("MomentToVoltage").getEntry(Config.ArmConfig.MOMENT_TO_VOLTAGE);
 
     m_armFFSubs.setDefault(Config.ArmConfig.arm_kFF);
     m_armPSubs.setDefault(Config.ArmConfig.arm_kP);
@@ -107,10 +108,9 @@ public class ArmSubsystem extends SubsystemBase{
     m_armIzSubs.setDefault(Config.ArmConfig.arm_kIz);
 
     NetworkTable ArmDataTable = NetworkTableInstance.getDefault().getTable(m_dataTable);
-
     
     m_armPosPub = ArmDataTable.getDoubleTopic("MeasuredAngleDeg").publish(PubSubOption.periodic(0.02));
-    m_targetAngle = ArmDataTable.getDoubleTopic("TargetAngle").publish(PubSubOption.periodic(0.02));
+    m_targetAngle = ArmDataTable.getDoubleTopic("TargetAngleDeg").publish(PubSubOption.periodic(0.02));
 
     updatePIDSettings();
     //updateFromAbsoluteBottom();
@@ -126,13 +126,11 @@ public class ArmSubsystem extends SubsystemBase{
   @Override
   public void periodic() {
     m_armPosPub.accept(Math.toDegrees(m_absEncoder.getPosition()));
-    m_armVelPub.accept(m_absEncoder.getVelocity());
+    m_armVelPub.accept(Math.toDegrees(m_absEncoder.getVelocity()));
   }
     //input angle_bottom in radians
     public void setJointAngle(double angle) {
-      if (angle<Math.toRadians(Config.ArmConfig.MIN_ARM_ANGLE_DEG) || angle>Math.toRadians(Config.ArmConfig.MAX_ARM_ANGLE_DEG)) {
-        angle = Math.toRadians(Config.ArmConfig.MAX_ARM_ANGLE_DEG);
-      }
+      MathUtil.clamp(angle, Math.toRadians(Config.ArmConfig.MIN_ARM_ANGLE_DEG), Math.toRadians(Config.ArmConfig.MAX_ARM_ANGLE_DEG));
     
       double targetPos = m_profiledFFController.getNextProfiledPIDPos(getPosition(), angle);
       m_pidControllerArm.setReference((targetPos), ControlType.kPosition, 0, calculateFF(angle));

@@ -287,12 +287,17 @@ public final class Config {
 
     public static final double ARM_ENCODER_GEAR_RATIO =  1;
 
-    public static final double armPositionConversionFactor = 2 * Math.PI / ARM_NEO_GEAR_RATIO;
-    public static final double armVelocityConversionFactor = armPositionConversionFactor / 60.0;
+    //arm position unit: radians
+    public static final double armPositionConversionFactor = 2 * Math.PI / ARM_ENCODER_GEAR_RATIO;
+    //arm velocity unit: radians/sec
+    public static final double armVelocityConversionFactor = armPositionConversionFactor / 60.0; 
+    //offset unit: degrees
     public static final double armAbsEncoderOffset = 27;
 
     public static final double MAX_VEL = Math.PI * 0.5;
     public static final double MAX_ACCEL = Math.PI * 0.5;
+
+    public static final double MOMENT_TO_VOLTAGE = 0.000005;
 
     public static final double MAX_ARM_ANGLE_DEG = 95;
     public static final double MIN_ARM_ANGLE_DEG = 0;

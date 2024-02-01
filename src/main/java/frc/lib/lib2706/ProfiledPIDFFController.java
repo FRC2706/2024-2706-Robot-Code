@@ -38,12 +38,10 @@ public class ProfiledPIDFFController {
         double pidVal = getProfiledPIDVoltage(measuredPos, finalPos);
 
         double currVel = m_ProfiledPIDController.getSetpoint().velocity;
-        double currAccel = (m_ProfiledPIDController.getSetpoint().velocity - lastVel)/(Timer.getFPGATimestamp() - lastTime);
-        double ffVal = m_FFController.calculate(currVel, currAccel);
+       // double currAccel = (m_ProfiledPIDController.getSetpoint().velocity - lastVel)/(0.02);
+        double ffVal = m_FFController.calculate(lastVel, currVel, 0.02);
 
         lastVel = currVel;
-        lastTime = Timer.getFPGATimestamp();
-
         return ffVal;
     }
 
