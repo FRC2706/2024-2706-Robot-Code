@@ -73,7 +73,6 @@ public class NewRobotContainer extends RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // return new AutoRoutines().getAutonomousCommand(1);
-    return new PathPlannerAuto("testAuto");
+    return new AutoRoutines().getAutonomousCommand(2);
   }
 }

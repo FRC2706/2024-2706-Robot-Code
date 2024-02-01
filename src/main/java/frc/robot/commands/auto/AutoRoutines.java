@@ -1,6 +1,7 @@
 package frc.robot.commands.auto;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -32,7 +33,7 @@ public class AutoRoutines extends SubsystemBase {
                     AutoBuilder.followPath(path1)
                 );
             case 2:
-                return AutoBuilder.followPath(path2);
+                return new PathPlannerAuto("testAuto");
         }
     }
 }
