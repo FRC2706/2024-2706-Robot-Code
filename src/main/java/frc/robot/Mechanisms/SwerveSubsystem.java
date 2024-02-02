@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.Mechanisms;
 
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.lib2706.AdvantageUtil;
 import frc.lib.lib2706.PoseBuffer;
 import frc.robot.Config;
+import frc.robot.Mechanisms.SwerveModules.SwerveModule;
 
 public class SwerveSubsystem extends SubsystemBase {
   private final PigeonIMU gyro;

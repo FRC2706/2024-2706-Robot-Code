@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.Mechanisms.SwerveModules;
 
 import static frc.lib.lib2706.ErrorCheck.configureSpark;
 import static frc.lib.lib2706.ErrorCheck.errSpark;

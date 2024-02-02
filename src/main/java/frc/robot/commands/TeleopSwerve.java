@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Config;
 import frc.robot.Config.Swerve;
 import frc.robot.Config.Swerve.TeleopSpeeds;
-import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.Mechanisms.SwerveSubsystem;
 
 public class TeleopSwerve extends Command {
   private SwerveSubsystem s_Swerve;
