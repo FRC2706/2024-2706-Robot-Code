@@ -43,7 +43,7 @@ public final class Config {
   /**
    * ID of the robot that code is running on
    */
-  private static int robotId = 2;
+  private static int robotId = -1;
 
   private static final int SIMULATION_ID = 1;
   /**
@@ -252,7 +252,7 @@ public final class Config {
   }
 
     public static final class Intake {
-      public static final int INTAKE = 5;
+      public static final int INTAKE = -1;
     }
 
 }
