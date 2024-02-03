@@ -9,6 +9,8 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkPIDController;
+
+import static frc.lib.lib2706.ErrorCheck.configureSpark;
 import static frc.lib.lib2706.ErrorCheck.errREV;
 
 import edu.wpi.first.math.MathUtil;
@@ -68,15 +70,15 @@ public class ArmSubsystem extends SubsystemBase{
     }
     private ArmSubsystem() {
       m_arm = new CANSparkMax(Config.CANID.ARM_SPARK_CAN_ID, motorType); //creates SparkMax motor controller 
-      errREV(m_arm.restoreFactoryDefaults());
-      errREV(m_arm.setSmartCurrentLimit(Config.ArmConfig.CURRENT_LIMIT));
+      configureSpark("Arm restore factory defaults", () -> (m_arm.restoreFactoryDefaults()));
+      configureSpark("Arm set current limits", () -> m_arm.setSmartCurrentLimit(Config.ArmConfig.CURRENT_LIMIT));
       m_arm.setInverted(Config.ArmConfig.SET_INVERTED); //sets movement direction
-      errREV(m_arm.setIdleMode(IdleMode.kBrake)); //sets brakes when there is no motion
+      configureSpark("Arm set brakes when idle", () -> (m_arm.setIdleMode(IdleMode.kBrake))); //sets brakes when there is no motion
       
-      errREV(m_arm.setSoftLimit(SoftLimitDirection.kForward, Config.ArmConfig.arm_forward_limit));
-      errREV(m_arm.setSoftLimit(SoftLimitDirection.kReverse, Config.ArmConfig.arm_reverse_limit));
-      errREV(m_arm.enableSoftLimit(SoftLimitDirection.kForward, Config.ArmConfig.SOFT_LIMIT_ENABLE));
-      errREV(m_arm.enableSoftLimit(SoftLimitDirection.kReverse, Config.ArmConfig.SOFT_LIMIT_ENABLE));
+      configureSpark("Arm set soft limits forward", () -> (m_arm.setSoftLimit(SoftLimitDirection.kForward, Config.ArmConfig.arm_forward_limit)));
+      configureSpark("Arm sets soft limits reverse", () -> (m_arm.setSoftLimit(SoftLimitDirection.kReverse, Config.ArmConfig.arm_reverse_limit)));
+      configureSpark("Arm enables soft limits forward", () ->(m_arm.enableSoftLimit(SoftLimitDirection.kForward, Config.ArmConfig.SOFT_LIMIT_ENABLE)));
+      configureSpark("Arm enable soft limit reverse", () -> (m_arm.enableSoftLimit(SoftLimitDirection.kReverse, Config.ArmConfig.SOFT_LIMIT_ENABLE)));
 
       //SparkMax periodic status frame 5: frequency absolute encoder position data is sent over the can bus
       //SparkMax perioidc status frame 6: frequency absolute encoder velocity data is sent over the can bus
@@ -116,19 +118,19 @@ public class ArmSubsystem extends SubsystemBase{
     updatePIDSettings();
   }
   public void updatePIDSettings() {
-    errREV(m_pidControllerArm.setFF(m_armFFSubs.get()));
-    errREV(m_pidControllerArm.setP(m_armPSubs.get()));
-    errREV(m_pidControllerArm.setI(m_armISubs.get()));
-    errREV(m_pidControllerArm.setD(m_armDSubs.get()));
-    errREV(m_pidControllerArm.setIZone(m_armIzSubs.get()));
-    errREV(m_pidControllerArm.setOutputRange(Config.ArmConfig.min_output, Config.ArmConfig.max_output));
+    configureSpark("Arm set FF", () ->(m_pidControllerArm.setFF(m_armFFSubs.get())));
+    configureSpark("Arm set P", () -> (m_pidControllerArm.setP(m_armPSubs.get())));
+    configureSpark("Arm set I", () ->(m_pidControllerArm.setI(m_armISubs.get())));
+    configureSpark("Arm set D", () -> (m_pidControllerArm.setD(m_armDSubs.get())));
+    configureSpark("Arm set Iz", () -> (m_pidControllerArm.setIZone(m_armIzSubs.get())));
+    configureSpark("Arm set Output Range", () -> (m_pidControllerArm.setOutputRange(Config.ArmConfig.min_output, Config.ArmConfig.max_output)));
   }
   @Override
   public void periodic() {
     m_armPosPub.accept(Math.toDegrees(m_absEncoder.getPosition()));
     m_armVelPub.accept(Math.toDegrees(m_absEncoder.getVelocity()));
   }
-    //input angle_bottom in radians
+    //input angle_bottom in radians(
     public void setJointAngle(double angle) {
       MathUtil.clamp(angle, Math.toRadians(Config.ArmConfig.MIN_ARM_ANGLE_DEG), Math.toRadians(Config.ArmConfig.MAX_ARM_ANGLE_DEG));
     
@@ -147,7 +149,7 @@ public class ArmSubsystem extends SubsystemBase{
       m_arm.stopMotor();
     }
     public void burnFlash() {
-      errREV(m_arm.burnFlash());
+      configureSpark("Arm burn flash", () -> (m_arm.burnFlash()));
     }
     private double calculateFF(double encoder1Rad) {
       double ArmMoment = Config.ArmConfig.ARM_FORCE * (Config.ArmConfig.LENGTH_ARM_TO_COG*Math.cos(encoder1Rad));
