@@ -261,9 +261,13 @@ public final class Config {
 
     public static final int CURRENT_LIMIT = 60;
 
+    
+    public static final double MAX_ARM_ANGLE_DEG = 135;
+    public static final double MIN_ARM_ANGLE_DEG = 40;
+
     //soft limit constant for bottom arm
-    public static final float arm_forward_limit = (float)Math.toRadians(135);
-    public static final float arm_reverse_limit = (float)Math.toRadians(40);
+    public static final float arm_forward_limit = (float)Math.toRadians(MAX_ARM_ANGLE_DEG);
+    public static final float arm_reverse_limit = (float)Math.toRadians(MIN_ARM_ANGLE_DEG);
     public static final boolean SOFT_LIMIT_ENABLE = true;
     
     //PID constants
@@ -301,12 +305,7 @@ public final class Config {
     public static final double MAX_VEL = Math.PI * 0.5;
     public static final double MAX_ACCEL = Math.PI * 0.5;
 
-    public static final double MOMENT_TO_VOLTAGE = 0.000005;
-
-    public static final double MAX_ARM_ANGLE_DEG = 135;
-    public static final double MIN_ARM_ANGLE_DEG = 40;
-
-    
+    public static final double MOMENT_TO_VOLTAGE = 0.000005;    
 }
 
     

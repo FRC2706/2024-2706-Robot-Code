@@ -113,7 +113,6 @@ public class ArmSubsystem extends SubsystemBase{
     m_targetAngle = ArmDataTable.getDoubleTopic("TargetAngleDeg").publish(PubSubOption.periodic(0.02));
 
     updatePIDSettings();
-    //updateFromAbsoluteBottom();
   }
   public void updatePIDSettings() {
     errREV(m_pidControllerArm.setFF(m_armFFSubs.get()));

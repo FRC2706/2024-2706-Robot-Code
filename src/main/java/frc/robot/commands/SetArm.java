@@ -14,7 +14,7 @@ public class SetArm extends Command {
   final double TIMEOUT_S=2;
 
   Timer m_timer = new Timer();
-  /** Creates a new SetBottomArm. */
+  /** Creates a new SetArm. */
   public SetArm(double angleDegree) {
     armAngleRadians = Math.toRadians(angleDegree);
     // Use addRequirements() here to declare subsystem dependencies.
@@ -25,7 +25,6 @@ public class SetArm extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    //ArmSubsystem.getInstance().controlArmBrake(false);
     ArmPneumaticsSubsystem.getInstance().controlBrake(false, false);
     m_timer.stop();
     m_timer.reset();
@@ -43,11 +42,8 @@ public class SetArm extends Command {
   @Override
   public void end(boolean interrupted) {
     ArmSubsystem.getInstance().stopMotors();
-    if (interrupted == false)
-     {
-      //ArmSubsystem.getInstance().controlArmBrake(true);
+    if (interrupted == false) {
       ArmPneumaticsSubsystem.getInstance().controlBrake(true, true);
-
     }
     m_timer.stop();
   }
