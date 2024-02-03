@@ -1,0 +1,59 @@
+package frc.robot.subsystems;
+
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import frc.robot.config.Config;
+import frc.robot.config.FluidConstant;
+
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.REVLibError;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkMax.ControlType;
+
+
+public class ShooterSubsystem extends SubsystemBase {
+
+    private CANSparkMax m_shooter;
+    private SparkMaxPIDController m_pidController;
+    private RelativeEncoder m_encoder;
+
+    private double kP, kD, kFF, kMaxOutput, kMinOutput, maxRPM; 
+    
+        /// add Tunable Number later for ajusting Rpm on the flywheels 
+
+        public ShooterSubsystem() {
+            
+            m_motor = new CANSparkMax(deviceID, MotorType.kBrushless);
+
+            m_motor.restoreFavtoryDefaults();
+
+            m_pidController = m_motor.getPIDContorlller();
+
+            m_encoder = m_motor.getEncoder();
+
+            //confi
+            kP = 6e-5;
+            kD = 0;
+            kFF = 0.000015;
+            kMaxOutput = 1;
+            kMinOutput = -1;
+            maxRPM = 5700; 
+
+            m_pidController.setP(kP);
+            m_pidController.setD(kD);
+            m_pidController.setFF(kFF);
+            m_pidControllersetOutputRange(kMaxOutput, kMinOutput);
+
+
+
+
+
+
+
+
+
+        }
+
+}
