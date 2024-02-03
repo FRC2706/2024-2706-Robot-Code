@@ -2,34 +2,28 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import frc.robot.config.Config;
-import frc.robot.config.FluidConstant;
-
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.REVLibError;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.CANSparkMax.ControlType;
 
 
-public class ShooterSubsystem extends SubsystemBase {
+public class Shooter extends SubsystemBase {
 
-    private CANSparkMax m_shooter;
-    private SparkMaxPIDController m_pidController;
+    private CANSparkMax m_motor;
+    private SparkPIDController m_pidController;
     private RelativeEncoder m_encoder;
 
     private double kP, kD, kFF, kMaxOutput, kMinOutput, maxRPM; 
     
         /// add Tunable Number later for ajusting Rpm on the flywheels 
 
-        public ShooterSubsystem() {
-            
-            m_motor = new CANSparkMax(deviceID, MotorType.kBrushless);
+        public Shooter() {  
+            m_motor = new CANSparkMax(1, MotorType.kBrushless);
 
-            m_motor.restoreFavtoryDefaults();
+            m_motor.restoreFactoryDefaults();
 
-            m_pidController = m_motor.getPIDContorlller();
+            m_pidController = m_motor.getPIDController();
 
             m_encoder = m_motor.getEncoder();
 
@@ -44,16 +38,7 @@ public class ShooterSubsystem extends SubsystemBase {
             m_pidController.setP(kP);
             m_pidController.setD(kD);
             m_pidController.setFF(kFF);
-            m_pidControllersetOutputRange(kMaxOutput, kMinOutput);
-
-
-
-
-
-
-
-
-
+            m_pidController.setOutputRange(kMaxOutput, kMinOutput);
         }
 
 }
