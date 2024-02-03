@@ -258,6 +258,7 @@ public final class Config {
   public class ArmConfig {
     public static final boolean SET_INVERTED = true;
     public static final boolean setInvered = true;
+    public static final boolean INVERT_ENCODER = true;
 
     public static final int CURRENT_LIMIT = 60;
 

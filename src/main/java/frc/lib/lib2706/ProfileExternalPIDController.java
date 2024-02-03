@@ -53,7 +53,7 @@ public class ProfileExternalPIDController {
       public void setConstraints(TrapezoidProfile.Constraints constraints) {
         m_constraints = constraints;
       }
-    
+      
       /**
        * Returns the current setpoint of the ProfiledExternalPIDController.
        *

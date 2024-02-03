@@ -84,6 +84,7 @@ public class ArmSubsystem extends SubsystemBase{
       m_arm.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
 
       m_absEncoder = m_arm.getAbsoluteEncoder(Type.kDutyCycle);
+      m_absEncoder.setInverted(Config.ArmConfig.INVERT_ENCODER);
       m_absEncoder.setPositionConversionFactor(Config.ArmConfig.armPositionConversionFactor);
       m_absEncoder.setVelocityConversionFactor(Config.ArmConfig.armVelocityConversionFactor);
       m_absEncoder.setZeroOffset(Math.toRadians(Config.ArmConfig.armAbsEncoderOffset));
@@ -151,6 +152,10 @@ public class ArmSubsystem extends SubsystemBase{
     private double calculateFF(double encoder1Rad) {
       double ArmMoment = Config.ArmConfig.ARM_FORCE * (Config.ArmConfig.LENGTH_ARM_TO_COG*Math.cos(encoder1Rad));
       return (ArmMoment) * m_armMomentToVoltage.get();
+    }
+
+    public void isAtSetpoint() {
+      
     }
   } 
 
