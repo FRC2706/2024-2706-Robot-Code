@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot;
+import frc.robot.commands.BlingCommand;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -25,7 +26,7 @@ public class BeetleContainer extends RobotContainer {
     configureButtonBindings();
   }
 
-  /**
+  /**    
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
@@ -33,7 +34,9 @@ public class BeetleContainer extends RobotContainer {
    */
   private void configureButtonBindings() {
     CommandXboxController driver = new CommandXboxController(0);
-    CommandXboxController operator = new CommandXboxController(1);
+    CommandXboxController operator = new CommandXboxController(1); 
+
+    driver.a().onTrue(new BlingCommand(7));
   }
 
   /**
