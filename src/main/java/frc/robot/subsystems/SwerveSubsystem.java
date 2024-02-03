@@ -10,6 +10,7 @@ import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -31,6 +32,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.lib2706.AdvantageUtil;
 import frc.lib.lib2706.PoseBuffer;
+import frc.lib.lib2706.UpdateSimpleFeedforward;
 import frc.robot.Config;
 
 public class SwerveSubsystem extends SubsystemBase {
@@ -44,6 +46,7 @@ public class SwerveSubsystem extends SubsystemBase {
   private DoublePublisher pubCurrentPositionX = swerveTable.getDoubleTopic("Current positionX (m) ").publish(PubSubOption.periodic(0.02));
   private DoublePublisher pubCurrentPositionY = swerveTable.getDoubleTopic("Current positionY (m) ").publish(PubSubOption.periodic(0.02));
   private DoubleArrayPublisher pubCurrentPose = swerveTable.getDoubleArrayTopic("Pose ").publish(PubSubOption.periodic(0.02));
+  private UpdateSimpleFeedforward updateFeedforward = new UpdateSimpleFeedforward((ff) -> updateModuleFeedforward(ff), swerveTable, Config.Swerve.driveKS, Config.Swerve.driveKV, Config.Swerve.driveKA);
 
   // ProfiledPIDControllers for the pid control
   ProfiledPIDController pidControlX;
@@ -184,6 +187,12 @@ public class SwerveSubsystem extends SubsystemBase {
     return positions;
   }
 
+  public void updateModuleFeedforward(SimpleMotorFeedforward ff) {
+    for (SwerveModule mod : mSwerveMods) {
+      mod.setFeedforward(ff);
+    }
+  }
+
   private Rotation2d getYaw() {
     return (Config.Swerve.invertGyro)
         ? Rotation2d.fromDegrees(360 - gyro.getYaw())
@@ -284,7 +293,7 @@ public class SwerveSubsystem extends SubsystemBase {
     pubCurrentPositionY.accept(getPose().getY());
     pubCurrentPose.accept(AdvantageUtil.deconstruct(getPose()));
 
-
+    updateFeedforward.checkForUpdates();
   }
   
   public void driveRobotRelative(ChassisSpeeds robotRelativeSpeeds) {

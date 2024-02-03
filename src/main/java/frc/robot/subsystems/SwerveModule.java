@@ -61,7 +61,6 @@ public class SwerveModule {
   private SimpleMotorFeedforward feedforward =
       new SimpleMotorFeedforward(
         Config.Swerve.driveKS, Config.Swerve.driveKV, Config.Swerve.driveKA);
-  private UpdateSimpleFeedforward updateFeedforward;
 
   public SwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants, String ModuleName) {
     this.moduleNumber = moduleNumber;
@@ -72,7 +71,6 @@ public class SwerveModule {
     String tableName = "SwerveChassis/SwerveModule" + ModuleName;
     swerveModuleTable = NetworkTableInstance.getDefault().getTable(tableName);
     swerveTable = NetworkTableInstance.getDefault().getTable("SwerveChassis");
-    updateFeedforward = new UpdateSimpleFeedforward((ff) -> feedforward = ff, swerveModuleTable, Config.Swerve.driveKS, Config.Swerve.driveKV, Config.Swerve.driveKA);
   
     /* Angle Encoder Config */
     angleEncoder = new CANCoder(moduleConstants.cancoderID);
@@ -258,11 +256,15 @@ public class SwerveModule {
     return new SwerveModulePosition(driveEncoder.getPosition(), getAngle());
   }
 
+  public void setFeedforward(SimpleMotorFeedforward newFeedforward) {
+    feedforward = newFeedforward;
+  }
+
   public void periodic() {
     //update network tables
     currentSpeedEntry.accept(driveEncoder.getVelocity());
     currentAngleEntry.accept(getAngle().getRadians());
-    updateFeedforward.checkForUpdates();
+    
     canCoderAngleEntry.accept(getCanCoder().getDegrees());
 
     if (Config.swerveTuning) {  
