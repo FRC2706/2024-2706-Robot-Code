@@ -45,14 +45,16 @@ public class ShooterSubsystem extends SubsystemBase {
             m_pidController.setD(kD);
             m_pidController.setFF(kFF);
             m_pidControllersetOutputRange(kMaxOutput, kMinOutput);
+        }
 
+        public double getVelo(){
 
+            return m_encoder.getVelocity();
+        }
 
+        public void setSetPoint() {
 
-
-
-
-
+            m_pidController.setRef
 
         }
 
