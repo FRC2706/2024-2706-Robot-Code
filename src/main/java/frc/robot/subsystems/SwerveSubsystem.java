@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import java.util.Optional;
-import java.util.function.BooleanSupplier;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -23,6 +22,7 @@ import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -321,5 +321,13 @@ public class SwerveSubsystem extends SubsystemBase {
     for (SwerveModule module : mSwerveMods) {
       module.resetToAbsolute();
     }
+  }
+
+  public static Rotation2d rotateForAlliance(Rotation2d rot){
+     var alliance = DriverStation.getAlliance();
+            if (alliance.isPresent() && alliance.get()==DriverStation.Alliance.Blue) {
+                return rot;
+            }
+            return rot.rotateBy(new Rotation2d(Math.PI));
   }
 }
