@@ -1,20 +1,37 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
-import frc.robot.config.Config;
-import com.revrobotics.SparkMaxPIDController;
+import frc.robot.Config;
+import com.revrobotics.SparkPIDController;
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 
 public class IntakeSubsystem extends SubsystemBase {
 
+    private static final IntakeSubsystem INSTANCE_INTAKE = new IntakeSubsystem();
+
+    private CANSparkMax m_intake;
+    int targetSpeed = 0;
+    double kMaxOutput = 1;
+    double kMinOutput = -1;
+
+    public boolean isActive() {
+        return m_intake != null;
+    }
+
+    public static IntakeSubsystem getInstance() {
+        if (INSTANCE_INTAKE.isActive())
+            return INSTANCE_INTAKE;
+        else
+            return null;
+    }
+
+
     private IntakeSubsystem() {
-        if.(Config.CANID.INTAKE != -1) {
-            initializeSubsystem()
+        if (Config.Intake.INTAKE != -1) {
+            initializeSubsystem();
         } else {
             m_intake = null;
         }
@@ -22,12 +39,29 @@ public class IntakeSubsystem extends SubsystemBase {
 
     private void initializeSubsystem() {
         
-        m_intake = new CANSparkMax(Config.CANID.INTAKE, MotorType.kBrushless);
+        m_intake = new CANSparkMax(Config.Intake.INTAKE, MotorType.kBrushless);
+        m_intake.restoreFactoryDefaults();
+        m_intake.setInverted(false);
 
     }
 
     public void setMotorRPM(Double speed) {
-        m_intake.set(speed)
+        m_intake.set(speed);
+    }
+
+    @Override
+    public void periodic() {
+        
+    }
+
+    public void stop()
+    {
+        m_intake.stopMotor();
+    }
+
+    public void setDefaultCommand() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setDefaultCommand'");
     }
 
 }

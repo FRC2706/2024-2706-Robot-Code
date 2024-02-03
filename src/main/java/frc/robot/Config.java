@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -42,7 +43,7 @@ public final class Config {
   /**
    * ID of the robot that code is running on
    */
-  private static int robotId = -1;
+  private static int robotId = 2;
 
   private static final int SIMULATION_ID = 1;
   /**
@@ -239,6 +240,7 @@ public final class Config {
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
     //Changed values
+
     public static final double kPXController = 1;
     public static final double kPYController = 1;
     public static final double kPThetaController = 1.35;
@@ -248,4 +250,9 @@ public final class Config {
         new TrapezoidProfile.Constraints(
             kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
   }
+
+    public static final class Intake {
+      public static final int INTAKE = 5;
+    }
+
 }
