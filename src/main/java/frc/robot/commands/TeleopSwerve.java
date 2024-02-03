@@ -11,10 +11,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Config;
 import frc.robot.Config.Swerve;
 import frc.robot.Config.Swerve.TeleopSpeeds;
-import frc.robot.Mechanisms.SwerveSubsystem;
+//import frc.robot.Mechanisms.SwerveSubsystem;
 
 public class TeleopSwerve extends Command {
-  private SwerveSubsystem s_Swerve;
+  //private SwerveSubsystem s_Swerve;
 
   private CommandXboxController driver;
   private final int translationAxis = XboxController.Axis.kLeftY.value;
@@ -31,21 +31,21 @@ public class TeleopSwerve extends Command {
   private double strafeVal;
   private double rotationVal;
 
-  public TeleopSwerve(
-      SwerveSubsystem s_Swerve,
+public TeleopSwerve(/*
+      SwerveSubsystem s_Swerve,*/
       CommandXboxController driver,
       TeleopSpeeds speeds) {
-    this.s_Swerve = s_Swerve;
-    addRequirements(s_Swerve);
+    /*this.s_Swerve = s_Swerve;
+    addRequirements(s_Swerve);*/
     this.driver = driver;
     this.speeds = speeds;
   }
 
   @Override
   public void initialize(){
-    translationLimiter.reset(s_Swerve.getFieldRelativeSpeeds().vxMetersPerSecond);
-    strafeLimiter.reset(s_Swerve.getFieldRelativeSpeeds().vyMetersPerSecond);
-    rotationLimiter.reset(s_Swerve. getFieldRelativeSpeeds().omegaRadiansPerSecond);
+    //translationLimiter.reset(s_Swerve.getFieldRelativeSpeeds().vxMetersPerSecond);
+    //strafeLimiter.reset(s_Swerve.getFieldRelativeSpeeds().vyMetersPerSecond);
+    //rotationLimiter.reset(s_Swerve. getFieldRelativeSpeeds().omegaRadiansPerSecond);
   }
   
   @Override
@@ -59,7 +59,7 @@ public class TeleopSwerve extends Command {
            
     rotationVal = MathUtil.applyDeadband(-driver.getRawAxis(rotationAxis), Config.Swerve.stickDeadband) * speeds.angularSpeed;
     rotationVal = rotationLimiter.calculate(rotationVal);
-
+    /*
     s_Swerve.drive(
         new ChassisSpeeds(
           translationVal, 
@@ -67,5 +67,6 @@ public class TeleopSwerve extends Command {
           rotationVal),
         true,
         true);
+        */
   }
 }
