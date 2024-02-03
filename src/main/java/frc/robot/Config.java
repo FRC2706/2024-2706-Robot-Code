@@ -97,8 +97,8 @@ public final class Config {
    * 
    * ID 0: Competition Robot (Crescendo) (NEEDS UPDATE ON robot.conf)
    * ID 1: Simulation of Comp Robot (Crescendo in Simulation)
-   * ID 2: Poseidon (Charged Up) (NEEDS UPDATE ON robot.conf)
-   * ID 3: Clutch (Rapid React) (NEEDS UPDATE ON robot.conf)
+   * ID 2: Beetle (Small Talon Tank Drive)
+   * ID 3: Poseidon (Charged Up) (NEEDS UPDATE ON robot.conf)
    **/
 
    /** ADD CONSTANTS BELOW THIS LINE */
@@ -248,4 +248,48 @@ public final class Config {
         new TrapezoidProfile.Constraints(
             kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
   }
+     public static class CANID {   
+        //public static int PIGEON = robotSpecific(30, 27, 27, 27, 30);
+    
+        public static int CANDLE = robotSpecific(15, 15, -1, 15, 15);
+        //public static int CTRE_PCM = robotSpecific(1, 1, -1, -1);
+
+        // Swerve Drive
+        /*public static final int FRONT_LEFT_DRIVE = 24;
+        public static final int REAR_LEFT_DRIVE = 20;
+        public static final int FRONT_RIGHT_DRIVE = 21;
+        public static final int REAR_RIGHT_DRIVE = 27;
+
+        public static final int FRONT_LEFT_STEERING = 23;
+        public static final int REAR_LEFT_STEERING = 26;
+        public static final int FRONT_RIGHT_STEERING = 25;
+        public static final int REAR_RIGHT_STEERING = 22;
+
+        public static final int FRONT_LEFT_CANCODER = 9;
+        public static final int REAR_LEFT_CANCODER = 8;
+        public static final int FRONT_RIGHT_CANCODER = 6;
+        public static final int REAR_RIGHT_CANCODER = 7;
+        */
+
+        // Arm Subsystem
+        /*public static final int TOP_ARM_SPARK_CAN_ID = robotSpecific(5, 0, 0, 0, 0, 18, 18);
+        public static final int BOTTOM_ARM_SPARK_CAN_ID = robotSpecific(4, 0, 0, 0, 0, 19, 19);
+        public static final int TOP_CANCODER_CAN_ID = 3;
+        public static final int BOTTOM_CANCODER_CAN_ID = 2;
+        */
+
+        // Differential Drive CAN IDs
+        public static int DIFF_LEADER_LEFT = robotSpecific(-01, 6, 2, 5, -01, 35);
+        public static int DIFF_LEADER_RIGHT = robotSpecific(-01, 3, 1, 3, -01, 33);
+        public static int DIFF_FOLLOWER_LEFT = robotSpecific(-01, 5, -1, 7, -01, 37);
+        public static int DIFF_FOLLOWER_RIGHT = robotSpecific(-01, 2, -1, 9, -01, 39);
+
+        // Clutch CAN IDs
+        public static int INTAKE = robotSpecific(-01, 8, -1, -1);
+        public static int SHOOTER = robotSpecific(-01, 11, 5, -1);
+        public static int CLIMBER = robotSpecific(-01, 4, 5, -1);  
+        public static int INDEXER = robotSpecific(-01, 7, 7, -1);
+    }
 }
+
+    
