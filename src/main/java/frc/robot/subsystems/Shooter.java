@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 
@@ -39,6 +40,19 @@ public class Shooter extends SubsystemBase {
             m_pidController.setD(kD);
             m_pidController.setFF(kFF);
             m_pidController.setOutputRange(kMaxOutput, kMinOutput);
+        }
+
+        public double getVelocity() {
+
+                return m_encoder.getVelocity();
+
+        }
+
+        public void setSetPoint(double setPoint){
+
+            
+            m_pidController.setReference(setPoint, ControlType.kVelocity);
+
         }
 
 }
