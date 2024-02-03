@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkPIDController;
+import static frc.lib.lib2706.ErrorCheck.errREV;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.DoubleEntry;
@@ -28,7 +29,7 @@ public class ArmSubsystem extends SubsystemBase{
      private static ArmSubsystem instance = null; //static object that contains all movement controls
 
      private static final MotorType motorType = MotorType.kBrushless; //defines brushless motortype
-     public final CANSparkMax m_arm; //bottom SparkMax motor controller
+     private final CANSparkMax m_arm; //bottom SparkMax motor controller
      
      //network table entry
      private final String m_tuningTable = "Arm/ArmTuning";
@@ -51,10 +52,10 @@ public class ArmSubsystem extends SubsystemBase{
     private DoubleEntry m_armMomentToVoltage;
 
     //spark absolute encoder
-    SparkAbsoluteEncoder m_absEncoder;  
+    private SparkAbsoluteEncoder m_absEncoder;  
     //embedded relative encoder
     //private RelativeEncoder m_Encoder;
-    public SparkPIDController m_pidControllerArm;  
+    private SparkPIDController m_pidControllerArm;  
 
     ProfiledPIDFFController m_profiledFFController = new ProfiledPIDFFController();
 
@@ -65,17 +66,17 @@ public class ArmSubsystem extends SubsystemBase{
       }
       return instance;
     }
-    public ArmSubsystem() {
+    private ArmSubsystem() {
       m_arm = new CANSparkMax(Config.CANID.ARM_SPARK_CAN_ID, motorType); //creates SparkMax motor controller 
-      ErrorCheck.errREV(m_arm.restoreFactoryDefaults());
-      ErrorCheck.errREV(m_arm.setSmartCurrentLimit(Config.ArmConfig.CURRENT_LIMIT));
+      errREV(m_arm.restoreFactoryDefaults());
+      errREV(m_arm.setSmartCurrentLimit(Config.ArmConfig.CURRENT_LIMIT));
       m_arm.setInverted(Config.ArmConfig.SET_INVERTED); //sets movement direction
-      ErrorCheck.errREV(m_arm.setIdleMode(IdleMode.kBrake)); //sets brakes when there is no motion
+      errREV(m_arm.setIdleMode(IdleMode.kBrake)); //sets brakes when there is no motion
       
-      ErrorCheck.errREV(m_arm.setSoftLimit(SoftLimitDirection.kForward, Config.ArmConfig.arm_forward_limit));
-      ErrorCheck.errREV(m_arm.setSoftLimit(SoftLimitDirection.kReverse, Config.ArmConfig.arm_reverse_limit));
-      ErrorCheck.errREV(m_arm.enableSoftLimit(SoftLimitDirection.kForward, Config.ArmConfig.SOFT_LIMIT_ENABLE));
-      ErrorCheck.errREV(m_arm.enableSoftLimit(SoftLimitDirection.kReverse, Config.ArmConfig.SOFT_LIMIT_ENABLE));
+      errREV(m_arm.setSoftLimit(SoftLimitDirection.kForward, Config.ArmConfig.arm_forward_limit));
+      errREV(m_arm.setSoftLimit(SoftLimitDirection.kReverse, Config.ArmConfig.arm_reverse_limit));
+      errREV(m_arm.enableSoftLimit(SoftLimitDirection.kForward, Config.ArmConfig.SOFT_LIMIT_ENABLE));
+      errREV(m_arm.enableSoftLimit(SoftLimitDirection.kReverse, Config.ArmConfig.SOFT_LIMIT_ENABLE));
 
       //SparkMax periodic status frame 5: frequency absolute encoder position data is sent over the can bus
       //SparkMax perioidc status frame 6: frequency absolute encoder velocity data is sent over the can bus
@@ -83,7 +84,6 @@ public class ArmSubsystem extends SubsystemBase{
       m_arm.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
 
       m_absEncoder = m_arm.getAbsoluteEncoder(Type.kDutyCycle);
-      m_absEncoder.setInverted(true);
       m_absEncoder.setPositionConversionFactor(Config.ArmConfig.armPositionConversionFactor);
       m_absEncoder.setVelocityConversionFactor(Config.ArmConfig.armVelocityConversionFactor);
       m_absEncoder.setZeroOffset(Math.toRadians(Config.ArmConfig.armAbsEncoderOffset));
@@ -93,7 +93,7 @@ public class ArmSubsystem extends SubsystemBase{
 
       
     NetworkTable ArmTuningTable = NetworkTableInstance.getDefault().getTable(m_tuningTable);
-    m_armPSubs = ArmTuningTable.getDoubleTopic("P").getEntry(Config.ArmConfig.arm_kP, PubSubOption.periodic(0.02));
+    m_armPSubs = ArmTuningTable.getDoubleTopic("P").getEntry(Config.ArmConfig.arm_kP);
     m_armISubs = ArmTuningTable.getDoubleTopic("I").getEntry(Config.ArmConfig.arm_kI);
     m_armDSubs = ArmTuningTable.getDoubleTopic("D").getEntry(Config.ArmConfig.arm_kD);
     m_armIzSubs = ArmTuningTable.getDoubleTopic("IZone").getEntry(Config.ArmConfig.arm_kIz);
@@ -116,12 +116,12 @@ public class ArmSubsystem extends SubsystemBase{
     //updateFromAbsoluteBottom();
   }
   public void updatePIDSettings() {
-    ErrorCheck.errREV(m_pidControllerArm.setFF(m_armFFSubs.get()));
-    ErrorCheck.errREV(m_pidControllerArm.setP(m_armPSubs.get()));
-    ErrorCheck.errREV(m_pidControllerArm.setI(m_armISubs.get()));
-    ErrorCheck.errREV(m_pidControllerArm.setD(m_armDSubs.get()));
-    ErrorCheck.errREV(m_pidControllerArm.setIZone(m_armIzSubs.get()));
-    ErrorCheck.errREV(m_pidControllerArm.setOutputRange(Config.ArmConfig.min_output, Config.ArmConfig.max_output));
+    errREV(m_pidControllerArm.setFF(m_armFFSubs.get()));
+    errREV(m_pidControllerArm.setP(m_armPSubs.get()));
+    errREV(m_pidControllerArm.setI(m_armISubs.get()));
+    errREV(m_pidControllerArm.setD(m_armDSubs.get()));
+    errREV(m_pidControllerArm.setIZone(m_armIzSubs.get()));
+    errREV(m_pidControllerArm.setOutputRange(Config.ArmConfig.min_output, Config.ArmConfig.max_output));
   }
   @Override
   public void periodic() {
@@ -135,7 +135,6 @@ public class ArmSubsystem extends SubsystemBase{
       double targetPos = m_profiledFFController.getNextProfiledPIDPos(getPosition(), angle);
       m_pidControllerArm.setReference((targetPos), ControlType.kPosition, 0, calculateFF(angle));
       m_targetAngle.accept(Math.toDegrees(targetPos));
-      System.out.println(targetPos);
     }
 
   
@@ -148,7 +147,7 @@ public class ArmSubsystem extends SubsystemBase{
       m_arm.stopMotor();
     }
     public void burnFlash() {
-      ErrorCheck.errREV(m_arm.burnFlash());
+      errREV(m_arm.burnFlash());
     }
     private double calculateFF(double encoder1Rad) {
       double ArmMoment = Config.ArmConfig.ARM_FORCE * (Config.ArmConfig.LENGTH_ARM_TO_COG*Math.cos(encoder1Rad));

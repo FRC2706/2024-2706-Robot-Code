@@ -46,6 +46,9 @@ public final class Config {
   public static class CANID {
     // Arm Subsystem
     public static final int ARM_SPARK_CAN_ID = robotSpecific(5,0,0,0,0,18,18);
+    //PCM Can ID 
+    public static final int CTRE_PCM_CAN_ID = 1;
+
   }
 
   private static final int SIMULATION_ID = 1;
@@ -254,6 +257,7 @@ public final class Config {
   }
   public class ArmConfig {
     public static final boolean SET_INVERTED = true;
+    public static final boolean setInvered = true;
 
     public static final int CURRENT_LIMIT = 60;
 
@@ -299,17 +303,15 @@ public final class Config {
 
     public static final double MOMENT_TO_VOLTAGE = 0.000005;
 
-    public static final double MAX_ARM_ANGLE_DEG = 95;
-    public static final double MIN_ARM_ANGLE_DEG = 0;
+    public static final double MAX_ARM_ANGLE_DEG = 135;
+    public static final double MIN_ARM_ANGLE_DEG = 40;
 
     
 }
 
-    //PCM Can ID 
-      public static final int CTRE_PCM_CAN_ID = 1;
     
       //Constants for arm pneumatics 
-      public static final int ARMLOW_PNEUMATIC_FORWARD_CHANNEL=0;
+      public static final int ARMLOW_PNEUMATIC_FORWARD_CHANNEL = 0;
       public static final int ARMLOW_PNEUMATIC_REVERSE_CHANNEL = 1;
 
 

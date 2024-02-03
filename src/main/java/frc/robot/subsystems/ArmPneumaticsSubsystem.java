@@ -22,10 +22,10 @@ public class ArmPneumaticsSubsystem  extends SubsystemBase{
 
     // Create ArmPneumaticsSubsystem
     private ArmPneumaticsSubsystem(){
-    brakeSolenoid = new DoubleSolenoid(Config.CTRE_PCM_CAN_ID, PneumaticsModuleType.CTREPCM, Config.ARMLOW_PNEUMATIC_FORWARD_CHANNEL, Config.ARMLOW_PNEUMATIC_REVERSE_CHANNEL);
+    brakeSolenoid = new DoubleSolenoid(Config.CANID.CTRE_PCM_CAN_ID, PneumaticsModuleType.CTREPCM, Config.ARMLOW_PNEUMATIC_FORWARD_CHANNEL, Config.ARMLOW_PNEUMATIC_REVERSE_CHANNEL);
     }
     // control bottom brake
-    public void controlBottomBrake(boolean brakeOn, boolean turnOffAfterHalfSecond) {
+    public void controlBrake(boolean brakeOn, boolean turnOffAfterHalfSecond) {
         if (brakeOn) {
             brakeSolenoid.set(Value.kForward);
         } else {

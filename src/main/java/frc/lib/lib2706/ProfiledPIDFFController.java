@@ -9,7 +9,6 @@ import frc.robot.Config.ArmConfig;
 
 public class ProfiledPIDFFController {
     private double lastVel = 0; 
-    private double lastTime = Timer.getFPGATimestamp();
 
     private final TrapezoidProfile.Constraints m_constraints = 
     new TrapezoidProfile.Constraints(Config.ArmConfig.MAX_VEL, Config.ArmConfig.MAX_ACCEL);
