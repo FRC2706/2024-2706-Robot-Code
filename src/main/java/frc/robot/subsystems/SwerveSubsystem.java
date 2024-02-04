@@ -46,7 +46,7 @@ public class SwerveSubsystem extends SubsystemBase {
   private DoublePublisher pubCurrentPositionX = swerveTable.getDoubleTopic("Current positionX (m) ").publish(PubSubOption.periodic(0.02));
   private DoublePublisher pubCurrentPositionY = swerveTable.getDoubleTopic("Current positionY (m) ").publish(PubSubOption.periodic(0.02));
   private DoubleArrayPublisher pubCurrentPose = swerveTable.getDoubleArrayTopic("Pose ").publish(PubSubOption.periodic(0.02));
-  private UpdateSimpleFeedforward updateFeedforward = new UpdateSimpleFeedforward((ff) -> updateModuleFeedforward(ff), swerveTable, Config.Swerve.driveKS, Config.Swerve.driveKV, Config.Swerve.driveKA);
+  private UpdateSimpleFeedforward updateFeedforward;
 
   // ProfiledPIDControllers for the pid control
   ProfiledPIDController pidControlX;
@@ -131,6 +131,8 @@ public class SwerveSubsystem extends SubsystemBase {
             new TrapezoidProfile.Constraints(1, 1));
     pidControlRotation = new ProfiledPIDController(4.0, 0, 0.4,
             new TrapezoidProfile.Constraints(4 * Math.PI, 8 * Math.PI));
+
+    updateFeedforward = new UpdateSimpleFeedforward((ff) -> updateModuleFeedforward(ff), swerveTable, Config.Swerve.driveKS, Config.Swerve.driveKV, Config.Swerve.driveKA);
   }
 
   public void drive(
