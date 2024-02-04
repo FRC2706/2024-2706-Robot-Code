@@ -1,0 +1,49 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.2438391950575256,
+        "y": 5.948224498086315
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.164181506762885,
+        "y": 6.34720048179382
+      },
+      "isLocked": false,
+      "linkedName": "Auto1-5RingSpeakerSide-Point2"
+    },
+    {
+      "anchor": {
+        "x": 2.550362384695989,
+        "y": 6.837493388817909
+      },
+      "prevControl": {
+        "x": 2.194133281593577,
+        "y": 6.6177899769261055
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Auto1-5RingSpeakerSide-Point3"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 2.5,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 480.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 30.0,
+    "rotateFast": true
+  },
+  "reversed": false,
+  "folder": "Auto1-5RingSpeakerSide",
+  "previewStartingState": null,
+  "useDefaultConstraints": true
+}

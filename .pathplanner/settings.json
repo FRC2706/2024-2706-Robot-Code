@@ -2,11 +2,14 @@
   "robotWidth": 0.9,
   "robotLength": 0.9,
   "holonomicMode": true,
-  "pathFolders": [],
+  "pathFolders": [
+    "Auto1-5RingSpeakerSide",
+    "Auto2-3RingClose"
+  ],
   "autoFolders": [],
-  "defaultMaxVel": 1.5,
-  "defaultMaxAccel": 1.5,
-  "defaultMaxAngVel": 270.0,
-  "defaultMaxAngAccel": 360.0,
+  "defaultMaxVel": 2.5,
+  "defaultMaxAccel": 3.0,
+  "defaultMaxAngVel": 360.0,
+  "defaultMaxAngAccel": 480.0,
   "maxModuleSpeed": 2.5
 }

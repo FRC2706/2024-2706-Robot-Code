@@ -1,0 +1,49 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.3,
+        "y": 5.55
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.9409516681628791,
+        "y": 5.525086266457521
+      },
+      "isLocked": false,
+      "linkedName": "VisionSpeakerCloseCenter"
+    },
+    {
+      "anchor": {
+        "x": 2.4005051572444116,
+        "y": 4.407535736191065
+      },
+      "prevControl": {
+        "x": 2.0767288353915134,
+        "y": 4.992421995022108
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 2.5,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 480.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -30.0,
+    "rotateFast": true
+  },
+  "reversed": false,
+  "folder": "Auto2-3RingClose",
+  "previewStartingState": null,
+  "useDefaultConstraints": false
+}
