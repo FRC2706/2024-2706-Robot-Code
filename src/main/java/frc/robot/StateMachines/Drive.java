@@ -36,6 +36,8 @@ import frc.robot.Mechanisms.DriveMechanisms.GyroIO.GyroIOValues;
 import frc.robot.Mechanisms.DriveMechanisms.Modules;
 import frc.robot.Mechanisms.DriveMechanisms.ModulesIO;
 
+//TODO: compare this code with the advanced swerve drive
+
 public class Drive extends SubsystemBase {
   private static final double MAX_LINEAR_SPEED = Units.feetToMeters(14.5);
   private static final double TRACK_WIDTH_X = Units.inchesToMeters(25.0);

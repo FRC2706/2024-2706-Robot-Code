@@ -5,7 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Shooter;
+import frc.robot.StateMachines.Shooter;
 
 public class Shooter_tuner extends Command {
   Shooter shooter;
