@@ -37,6 +37,7 @@ import frc.robot.Mechanisms.DriveMechanisms.Modules;
 import frc.robot.Mechanisms.DriveMechanisms.ModulesIO;
 
 //TODO: compare this code with the advanced swerve drive
+//TODO: add the sparkMax Burn Manager
 
 public class Drive extends SubsystemBase {
   private static final double MAX_LINEAR_SPEED = Units.feetToMeters(14.5);
