@@ -7,7 +7,7 @@ package frc.robot.robotcontainers;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants;
+import frc.robot.Config;
 import frc.robot.Robot;
 
 /** Add your docs here. */
@@ -19,7 +19,7 @@ public class RobotContainer_Advantage_Kit {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer_Advantage_Kit() {
-    switch(Constants.currentMode){
+    switch(Config.LoggingConstants.currentMode){
       case REAL:
       case REPLAY:
         //armGearbox = new ArmGearbox(new ArmGearboxIOSparkMax());

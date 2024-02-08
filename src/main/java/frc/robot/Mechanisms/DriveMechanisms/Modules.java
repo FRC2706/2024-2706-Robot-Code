@@ -8,7 +8,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
-import frc.robot.Constants;
+import frc.robot.Config;
+import frc.robot.TODOS;
 import frc.robot.Mechanisms.DriveMechanisms.ModulesIO.ModulesIOValues;
 
 public class Modules {
@@ -31,7 +32,7 @@ public class Modules {
 
     // Switch constants based on mode (the physics simulator is treated as a
     // separate robot with different tuning)
-    switch (Constants.currentMode) {
+    switch (Config.LoggingConstants.currentMode) {
       case REAL:
       case REPLAY:
         driveFeedforward = new SimpleMotorFeedforward(0.1, 0.13);

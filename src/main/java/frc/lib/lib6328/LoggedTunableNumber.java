@@ -7,10 +7,15 @@
 
 package frc.lib.lib6328;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import frc.robot.Constants;
+import java.util.function.Consumer;
+
+import frc.robot.Config;
+import frc.robot.TODOS;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
+
 
 /**
  * Class for a tunable number. Gets value from dashboard in tuning mode, returns default if not or
@@ -54,7 +59,7 @@ public class LoggedTunableNumber {
     if (!hasDefault) {
       hasDefault = true;
       this.defaultValue = defaultValue;
-      if (Constants.tuningMode) {
+      if (Config.LoggingConstants.tuningMode) {
         dashboardNumber = new LoggedDashboardNumber(key, defaultValue);
       }
     }
@@ -69,7 +74,7 @@ public class LoggedTunableNumber {
     if (!hasDefault) {
       return 0.0;
     } else {
-      return Constants.tuningMode ? dashboardNumber.get() : defaultValue;
+      return Config.LoggingConstants.tuningMode ? dashboardNumber.get() : defaultValue;
     }
   }
 
@@ -90,5 +95,26 @@ public class LoggedTunableNumber {
     }
 
     return false;
+  }
+
+  /**
+   * Runs action if any of the tunableNumbers have changed
+   *
+   * @param id Unique identifier for the caller to avoid conflicts when shared between multiple *
+   *     objects. Recommended approach is to pass the result of "hashCode()"
+   * @param action Callback to run when any of the tunable numbers have changed. Access tunable
+   *     numbers in order inputted in method
+   * @param tunableNumbers All tunable numbers to check
+   */
+  public static void ifChanged(
+      int id, Consumer<double[]> action, LoggedTunableNumber... tunableNumbers) {
+    if (Arrays.stream(tunableNumbers).anyMatch(tunableNumber -> tunableNumber.hasChanged(id))) {
+      action.accept(Arrays.stream(tunableNumbers).mapToDouble(LoggedTunableNumber::get).toArray());
+    }
+  }
+
+  /** Runs action if any of the tunableNumbers have changed */
+  public static void ifChanged(int id, Runnable action, LoggedTunableNumber... tunableNumbers) {
+    ifChanged(id, values -> action.run(), tunableNumbers);
   }
 }
