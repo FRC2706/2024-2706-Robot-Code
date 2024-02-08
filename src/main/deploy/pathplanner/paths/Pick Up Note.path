@@ -49,11 +49,18 @@
   "eventMarkers": [
     {
       "name": "IntakeAndArm",
-      "waypointRelativePos": 2.0,
+      "waypointRelativePos": 0.0,
       "command": {
         "type": "parallel",
         "data": {
-          "commands": []
+          "commands": [
+            {
+              "type": "parallel",
+              "data": {
+                "commands": []
+              }
+            }
+          ]
         }
       }
     }
