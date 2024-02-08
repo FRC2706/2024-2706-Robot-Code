@@ -47,20 +47,20 @@ public class DiffTalonSubsystem extends SubsystemBase {
 
     /** Creates a new ExampleSubsystem. */
     public DiffTalonSubsystem() {
-        leftLeader = new WPI_TalonSRX(Config.CANID.DIFF_LEADER_LEFT);
-        rightLeader = new WPI_TalonSRX(Config.CANID.DIFF_LEADER_RIGHT);
+        leftLeader = new WPI_TalonSRX(Config.DIFF.DIFF_LEADER_LEFT);
+        rightLeader = new WPI_TalonSRX(Config.DIFF.DIFF_LEADER_RIGHT);
 
         // Check whether to construct a victor or a talon or nothing
         if(Config.DIFF.HAS_FOLLOWERS == true){
             if (Config.DIFF.LEFT_FOLLOWER_ISVICTOR) {
-                leftFollower = new WPI_VictorSPX(Config.CANID.DIFF_FOLLOWER_LEFT);
+                leftFollower = new WPI_VictorSPX(Config.DIFF.DIFF_FOLLOWER_LEFT);
             } else {
-                leftFollower = new WPI_TalonSRX(Config.CANID.DIFF_FOLLOWER_LEFT);
+                leftFollower = new WPI_TalonSRX(Config.DIFF.DIFF_FOLLOWER_LEFT);
             }
             if (Config.DIFF.RIGHT_FOLLOWER_ISVICTOR) {
-                rightFollower = new WPI_VictorSPX(Config.CANID.DIFF_FOLLOWER_RIGHT);
+                rightFollower = new WPI_VictorSPX(Config.DIFF.DIFF_FOLLOWER_RIGHT);
             } else {
-                rightFollower = new WPI_TalonSRX(Config.CANID.DIFF_FOLLOWER_RIGHT);
+                rightFollower = new WPI_TalonSRX(Config.DIFF.DIFF_FOLLOWER_RIGHT);
             }
         }
         else{
@@ -86,7 +86,7 @@ public class DiffTalonSubsystem extends SubsystemBase {
         }
 
         if (Config.CANID.PIGEON != -1) {
-            if (Config.CANID.PIGEON == Config.CANID.DIFF_FOLLOWER_LEFT && leftFollower != null) 
+            if (Config.CANID.PIGEON == Config.DIFF.DIFF_FOLLOWER_LEFT && leftFollower != null) 
                 pigeon = new PigeonIMU((WPI_TalonSRX) leftFollower);
             else {
                 pigeon = new PigeonIMU(Config.CANID.PIGEON);

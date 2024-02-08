@@ -51,13 +51,6 @@ public final class Config {
     public static final int ARM_SPARK_CAN_ID = robotSpecific(5,0,0,0,0,18,18);
     //PCM Can ID 
     public static final int CTRE_PCM_CAN_ID = 1;
-      // Differential Drive CAN IDs
-      public static int DIFF_LEADER_LEFT = robotSpecific(-01, 6, 2, 5, -01, 35);
-      public static int DIFF_LEADER_RIGHT = robotSpecific(-01, 3, 1, 3, -01, 33);
-      public static int DIFF_FOLLOWER_LEFT = robotSpecific(-01, 5, -1, 7, -01, 37);
-      public static int DIFF_FOLLOWER_RIGHT = robotSpecific(-01, 2, -1, 9, -01, 39);
-  
-
   }
 
   private static final int SIMULATION_ID = 1;
@@ -328,6 +321,13 @@ public final class Config {
      * Differential Drive Constants
      */
     public static class DIFF {
+
+           // Differential Drive CAN IDs
+        public static int DIFF_LEADER_LEFT = robotSpecific(-01, 6, 2, 5, -01, 35);
+        public static int DIFF_LEADER_RIGHT = robotSpecific(-01, 3, 1, 3, -01, 33);
+        public static int DIFF_FOLLOWER_LEFT = robotSpecific(-01, 5, -1, 7, -01, 37);
+        public static int DIFF_FOLLOWER_RIGHT = robotSpecific(-01, 2, -1, 9, -01, 39);
+
         public static boolean ISNEOS = robotSpecific(true, false, false, false);
         public static boolean HAS_FOLLOWERS = robotSpecific(true, true, false, true, true);
         public static boolean LEFT_FOLLOWER_ISVICTOR = robotSpecific(false, true, false, true);
