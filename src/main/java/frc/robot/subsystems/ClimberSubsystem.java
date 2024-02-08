@@ -7,8 +7,7 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkBase.ControlType;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import frc.robot.Config;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -28,7 +27,7 @@ public class ClimberSubsystem extends SubsystemBase {
   /** Creates a new ClimberSubSystem. */
   private ClimberSubsystem() {
     
-    if (Config.CANID.CLIMBER != -1) {
+    if (Config.Climber.CLIMBER != -1) {
       initializeSubsystem();
     }
     else
@@ -40,7 +39,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
   private void initializeSubsystem() 
   {
-    m_climber = new CANSparkMax(Config.CANID.CLIMBER, MotorType.kBrushless);
+    m_climber = new CANSparkMax(Config.Climber.CLIMBER, MotorType.kBrushless);
 
     if ( m_climber != null )
     {      
