@@ -29,6 +29,7 @@ import frc.robot.robotcontainers.CosmobotContainer;
 import frc.robot.robotcontainers.NewRobotContainer;
 import frc.robot.robotcontainers.PoseidonContainer;
 import frc.robot.robotcontainers.RobotContainer;
+import frc.robot.robotcontainers.RobotContainer_Advantage_Kit;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -146,6 +147,9 @@ public class Robot extends LoggedRobot {
 
       case 3:
         m_robotContainer = new CosmobotContainer(); break;
+
+      case 4: 
+        m_robotContainer = new RobotContainer_Advantage_Kit(); break;
 
       default:
         m_robotContainer = new NewRobotContainer();
