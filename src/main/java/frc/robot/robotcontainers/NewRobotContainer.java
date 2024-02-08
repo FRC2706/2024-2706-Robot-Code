@@ -37,6 +37,8 @@ public class NewRobotContainer extends RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public NewRobotContainer() {
+    AutoRoutines.registerCommandsToPathplanner();
+
     // Setup default commands
     s_Swerve.setDefaultCommand(
         new TeleopSwerve(
