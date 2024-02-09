@@ -7,18 +7,14 @@ import frc.robot.Config;
 import frc.robot.Mechanisms.Shooter.ShooterIO;
 import frc.robot.Mechanisms.Shooter.ShooterIOValuesAutoLogged;
 
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkBase.ControlType;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-
 import org.littletonrobotics.junction.Logger;
 
-import com.revrobotics.CANSparkMax;
 
 public class Shooter extends SubsystemBase {
     private ShooterIO shooterIO;
     private ShooterIOValuesAutoLogged shooterValues; 
+
+    private ShooterState shooterState = new ShooterState();
 
     private LoggedTunableNumber kP =
         new LoggedTunableNumber("Shooter/kP", Config.ShooterConstants.kP);
@@ -51,6 +47,7 @@ public class Shooter extends SubsystemBase {
         if(DriverStation.isDisabled()){
             shooterIO.stop();
         } 
+
         
         Logger.recordOutput("Shooter/AppliedVolts", shooterValues.flywheelAppliedVolts);
         Logger.recordOutput("Shooter/OutputCurrent", shooterValues.flywheelOutputCurrent);
