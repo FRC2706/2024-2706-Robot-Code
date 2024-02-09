@@ -1,5 +1,6 @@
 package frc.robot.StateMachines.Shooter;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.lib6328.LoggedTunableNumber;
@@ -13,6 +14,7 @@ import org.littletonrobotics.junction.Logger;
 public class Shooter extends SubsystemBase {
     private ShooterIO shooterIO;
     private ShooterIOValuesAutoLogged shooterValues; 
+    private double tolerance = 10;//Check this value
 
     private ShooterState shooterState = new ShooterState();
 
@@ -48,11 +50,21 @@ public class Shooter extends SubsystemBase {
             shooterIO.stop();
         } 
 
-        
-        Logger.recordOutput("Shooter/AppliedVolts", shooterValues.flywheelAppliedVolts);
-        Logger.recordOutput("Shooter/OutputCurrent", shooterValues.flywheelOutputCurrent);
-        Logger.recordOutput("Shooter/PositionRotations", shooterValues.flywheelPositionRotations);
-        Logger.recordOutput("Shooter/VelocityRPM", shooterValues.flywheelVelocityRPM);
+        shooterState.isInRange(()->{
+            if(MathUtil.isNear(shooterState.getDesiredVelocity(), shooterValues.flywheelVelocityRPM, tolerance))
+            return true;
+            else return false;
+        });
+
+        Logger.recordOutput("Shooter/CurrentState", shooterState.updateState());
+    }
+
+    /**
+     * This should be called every loop cycle.
+     * @param h the value of a hypotenouse drown from the robot distance 
+     */
+    public void setRobotDistance2Target(double h){
+        shooterState.updateDistance(h);
     }
 
     public void setSetPoint(double RPM){

@@ -23,7 +23,6 @@ import frc.robot.Mechanisms.Shooter.ShooterIOValuesAutoLogged;
 
 /** Add your docs here. */
 public class ShooterState {
-    private double currentVel = 0;
     private boolean isInRange = false;
     private static double distanceFromSpeaker = 0.0;
 
@@ -71,10 +70,6 @@ public class ShooterState {
         return desiredMode.getDesiredSpeed();
     }
 
-    public void updateActualSpeed(double velocity) {
-        currentVel = velocity;
-    }
-
     public void updateDistance(double h) {
         distanceFromSpeaker = h;
     }
@@ -95,10 +90,10 @@ public class ShooterState {
                 currentState = isInRange ? PRE_HEATED : PRE_HEATING;
                 break;
             case SHOOT_AMP:
+                currentState = isInRange ? ON_SET_POINT: REACHING_SET_POINT;
                 break;
             case SHOOT_SPEAKER:
-                break;
-            default:
+                currentState = isInRange ? ON_SET_POINT: REACHING_SET_POINT;
                 break;
         }
         return currentState; 
