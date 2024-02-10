@@ -112,7 +112,7 @@ public final class Config {
 
   public static final Boolean swerveTuning = true;
 
-  public static final class Climber {
+  public static final class Climber_CANID {
      public static int CLIMBER = robotSpecific(-01, 4, 5, -1);  
   }
 

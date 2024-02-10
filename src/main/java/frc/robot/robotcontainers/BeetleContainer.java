@@ -26,23 +26,20 @@ public class BeetleContainer extends RobotContainer {
         configureButtonBindings();
   }
 
-private void configureButtonBindings(){
-
-  CommandXboxController driver = new CommandXboxController(0);
-  CommandXboxController operator = new CommandXboxController(1);
-  driver.y().whileTrue(new ClimberRPM(-0.1));
-
-}
-
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  
 
-  
+  private void configureButtonBindings(){
+
+  CommandXboxController driver = new CommandXboxController(0);
+  CommandXboxController operator = new CommandXboxController(1);
+  driver.y().whileTrue(new ClimberRPM(-0.1));
+
+}
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
