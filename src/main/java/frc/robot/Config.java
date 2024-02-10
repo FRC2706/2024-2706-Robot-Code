@@ -106,8 +106,8 @@ public final class Config {
    * 
    * ID 0: Competition Robot (Crescendo) (NEEDS UPDATE ON robot.conf)
    * ID 1: Simulation of Comp Robot (Crescendo in Simulation)
-   * ID 2: Poseidon (Charged Up) (NEEDS UPDATE ON robot.conf)
-   * ID 3: Clutch (Rapid React) (NEEDS UPDATE ON robot.conf)
+   * ID 2: Beetle (Test robot) (NEEDS UPDATE ON robot.conf)
+   * ID 3: Poseidon (Charged up) (NEEDS UPDATE ON robot.conf)
    **/
 
    /** ADD CONSTANTS BELOW THIS LINE */
@@ -257,6 +257,9 @@ public final class Config {
         new TrapezoidProfile.Constraints(
             kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
   }
+   public static final class BlingConstants {
+    public static int CANDLE = 15;
+ }
   public class ArmConfig {
     public static final boolean SET_INVERTED = true;
     public static final boolean setInvered = true;
