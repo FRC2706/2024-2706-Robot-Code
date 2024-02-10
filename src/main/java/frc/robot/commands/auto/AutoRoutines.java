@@ -16,11 +16,13 @@ import frc.robot.subsystems.SwerveSubsystem;
 public class AutoRoutines extends SubsystemBase {
     PathPlannerPath path1 = PathPlannerPath.fromPathFile("4 note");
     PathPlannerPath path2 = PathPlannerPath.fromPathFile("Diagonal45Degrees");
-    PathPlannerAuto auto1 = new PathPlannerAuto("Note Auto");
-    PathPlannerAuto auto2 = new PathPlannerAuto("StartingZoneAmp");
+    PathPlannerAuto SequentialAutoTest = new PathPlannerAuto("Sequential Auto Test");
+    PathPlannerAuto ParallelAutoTest = new PathPlannerAuto("Parallel Auto Test");
+    PathPlannerAuto SequentialAndParallelAutoTest = new PathPlannerAuto("Sequential and Parallel Auto Test");
     public AutoRoutines() {
         
     }
+
 
     public static void registerCommandsToPathplanner() {
         
@@ -66,9 +68,11 @@ public class AutoRoutines extends SubsystemBase {
             case 2:
                 return new PathPlannerAuto("testAuto");
             case 3:
-                return auto1;
+                return SequentialAutoTest;
             case 4:
-                return auto2;
+                return ParallelAutoTest;
+            case 5:
+                return SequentialAndParallelAutoTest;
         }
     }
 }
