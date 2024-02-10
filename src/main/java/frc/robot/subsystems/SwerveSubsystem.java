@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import java.util.Optional;
-import java.util.function.BooleanSupplier;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.pathplanner.lib.auto.AutoBuilder;
