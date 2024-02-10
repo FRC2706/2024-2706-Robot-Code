@@ -76,5 +76,14 @@ public class ErrorCheck {
             
         return false;
     }
+    
+    public static boolean errREV(REVLibError error) {
+        if (error == REVLibError.kOk) {
+            return true;
+        }
+    DriverStation.reportError("REV DEVICE Error" + error.toString(), true);
+    return false;
+    }
+
 
 }
