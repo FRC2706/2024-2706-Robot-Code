@@ -17,7 +17,6 @@ public class AutoRoutines extends SubsystemBase {
     PathPlannerPath path1 = PathPlannerPath.fromPathFile("4 note");
     PathPlannerPath path2 = PathPlannerPath.fromPathFile("Diagonal45Degrees");
     PathPlannerAuto auto1 = new PathPlannerAuto("Note Auto");
-    PathPlannerAuto auto2 = new PathPlannerAuto("StartingZoneAmp");
     public AutoRoutines() {
         
     }
@@ -67,8 +66,6 @@ public class AutoRoutines extends SubsystemBase {
                 return new PathPlannerAuto("testAuto");
             case 3:
                 return auto1;
-            case 4:
-                return auto2;
         }
     }
 }
