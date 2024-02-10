@@ -7,6 +7,7 @@
 
 package frc.robot.subsystems;
 
+
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.CANdle.LEDStripType;
@@ -36,7 +37,6 @@ public class BlingSubsystem extends SubsystemBase {
     } else {
       candle = null;
     }
-
   }
 
   public static BlingSubsystem getINSTANCE() {
@@ -48,6 +48,7 @@ public class BlingSubsystem extends SubsystemBase {
 
     return INSTANCE;
   }
+
 
   public void setBrightness() {
     candle.configBrightnessScalar(Brightness);
@@ -81,6 +82,7 @@ public class BlingSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
   }
 
   public void setAnimation(Animation animation) {
