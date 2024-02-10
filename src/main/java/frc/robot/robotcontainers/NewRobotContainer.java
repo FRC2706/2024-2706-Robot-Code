@@ -9,6 +9,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Config.Swerve.TeleopSpeeds;
 import frc.robot.Robot;
@@ -65,6 +66,13 @@ public class NewRobotContainer extends RobotContainer {
         s_Swerve,
         driver,
         TeleopSpeeds.SLOW
+    ));
+    driver.a().whileTrue(new ParallelCommandGroup(
+      new TeleopSwerve(
+        s_Swerve,
+        driver,
+        TeleopSpeeds.MAX
+      ), s_Swerve.setHeadingCommand(/* Keira and Samuel function */null)
     ));
     /* Operator Controls */
   }

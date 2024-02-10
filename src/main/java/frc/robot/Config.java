@@ -103,7 +103,7 @@ public final class Config {
 
    /** ADD CONSTANTS BELOW THIS LINE */
 
-  public static final Boolean swerveTuning = true;
+  public static final Boolean swerveTuning = true; //tune swerve? Turn this to false for competition
 
   public static final class Swerve {
     public static final double stickDeadband = 0.1;
