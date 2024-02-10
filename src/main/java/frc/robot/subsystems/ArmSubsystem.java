@@ -148,11 +148,11 @@ public class ArmSubsystem extends SubsystemBase {
 
   // input angle_bottom in radians(
   public void setJointAngle(double angle) {
-    MathUtil.clamp(angle, Math.toRadians(Config.ArmConfig.MIN_ARM_ANGLE_DEG),
+    double clampedAngle = MathUtil.clamp(angle, Math.toRadians(Config.ArmConfig.MIN_ARM_ANGLE_DEG),
         Math.toRadians(Config.ArmConfig.MAX_ARM_ANGLE_DEG));
 
-    double targetPos = m_profiledFFController.getNextProfiledPIDPos(getPosition(), angle);
-    m_pidControllerArm.setReference((targetPos), ControlType.kPosition, 0, calculateFF(angle));
+    double targetPos = m_profiledFFController.getNextProfiledPIDPos(getPosition(), clampedAngle);
+    m_pidControllerArm.setReference((targetPos), ControlType.kPosition, 0, calculateFF(clampedAngle));
     m_targetAngle.accept(Math.toDegrees(targetPos));
   }
 
