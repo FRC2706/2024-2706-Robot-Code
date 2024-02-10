@@ -10,8 +10,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot;
+import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.BlingCommand;
 import frc.robot.commands.BlingCommand.BlingColour;
+import frc.robot.subsystems.DiffTalonSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -38,6 +40,9 @@ public class BeetleContainer extends RobotContainer {
     CommandXboxController operator = new CommandXboxController(1); 
 
     driver.a().onTrue(new BlingCommand(BlingColour.HONEYDEW));
+
+      DiffTalonSubsystem.getInstance().setDefaultCommand(
+        new ArcadeDrive(driver, XboxController.Axis.kLeftY.value, XboxController.Axis.kRightX.value));
   }
 
   /**
