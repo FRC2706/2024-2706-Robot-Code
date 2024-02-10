@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -106,6 +107,16 @@ public final class Config {
   public static final Boolean swerveTuning = true;
 
   public static final class PhotonConfig{
+    public static final double CAMERA_HEIGHT = 0.29;
+    public static final Rotation2d CAMERA_PITCH = Rotation2d.fromDegrees(26);
+    //x is forwards, y is sideways with +y being left, rotation probobly if + left too
+    public static final Pose2d cameraOffset = new Pose2d(new Translation2d(-0.2,0.28), Rotation2d.fromDegrees(0));
+  
+    //networkTableName
+    public static final String networkTableName = "PhotonCamera";
+    //data max
+    public static final int maxNumSamples = 10;
+
     // these are the heights for the apriltags 4, 5, 6, 7
     public static final double[] APRIL_HEIGHTS = {1.32,1.22,1.22,1.32};
     public static final double POS_TOLERANCE = 0.01; // meters

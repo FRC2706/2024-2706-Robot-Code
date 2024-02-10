@@ -23,11 +23,11 @@ import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Config;
+import frc.robot.Config.PhotonConfig;
 import frc.robot.Config.PhotonConfig.PhotonPositions;
 import frc.robot.commands.PhotonMoveToTarget;
 
@@ -35,15 +35,7 @@ import frc.robot.commands.PhotonMoveToTarget;
 public class PhotonSubsystem extends SubsystemBase {
 
   //constants
-  private double CAMERA_HEIGHT = 0.29;
-  private Rotation2d CAMERA_PITCH = Rotation2d.fromDegrees(26);
-  //x is forwards, y is sideways with +y being left, rotation probobly if + left too
-  private Pose2d cameraOffset = new Pose2d(new Translation2d(-0.2,0.28), Rotation2d.fromDegrees(0));
   
-  //networkTableName
-  private String networkTableName = "PhotonCamera";
-  //data max
-  private int maxNumSamples = 10;
   //declarations
   private static PhotonSubsystem instance;
   private DoubleArrayPublisher pubSetPoint;
@@ -51,9 +43,9 @@ public class PhotonSubsystem extends SubsystemBase {
   private PhotonCamera camera1;
   private Translation2d targetPos;
   private Rotation2d targetRotation;
-  private LinearFilter filteryaw = LinearFilter.movingAverage(maxNumSamples);
-  private LinearFilter filterX = LinearFilter.movingAverage(maxNumSamples);
-  private LinearFilter filterY = LinearFilter.movingAverage(maxNumSamples);
+  private LinearFilter filteryaw = LinearFilter.movingAverage(PhotonConfig.maxNumSamples);
+  private LinearFilter filterX = LinearFilter.movingAverage(PhotonConfig.maxNumSamples);
+  private LinearFilter filterY = LinearFilter.movingAverage(PhotonConfig.maxNumSamples);
   private int numSamples;
   private int id;
 
@@ -71,9 +63,9 @@ public class PhotonSubsystem extends SubsystemBase {
     //name of camera, change if using multiple cameras
     camera1 = new PhotonCamera("OV9281");
     //networktable publishers
-    pubSetPoint = NetworkTableInstance.getDefault().getTable(networkTableName).getDoubleArrayTopic("PhotonAprilPoint").publish(PubSubOption.periodic(0.02));
-    pubRange = NetworkTableInstance.getDefault().getTable(networkTableName).getDoubleTopic("Range").publish(PubSubOption.periodic(0.02));
-    pubYaw = NetworkTableInstance.getDefault().getTable(networkTableName).getDoubleTopic("Yaw").publish(PubSubOption.periodic(0.02));
+    pubSetPoint = NetworkTableInstance.getDefault().getTable(PhotonConfig.networkTableName).getDoubleArrayTopic("PhotonAprilPoint").publish(PubSubOption.periodic(0.02));
+    pubRange = NetworkTableInstance.getDefault().getTable(PhotonConfig.networkTableName).getDoubleTopic("Range").publish(PubSubOption.periodic(0.02));
+    pubYaw = NetworkTableInstance.getDefault().getTable(PhotonConfig.networkTableName).getDoubleTopic("Yaw").publish(PubSubOption.periodic(0.02));
     reset(-1);
   }
 
@@ -160,13 +152,13 @@ public class PhotonSubsystem extends SubsystemBase {
 
   public boolean hasData() {
     //if data is the max that the filters hold
-    return(numSamples >= maxNumSamples);
+    return(numSamples >= PhotonConfig.maxNumSamples);
   }
 
   private double range(double y) {
     y = Math.toRadians(y);
-    y += CAMERA_PITCH.getRadians();
-    return (Config.PhotonConfig.APRIL_HEIGHTS[id-4]-CAMERA_HEIGHT)/Math.tan(y);
+    y += PhotonConfig.CAMERA_PITCH.getRadians();
+    return (Config.PhotonConfig.APRIL_HEIGHTS[id-4]-PhotonConfig.CAMERA_HEIGHT)/Math.tan(y);
   }
 
   private PhotonTrackedTarget biggestTarget(List<PhotonTrackedTarget> targets) {
@@ -187,8 +179,8 @@ public class PhotonSubsystem extends SubsystemBase {
   private Pose2d convertToField(double range, Rotation2d yaw, Pose2d odometryPose) {
     Rotation2d fieldOrientedTarget = yaw.rotateBy(odometryPose.getRotation());
     Translation2d visionXY = new Translation2d(range, yaw);
-    Translation2d robotRotated = visionXY.rotateBy(cameraOffset.getRotation());
-    Translation2d robotToTargetRELATIVE = robotRotated.plus(cameraOffset.getTranslation());
+    Translation2d robotRotated = visionXY.rotateBy(PhotonConfig.cameraOffset.getRotation());
+    Translation2d robotToTargetRELATIVE = robotRotated.plus(PhotonConfig.cameraOffset.getTranslation());
     Translation2d robotToTarget = robotToTargetRELATIVE.rotateBy(odometryPose.getRotation());
     return new Pose2d(robotToTarget.plus(odometryPose.getTranslation()), fieldOrientedTarget);
   }

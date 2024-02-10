@@ -78,7 +78,6 @@ public class PhotonMoveToTarget extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    // SwerveSubsystem.getInstance().stopMotors();
   }
 
   
@@ -88,7 +87,7 @@ public class PhotonMoveToTarget extends Command {
     if (isWaypoint){
       return SwerveSubsystem.getInstance().isAtPose(PhotonConfig.WAYPOINT_POS_TOLERANCE, PhotonConfig.WAYPOINT_ANGLE_TOLERANCE);
     } else {
-      return SwerveSubsystem.getInstance().isAtPose(PhotonConfig.POS_TOLERANCE, PhotonConfig.ANGLE_TOLERANCE);
+      return SwerveSubsystem.getInstance().isAtPose(PhotonConfig.POS_TOLERANCE, PhotonConfig.ANGLE_TOLERANCE) && SwerveSubsystem.getInstance().isChassisMoving();
     }
   }
 }
