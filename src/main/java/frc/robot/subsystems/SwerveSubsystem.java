@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import java.util.Optional;
-import java.util.function.BooleanSupplier;
 
 import org.photonvision.PhotonCamera;
 
