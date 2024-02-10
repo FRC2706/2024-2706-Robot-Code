@@ -45,10 +45,10 @@ public final class Config {
    */
   private static int robotId = -1;
   public static class CANID {
-    public static int PIGEON = robotSpecific(30, 27, 27, 27, 30);
+    public static int PIGEON = robotSpecific(-1, -1, 27, 30);
 
     // Arm Subsystem
-    public static final int ARM_SPARK_CAN_ID = robotSpecific(5,0,0,0,0,18,18);
+    public static final int ARM_SPARK_CAN_ID = robotSpecific(-1,-1,0,5);
     //PCM Can ID 
     public static final int CTRE_PCM_CAN_ID = 1;
   }
@@ -279,10 +279,10 @@ public final class Config {
     public static final boolean SOFT_LIMIT_ENABLE = true;
     
     //PID constants
-    public static final double arm_kP = 1.4;
-    public static final double arm_kI = 0.0003;
-    public static final double arm_kD = 0.9;
-    public static final double arm_kIz = 0.3;
+    public static final double arm_kP = robotSpecific(0.0, 0.0, 0.0, 1.4);
+    public static final double arm_kI = robotSpecific(0.0, 0.0, 0.0, 0.0003);
+    public static final double arm_kD = robotSpecific(0.0, 0.0, 0.0, 0.9);
+    public static final double arm_kIz = robotSpecific(0.0, 0.0, 0.0, 0.3);
     public static final double arm_kFF = 0;
     public static final double min_output = -1;
     public static final double max_output = 1;
@@ -328,24 +328,24 @@ public final class Config {
     public static class DIFF {
 
            // Differential Drive CAN IDs
-        public static int DIFF_LEADER_LEFT = robotSpecific(-01, 6, 2, 5, -01, 35);
-        public static int DIFF_LEADER_RIGHT = robotSpecific(-01, 3, 1, 3, -01, 33);
-        public static int DIFF_FOLLOWER_LEFT = robotSpecific(-01, 5, -1, 7, -01, 37);
-        public static int DIFF_FOLLOWER_RIGHT = robotSpecific(-01, 2, -1, 9, -01, 39);
+        public static int DIFF_LEADER_LEFT = robotSpecific(0, 0, 2, -01);
+        public static int DIFF_LEADER_RIGHT = robotSpecific(0, 0, 1, -01);
+        public static int DIFF_FOLLOWER_LEFT = robotSpecific(0, 0, -1, -01);
+        public static int DIFF_FOLLOWER_RIGHT = robotSpecific(0, 0, -1, -01);
 
-        public static boolean ISNEOS = robotSpecific(true, false, false, false);
-        public static boolean HAS_FOLLOWERS = robotSpecific(true, true, false, true, true);
-        public static boolean LEFT_FOLLOWER_ISVICTOR = robotSpecific(false, true, false, true);
-        public static boolean RIGHT_FOLLOWER_ISVICTOR = robotSpecific(false, true, false, true);
+        public static boolean ISNEOS = robotSpecific(false, false, false, true);
+        public static boolean HAS_FOLLOWERS = robotSpecific(false, false, false, true);
+        public static boolean LEFT_FOLLOWER_ISVICTOR = robotSpecific(false, false, false, false);
+        public static boolean RIGHT_FOLLOWER_ISVICTOR = robotSpecific(false, false, false, false);
     
         // Invert motors to consider forward as forward (same practice for all objects)
-        public static boolean LEADER_LEFT_INVERTED = robotSpecific(false, false, false, false, false, false);
-        public static boolean LEADER_RIGHT_INVERTED = robotSpecific(false, false, true, true, false, true);
-        public static boolean FOLLOWER_LEFT_INVERTED = robotSpecific(false, false, false, false, false, false);
-        public static boolean FOLLOWER_RIGHT_INVERTED = robotSpecific(false, false, false, true, false, false);
+        public static boolean LEADER_LEFT_INVERTED = robotSpecific(false, false, false, false);
+        public static boolean LEADER_RIGHT_INVERTED = robotSpecific(false, false, false, false);
+        public static boolean FOLLOWER_LEFT_INVERTED = robotSpecific(false, false, false, false);
+        public static boolean FOLLOWER_RIGHT_INVERTED = robotSpecific(false, false, false, false);
     
-        public static boolean LEFT_SENSORPHASE = robotSpecific(false, true, true, true);
-        public static boolean RIGHT_SENSORPHASE = robotSpecific(false, false, true, true);
+        public static boolean LEFT_SENSORPHASE = robotSpecific(false, false, true, false);
+        public static boolean RIGHT_SENSORPHASE = robotSpecific(false, false, true, false);
     
         // Current limiter Constants
         public static boolean TALON_CURRENT_LIMIT = true;   //Enable or disable motor current limiting.
