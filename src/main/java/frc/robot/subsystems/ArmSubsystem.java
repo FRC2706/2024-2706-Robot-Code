@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import static frc.lib.lib2706.ErrorCheck.configureSpark;
+
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
@@ -10,18 +12,13 @@ import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkPIDController;
 
-import static frc.lib.lib2706.ErrorCheck.configureSpark;
-import static frc.lib.lib2706.ErrorCheck.errREV;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.lib.lib2706.ErrorCheck;
 import frc.lib.lib2706.ProfiledPIDFFController;
 import frc.lib.lib2706.SubsystemChecker;
 import frc.lib.lib2706.SubsystemChecker.SubsystemType;
@@ -71,6 +68,7 @@ public class ArmSubsystem extends SubsystemBase{
     private ArmSubsystem() {
       m_arm = new CANSparkMax(Config.CANID.ARM_SPARK_CAN_ID, motorType); //creates SparkMax motor controller 
       configureSpark("Arm restore factory defaults", () -> (m_arm.restoreFactoryDefaults()));
+      m_arm.setCANTimeout(100);
       configureSpark("Arm set current limits", () -> m_arm.setSmartCurrentLimit(Config.ArmConfig.CURRENT_LIMIT));
       m_arm.setInverted(Config.ArmConfig.SET_INVERTED); //sets movement direction
       configureSpark("Arm set brakes when idle", () -> (m_arm.setIdleMode(IdleMode.kBrake))); //sets brakes when there is no motion
@@ -116,6 +114,8 @@ public class ArmSubsystem extends SubsystemBase{
     m_targetAngle = ArmDataTable.getDoubleTopic("TargetAngleDeg").publish(PubSubOption.periodic(0.02));
 
     updatePIDSettings();
+    m_arm.setCANTimeout(0);
+
   }
   public void updatePIDSettings() {
     configureSpark("Arm set FF", () ->(m_pidControllerArm.setFF(m_armFFSubs.get())));
