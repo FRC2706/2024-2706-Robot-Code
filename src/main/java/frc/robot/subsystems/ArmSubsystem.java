@@ -84,10 +84,10 @@ public class ArmSubsystem extends SubsystemBase{
       m_arm.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
 
       m_absEncoder = m_arm.getAbsoluteEncoder(Type.kDutyCycle);
-      m_absEncoder.setInverted(Config.ArmConfig.INVERT_ENCODER);
-      m_absEncoder.setPositionConversionFactor(Config.ArmConfig.armPositionConversionFactor);
-      m_absEncoder.setVelocityConversionFactor(Config.ArmConfig.armVelocityConversionFactor);
-      m_absEncoder.setZeroOffset(Math.toRadians(Config.ArmConfig.armAbsEncoderOffset));
+      configureSpark("Absolute encoder set inerted", () -> m_absEncoder.setInverted(Config.ArmConfig.INVERT_ENCODER));
+      configureSpark("Absolute encoder set position conersation factor", () -> m_absEncoder.setPositionConversionFactor(Config.ArmConfig.armPositionConversionFactor));
+      configureSpark("Absolute Encoder set velocity conversion factor", () -> m_absEncoder.setVelocityConversionFactor(Config.ArmConfig.armVelocityConversionFactor));
+      configureSpark("Absolute encoder set zero offset", () -> m_absEncoder.setZeroOffset(Math.toRadians(Config.ArmConfig.armAbsEncoderOffset)));
 
       m_pidControllerArm = m_arm.getPIDController();
       m_pidControllerArm.setFeedbackDevice(m_absEncoder);
