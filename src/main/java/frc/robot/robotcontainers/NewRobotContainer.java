@@ -7,6 +7,7 @@ package frc.robot.robotcontainers;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Config.Swerve.TeleopSpeeds;
@@ -42,8 +43,7 @@ public class NewRobotContainer extends RobotContainer {
     s_Swerve.setDefaultCommand(
         new TeleopSwerve(
             s_Swerve,
-            driver,
-            TeleopSpeeds.MAX
+            driver
         )
     );
     // Configure the button bindings
@@ -55,29 +55,18 @@ public class NewRobotContainer extends RobotContainer {
    * created via the {@link CommandXboxController} or other ways.
    */
   private void configureButtonBindings() {
-    
-
     /* Driver Controls */
     driver.start().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d(0)));
     driver.back().whileTrue(SwerveSubsystem.getInstance().setLockWheelsInXCommand());
-    driver.leftBumper().whileTrue(new TeleopSwerve(
-        s_Swerve,
-        driver,
-        TeleopSpeeds.SLOW
-    ));
-    driver.a().whileTrue(new ParallelCommandGroup(
-      new TeleopSwerve(
-        s_Swerve,
-        driver,
-        TeleopSpeeds.MAX
-      ), s_Swerve.setHeadingCommand(/* Keira and Samuel function */null)
-    ));
+    driver.leftBumper().onTrue(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.SLOW))).onFalse(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.MAX)));
+    
     /* Operator Controls */
   }
+  
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
+   *leop
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {

@@ -21,7 +21,7 @@ public class TeleopSwerve extends Command {
   private final int strafeAxis = XboxController.Axis.kLeftX.value;
   private final int rotationAxis = XboxController.Axis.kRightX.value;
 
-  TeleopSpeeds speeds;
+  private static TeleopSpeeds speed = TeleopSpeeds.MAX;
 
   private SlewRateLimiter translationLimiter = new SlewRateLimiter(4.5);
   private SlewRateLimiter strafeLimiter = new SlewRateLimiter(4.5);
@@ -33,12 +33,14 @@ public class TeleopSwerve extends Command {
 
   public TeleopSwerve(
       SwerveSubsystem s_Swerve,
-      CommandXboxController driver,
-      TeleopSpeeds speeds) {
+      CommandXboxController driver) {
     this.s_Swerve = s_Swerve;
     addRequirements(s_Swerve);
     this.driver = driver;
-    this.speeds = speeds;
+  }
+
+  public static void setSpeeds(TeleopSpeeds newSpeed) {
+    speed = newSpeed;
   }
 
   @Override
@@ -51,13 +53,13 @@ public class TeleopSwerve extends Command {
   @Override
   public void execute() {
     /* Get Values and apply deadband to limit unwanted movement*/
-    translationVal = MathUtil.applyDeadband(-driver.getRawAxis(translationAxis), Config.Swerve.stickDeadband) * speeds.translationalSpeed;
+    translationVal = MathUtil.applyDeadband(-driver.getRawAxis(translationAxis), Config.Swerve.stickDeadband) * speed.translationalSpeed;
     translationVal = translationLimiter.calculate(translationVal);
     
-    strafeVal = MathUtil.applyDeadband(-driver.getRawAxis(strafeAxis), Config.Swerve.stickDeadband) * speeds.translationalSpeed;
+    strafeVal = MathUtil.applyDeadband(-driver.getRawAxis(strafeAxis), Config.Swerve.stickDeadband) * speed.translationalSpeed;
     strafeVal = strafeLimiter.calculate(strafeVal);
            
-    rotationVal = MathUtil.applyDeadband(-driver.getRawAxis(rotationAxis), Config.Swerve.stickDeadband) * speeds.angularSpeed;
+    rotationVal = MathUtil.applyDeadband(-driver.getRawAxis(rotationAxis), Config.Swerve.stickDeadband) * speed.angularSpeed;
     rotationVal = rotationLimiter.calculate(rotationVal);
 
     s_Swerve.drive(
