@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
 
+import org.photonvision.PhotonCamera;
+
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
@@ -31,6 +33,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.lib2706.AdvantageUtil;
 import frc.lib.lib2706.PoseBuffer;
 import frc.robot.Config;
+import frc.robot.Config.PhotonConfig;
 
 public class SwerveSubsystem extends SubsystemBase {
   private final PigeonIMU gyro;
@@ -115,7 +118,7 @@ public class SwerveSubsystem extends SubsystemBase {
             new TrapezoidProfile.Constraints(2,2));
     pidControlY = new ProfiledPIDController(3, 0.0, 0.2,
             new TrapezoidProfile.Constraints(2, 2));
-    pidControlRotation = new ProfiledPIDController(4.0, 0, 0.4,
+    pidControlRotation = new ProfiledPIDController(2.0, 0, 0.4,
             new TrapezoidProfile.Constraints(4 * Math.PI, 4 * Math.PI));
             pidControlRotation.enableContinuousInput(-Math.PI, Math.PI);
   }
@@ -220,12 +223,15 @@ public class SwerveSubsystem extends SubsystemBase {
 
     double x = pidControlX.calculate(currentX, desiredX);
     double y = pidControlY.calculate(currentY, desiredY);
-    double rot = pidControlRotation.calculate(currentRotation, desiredRotation);
+    double rot = 0;
+    if (Math.abs(currentRotation - desiredRotation) > PhotonConfig.ANGLE_TOLERANCE) {
+      rot = pidControlRotation.calculate(currentRotation, desiredRotation);
+    }
 
     drive(new ChassisSpeeds(x, y, rot), true, false);
   }
 
-  public boolean isAtPose(double tol,double angleTol) {
+  public boolean isAtPose(double tol, double angleTol) {
     return Math.abs(currentX - desiredX) < tol && Math.abs(currentY - desiredY) < tol
             && Math.abs(currentRotation - desiredRotation) < angleTol;
   }

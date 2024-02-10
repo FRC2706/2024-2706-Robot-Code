@@ -10,6 +10,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.Config;
+import frc.robot.Config.PhotonConfig;
 import frc.robot.subsystems.PhotonSubsystem;
 
 //class
@@ -18,25 +20,39 @@ public class PhotonMoveToTarget extends Command {
   Translation2d targetOffset;
   boolean centerTarget;
   Rotation2d desiredHeading;
-  double tolerance=0.01;
+  boolean isWaypoint;
 
-
-  public PhotonMoveToTarget(Translation2d _targetOffset, double _tolerance) {
+/**
+ * Command for moving to the target currently selected in the PhotonSubsystem. Without a desired heading, the robot turns so that the camera faces the target.
+ * @param _targetOffset
+ * the field oriented offset from the aprilTag to move towards
+ * @param _isWaypoint
+ * whether or not to use the larger tolerences meant for stop-and-go waypoints
+ */
+  public PhotonMoveToTarget(Translation2d _targetOffset, boolean _isWaypoint) {
     addRequirements(SwerveSubsystem.getInstance());
     addRequirements(PhotonSubsystem.getInstance());
     targetOffset = _targetOffset;
     centerTarget=true;
-    tolerance=_tolerance;
+    isWaypoint=_isWaypoint;
   }
 
-  //if you want a direction at the stopping point
-  public PhotonMoveToTarget(Translation2d _targetOffset, Rotation2d _desiredHeading, double _tolerance) {
+/**
+ * Command for moving to the target currently selected in the PhotonSubsystem
+ * @param _targetOffset
+ * the field oriented offset from the aprilTag to move towards
+ * @param _desiredHeading
+ * what direction the robot should be facing compared to the field
+ * @param _isWaypoint
+ * whether or not to use the larger tolerences meant for stop-and-go waypoints
+ */
+  public PhotonMoveToTarget(Translation2d _targetOffset, Rotation2d _desiredHeading, boolean _isWaypoint) {
     addRequirements(SwerveSubsystem.getInstance());
     addRequirements(PhotonSubsystem.getInstance());
     targetOffset = _targetOffset;
     desiredHeading = _desiredHeading;
     centerTarget=false;
-    tolerance=_tolerance;
+    isWaypoint=_isWaypoint;
   }
 
 
@@ -70,6 +86,10 @@ public class PhotonMoveToTarget extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return SwerveSubsystem.getInstance().isAtPose(tolerance, tolerance*5);
+    if (isWaypoint){
+      return SwerveSubsystem.getInstance().isAtPose(PhotonConfig.WAYPOINT_POS_TOLERANCE, PhotonConfig.WAYPOINT_ANGLE_TOLERANCE);
+    } else {
+      return SwerveSubsystem.getInstance().isAtPose(PhotonConfig.POS_TOLERANCE, PhotonConfig.ANGLE_TOLERANCE);
+    }
   }
 }

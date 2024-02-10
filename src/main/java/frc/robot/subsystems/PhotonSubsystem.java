@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.commands.PhotonMoveToTarget;
@@ -88,24 +89,60 @@ public class PhotonSubsystem extends SubsystemBase {
     id = desiredId;
   }
 
+  /**
+   * Command for removing photon data and changing the target id to look for.
+   * @param tagid
+   * the id that the subsystem will now look for
+   * @return
+   * the command
+   */
   public Command getResetCommand(int tagid){
     return runOnce(() -> reset(tagid));
   }
 
+  /**
+   * Command that does nothing until photonSubsystem has enough data to track a target
+   * @param tagid
+   * resets the subsystem and its id
+   * @return
+   * the command
+   */
   public Command getWaitForDataCommand(int tagid){
     return new FunctionalCommand(() -> reset(tagid), ()->{}, (interrupted) ->{}, ()->hasData(), this);
   }
+
+/**
+ * this is the command for going to a specific position based off of an apriltag during teleoperated,------------------------       
+ * 
+ * during Auto, please use the positions with PhotonMoveToTarget
+ * @param spacePositions
+ * a PhotonPositions object from the config file
+ * @return
+ * the command to run
+ */
   public Command getAprilTagCommand(PhotonPositions spacePositions){
-
-    return Commands.sequence(
-      getWaitForDataCommand(spacePositions.id),
-      
-      new ScheduleCommand(Commands.sequence(
-
-        new PhotonMoveToTarget(spacePositions.waypoint,0.1),
-        new PhotonMoveToTarget(spacePositions.destination, spacePositions.direction, 0.02 )
-      ))
-    );
+    Command swerveRequirementCommand = Commands.run(() -> {}, SwerveSubsystem.getInstance())
+            .withName("AprilTagCommandSwerveRequirement");
+    if (spacePositions.hasWaypoint){
+      return Commands.sequence(
+        getWaitForDataCommand(spacePositions.id),
+        Commands.runOnce(() -> swerveRequirementCommand.schedule()), // Add delayed requirement to SwerveSubsystem
+        new ProxyCommand(Commands.sequence( // Proxy these commands to prevent SwerveSubsystem requirement conflicting with swerveRequirementCommand
+          new PhotonMoveToTarget(spacePositions.waypoint,true),
+          new PhotonMoveToTarget(spacePositions.destination, spacePositions.direction, false)
+        ))
+      ).finallyDo(() -> swerveRequirementCommand.cancel()); // Ensure requirement to SwerveSubsystem ends with this command ending
+    }
+    else
+    {
+      return Commands.sequence(
+        getWaitForDataCommand(spacePositions.id),
+        new ScheduleCommand(
+          new PhotonMoveToTarget(spacePositions.destination, spacePositions.direction, false)
+        )
+      );
+    }
+    
   }
 
   public Translation2d getTargetPos(){
@@ -124,7 +161,7 @@ public class PhotonSubsystem extends SubsystemBase {
   private double range(double y) {
     y = Math.toRadians(y);
     y += CAMERA_PITCH.getRadians();
-    return (Config.PhotonConfig.APRIL_HEIGHTS[id]-CAMERA_HEIGHT)/Math.tan(y);
+    return (Config.PhotonConfig.APRIL_HEIGHTS[id-4]-CAMERA_HEIGHT)/Math.tan(y);
   }
 
   private PhotonTrackedTarget biggestTarget(List<PhotonTrackedTarget> targets) {
@@ -189,7 +226,7 @@ public class PhotonSubsystem extends SubsystemBase {
       //get tag info
       double correctionValueYaw=1.5;
       //calculate yaw
-      Rotation2d yaw = Rotation2d.fromDegrees(target.getYaw()*-correctionValueYaw);//yaw(tag.x);
+      Rotation2d yaw = Rotation2d.fromDegrees(target.getYaw()*-correctionValueYaw);
       //calculate range
       double range = range(target.getPitch());
       //convert to field quordinates

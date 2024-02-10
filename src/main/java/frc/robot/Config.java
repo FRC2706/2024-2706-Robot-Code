@@ -106,7 +106,12 @@ public final class Config {
   public static final Boolean swerveTuning = true;
 
   public static final class PhotonConfig{
-    public static double[] APRIL_HEIGHTS = {0,0,0,0,1.32,1.32,1.32,0,0,0,0,1.31,1.31,1.31,1.31,1.31,1.31};
+    // these are the heights for the apriltags 4, 5, 6, 7
+    public static final double[] APRIL_HEIGHTS = {1.32,1.22,1.22,1.32};
+    public static final double POS_TOLERANCE = 0.01; // meters
+    public static final double ANGLE_TOLERANCE = Math.toRadians(1.0);
+    public static final double WAYPOINT_POS_TOLERANCE = 0.5; // meters
+    public static final double WAYPOINT_ANGLE_TOLERANCE = Math.toRadians(30.0);
     public static enum PhotonPositions {
       
       LEFT_SPEAKER_RED(4, new Translation2d(-0.937,-0.937), new Translation2d(-0.637,-0.637), Rotation2d.fromDegrees(45)),
@@ -120,13 +125,23 @@ public final class Config {
       TEST(4, new Translation2d(-2,0), new Translation2d(-1,0), Rotation2d.fromDegrees(0));
   
       public final int id;
+      public final boolean hasWaypoint;
       public final Translation2d waypoint;
       public final Translation2d destination;
       public final Rotation2d direction;
   
       PhotonPositions(int id, Translation2d waypoint, Translation2d destination, Rotation2d direction) {
         this.id = id;
+        this.hasWaypoint = true;
         this.waypoint = waypoint;
+        this.destination = destination;
+        this.direction = direction;
+      }
+
+      PhotonPositions(int id, Translation2d destination, Rotation2d direction) {
+        this.id = id;
+        this.hasWaypoint = false;
+        this.waypoint = null;
         this.destination = destination;
         this.direction = direction;
       }
