@@ -8,5 +8,7 @@ package frc.robot;
 public class TODOS {
   //TODO: check Team's 6328 2023 robots code and see what you can implement for constants,
   //TODO: Implement the Spark max burn manager
+  //TODO: Create a branch example without having the simulator, just the hardware implementation
+  //TODO: Test it  
  
 }

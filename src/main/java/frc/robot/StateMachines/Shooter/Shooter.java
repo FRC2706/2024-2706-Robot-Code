@@ -30,7 +30,7 @@ public class Shooter extends SubsystemBase {
         new LoggedTunableNumber("Shooter/setPointRPM", 0);
 
     public Shooter(ShooterIO io) {
-        System.out.println("[Init]Creating Shooter BAE");
+        System.out.println("[Init]Creating Shooter");
         shooterIO = io;
         shooterIO.setPID(kP.get(), kI.get(), kD.get());
         shooterIO.setFF(kFF.get());

@@ -11,7 +11,7 @@ public interface ArmIO {
     @AutoLog
     class ArmIOValues {
         public double armPositionRads = 0.0;
-        public double armAbsoluteEncoderPos = 0.0;
+        public double armAbsoluteEncoderPosRad = 0.0;
         public double armVelocityRadsPerSec = 0.0;
 
         public double[] armAppliedVolts = new double[] {};
@@ -35,7 +35,7 @@ public interface ArmIO {
     }
 
     /** Set FF values */
-    default void setFF(double s, double v, double a, double g) {
+    default void setFF(double ff) {
     }
 
     /** Set PID values */

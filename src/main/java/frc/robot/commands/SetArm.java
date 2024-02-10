@@ -18,7 +18,7 @@ public class SetArm extends Command {
   public SetArm(double angleDegree) {
     armAngleRadians = Math.toRadians(angleDegree);
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(ArmSubsystem.getInstance());
+   // addRequirements(ArmSubsystem.getInstance());
     addRequirements(ArmPneumaticsSubsystem.getInstance());
   }
 
@@ -35,13 +35,13 @@ public class SetArm extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    ArmSubsystem.getInstance().setJointAngle(armAngleRadians);
+   // ArmSubsystem.getInstance().setJointAngle(armAngleRadians);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    ArmSubsystem.getInstance().stopMotors();
+   // ArmSubsystem.getInstance().stopMotors();
     if (interrupted == false) {
       ArmPneumaticsSubsystem.getInstance().controlBrake(true, true);
     }

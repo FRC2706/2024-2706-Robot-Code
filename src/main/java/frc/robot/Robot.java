@@ -148,8 +148,8 @@ public class Robot extends LoggedRobot {
       case 3:
         m_robotContainer = new CosmobotContainer(); break;
 
-      case 4: 
-        m_robotContainer = new RobotContainer_Advantage_Kit(); break;
+     // case 4: 
+     //   m_robotContainer = new RobotContainer_Advantage_Kit(); break;
 
       default:
         m_robotContainer = new NewRobotContainer();
