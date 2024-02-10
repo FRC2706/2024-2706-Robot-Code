@@ -69,7 +69,7 @@ public class ArmSubsystem extends SubsystemBase {
   private ArmSubsystem() {
     m_arm = new CANSparkMax(Config.CANID.ARM_SPARK_CAN_ID, motorType); // creates SparkMax motor controller
     configureSpark("Arm restore factory defaults", () -> (m_arm.restoreFactoryDefaults()));
-    configureSpark("arm set CANTimeout", () -> m_arm.setCANTimeout(100));
+    configureSpark("arm set CANTimeout", () -> m_arm.setCANTimeout(Config.CANTIMEOUT_MS));
     configureSpark("Arm set current limits", () -> m_arm.setSmartCurrentLimit(Config.ArmConfig.CURRENT_LIMIT));
     m_arm.setInverted(Config.ArmConfig.SET_INVERTED); // sets movement direction
     configureSpark("Arm set brakes when idle", () -> (m_arm.setIdleMode(IdleMode.kBrake))); // sets brakes when there is
@@ -88,8 +88,8 @@ public class ArmSubsystem extends SubsystemBase {
     // sent over the can bus
     // SparkMax perioidc status frame 6: frequency absolute encoder velocity data is
     // sent over the can bus
-    m_arm.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);
-    m_arm.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20);
+    configureSpark("Arm set periodic frame period", () -> m_arm.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20));
+    configureSpark("Arm set periodic frame period", () -> m_arm.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 20));
 
     m_absEncoder = m_arm.getAbsoluteEncoder(Type.kDutyCycle);
     configureSpark("Absolute encoder set inerted", () -> m_absEncoder.setInverted(Config.ArmConfig.INVERT_ENCODER));
@@ -101,7 +101,7 @@ public class ArmSubsystem extends SubsystemBase {
         () -> m_absEncoder.setZeroOffset(Math.toRadians(Config.ArmConfig.armAbsEncoderOffset)));
 
     m_pidControllerArm = m_arm.getPIDController();
-    m_pidControllerArm.setFeedbackDevice(m_absEncoder);
+    configureSpark("Pid controller arm set feedback device", () -> m_pidControllerArm.setFeedbackDevice(m_absEncoder));
 
     NetworkTable ArmTuningTable = NetworkTableInstance.getDefault().getTable(m_tuningTable);
     m_armPSubs = ArmTuningTable.getDoubleTopic("P").getEntry(Config.ArmConfig.arm_kP);
@@ -126,7 +126,7 @@ public class ArmSubsystem extends SubsystemBase {
     m_targetAngle = ArmDataTable.getDoubleTopic("TargetAngleDeg").publish(PubSubOption.periodic(0.02));
 
     updatePIDSettings();
-    m_arm.setCANTimeout(0);
+    configureSpark("Arm set CANTimeout", () -> m_arm.setCANTimeout(0));
 
   }
 
