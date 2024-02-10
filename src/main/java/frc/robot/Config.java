@@ -53,6 +53,8 @@ public final class Config {
     public static final int CTRE_PCM_CAN_ID = 1;
   }
 
+  public static final int CANTIMEOUT_MS = 100;
+
   private static final int SIMULATION_ID = 1;
   /**
    * Returns one of the values passed based on the robot ID
@@ -113,7 +115,7 @@ public final class Config {
    /** ADD CONSTANTS BELOW THIS LINE */
 
   public static final Boolean swerveTuning = true;
-
+  
   public static final class Swerve {
     public static final double stickDeadband = 0.1;
  
