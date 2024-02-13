@@ -6,6 +6,7 @@ import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkPIDController;
@@ -54,7 +55,7 @@ public class ArmSubsystem extends SubsystemBase{
     //spark absolute encoder
     private SparkAbsoluteEncoder m_absEncoder;  
     //embedded relative encoder
-    //private RelativeEncoder m_Encoder;
+    private RelativeEncoder m_encoder;
     private SparkPIDController m_pidControllerArm;  
 
     ProfiledPIDFFController m_profiledFFController = new ProfiledPIDFFController();
@@ -150,12 +151,24 @@ public class ArmSubsystem extends SubsystemBase{
       errREV(m_arm.burnFlash());
     }
     private double calculateFF(double encoder1Rad) {
-      double ArmMoment = Config.ArmConfig.ARM_FORCE * (Config.ArmConfig.LENGTH_ARM_TO_COG*Math.cos(encoder1Rad));
-      return (ArmMoment) * m_armMomentToVoltage.get();
+      //double ArmMoment = Config.ArmConfig.ARM_FORCE * (Config.ArmConfig.LENGTH_ARM_TO_COG*Math.cos(encoder1Rad));
+      //return (ArmMoment) * m_armMomentToVoltage.get();
+
+      double toTunedConst = m_armMomentToVoltage.get();
+      return toTunedConst*Math.cos(encoder1Rad);
     }
 
     public void isAtSetpoint() {
-      
+    }
+
+    public void setArmIdleMode(IdleMode mode) {
+      m_arm.setIdleMode(mode);
+    }
+
+    public void testFeedForward(double additionalVoltage) {
+      double voltage = additionalVoltage + calculateFF(m_encoder.getPosition());
+      m_pidControllerArm.setReference(voltage, ControlType.kVoltage);
+      m_armFFTestingVolts.accept(voltage);
     }
   } 
 
