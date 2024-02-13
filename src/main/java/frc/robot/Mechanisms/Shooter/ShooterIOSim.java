@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 
 /** Add your docs here. */
 public class ShooterIOSim implements ShooterIO{
-    private final FlywheelSim m_motor = new FlywheelSim(DCMotor.getNEO(1), 1, 40);
+    private final FlywheelSim m_motor = new FlywheelSim(DCMotor.getNEO(1), 1, 1);
     private final PIDController m_controller = new PIDController(0, 0, 0);
 
     private double feedForward = 0.0;

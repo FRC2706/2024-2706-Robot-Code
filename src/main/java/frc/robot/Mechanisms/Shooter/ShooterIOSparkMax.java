@@ -15,16 +15,16 @@ import com.revrobotics.SparkPIDController;
 
 /** Add your docs here. */
 public class ShooterIOSparkMax implements ShooterIO{
-    private CANSparkMax m_motor = new CANSparkMax(1, MotorType.kBrushless);
+    private CANSparkMax m_motor = new CANSparkMax(32, MotorType.kBrushless);
     private SparkPIDController m_pidController;
     private RelativeEncoder m_encoder;
     
-    private boolean setReverse = true;
+    private boolean setReverse = false;
     private double feedForward = 0;
 
     //TODO: add the spark max brun manager
     public ShooterIOSparkMax(){
-        System.out.println("[Init] Creating CubeIntakeIOSparkMax");
+        System.out.println("[Init] Creating ShooterIOSparkMax");
         m_motor.restoreFactoryDefaults();
         
         //Soft limit params

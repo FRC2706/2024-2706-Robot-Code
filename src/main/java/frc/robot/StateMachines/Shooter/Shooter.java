@@ -13,8 +13,9 @@ import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
     private ShooterIO shooterIO;
-    private ShooterIOValuesAutoLogged shooterValues; 
+    private ShooterIOValuesAutoLogged shooterValues = new ShooterIOValuesAutoLogged(); 
     private double tolerance = 10;//Check this value
+    public static double TUNING_MODE = -1;
 
     private ShooterState shooterState = new ShooterState();
 
@@ -67,8 +68,12 @@ public class Shooter extends SubsystemBase {
         shooterState.updateDistance(h);
     }
 
+    public void stop(){
+        shooterIO.stop();
+    }
+
     public void setSetPoint(double RPM){
-        if(Config.LoggingConstants.tuningMode){
+        if(RPM == TUNING_MODE){
             shooterIO.setRPM(setPointRPM.get());
         }else{
             shooterIO.setRPM(RPM);

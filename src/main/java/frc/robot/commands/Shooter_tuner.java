@@ -8,28 +8,32 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.StateMachines.Shooter.Shooter;
 
 public class Shooter_tuner extends Command {
-  Shooter shooter;
-
+  private Shooter shooter;
 
   /** Creates a new Shooter_tuner. */
-  public Shooter_tuner() {
+  public Shooter_tuner(Shooter shooter) {
+    this.shooter = shooter;
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(shooter);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
+    shooter.setSetPoint(Shooter.TUNING_MODE);
   }
   
-
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    shooter.stop();
+  }
 
   // Returns true when the command should end.
   @Override

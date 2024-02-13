@@ -36,6 +36,7 @@ public class ClutchContainer extends RobotContainer {
     CommandXboxController operator = new CommandXboxController(1);
   }
 
+  
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *

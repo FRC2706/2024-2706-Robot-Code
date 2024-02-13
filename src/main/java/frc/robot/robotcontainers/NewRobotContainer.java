@@ -1,5 +1,5 @@
-  
-  // Copyright (c) FIRST and other WPILib contributors.
+
+// Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
@@ -9,10 +9,24 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Config;
 import frc.robot.Config.Swerve.TeleopSpeeds;
+import frc.robot.Mechanisms.DriveMechanisms.GyroIO;
+import frc.robot.Mechanisms.DriveMechanisms.GyroIOPigeon;
+import frc.robot.Mechanisms.DriveMechanisms.ModulesIO;
+import frc.robot.Mechanisms.DriveMechanisms.ModulesIOSim;
+import frc.robot.Mechanisms.DriveMechanisms.ModulesIOSparkMax;
+import frc.robot.Mechanisms.Shooter.ShooterIO;
+import frc.robot.Mechanisms.Shooter.ShooterIOSim;
+import frc.robot.Mechanisms.Shooter.ShooterIOSparkMax;
+import frc.robot.StateMachines.Drive.Drive;
+import frc.robot.StateMachines.Shooter.Shooter;
 //import frc.robot.Mechanisms.SwerveSubsystem;
 import frc.robot.Robot;
+import frc.robot.commands.Shooter_tuner;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.auto.AutoRoutines;
 
@@ -27,25 +41,30 @@ import frc.robot.commands.auto.AutoRoutines;
 public class NewRobotContainer extends RobotContainer {
   /* Controllers */
   private final CommandXboxController driver = new CommandXboxController(0);
-  private final CommandXboxController operator = new CommandXboxController(1);
+  private final CommandJoystick operator = new CommandJoystick(1);
+  private final Shooter shooter;
 
-  //private final SwerveSubsystem s_Swerve = SwerveSubsystem.getInstance();
-
+  // private final SwerveSubsystem s_Swerve = SwerveSubsystem.getInstance();
   /* Create Subsystems in a specific order */
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public NewRobotContainer() {
-    /*Setup default commands
-    s_Swerve.setDefaultCommand(
-        new TeleopSwerve(
-            s_Swerve,
-            driver,
-            TeleopSpeeds.MAX
-        )
-    );
-    // Configure the button bindings*/
+    switch (Config.LoggingConstants.currentMode) {
+      case REAL:
+      case REPLAY:
+        shooter = new Shooter(new ShooterIOSparkMax());
+        break;
+    case SIM:
+        //System.out.println("[Init] Simulation Created");
+        shooter = new Shooter(new ShooterIOSim());
+        break;
+      default:
+        shooter = new Shooter(new ShooterIO() {});
+        break;
+    }
+
     configureButtonBindings();
   }
 
@@ -54,17 +73,22 @@ public class NewRobotContainer extends RobotContainer {
    * created via the {@link CommandXboxController} or other ways.
    */
   private void configureButtonBindings() {
-    
+    driver.a().whileTrue(new Shooter_tuner(shooter));
+    //operator.button(1).whileTrue(new Shooter_tuner(shooter));
 
-    /* Driver Controls 
-    driver.start().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d(0)));
-    driver.back().whileTrue(SwerveSubsystem.getInstance().setLockWheelsInXCommand());
-    driver.leftBumper().whileTrue(new TeleopSwerve(
-        s_Swerve,
-        driver,
-        TeleopSpeeds.SLOW
-    ));
-    /* Operator Controls */
+    /*
+     * Driver Controls
+     * driver.start().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new
+     * Rotation2d(0)));
+     * driver.back().whileTrue(SwerveSubsystem.getInstance().setLockWheelsInXCommand
+     * ());
+     * driver.leftBumper().whileTrue(new TeleopSwerve(
+     * s_Swerve,
+     * driver,
+     * TeleopSpeeds.SLOW
+     * ));
+     * /* Operator Controls
+     */
   }
 
   /**
@@ -73,6 +97,6 @@ public class NewRobotContainer extends RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new AutoRoutines().getAutonomousCommand(2);
+    return null;
   }
 }

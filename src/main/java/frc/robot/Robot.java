@@ -94,6 +94,9 @@ public class Robot extends LoggedRobot {
         Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
         break;
     }
+    
+    // Start AdvantageKit logger
+    Logger.start();
 
     // Log active commands
     Map<String, Integer> commandCounts = new HashMap<>();
@@ -125,8 +128,6 @@ public class Robot extends LoggedRobot {
     // See http://bit.ly/3YIzFZ6 for more information on timestamps in AdvantageKit.
     // Logger.disableDeterministicTimestamps()
 
-    // Start AdvantageKit logger
-    Logger.start();
 
     createRobotContainer();
   }
@@ -136,11 +137,14 @@ public class Robot extends LoggedRobot {
     // autonomous chooser on the dashboard.
 
     switch (Config.getRobotId()) {
+      //case -1: 
       case 0:
-        m_robotContainer = new NewRobotContainer(); break;
-      
       case 1:
-        m_robotContainer = new ClutchContainer(); break;
+        //m_robotContainer = new NewRobotContainer(); break;
+      
+        //m_robotContainer = new ClutchContainer(); break;
+        m_robotContainer = new NewRobotContainer(); break;
+
 
       case 2:
         m_robotContainer = new BeetleContainer(); break;
