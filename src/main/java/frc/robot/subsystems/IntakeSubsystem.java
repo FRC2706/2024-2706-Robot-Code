@@ -41,7 +41,8 @@ public class IntakeSubsystem extends SubsystemBase {
         
         m_intake = new CANSparkMax(Config.Intake.INTAKE, MotorType.kBrushless);
         m_intake.restoreFactoryDefaults();
-        m_intake.setInverted(false);
+        m_intake.setInverted(true);
+        m_intake.setSmartCurrentLimit(40);
 
     }
 
@@ -49,6 +50,9 @@ public class IntakeSubsystem extends SubsystemBase {
         m_intake.set(speed);
     }
 
+    public void setVoltage(double voltage){
+        m_intake.setVoltage(voltage);
+    }
     @Override
     public void periodic() {
         
@@ -57,11 +61,6 @@ public class IntakeSubsystem extends SubsystemBase {
     public void stop()
     {
         m_intake.stopMotor();
-    }
-
-    public void setDefaultCommand() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setDefaultCommand'");
     }
 
 }

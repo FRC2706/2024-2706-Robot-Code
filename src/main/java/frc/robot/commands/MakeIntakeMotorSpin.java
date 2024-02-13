@@ -2,7 +2,6 @@ package frc.robot.commands;
 
 import frc.robot.subsystems.IntakeSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj.Timer;
 
 public class MakeIntakeMotorSpin extends Command {
@@ -33,11 +32,6 @@ public class MakeIntakeMotorSpin extends Command {
         }
 
     } 
-
-
-    public MakeIntakeMotorSpin(CommandXboxController driver, int value, int value2) {
-        //TODO Auto-generated constructor stub
-    }
 
 
     @Override

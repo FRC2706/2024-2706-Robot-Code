@@ -252,7 +252,7 @@ public final class Config {
   }
 
     public static final class Intake {
-      public static final int INTAKE = -1;
+      public static final int INTAKE = 31;
     }
 
 }
