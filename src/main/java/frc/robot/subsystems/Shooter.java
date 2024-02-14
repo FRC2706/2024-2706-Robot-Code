@@ -1,15 +1,24 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkPIDController;
+
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
 public class Shooter extends SubsystemBase {
+    
+    private static Shooter shooter; 
+     public static synchronized Shooter getInstance()
+    {
+        if (shooter == null)
+            shooter = new Shooter();
+ 
+        return shooter;
+    }
 
     private CANSparkMax m_motor;
     private SparkPIDController m_pidController;

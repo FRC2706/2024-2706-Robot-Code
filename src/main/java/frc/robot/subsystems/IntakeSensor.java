@@ -7,10 +7,10 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Intake extends SubsystemBase {
+public class IntakeSensor extends SubsystemBase {
   private final DigitalInput limitSwitch; // DigitalInput instance
 
-  public Intake() {
+  public IntakeSensor() {
     // Initialize DigitalInput on channel 5
     limitSwitch = new DigitalInput(5);
   }

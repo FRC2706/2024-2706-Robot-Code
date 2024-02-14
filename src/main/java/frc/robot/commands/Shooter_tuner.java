@@ -9,10 +9,15 @@ import frc.robot.subsystems.Shooter;
 
 public class Shooter_tuner extends Command {
   Shooter shooter;
+  private double setPoint;
 
 
   /** Creates a new Shooter_tuner. */
-  public Shooter_tuner() {
+  
+  public Shooter_tuner(double setPoint) { 
+    
+    this.setPoint = setPoint;
+
     // Use addRequirements() here to declare subsystem dependencies.
     shooter = new Shooter();
   }
@@ -25,7 +30,8 @@ public class Shooter_tuner extends Command {
   @Override
   public void execute() {
 
-    shooter.setSetPoint(1000);
+    // need to add setpoint variable 
+    shooter.setSetPoint(setPoint);
 
   }
   
