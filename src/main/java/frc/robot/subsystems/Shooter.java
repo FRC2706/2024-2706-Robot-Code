@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Shooter extends SubsystemBase {
     
     private static Shooter shooter; 
-     public static synchronized Shooter getInstance()
+     public static Shooter getInstance()
     {
         if (shooter == null)
             shooter = new Shooter();
@@ -26,13 +26,12 @@ public class Shooter extends SubsystemBase {
 
     private double kP, kD, kFF, kMaxOutput, kMinOutput, maxRPM; 
     
-        /// add Tunable Number later for ajusting Rpm on the flywheels 
-
+        // add Tunable Number later for ajusting Rpm on the flywheels 
         public Shooter() {  
-            m_motor = new CANSparkMax(1, MotorType.kBrushless);
+            m_motor = new CANSparkMax(32, MotorType.kBrushless);
 
             m_motor.restoreFactoryDefaults();
-
+            m_motor.setSmartCurrentLimit(70);
             m_pidController = m_motor.getPIDController();
 
             m_encoder = m_motor.getEncoder();
@@ -62,6 +61,12 @@ public class Shooter extends SubsystemBase {
             
             m_pidController.setReference(setPoint, ControlType.kVelocity);
 
+        }
+
+        public void setSetVolt(double setVolt){
+            
+           m_motor.setVoltage(setVolt);
+            
         }
 
 }

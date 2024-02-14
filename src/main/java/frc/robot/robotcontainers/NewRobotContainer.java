@@ -11,7 +11,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Config.Swerve.TeleopSpeeds;
 import frc.robot.Robot;
+import frc.robot.commands.Shooter_tuner;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /**
@@ -27,7 +29,8 @@ public class NewRobotContainer extends RobotContainer {
   private final CommandXboxController driver = new CommandXboxController(0);
   private final CommandXboxController operator = new CommandXboxController(1);
 
-  private final SwerveSubsystem s_Swerve = SwerveSubsystem.getInstance();
+  //private final SwerveSubsystem s_Swerve = SwerveSubsystem.getInstance();
+
 
   /* Create Subsystems in a specific order */
 
@@ -35,14 +38,14 @@ public class NewRobotContainer extends RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public NewRobotContainer() {
-    // Setup default commands
+    /*  Setup default commands
     s_Swerve.setDefaultCommand(
         new TeleopSwerve(
             s_Swerve,
             driver,
             TeleopSpeeds.MAX
         )
-    );
+    );*/
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -51,11 +54,14 @@ public class NewRobotContainer extends RobotContainer {
    * Use this method to define your trigger->command mappings. Triggers can be
    * created via the {@link CommandXboxController} or other ways.
    */
-  private void configureButtonBindings() {
+  private void configureButtonBindings() { 
+
+    driver.x().whileTrue(new Shooter_tuner(12));
+
     
 
     /* Driver Controls */
-    driver.start().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d(0)));
+    /*driver.start().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d(0)));
     driver.back().whileTrue(SwerveSubsystem.getInstance().setLockWheelsInXCommand());
     driver.leftBumper().whileTrue(new TeleopSwerve(
         s_Swerve,

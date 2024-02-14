@@ -8,18 +8,18 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
 
 public class Shooter_tuner extends Command {
-  Shooter shooter;
+
+  //variable for setpoint
+  private final Shooter shooter = Shooter.getInstance() ;
   private double setPoint;
 
-
   /** Creates a new Shooter_tuner. */
-  
   public Shooter_tuner(double setPoint) { 
-    
+
     this.setPoint = setPoint;
 
     // Use addRequirements() here to declare subsystem dependencies.
-    shooter = new Shooter();
+    addRequirements(shooter);
   }
 
   // Called when the command is initially scheduled.
@@ -30,15 +30,18 @@ public class Shooter_tuner extends Command {
   @Override
   public void execute() {
 
-    // need to add setpoint variable 
-    shooter.setSetPoint(setPoint);
+    shooter.setSetVolt(setPoint);
 
   }
   
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+
+    shooter.setSetVolt(0);
+
+  }
 
   // Returns true when the command should end.
   @Override
