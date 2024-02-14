@@ -34,8 +34,6 @@ public class NewRobotContainer extends RobotContainer {
   private final CommandXboxController operator = new CommandXboxController(1);
 
   private final SwerveSubsystem s_Swerve = SwerveSubsystem.getInstance();
-  private final IntakeSubsystem intake = IntakeSubsystem.getInstance();
-
   /* Create Subsystems in a specific order */
 
   /**
@@ -64,10 +62,6 @@ public class NewRobotContainer extends RobotContainer {
     CommandXboxController operator = new CommandXboxController(1);
     /* Driver Controls */
     driver.a().whileTrue(new MakeIntakeMotorSpin(0.6, 0));
-    //driver.a()
-    //.whileTrue(Commands.run(()->{intake.setVoltage(10);}, intake))
-    //.whileFalse(Commands.run(()->{intake.setVoltage(0);}, intake));
-
     
     driver.start().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d(0)));
     driver.back().whileTrue(SwerveSubsystem.getInstance().setLockWheelsInXCommand());
