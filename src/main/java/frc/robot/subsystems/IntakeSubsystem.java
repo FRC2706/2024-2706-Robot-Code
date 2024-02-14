@@ -4,6 +4,9 @@ import com.revrobotics.CANSparkMax;
 import frc.robot.Config;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.RelativeEncoder;
+
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
@@ -11,6 +14,14 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 public class IntakeSubsystem extends SubsystemBase {
 
     private static final IntakeSubsystem INSTANCE_INTAKE = new IntakeSubsystem();
+
+    DigitalInput switch1;
+    DigitalInput switch2;
+    DigitalInput switch3;
+
+    Debouncer switch1Debouncer;
+    Debouncer switch2Debouncer;
+    Debouncer switch3Debouncer;
 
     private CANSparkMax m_intake;
     int targetSpeed = 0;
@@ -44,7 +55,29 @@ public class IntakeSubsystem extends SubsystemBase {
         m_intake.setInverted(true);
         m_intake.setSmartCurrentLimit(70);
 
+        switch1 = new DigitalInput(7);
+        switch2 = new DigitalInput(8);
+        switch3 = new DigitalInput(9);
+
+        switch1Debouncer = new Debouncer(0.1, Debouncer.DebounceType.kBoth);
+        switch2Debouncer = new Debouncer(0.1, Debouncer.DebounceType.kBoth);
+        switch3Debouncer = new Debouncer(0.1, Debouncer.DebounceType.kBoth);
+
     }
+
+    public boolean isSwitch1True() {
+        return switch1Debouncer.calculate(switch1.get());
+    }
+
+    public boolean isSwitch2True() {
+        return switch2Debouncer.calculate(switch2.get());
+    }
+
+    public boolean isSwitch3True() {
+        return switch3Debouncer.calculate(switch3.get());
+    }
+
+
 
     public void setMotorRPM(Double speed) {
         m_intake.set(speed);
@@ -53,6 +86,7 @@ public class IntakeSubsystem extends SubsystemBase {
     public void setVoltage(double voltage){
         m_intake.setVoltage(voltage);
     }
+    
     @Override
     public void periodic() {
         
