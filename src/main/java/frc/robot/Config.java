@@ -267,6 +267,7 @@ public final class Config {
     public static final class Intake {
       public static final int INTAKE = 31;
    }
+   
   public class ArmConfig {
     public static final boolean SET_INVERTED = true;
     public static final boolean setInvered = true;
