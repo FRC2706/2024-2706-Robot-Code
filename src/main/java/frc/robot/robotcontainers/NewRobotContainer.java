@@ -63,10 +63,10 @@ public class NewRobotContainer extends RobotContainer {
     CommandXboxController driver = new CommandXboxController(0);
     CommandXboxController operator = new CommandXboxController(1);
     /* Driver Controls */
-    //driver.a().whileTrue(new MakeIntakeMotorSpin(1.0,300));
-    driver.a()
-    .whileTrue(Commands.run(()->{intake.setVoltage(10);}, intake))
-    .whileFalse(Commands.run(()->{intake.setVoltage(0);}, intake));
+    driver.a().whileTrue(new MakeIntakeMotorSpin(0.6, 0));
+    //driver.a()
+    //.whileTrue(Commands.run(()->{intake.setVoltage(10);}, intake))
+    //.whileFalse(Commands.run(()->{intake.setVoltage(0);}, intake));
 
     
     driver.start().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d(0)));
