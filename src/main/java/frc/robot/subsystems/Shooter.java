@@ -66,6 +66,8 @@ public class Shooter extends SubsystemBase {
         public void setSetVolt(double setVolt){
             
            m_motor.setVoltage(setVolt);
+
+           //need to add a delay so the shooter can spin up, then the intake will lunch the note up into the shoorter part.
             
         }
 

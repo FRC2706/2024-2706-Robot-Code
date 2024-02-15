@@ -5,20 +5,14 @@
 
 package frc.robot.robotcontainers;
 
-import com.pathplanner.lib.commands.PathPlannerAuto;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Config.Swerve.TeleopSpeeds;
 import frc.robot.Robot;
-import frc.robot.commands.Shooter_tuner;
 import frc.robot.commands.MakeIntakeMotorSpin;
+import frc.robot.commands.Shooter_tuner;
 import frc.robot.commands.TeleopSwerve;
-import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.commands.auto.AutoRoutines;
 import frc.robot.subsystems.SwerveSubsystem;
 
@@ -45,14 +39,15 @@ public class NewRobotContainer extends RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public NewRobotContainer() {
-    /*  Setup default commands
+
+    /*  Setup default commands */
     s_Swerve.setDefaultCommand(
         new TeleopSwerve(
             s_Swerve,
             driver,
             TeleopSpeeds.MAX
         )
-    );*/
+    );
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -62,17 +57,14 @@ public class NewRobotContainer extends RobotContainer {
    * created via the {@link CommandXboxController} or other ways.
    */
   private void configureButtonBindings() { 
-
-    driver.x().whileTrue(new Shooter_tuner(12));
-
     
-    CommandXboxController driver = new CommandXboxController(0);
-    CommandXboxController operator = new CommandXboxController(1);
+    
     /* Driver Controls */
-    driver.a().whileTrue(new MakeIntakeMotorSpin(0.6, 0));
+    operator.a().whileTrue(new MakeIntakeMotorSpin(0.6, 0));
+    operator.x().whileTrue(new Shooter_tuner(12));
     
     driver.start().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d(0)));
-    /*driver.start().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d(0)));
+  
     driver.back().whileTrue(SwerveSubsystem.getInstance().setLockWheelsInXCommand());
     driver.leftBumper().whileTrue(new TeleopSwerve(
         s_Swerve,
