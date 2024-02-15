@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Config.Swerve.TeleopSpeeds;
 import frc.robot.Robot;
-import frc.robot.commands.MakeIntakeMotorSpin;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.SpinUntilIn;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -63,7 +63,7 @@ public class NewRobotContainer extends RobotContainer {
     CommandXboxController driver = new CommandXboxController(0);
     CommandXboxController operator = new CommandXboxController(1);
     /* Driver Controls */
-    //driver.a().whileTrue(new MakeIntakeMotorSpin(0.6, 0));
+    //driver.a().whileTrue(new IntakeCommand(0.6, 0));
     driver.a().whileTrue(new SpinUntilIn(0.6));
     
     driver.start().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d(0)));

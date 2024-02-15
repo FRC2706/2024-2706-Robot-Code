@@ -38,6 +38,6 @@ public class SpinUntilIn extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return intakeSubsystem.isSwitch1True();
+    return intakeSubsystem.isSwitch3True();
     }
 }

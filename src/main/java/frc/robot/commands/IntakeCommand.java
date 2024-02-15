@@ -4,7 +4,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj.Timer;
 
-public class MakeIntakeMotorSpin extends Command {
+public class IntakeCommand extends Command {
 
     private IntakeSubsystem intakeSubsystem;
     private double targetSpeed;
@@ -13,7 +13,7 @@ public class MakeIntakeMotorSpin extends Command {
     private boolean m_bUseTimer;
 
 
-    public MakeIntakeMotorSpin(Double Speed, int i) {
+    public IntakeCommand(Double Speed, int i) {
         targetSpeed = Speed;
         timeout = i;
 
