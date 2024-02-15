@@ -28,8 +28,8 @@ public class ShooterIOSparkMax implements ShooterIO{
         m_motor.restoreFactoryDefaults();
         
         //Soft limit params
-        m_motor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true);
-        m_motor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
+        m_motor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, false);
+        m_motor.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, false);
         m_motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, 15);  
         m_motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, 0);
         m_motor.setInverted(setReverse);
@@ -68,6 +68,11 @@ public class ShooterIOSparkMax implements ShooterIO{
     @Override
     public void setCharacterizationVoltage(double volts) {
         m_motor.setVoltage(volts);
+    }
+
+    @Override
+    public void setVoltage(double voltage){
+        m_motor.setVoltage(voltage);
     }
 
     @Override

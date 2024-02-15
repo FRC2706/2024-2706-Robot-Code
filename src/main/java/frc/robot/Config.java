@@ -325,7 +325,7 @@ public final class Config {
   }
 
   public static final class LoggingConstants {
-    public static final Mode currentMode = Mode.SIM;
+    public static final Mode currentMode = Mode.REAL;
     public static final boolean tuningMode = true;
 
     public static enum Mode {

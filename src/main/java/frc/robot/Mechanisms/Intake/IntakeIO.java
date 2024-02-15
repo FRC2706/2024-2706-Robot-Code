@@ -4,5 +4,32 @@
 
 package frc.robot.Mechanisms.Intake;
 
+import org.littletonrobotics.junction.AutoLog;
+
 /** Add your docs here. */
-public class IntakeIO {}
+public interface IntakeIO {
+  @AutoLog
+  class IntakeIOValues {
+    public double flywheelPositionRotations = 0.0;
+    public double flywheelVelocityRPM = 0.0;
+    public double flywheelAppliedVolts = 0.0;
+    public double flywheelOutputCurrent = 0.0;
+  }
+
+  /** Update inputs */
+  default void updateValues(IntakeIOValues values) {}
+
+  default void setRPM(double rpm) {}
+
+  default void setShooterBrakeMode(boolean enabled) {}
+
+  default void setCharacterizationVoltage(double volts) {}
+  
+  default void setVoltage(double volts) {}
+
+  default void setPID(double p, double i, double d) {}
+
+  default void setFF(double volts) {}
+
+  default void stop() {}
+}

@@ -15,6 +15,7 @@ public class Shooter extends SubsystemBase {
     private ShooterIO shooterIO;
     private ShooterIOValuesAutoLogged shooterValues = new ShooterIOValuesAutoLogged(); 
     private double tolerance = 10;//Check this value
+    private double setV = 0;
     public static double TUNING_MODE = -1;
 
     private ShooterState shooterState = new ShooterState();
@@ -29,6 +30,8 @@ public class Shooter extends SubsystemBase {
         new LoggedTunableNumber("Shooter/kFF", Config.ShooterConstants.kFF);
     private LoggedTunableNumber setPointRPM =
         new LoggedTunableNumber("Shooter/setPointRPM", 0);
+    private LoggedTunableNumber setVoltage =
+        new LoggedTunableNumber("Shooter/setVoltage", 0);
 
     public Shooter(ShooterIO io) {
         System.out.println("[Init]Creating Shooter");
@@ -43,6 +46,7 @@ public class Shooter extends SubsystemBase {
         ()->shooterIO.setPID(kP.get(), kI.get(), kD.get()), kP, kI, kD);
         LoggedTunableNumber.ifChanged(hashCode(), 
         ()->shooterIO.setFF(kFF.get()), kFF);
+        LoggedTunableNumber.ifChanged(hashCode(), ()->{setV = setVoltage.get(); System.out.println("Voltage changed" + setV);}, setVoltage);
 
         shooterIO.updateValues(shooterValues);
         Logger.processInputs("Shooter", shooterValues);
@@ -70,6 +74,14 @@ public class Shooter extends SubsystemBase {
 
     public void stop(){
         shooterIO.stop();
+    }
+
+    public void setSetV(double voltage){
+        if(voltage == TUNING_MODE){
+            shooterIO.setVoltage(setV);
+        }else{
+            shooterIO.setVoltage(voltage);
+        }        
     }
 
     public void setSetPoint(double RPM){
