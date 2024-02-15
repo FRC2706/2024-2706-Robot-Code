@@ -12,7 +12,7 @@ public class IntakeSensor extends SubsystemBase {
 
   public IntakeSensor() {
     // Initialize DigitalInput on channel 5
-    limitSwitch = new DigitalInput(5);
+    limitSwitch = new DigitalInput(7);
   }
 
   @Override
