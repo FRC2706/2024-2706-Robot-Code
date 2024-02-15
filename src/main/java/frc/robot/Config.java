@@ -53,6 +53,8 @@ public final class Config {
     public static final int CTRE_PCM_CAN_ID = 1;
   }
 
+  public static final int CANTIMEOUT_MS = 100;
+
   private static final int SIMULATION_ID = 1;
   /**
    * Returns one of the values passed based on the robot ID
@@ -106,14 +108,14 @@ public final class Config {
    * 
    * ID 0: Competition Robot (Crescendo) (NEEDS UPDATE ON robot.conf)
    * ID 1: Simulation of Comp Robot (Crescendo in Simulation)
-   * ID 2: Poseidon (Charged Up) (NEEDS UPDATE ON robot.conf)
-   * ID 3: Clutch (Rapid React) (NEEDS UPDATE ON robot.conf)
+   * ID 2: Beetle (Test robot) (NEEDS UPDATE ON robot.conf)
+   * ID 3: Poseidon (Charged up) (NEEDS UPDATE ON robot.conf)
    **/
 
    /** ADD CONSTANTS BELOW THIS LINE */
 
   public static final Boolean swerveTuning = true;
-
+  
   public static final class Swerve {
     public static final double stickDeadband = 0.1;
  
@@ -174,7 +176,7 @@ public final class Config {
     /* Swerve Profiling Values Changed*/
     public static enum TeleopSpeeds {
       SLOW(0.5, 0.5*Math.PI),
-      MAX(3.0, 3.0*Math.PI);
+      MAX(3.0, 4.0*Math.PI);
 
       public final double translationalSpeed;
       public final double angularSpeed;
@@ -248,6 +250,7 @@ public final class Config {
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
     //Changed values
+
     public static final double kPXController = 1;
     public static final double kPYController = 1;
     public static final double kPThetaController = 1.35;
@@ -257,6 +260,14 @@ public final class Config {
         new TrapezoidProfile.Constraints(
             kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
   }
+   public static final class BlingConstants {
+    public static int CANDLE = 15;
+  }
+
+    public static final class Intake {
+      public static final int INTAKE = 31;
+   }
+   
   public class ArmConfig {
     public static final boolean SET_INVERTED = true;
     public static final boolean setInvered = true;
