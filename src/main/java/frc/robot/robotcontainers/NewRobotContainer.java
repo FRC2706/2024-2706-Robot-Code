@@ -7,6 +7,7 @@ package frc.robot.robotcontainers;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Config.Swerve.TeleopSpeeds;
 import frc.robot.Robot;
@@ -14,6 +15,7 @@ import frc.robot.commands.MakeIntakeMotorSpin;
 import frc.robot.commands.Shooter_tuner;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.auto.AutoRoutines;
+import frc.robot.subsystems.ArmPneumaticsSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /**
@@ -72,6 +74,10 @@ public class NewRobotContainer extends RobotContainer {
         TeleopSpeeds.SLOW
     ));
     /* Operator Controls */
+
+    operator.rightBumper().onTrue(Commands.runOnce(() -> ArmPneumaticsSubsystem.getInstance().controlBrake(false, true)));
+
+    operator.rightTrigger().onTrue(Commands.runOnce(() -> ArmPneumaticsSubsystem.getInstance().controlBrake(true, true)));
   }
 
   /**
