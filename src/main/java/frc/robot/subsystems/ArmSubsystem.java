@@ -55,7 +55,6 @@ public class ArmSubsystem extends SubsystemBase{
     //spark absolute encoder
     private SparkAbsoluteEncoder m_absEncoder;  
     //embedded relative encoder
-    private RelativeEncoder m_encoder;
     private SparkPIDController m_pidControllerArm;  
 
     ProfiledPIDFFController m_profiledFFController = new ProfiledPIDFFController();
@@ -166,7 +165,7 @@ public class ArmSubsystem extends SubsystemBase{
     }
 
     public void testFeedForward(double additionalVoltage) {
-      double voltage = additionalVoltage + calculateFF(m_encoder.getPosition());
+      double voltage = additionalVoltage + calculateFF(m_absEncoder.getPosition());
       m_pidControllerArm.setReference(voltage, ControlType.kVoltage);
       m_armFFTestingVolts.accept(voltage);
     }
