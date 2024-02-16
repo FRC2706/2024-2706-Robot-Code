@@ -8,7 +8,6 @@ import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkPIDController;
@@ -145,6 +144,18 @@ public class ArmSubsystem extends SubsystemBase {
     m_armPosPub.accept(Math.toDegrees(m_absEncoder.getPosition()));
     m_armVelPub.accept(Math.toDegrees(m_absEncoder.getVelocity()));
   }
+
+    // input angle_bottom in radians(
+  public void setJointAngle(double angle) {
+    double clampedAngle = MathUtil.clamp(angle, Math.toRadians(Config.ArmConfig.MIN_ARM_ANGLE_DEG),
+        Math.toRadians(Config.ArmConfig.MAX_ARM_ANGLE_DEG));
+
+    double targetPos = m_profiledFFController.getNextProfiledPIDPos(getPosition(), clampedAngle);
+    m_pidControllerArm.setReference((targetPos), ControlType.kPosition, 0, calculateFF(clampedAngle));
+    m_targetAngle.accept(Math.toDegrees(targetPos));
+  }
+
+
   
     //return radius
     public double getPosition() {
@@ -177,15 +188,5 @@ public class ArmSubsystem extends SubsystemBase {
       m_pidControllerArm.setReference(voltage, ControlType.kVoltage);
       m_armFFTestingVolts.accept(voltage);
     }
-
-  // input angle_bottom in radians(
-  public void setJointAngle(double angle) {
-    double clampedAngle = MathUtil.clamp(angle, Math.toRadians(Config.ArmConfig.MIN_ARM_ANGLE_DEG),
-        Math.toRadians(Config.ArmConfig.MAX_ARM_ANGLE_DEG));
-
-    double targetPos = m_profiledFFController.getNextProfiledPIDPos(getPosition(), clampedAngle);
-    m_pidControllerArm.setReference((targetPos), ControlType.kPosition, 0, calculateFF(clampedAngle));
-    m_targetAngle.accept(Math.toDegrees(targetPos));
-  }
 
 }
