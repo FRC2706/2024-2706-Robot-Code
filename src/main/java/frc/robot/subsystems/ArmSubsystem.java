@@ -122,6 +122,7 @@ public class ArmSubsystem extends SubsystemBase {
     NetworkTable ArmDataTable = NetworkTableInstance.getDefault().getTable(m_dataTable);
 
     m_armPosPub = ArmDataTable.getDoubleTopic("MeasuredAngleDeg").publish(PubSubOption.periodic(0.02));
+    m_armVelPub = ArmDataTable.getDoubleTopic("MeasuredVelocity").publish(PubSubOption.periodic(0.02));
     m_targetAngle = ArmDataTable.getDoubleTopic("TargetAngleDeg").publish(PubSubOption.periodic(0.02));
 
     updatePIDSettings();
