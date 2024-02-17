@@ -7,6 +7,7 @@ package frc.robot.commands;
 import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.SwerveSubsystem;
 
@@ -25,6 +26,11 @@ public class RotateAngleToVisionSupplier extends TeleopSwerve {
     pid.setTolerance(0.1);
     pid.enableContinuousInput(-Math.PI, Math.PI);
   }
+
+  public RotateAngleToVisionSupplier(SwerveSubsystem s_Swerve, CommandXboxController driver, DoubleSubscriber subscriber){
+    this(s_Swerve, driver, ()-> subscriber.getAsDouble()); 
+  }
+
 
   // Called when the command is initially scheduled.
   @Override
