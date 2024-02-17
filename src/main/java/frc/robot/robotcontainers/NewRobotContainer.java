@@ -59,9 +59,6 @@ public class NewRobotContainer extends RobotContainer {
     /* Driver Controls */
     driver.start().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d(0)));
     driver.back().whileTrue(SwerveSubsystem.getInstance().setLockWheelsInXCommand());
-    driver.x().onTrue(new RumbleJoystick(driver, RumbleType.kBothRumble, 0.5, 2,false));
-    driver.y().whileTrue(Commands.run( () -> driver.getHID().setRumble(RumbleType.kLeftRumble, 1)));
-    driver.a().onTrue(new RumbleJoystick(driver, RumbleType.kBothRumble, 1, 3,true));
 
     
     driver.leftBumper().whileTrue(new TeleopSwerve(
