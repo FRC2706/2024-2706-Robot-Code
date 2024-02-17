@@ -5,18 +5,16 @@
 
 package frc.robot.robotcontainers;
 
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Config.Swerve.TeleopSpeeds;
 import frc.robot.Robot;
-import frc.robot.commands.RumbleJoystick;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.auto.AutoRoutines;
 import frc.robot.subsystems.SwerveSubsystem;
-
 /**
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a "declarative" paradigm, very little robot logic
@@ -29,6 +27,7 @@ public class NewRobotContainer extends RobotContainer {
   /* Controllers */
   private final CommandXboxController driver = new CommandXboxController(0);
   private final CommandXboxController operator = new CommandXboxController(1);
+
   private final SwerveSubsystem s_Swerve = SwerveSubsystem.getInstance();
 
   /* Create Subsystems in a specific order */
@@ -59,18 +58,11 @@ public class NewRobotContainer extends RobotContainer {
     /* Driver Controls */
     driver.start().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d(0)));
     driver.back().whileTrue(SwerveSubsystem.getInstance().setLockWheelsInXCommand());
-
-    
     driver.leftBumper().whileTrue(new TeleopSwerve(
         s_Swerve,
         driver,
         TeleopSpeeds.SLOW
     ));
-
-
-
-
-
     /* Operator Controls */
   }
 
