@@ -45,9 +45,9 @@ public final class Config {
    */
   private static int robotId = -1;
   public static class CANID {
-    public static int PIGEON = robotSpecific(-1, -1, 27, 30);
+    public static int PIGEON = robotSpecific(30, -1, 27, 30);
 
-    public static final int ARM_SPARK_CAN_ID = robotSpecific(-1,-1,0,5);
+    public static final int ARM_SPARK_CAN_ID = robotSpecific(5,-1,0,5);
     
     //PCM Can ID 
     public static final int CTRE_PCM_CAN_ID = 1;
@@ -285,10 +285,10 @@ public final class Config {
     public static final boolean SOFT_LIMIT_ENABLE = true;
     
     //PID constants
-    public static final double arm_kP = robotSpecific(0.0, 0.0, 0.0, 1.4);
-    public static final double arm_kI = robotSpecific(0.0, 0.0, 0.0, 0.0003);
-    public static final double arm_kD = robotSpecific(0.0, 0.0, 0.0, 0.9);
-    public static final double arm_kIz = robotSpecific(0.0, 0.0, 0.0, 0.3);
+    public static final double arm_kP = robotSpecific(1.4, 0.0, 0.0, 1.4);
+    public static final double arm_kI = robotSpecific(0.0003, 0.0, 0.0, 0.0003);
+    public static final double arm_kD = robotSpecific(0.9, 0.0, 0.0, 0.9);
+    public static final double arm_kIz = robotSpecific(0.3, 0.0, 0.0, 0.3);
     public static final double arm_kFF = 0;
     public static final double min_output = -1;
     public static final double max_output = 1;
@@ -334,13 +334,13 @@ public final class Config {
     public static class DIFF {
 
            // Differential Drive CAN IDs
-        public static int DIFF_LEADER_LEFT = robotSpecific(0, 0, 2, -01);
-        public static int DIFF_LEADER_RIGHT = robotSpecific(0, 0, 1, -01);
-        public static int DIFF_FOLLOWER_LEFT = robotSpecific(0, 0, -1, -01);
-        public static int DIFF_FOLLOWER_RIGHT = robotSpecific(0, 0, -1, -01);
+        public static int DIFF_LEADER_LEFT = robotSpecific( -01, 0, 2, -01);
+        public static int DIFF_LEADER_RIGHT = robotSpecific( -01, 0, 1, -01);
+        public static int DIFF_FOLLOWER_LEFT = robotSpecific( -01, 0, -1, -01);
+        public static int DIFF_FOLLOWER_RIGHT = robotSpecific( -01, 0, -1, -01);
 
-        public static boolean ISNEOS = robotSpecific(false, false, false, true);
-        public static boolean HAS_FOLLOWERS = robotSpecific(false, false, false, true);
+        public static boolean ISNEOS = robotSpecific(true, false, false, true);
+        public static boolean HAS_FOLLOWERS = robotSpecific(true, false, false, true);
         public static boolean LEFT_FOLLOWER_ISVICTOR = robotSpecific(false, false, false, false);
         public static boolean RIGHT_FOLLOWER_ISVICTOR = robotSpecific(false, false, false, false);
     
