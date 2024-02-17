@@ -33,7 +33,6 @@ import frc.robot.subsystems.SwerveSubsystem;
 public class NewRobotContainer extends RobotContainer {
   /* Controllers */
   private final CommandXboxController driver = new CommandXboxController(0);
-  private final Joystick driver_Joystick = new Joystick(0);
   private final CommandXboxController operator = new CommandXboxController(1);
 
   private final SwerveSubsystem s_Swerve = SwerveSubsystem.getInstance();
@@ -68,10 +67,10 @@ public class NewRobotContainer extends RobotContainer {
     
     /* Driver Controls */
     
-    driver.start().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d(0)));
+    driver.back().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d(0)));
   
-    driver.back().whileTrue(SwerveSubsystem.getInstance().setLockWheelsInXCommand());
-    new POVButton(driver_Joystick, 0, 0).whileTrue(new RotateAngleToVision(s_Swerve, driver, 0));
+    //driver.back().whileTrue(SwerveSubsystem.getInstance().setLockWheelsInXCommand());
+    driver.start().whileTrue(new RotateAngleToVision(s_Swerve, driver, 0));
     driver.leftBumper().onTrue(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.SLOW))).onFalse(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.MAX)));
     // driver.
 
