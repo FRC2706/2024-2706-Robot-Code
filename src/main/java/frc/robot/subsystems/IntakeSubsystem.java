@@ -106,9 +106,9 @@ public class IntakeSubsystem extends SubsystemBase {
     }
     @Override
     public void periodic() {
-        sensor7Result = sensor7Debouncer.calculate(sensor7.get());
-        sensor8Result = sensor8Debouncer.calculate(sensor8.get());
-        sensor9Result = sensor9Debouncer.calculate(sensor9.get());
+        sensor7Result = sensor7Debouncer.calculate(!sensor7.get());
+        sensor8Result = sensor8Debouncer.calculate(!sensor8.get());
+        sensor9Result = sensor9Debouncer.calculate(!sensor9.get());
 
         sensor7Pub.accept(sensor7Result);
         sensor8Pub.accept(sensor8Result);
