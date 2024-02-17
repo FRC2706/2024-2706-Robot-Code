@@ -32,6 +32,7 @@ import frc.robot.Robot;
 public class SwerveModule {
 
   private NetworkTable swerveModuleTable;
+  private NetworkTable swerveTable;
   private DoublePublisher currentSpeedEntry;
   private DoublePublisher currentAngleEntry;
   private DoublePublisher speedError;
@@ -70,6 +71,7 @@ public class SwerveModule {
 
     String tableName = "SwerveChassis/SwerveModule" + ModuleName;
     swerveModuleTable = NetworkTableInstance.getDefault().getTable(tableName);
+    swerveTable = NetworkTableInstance.getDefault().getTable("SwerveChassis");
     updateFeedforward = new UpdateSimpleFeedforward((ff) -> feedforward = ff, swerveModuleTable, Config.Swerve.driveKS, Config.Swerve.driveKV, Config.Swerve.driveKA);
   
     /* Angle Encoder Config */
