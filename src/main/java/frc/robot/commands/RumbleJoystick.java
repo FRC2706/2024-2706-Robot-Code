@@ -17,6 +17,7 @@ public class RumbleJoystick extends Command {
   private double duration;
   private boolean doDoubleRumble;
   private double counter;
+  private double x;
   //private set variables here before
   /** Creates a new RumbleJoystick. */
   public RumbleJoystick(CommandXboxController joystick, RumbleType rumbleType, double strength, double duration, boolean doDoubleRumble) {
@@ -26,12 +27,12 @@ public class RumbleJoystick extends Command {
      
      */
     counter = 0;
-    m_timer = m_timer;
-    m_joystick = joystick;
-    rumbleType = rumbleType;
-    strength = strength;
-    duration = duration;
-    doDoubleRumble = doDoubleRumble;
+    x = 0;
+    this.m_joystick = joystick;
+    this.rumbleType = rumbleType;
+    this.strength = strength;
+    this.duration = duration;
+    this.doDoubleRumble = doDoubleRumble;
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -48,10 +49,16 @@ public class RumbleJoystick extends Command {
   public void execute() {
     if (doDoubleRumble == true) {
       
-      if (m_timer.hasElapsed(counter+(duration/3))){
-        counter+=(duration/3);
-        m_joystick.getHID().setRumble(rumbleType,0);
+      if (m_timer.hasElapsed(x+(duration/3))){
+        x+=(duration/3);
+        counter++;
     }
+      if (counter ==1) {
+        m_joystick.getHID().setRumble(rumbleType,0);
+      }
+      if (counter ==2){
+        m_joystick.getHID().setRumble(rumbleType,strength);
+      }
     }
 
   } //autocalled every 20 mils
@@ -59,12 +66,12 @@ public class RumbleJoystick extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-
+    m_joystick.getHID().setRumble(rumbleType,0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() { //
-    return m_timer.hasElapsed(1);
+    return m_timer.hasElapsed(duration);
   }
 }
