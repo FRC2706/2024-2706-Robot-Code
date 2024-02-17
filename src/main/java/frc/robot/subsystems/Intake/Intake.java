@@ -1,15 +1,8 @@
-package frc.robot.StateMachines.Intake;
+package frc.robot.subsystems.Intake;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.lib6328.LoggedTunableNumber;
-import frc.robot.Config;
-import frc.robot.Mechanisms.Intake.IntakeIO;
-import frc.robot.Mechanisms.Intake.IntakeIOValuesAutoLogged;
-import frc.robot.Mechanisms.Intake.IntakeIO.IntakeIOValues;
-import frc.robot.Mechanisms.Shooter.ShooterIO;
-
 import org.littletonrobotics.junction.Logger;
 
 

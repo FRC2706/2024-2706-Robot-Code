@@ -2,24 +2,15 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.StateMachines.Shooter;
+package frc.robot.subsystems.Shooter;
 
-import static frc.robot.StateMachines.Shooter.ShooterState.Modes.*;
-import static frc.robot.StateMachines.Shooter.ShooterState.States.*;
+import static frc.robot.subsystems.Shooter.ShooterState.Modes.*;
+import static frc.robot.subsystems.Shooter.ShooterState.States.*;
 
-import java.util.Collection;
-import java.util.Collections;
-
-import org.littletonrobotics.junction.AutoLogOutput;
-
-import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
-
-import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.math.interpolation.Interpolator;
 import edu.wpi.first.math.interpolation.InverseInterpolator;
 import frc.lib.lib2706.RunnableBoolean;
-import frc.robot.Mechanisms.Shooter.ShooterIOValuesAutoLogged;
 
 /** Add your docs here. */
 public class ShooterState {
@@ -41,7 +32,8 @@ public class ShooterState {
         IDLE(0.0),
         PRE_HEAT(0.0),
         SHOOT_AMP(0.0),
-        SHOOT_SPEAKER(interpolation.get(distanceFromSpeaker));
+        SHOOT_SPEAKER(interpolation.get(distanceFromSpeaker)),
+        RUN_BY_VOLTAGE(0.0);
 
         double s;
 
@@ -60,6 +52,7 @@ public class ShooterState {
         PRE_HEATED,
         REACHING_SET_POINT,//-
         ON_SET_POINT,
+        IS_VOLTAGE_RUN
     }
 
     public void setMode(Modes desiredMode) {
@@ -68,6 +61,10 @@ public class ShooterState {
 
     public double getDesiredVelocity() {
         return desiredMode.getDesiredSpeed();
+    }
+
+    public Modes getDesiredMode(){
+        return desiredMode;
     }
 
     public void updateDistance(double h) {
@@ -94,6 +91,11 @@ public class ShooterState {
                 break;
             case SHOOT_SPEAKER:
                 currentState = isInRange ? ON_SET_POINT: REACHING_SET_POINT;
+                break;
+            case RUN_BY_VOLTAGE:
+                currentState = IS_VOLTAGE_RUN;
+                break;
+            default:
                 break;
         }
         return currentState; 

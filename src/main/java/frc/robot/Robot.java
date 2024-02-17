@@ -97,7 +97,7 @@ public class Robot extends LoggedRobot {
     // Start AdvantageKit logger
     Logger.start();
 
-    /* Log active commands
+    //Log active commands
     Map<String, Integer> commandCounts = new HashMap<>();
     BiConsumer<Command, Boolean> logCommandFunction =
         (Command command, Boolean active) -> {
@@ -127,7 +127,7 @@ public class Robot extends LoggedRobot {
     // See http://bit.ly/3YIzFZ6 for more information on timestamps in AdvantageKit.
     // Logger.disableDeterministicTimestamps()
 
-*/
+
     createRobotContainer();
   }
 
@@ -179,8 +179,8 @@ public class Robot extends LoggedRobot {
     CommandScheduler.getInstance().run();
 
     //Add the "Print Auto Duration"
-    /*
-    // Print auto duration
+    
+    /*/ Print auto duration
     if (autoCommand != null) {
       if (!autoCommand.isScheduled() && !autoMessagePrinted) {
         if (DriverStation.isAutonomousEnabled()) {

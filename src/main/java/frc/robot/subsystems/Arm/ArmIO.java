@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.Mechanisms.Arm;
+package frc.robot.subsystems.Arm;
 
 import org.littletonrobotics.junction.AutoLog;
 
@@ -14,6 +14,7 @@ public interface ArmIO {
         public double armAbsoluteEncoderPosRad = 0.0;
         public double armVelocityRadsPerSec = 0.0;
 
+        //In case we have two motors on the gearbox
         public double[] armAppliedVolts = new double[] {};
         public double[] armCurrentAmps = new double[] {};
         public double[] armTempCelcius = new double[] {};

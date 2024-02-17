@@ -18,7 +18,9 @@ import frc.robot.Robot;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class CosmobotContainer extends RobotContainer {
-
+    CommandXboxController driver = new CommandXboxController(0);
+    CommandXboxController operator = new CommandXboxController(1);
+    
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public CosmobotContainer() {
     // Configure the button bindings
@@ -32,8 +34,6 @@ public class CosmobotContainer extends RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    CommandXboxController driver = new CommandXboxController(0);
-    CommandXboxController operator = new CommandXboxController(1);
   }
 
   /**

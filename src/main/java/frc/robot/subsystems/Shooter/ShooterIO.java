@@ -2,14 +2,14 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.Mechanisms.Intake;
+package frc.robot.subsystems.Shooter;
 
 import org.littletonrobotics.junction.AutoLog;
 
 /** Add your docs here. */
-public interface IntakeIO {
+public interface ShooterIO {
   @AutoLog
-  class IntakeIOValues {
+  class ShooterIOValues {
     public double flywheelPositionRotations = 0.0;
     public double flywheelVelocityRPM = 0.0;
     public double flywheelAppliedVolts = 0.0;
@@ -17,7 +17,7 @@ public interface IntakeIO {
   }
 
   /** Update inputs */
-  default void updateValues(IntakeIOValues values) {}
+  default void updateValues(ShooterIOValues values) {}
 
   default void setRPM(double rpm) {}
 

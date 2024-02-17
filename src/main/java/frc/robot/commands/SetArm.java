@@ -6,8 +6,8 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.ArmPneumaticsSubsystem;
-import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.Arm.ArmPneumaticsSubsystem;
+import frc.robot.subsystems.Arm.ArmSubsystem;
 
 public class SetArm extends Command {
   double armAngleRadians;
