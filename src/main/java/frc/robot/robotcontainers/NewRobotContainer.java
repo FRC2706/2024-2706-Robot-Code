@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Config.Swerve.TeleopSpeeds;
 import frc.robot.Robot;
+import frc.robot.commands.ArmFFTestCommand;
 import frc.robot.commands.MakeIntakeMotorSpin;
 import frc.robot.commands.Shooter_tuner;
 import frc.robot.commands.TeleopSwerve;
@@ -62,8 +63,6 @@ public class NewRobotContainer extends RobotContainer {
     
     
     /* Driver Controls */
-    operator.a().whileTrue(new MakeIntakeMotorSpin(0.6, 0));
-    operator.x().whileTrue(new Shooter_tuner(12));
     
     driver.start().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d(0)));
   
@@ -74,9 +73,16 @@ public class NewRobotContainer extends RobotContainer {
         TeleopSpeeds.SLOW
     ));
     /* Operator Controls */
+    operator.a().whileTrue(new MakeIntakeMotorSpin(0.6, 0));
+    operator.x().whileTrue(new Shooter_tuner(12));
 
+    operator.y().whileTrue (new ArmFFTestCommand(operator, 3, true) );
+
+
+    //turns brakes off
     operator.rightBumper().onTrue(Commands.runOnce(() -> ArmPneumaticsSubsystem.getInstance().controlBrake(false, true)));
 
+    //turns brakes on
     operator.rightTrigger().onTrue(Commands.runOnce(() -> ArmPneumaticsSubsystem.getInstance().controlBrake(true, true)));
   }
 
