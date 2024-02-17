@@ -101,7 +101,7 @@ public class SwerveSubsystem extends SubsystemBase {
         this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
         new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
             new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants kP = 5.0
-            new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
+            new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants kP = 5.0
             3.5, // Max module speed, in m/s
             0.4, // Drive base radius in meters. Distance from robot center to furthest module.
             new ReplanningConfig() // Default path replanning config. See the API for the options here
@@ -139,11 +139,11 @@ public class SwerveSubsystem extends SubsystemBase {
       ChassisSpeeds speeds, boolean fieldRelative, boolean isOpenLoop) {
     SwerveModuleState[] swerveModuleStates =
     Config.Swerve.swerveKinematics.toSwerveModuleStates(
-      ChassisSpeeds.discretize(
+      // ChassisSpeeds.discretize(
         fieldRelative ? 
             ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getHeading()) :
-            speeds, 0.02
-      )
+            speeds//, 0.02
+      // )
     );
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Config.Swerve.maxSpeed);
 
@@ -299,7 +299,8 @@ public class SwerveSubsystem extends SubsystemBase {
   }
   
   public void driveRobotRelative(ChassisSpeeds robotRelativeSpeeds) {
-    ChassisSpeeds targetSpeeds = ChassisSpeeds.discretize(robotRelativeSpeeds, 0.02);
+    // ChassisSpeeds targetSpeeds = ChassisSpeeds.discretize(robotRelativeSpeeds, 0.02);
+    ChassisSpeeds targetSpeeds = robotRelativeSpeeds;
 
     SwerveModuleState[] targetStates = Config.Swerve.swerveKinematics.toSwerveModuleStates(targetSpeeds);
     setModuleStates(targetStates, false);
