@@ -205,13 +205,13 @@ public final class Config {
     public static final int driveContinuousCurrentLimit = 50;
 
     /* Angle Motor PID Values, Changed */
-    public static final double angleKP = 1.0;
+    public static final double angleKP = 1.5;
     public static final double angleKI = 0.0;
     public static final double angleKD = 0.0;
     public static final double angleKFF = 0.0;
 
     /* Drive Motor PID Values, Changed*/
-    public static final double driveKP = 0.0; //0.2
+    public static final double driveKP = 0.2; //0.2
     public static final double driveKI = 0.0;
     public static final double driveKD = 0.0;
     public static final double driveKFF = 0.0;
@@ -226,6 +226,10 @@ public final class Config {
         (wheelDiameter * Math.PI) / driveGearRatio;
     public static final double driveConversionVelocityFactor = driveConversionPositionFactor / 60.0;
     public static final double angleConversionFactor = 2 * Math.PI / angleGearRatio;
+
+    /* Swerve ProfiledPidController values */
+    public static final double translationAllowableError = 0.01;
+    public static final double rotationAllowableError = Math.toRadians(0.7);
 
     /* Swerve Profiling Values Changed*/
     public static enum TeleopSpeeds {

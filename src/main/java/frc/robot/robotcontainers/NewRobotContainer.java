@@ -5,21 +5,19 @@
 
 package frc.robot.robotcontainers;
 
-import com.pathplanner.lib.commands.PathPlannerAuto;
-
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Config.Swerve;
 import frc.robot.Config.PhotonConfig.PhotonPositions;
 import frc.robot.Config.Swerve.TeleopSpeeds;
 import frc.robot.Robot;
 import frc.robot.commands.MakeIntakeMotorSpin;
 import frc.robot.commands.TeleopSwerve;
-import frc.robot.subsystems.PhotonSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.commands.auto.AutoRoutines;
+import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /**
@@ -63,12 +61,16 @@ public class NewRobotContainer extends RobotContainer {
     CommandXboxController driver = new CommandXboxController(0);
     CommandXboxController operator = new CommandXboxController(1);
     /* Driver Controls */
-    driver.a().whileTrue(new MakeIntakeMotorSpin(0.6, 0));
+    // driver.a().whileTrue(new MakeIntakeMotorSpin(0.6, 0));
     
     driver.start().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d(0)));
     driver.back().whileTrue(SwerveSubsystem.getInstance().setLockWheelsInXCommand());
     driver.b().onTrue(SwerveSubsystem.getInstance().setOdometryCommand(new Pose2d(3,3,new Rotation2d(0))));
     driver.a().whileTrue(PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.MIDDLE_SPEAKER_RED)).onFalse(Commands.runOnce(()->{},SwerveSubsystem.getInstance()));
+
+    driver.x().whileTrue(
+      SwerveSubsystem.getInstance().getDriveToPoseCommand(new Pose2d(3, 3, new Rotation2d(0)))
+    );
 
     driver.leftBumper().whileTrue(new TeleopSwerve(
         s_Swerve,
