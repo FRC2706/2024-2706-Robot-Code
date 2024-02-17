@@ -44,30 +44,40 @@ public class TeleopSwerve extends Command {
   }
 
   @Override
-  public void initialize(){
+  public void initialize() {
     translationLimiter.reset(s_Swerve.getFieldRelativeSpeeds().vxMetersPerSecond);
     strafeLimiter.reset(s_Swerve.getFieldRelativeSpeeds().vyMetersPerSecond);
-    rotationLimiter.reset(s_Swerve. getFieldRelativeSpeeds().omegaRadiansPerSecond);
+    rotationLimiter.reset(s_Swerve.getFieldRelativeSpeeds().omegaRadiansPerSecond);
   }
-  
+
+  protected double calculateTranslationVal() {
+    translationVal = MathUtil.applyDeadband(-driver.getRawAxis(translationAxis), Config.Swerve.stickDeadband)
+        * speed.translationalSpeed;
+    return translationLimiter.calculate(translationVal);
+  }
+
+  protected double calculateStrafeVal() {
+    strafeVal = MathUtil.applyDeadband(-driver.getRawAxis(strafeAxis), Config.Swerve.stickDeadband)
+        * speed.translationalSpeed;
+    return strafeLimiter.calculate(strafeVal);
+  }
+
+  protected double calculateRotationVal() {
+    rotationVal = MathUtil.applyDeadband(-driver.getRawAxis(rotationAxis), Config.Swerve.stickDeadband)
+        * speed.angularSpeed;
+    return rotationLimiter.calculate(rotationVal);
+  }
+
   @Override
   public void execute() {
-    /* Get Values and apply deadband to limit unwanted movement*/
-    translationVal = MathUtil.applyDeadband(-driver.getRawAxis(translationAxis), Config.Swerve.stickDeadband) * speed.translationalSpeed;
-    translationVal = translationLimiter.calculate(translationVal);
-    
-    strafeVal = MathUtil.applyDeadband(-driver.getRawAxis(strafeAxis), Config.Swerve.stickDeadband) * speed.translationalSpeed;
-    strafeVal = strafeLimiter.calculate(strafeVal);
-           
-    rotationVal = MathUtil.applyDeadband(-driver.getRawAxis(rotationAxis), Config.Swerve.stickDeadband) * speed.angularSpeed;
-    rotationVal = rotationLimiter.calculate(rotationVal);
 
     s_Swerve.drive(
         new ChassisSpeeds(
-          translationVal, 
-          strafeVal,
-          rotationVal),
+            calculateTranslationVal(),
+            calculateStrafeVal(),
+            calculateRotationVal()),
         true,
         true);
   }
+
 }

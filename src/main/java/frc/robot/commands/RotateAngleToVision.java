@@ -4,13 +4,28 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.subsystems.SwerveSubsystem;
 
 public class RotateAngleToVision extends TeleopSwerve {
+
+  ProfiledPIDController pid = new ProfiledPIDController(5.0, 0, 0.4, 
+                                        new TrapezoidProfile.Constraints(4 * Math.PI, 8 * Math.PI)); //pid to be tested
+  double angle;
+
   /** Creates a new RotateAngleToVision. */
-  public RotateAngleToVision() {
-    super(null, null);
-    // Use addRequirements() here to declare subsystem dependencies.
+  public RotateAngleToVision(
+      SwerveSubsystem s_Swerve,
+      CommandXboxController driver,
+      double _angle) {
+    super(s_Swerve, driver);
+    
+    this.angle = _angle;
+
+    pid.setTolerance(0.1);
+    pid.enableContinuousInput(-Math.PI, Math.PI);
   }
 
   // Called when the command is initially scheduled.
@@ -29,5 +44,10 @@ public class RotateAngleToVision extends TeleopSwerve {
   @Override
   public boolean isFinished() {
     return false;
+  }
+
+  @Override
+  protected double calculateRotationVal() {
+    return(pid.calculate(SwerveSubsystem.getInstance().getHeading().getRadians(), this.angle));
   }
 }

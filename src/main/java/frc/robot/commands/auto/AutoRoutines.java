@@ -19,6 +19,7 @@ public class AutoRoutines extends SubsystemBase {
     PathPlannerAuto SequentialAutoTest = new PathPlannerAuto("Sequential Auto Test");
     PathPlannerAuto ParallelAutoTest = new PathPlannerAuto("Parallel Auto Test");
     PathPlannerAuto SequentialAndParallelAutoTest = new PathPlannerAuto("Sequential and Parallel Auto Test");
+    PathPlannerAuto tune = new PathPlannerAuto("tuningAuto");
     public AutoRoutines() {
         
     }
