@@ -47,8 +47,8 @@ public final class Config {
   public static class CANID {
     public static int PIGEON = robotSpecific(-1, -1, 27, 30);
 
-    // Arm Subsystem
     public static final int ARM_SPARK_CAN_ID = robotSpecific(-1,-1,0,5);
+    
     //PCM Can ID 
     public static final int CTRE_PCM_CAN_ID = 1;
   }
