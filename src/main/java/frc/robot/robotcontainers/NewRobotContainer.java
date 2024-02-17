@@ -65,8 +65,7 @@ public class NewRobotContainer extends RobotContainer {
   private void configureButtonBindings() { 
     
     
-    /* Driver Controls */
-    
+    /* Driver Controls */  
     driver.start().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d(0)));
   
     driver.back().whileTrue(SwerveSubsystem.getInstance().setLockWheelsInXCommand());
