@@ -65,18 +65,12 @@ public class NewRobotContainer extends RobotContainer {
   private void configureButtonBindings() { 
     
     
-    /* Driver Controls */
-    // driver.a().whileTrue(new MakeIntakeMotorSpin(0.6, 0));
-    
+    /* Driver Controls */  
     driver.start().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d(0)));
   
     driver.back().whileTrue(SwerveSubsystem.getInstance().setLockWheelsInXCommand());
     driver.b().onTrue(SwerveSubsystem.getInstance().setOdometryCommand(new Pose2d(3,3,new Rotation2d(0))));
     driver.a().whileTrue(PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.MIDDLE_SPEAKER_RED)).onFalse(Commands.runOnce(()->{},SwerveSubsystem.getInstance()));
-
-    driver.x().whileTrue(
-      SwerveSubsystem.getInstance().getDriveToPoseCommand(new Pose2d(3, 3, new Rotation2d(0)))
-    );
 
     driver.leftBumper().whileTrue(new TeleopSwerve(
         s_Swerve,

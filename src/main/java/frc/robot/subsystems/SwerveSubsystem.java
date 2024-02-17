@@ -73,8 +73,6 @@ public class SwerveSubsystem extends SubsystemBase {
   int tempSynchCounter = 0;
   boolean recievedPidInstruction = false;
 
-  PIDController xPid, yPid, rotPid;
-
   /**
    * Counter to synchronize the modules relative encoder with absolute encoder when not moving.
    */
@@ -91,8 +89,6 @@ public class SwerveSubsystem extends SubsystemBase {
       }
       return instance;
   }
-
-  private SimpleMotorFeedforward ff = new SimpleMotorFeedforward(Swerve.driveKS, Swerve.driveKV);
 
   private SwerveSubsystem() {
     gyro = new PigeonIMU(Config.Swerve.pigeonID);
@@ -154,11 +150,6 @@ public class SwerveSubsystem extends SubsystemBase {
     pidControlX.setIZone(0.3);
     pidControlY.setIZone(0.3);
     pidControlRotation.setIZone(Math.toRadians(3));
-    
-
-    // SmartDashboard.putData("PidX", pidControlX);
-    // SmartDashboard.putData("PidY", pidControlY);
-    // SmartDashboard.putData("PidRot", pidControlRotation);
   }
 
   public void drive(
