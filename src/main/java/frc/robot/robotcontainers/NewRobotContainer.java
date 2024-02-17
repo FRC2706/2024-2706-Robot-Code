@@ -6,13 +6,16 @@
 package frc.robot.robotcontainers;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.Config.Swerve.TeleopSpeeds;
 import frc.robot.Robot;
 import frc.robot.commands.ArmFFTestCommand;
 import frc.robot.commands.MakeIntakeMotorSpin;
+import frc.robot.commands.RotateAngleToVision;
 import frc.robot.commands.Shooter_tuner;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.auto.AutoRoutines;
@@ -30,6 +33,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 public class NewRobotContainer extends RobotContainer {
   /* Controllers */
   private final CommandXboxController driver = new CommandXboxController(0);
+  private final Joystick driver_Joystick = new Joystick(0);
   private final CommandXboxController operator = new CommandXboxController(1);
 
   private final SwerveSubsystem s_Swerve = SwerveSubsystem.getInstance();
@@ -67,6 +71,7 @@ public class NewRobotContainer extends RobotContainer {
     driver.start().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d(0)));
   
     driver.back().whileTrue(SwerveSubsystem.getInstance().setLockWheelsInXCommand());
+    new POVButton(driver_Joystick, 0, 0).whileTrue(new RotateAngleToVision(s_Swerve, driver, 0));
     driver.leftBumper().onTrue(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.SLOW))).onFalse(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.MAX)));
     // driver.
 
