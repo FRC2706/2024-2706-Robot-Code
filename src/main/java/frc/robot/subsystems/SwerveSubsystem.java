@@ -11,6 +11,7 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -49,6 +50,7 @@ public class SwerveSubsystem extends SubsystemBase {
   private DoublePublisher pubCurrentPositionX = swerveTable.getDoubleTopic("Current positionX (m) ").publish(PubSubOption.periodic(0.02));
   private DoublePublisher pubCurrentPositionY = swerveTable.getDoubleTopic("Current positionY (m) ").publish(PubSubOption.periodic(0.02));
   private DoubleArrayPublisher pubCurrentPose = swerveTable.getDoubleArrayTopic("Pose ").publish(PubSubOption.periodic(0.02));
+  private DoublePublisher pubGyroRate = swerveTable.getDoubleTopic("Gyro Rate (degps)").publish(PubSubOption.periodic(0.02));
 
   private NetworkTable visionPidTable = swerveTable.getSubTable("VisionPid");
   private DoublePublisher pubMeasuredSpeedX = visionPidTable.getDoubleTopic("MeasuredSpeedX (mps)").publish(PubSubOption.periodic(0.02));
@@ -70,6 +72,8 @@ public class SwerveSubsystem extends SubsystemBase {
   double desiredRotation;
   int tempSynchCounter = 0;
   boolean recievedPidInstruction = false;
+
+  PIDController xPid, yPid, rotPid;
 
   /**
    * Counter to synchronize the modules relative encoder with absolute encoder when not moving.
@@ -138,29 +142,34 @@ public class SwerveSubsystem extends SubsystemBase {
     field = new Field2d();
     SmartDashboard.putData("Field", field);
 
-    pidControlX = new ProfiledPIDController(1, 0.0, 0.2,
-            new TrapezoidProfile.Constraints(2,1.5));
-    pidControlY = new ProfiledPIDController(1, 0.0, 0.2,
-            new TrapezoidProfile.Constraints(2, 2));
-    pidControlRotation = new ProfiledPIDController(3.0, 0, 0.4,
-            new TrapezoidProfile.Constraints(6 * Math.PI, 4 * Math.PI));
+    pidControlX = new ProfiledPIDController(4.5, 0.5, 0.2,
+            new TrapezoidProfile.Constraints(2.5, 2.5));
+    pidControlY = new ProfiledPIDController(4.5, 0.5, 0.2,
+            new TrapezoidProfile.Constraints(2.5, 2.5));
+    pidControlRotation = new ProfiledPIDController(5.0, 0.5, 0.3,
+            new TrapezoidProfile.Constraints(8 * Math.PI, 8 * Math.PI));
             pidControlRotation.enableContinuousInput(-Math.PI, Math.PI);
 
 
-    SmartDashboard.putData("PidX", pidControlX);
-    SmartDashboard.putData("PidY", pidControlY);
-    SmartDashboard.putData("PidRot", pidControlRotation);
+    pidControlX.setIZone(0.3);
+    pidControlY.setIZone(0.3);
+    pidControlRotation.setIZone(Math.toRadians(3));
+    
+
+    // SmartDashboard.putData("PidX", pidControlX);
+    // SmartDashboard.putData("PidY", pidControlY);
+    // SmartDashboard.putData("PidRot", pidControlRotation);
   }
 
   public void drive(
       ChassisSpeeds speeds, boolean fieldRelative, boolean isOpenLoop) {
     SwerveModuleState[] swerveModuleStates =
     Config.Swerve.swerveKinematics.toSwerveModuleStates(
-      ChassisSpeeds.discretize(
+      // ChassisSpeeds.discretize(
         fieldRelative ? 
             ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getHeading()) :
-            speeds, 0.02
-      )
+            speeds
+            // , 0.02)
     );
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Config.Swerve.maxSpeed);
 
@@ -284,7 +293,7 @@ public class SwerveSubsystem extends SubsystemBase {
     pubDesiredRot.accept(Math.toDegrees(pidControlRotation.getSetpoint().position));
 
     recievedPidInstruction = true;
-    drive(new ChassisSpeeds(xSpeed, ySpeed, rotSpeed), true, false);
+    drive(new ChassisSpeeds(xSpeed, ySpeed, rotSpeed), true, true);
   }
 
   public boolean isAtPose(double tol, double angleTol) {
@@ -336,11 +345,13 @@ public class SwerveSubsystem extends SubsystemBase {
     pubCurrentPositionX.accept(getPose().getX());
     pubCurrentPositionY.accept(getPose().getY());
     pubCurrentPose.accept(AdvantageUtil.deconstruct(getPose()));
+    
+    pubGyroRate.accept(getAngularRate());
 
     ChassisSpeeds speeds = getFieldRelativeSpeeds();
     pubMeasuredSpeedX.accept(speeds.vxMetersPerSecond);
     pubMeasuredSpeedY.accept(speeds.vyMetersPerSecond);
-    pubMeasuredSpeedRot.accept(speeds.omegaRadiansPerSecond);
+    pubMeasuredSpeedRot.accept(Math.toDegrees(speeds.omegaRadiansPerSecond));
   }
   
   public void driveRobotRelative(ChassisSpeeds robotRelativeSpeeds) {
@@ -357,6 +368,12 @@ public class SwerveSubsystem extends SubsystemBase {
   public Rotation2d getHeading()
   {
     return getPose().getRotation();
+  }
+
+  public double getAngularRate() {
+    double[] xyz_dps = new double[3];
+    gyro.getRawGyro(xyz_dps);
+    return xyz_dps[2];
   }
 
   public ChassisSpeeds getFieldRelativeSpeeds()

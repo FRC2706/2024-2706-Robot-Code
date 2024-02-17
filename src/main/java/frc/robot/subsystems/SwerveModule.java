@@ -211,7 +211,7 @@ public class SwerveModule {
           speed,
           ControlType.kVelocity,
           0,
-          feedforward.calculate(desiredState.speedMetersPerSecond)));
+          feedforward.calculate(speed)));
     }
   }
 
