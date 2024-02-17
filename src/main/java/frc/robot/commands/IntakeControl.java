@@ -43,21 +43,24 @@ public class IntakeControl extends Command {
   @Override
   public void execute() {
     if (direction == true) 
-      intakeSubsystem.setVoltage(3.0);
+      intakeSubsystem.setVoltage(4.0);
     else 
-      intakeSubsystem.setVoltage(-3.0);
+      intakeSubsystem.setVoltage(-1.0);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    intakeSubsystem.stop();
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     if (direction)
-      return intakeSubsystem.isSensor7True() == false;
+      // return intakeSubsystem.isSensor7True() == false;
+      return false;
     else
-      return intakeSubsystem.isSensor7True() == true;
+      return intakeSubsystem.isSensor7True() == false;
   }
 }

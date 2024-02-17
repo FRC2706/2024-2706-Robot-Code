@@ -8,6 +8,7 @@ package frc.robot.robotcontainers;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Config.Swerve.TeleopSpeeds;
 import frc.robot.Robot;
@@ -77,9 +78,17 @@ public class NewRobotContainer extends RobotContainer {
     operator.a().whileTrue(new MakeIntakeMotorSpin(0.6, 0));
     operator.x().whileTrue(new Shooter_tuner(12));
 
-    operator.y().whileTrue (new ArmFFTestCommand(operator, 3, true) );
-
+    //operator.y().whileTrue (new ArmFFTestCommand(operator, 3, true));
+  
     operator.b().whileTrue(new IntakeControl(true));
+    operator.y().whileTrue(new IntakeControl(false));
+    operator.start().whileTrue(Commands.deadline(
+      Commands.sequence(
+        new IntakeControl(false), 
+        new WaitCommand(0.5), 
+        new IntakeControl(true).withTimeout(2)),
+      new Shooter_tuner(12)
+    ));
     //turns brakes off
     operator.rightBumper().onTrue(Commands.runOnce(() -> ArmPneumaticsSubsystem.getInstance().controlBrake(false, true)));
 

@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import frc.robot.Config;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.math.filter.Debouncer;
@@ -67,6 +68,7 @@ public class IntakeSubsystem extends SubsystemBase {
         m_intake.restoreFactoryDefaults();
         m_intake.setInverted(true);
         m_intake.setSmartCurrentLimit(70);
+        m_intake.setIdleMode(IdleMode.kBrake);
 
         sensor7 = new DigitalInput(7);
         sensor8 = new DigitalInput(8);
