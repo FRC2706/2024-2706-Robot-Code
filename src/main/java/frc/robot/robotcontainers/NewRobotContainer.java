@@ -79,8 +79,10 @@ public class NewRobotContainer extends RobotContainer {
     operator.y().whileTrue (new ArmFFTestCommand(operator, 3, true) );
 
 
+    //turns brakes off
     operator.rightBumper().onTrue(Commands.runOnce(() -> ArmPneumaticsSubsystem.getInstance().controlBrake(false, true)));
 
+    //turns brakes on
     operator.rightTrigger().onTrue(Commands.runOnce(() -> ArmPneumaticsSubsystem.getInstance().controlBrake(true, true)));
   }
 
