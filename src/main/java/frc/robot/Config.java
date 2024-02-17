@@ -115,11 +115,11 @@ public final class Config {
     //networkTableName
     public static final String networkTableName = "PhotonCamera";
     //data max
-    public static final int maxNumSamples = 10;
+    public static final int maxNumSamples = 12;
 
     // these are the heights for the apriltags 4, 5, 6, 7
     public static final double[] APRIL_HEIGHTS = {1.32,1.22,1.22,1.32};
-    public static final double POS_TOLERANCE = 0.01; // meters
+    public static final double POS_TOLERANCE = 0.03; // meters
     public static final double ANGLE_TOLERANCE = Math.toRadians(1.0);
     public static final double WAYPOINT_POS_TOLERANCE = 0.5; // meters
     public static final double WAYPOINT_ANGLE_TOLERANCE = Math.toRadians(30.0);
@@ -127,7 +127,7 @@ public final class Config {
       
       LEFT_SPEAKER_RED(4, new Translation2d(-0.937,-0.937), new Translation2d(-0.637,-0.637), Rotation2d.fromDegrees(45)),
       RIGHT_SPEAKER_RED(4, new Translation2d(-0.937,0.937), new Translation2d(-0.637,0.637), Rotation2d.fromDegrees(-45)),
-      MIDDLE_SPEAKER_RED(4, new Translation2d(-1.20,0), new Translation2d(-0.90,0), Rotation2d.fromDegrees(0)),
+      MIDDLE_SPEAKER_RED(4, new Translation2d(-1.3,0), new Translation2d(-0.95,0), Rotation2d.fromDegrees(0)),
       AMP_RED(5, new Translation2d(0,-30), new Translation2d(0,0), Rotation2d.fromDegrees(90)),
       AMP_BLUE(6, new Translation2d(0,-30), new Translation2d(0,0),  Rotation2d.fromDegrees(90)),
       LEFT_SPEAKER_BLUE(7, new Translation2d(0.937,0.937), new Translation2d(0.637,0.637), Rotation2d.fromDegrees(-135)),

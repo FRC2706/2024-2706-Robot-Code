@@ -118,7 +118,7 @@ public class SwerveSubsystem extends SubsystemBase {
     pidControlY = new ProfiledPIDController(3, 0.0, 0.2,
             new TrapezoidProfile.Constraints(2, 2));
     pidControlRotation = new ProfiledPIDController(2.0, 0, 0.4,
-            new TrapezoidProfile.Constraints(4 * Math.PI, 4 * Math.PI));
+            new TrapezoidProfile.Constraints(8 * Math.PI, 8 * Math.PI));
             pidControlRotation.enableContinuousInput(-Math.PI, Math.PI);
   }
 
