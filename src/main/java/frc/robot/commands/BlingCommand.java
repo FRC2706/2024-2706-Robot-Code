@@ -104,63 +104,100 @@ public class BlingCommand extends InstantCommand {
     }
   
   public void setRainbow() {
-    // create a rainbow animation:
-    // - max brightness
-    // - half speed
-    // - 64 LEDs
+     //* @param brightness The brightness of the LEDs 1
+     //* @param speed How fast the rainbow travels through the leds 0.01
+     //* @param numLed How many LEDs are controlled by the CANdle 64
     RainbowAnimation rainbowAnim = new RainbowAnimation(1, 0.01, 64);
 
-    bling.candle.animate(rainbowAnim);
+    bling.setAnimation(rainbowAnim);
 
   }
 
   public void setFire()
   {
+     //* @param brightness How bright should the animation be 1
+     //* @param speed How fast will the flame be processed at 0.000001
+     //* @param numLed How many LEDs is the CANdle controlling 64
+     //* @param sparking The rate at which the Fire "Sparks" 0.8
+     //* @param cooling The rate at which the Fire "Cools" along the travel 0.4
     FireAnimation fireAnimation = new FireAnimation(1, 0.000001, 64, 0.8, 0.4);
 
-    bling.candle.animate(fireAnimation);
+    bling.setAnimation(fireAnimation);
   }
 
   public void setWhiteStrobe()
   {
+   //  * @param r How much red should the color have 255
+   //  * @param g How much green should the color have 255
+   //  * @param b How much blue should the color have 255
+   //  * @param w How much white should the color have 255
+   //  * @param speed How fast should the color travel the strip 0.001
+   //  * @param numLed How many LEDs the CANdle controls 64
     StrobeAnimation strobeAnimation = new StrobeAnimation(255, 255, 255, 255, 0.8, 64);
 
-    bling.candle.animate(strobeAnimation);
+    bling.setAnimation(strobeAnimation);
   }
 
   public void setPurpleStrobe()
   {
+   //  * @param r How much red should the color have 138
+   //  * @param g How much green should the color have 43
+   //  * @param b How much blue should the color have 226
+   //  * @param w How much white should the color have 127
+   //  * @param speed How fast should the color travel the strip 0.001
+   //  * @param numLed How many LEDs the CANdle controls 64
     StrobeAnimation strobeAnimation = new StrobeAnimation(138, 43, 226, 127, 0.001, 64); //TODO: test all of the rgbw bling values
 
-    bling.candle.animate(strobeAnimation);
+    bling.setAnimation(strobeAnimation);
   }
 
   public void setRedStrobe()
   {
+   //  * @param r How much red should the color have 255
+   //  * @param g How much green should the color have 0
+   //  * @param b How much blue should the color have 0
+   //  * @param w How much white should the color have 127
+   //  * @param speed How fast should the color travel the strip 0.001
+   //  * @param numLed How many LEDs the CANdle controls 64
     StrobeAnimation strobeAnimation = new StrobeAnimation(255, 0, 0, 127, 0.001, 64);
 
-    bling.candle.animate(strobeAnimation);
+    bling.setAnimation(strobeAnimation);
   }
 
   public void setBlueStrobe()
   {
+   //  * @param r How much red should the color have 0
+   //  * @param g How much green should the color have 0
+   //  * @param b How much blue should the color have 255
+   //  * @param w How much white should the color have 127
+   //  * @param speed How fast should the color travel the strip 0.001
+   //  * @param numLed How many LEDs the CANdle controls 64
     StrobeAnimation strobeAnimation = new StrobeAnimation(0, 0, 255, 127, 0.001, 64);
 
-    bling.candle.animate(strobeAnimation);
+    bling.setAnimation(strobeAnimation);
   }
 
   public void setYellowStrobe()
   {
+   //  * @param r How much red should the color have 255
+   //  * @param g How much green should the color have 255
+   //  * @param b How much blue should the color have 0
+   //  * @param w How much white should the color have 127
+   //  * @param speed How fast should the color travel the strip 0.001
+   //  * @param numLed How many LEDs the CANdle controls 64
     StrobeAnimation strobeAnimation = new StrobeAnimation(255, 255, 0, 127, 0.001, 64);
 
-    bling.candle.animate(strobeAnimation);
+    bling.setAnimation(strobeAnimation);
   }
 
   public void setRgbFade()
   {
+     //* @param brightness How bright the LEDs are 0.7
+     //* @param speed How fast the LEDs fade between Red, Green, and Blue 0.1
+     //* @param numLed How many LEDs are controlled by the CANdle 64
     RgbFadeAnimation rgbFadeAnimation = new RgbFadeAnimation(0.7, 0.1, 64);
 
-    bling.candle.animate(rgbFadeAnimation);
+    bling.setAnimation(rgbFadeAnimation);
   }
 
   @Override

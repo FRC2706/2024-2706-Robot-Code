@@ -250,6 +250,7 @@ public final class Config {
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
     //Changed values
+
     public static final double kPXController = 1;
     public static final double kPYController = 1;
     public static final double kPThetaController = 1.35;
@@ -261,7 +262,12 @@ public final class Config {
   }
    public static final class BlingConstants {
     public static int CANDLE = 15;
- }
+  }
+
+    public static final class Intake {
+      public static final int INTAKE = 31;
+   }
+   
   public class ArmConfig {
     public static final boolean SET_INVERTED = true;
     public static final boolean setInvered = true;
