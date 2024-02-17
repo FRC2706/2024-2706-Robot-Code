@@ -18,14 +18,16 @@ public class RumbleJoystick extends Command {
   private boolean doDoubleRumble;
   private double counter;
   private double x;
-  //private set variables here before
   /** Creates a new RumbleJoystick. */
-  public RumbleJoystick(CommandXboxController joystick, RumbleType rumbleType, double strength, double duration, boolean doDoubleRumble) {
     /**
-     strength: strength of rumble
-            value between 0 and 1
-     
+     * @brief Command that rumbles the joystick with two modes: Single rumble for a certain duration, DoubleRumble which splits the duration into three, rumbles on, off, on. 
+     * @param joystick name of joystick to vibrate
+     * @param rumbleType Type of rumble, see RumbleType definition for more details
+     * @param strength Number between 0 and 1 which dictates the strength of the vibration
+     * @param duration duraction vibration
+     * @param doDoubleRumble true for doubleRumble, false for singleRumble
      */
+  public RumbleJoystick(CommandXboxController joystick, RumbleType rumbleType, double strength, double duration, boolean doDoubleRumble) {
     counter = 0;
     x = 0;
     this.m_joystick = joystick;
@@ -42,7 +44,7 @@ public class RumbleJoystick extends Command {
     m_timer.restart();
     m_joystick.getHID().setRumble(rumbleType, strength);
     
-  }     //reset timer here 
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -61,7 +63,7 @@ public class RumbleJoystick extends Command {
       }
     }
 
-  } //autocalled every 20 mils
+  } 
 
   // Called once the command ends or is interrupted.
   @Override
