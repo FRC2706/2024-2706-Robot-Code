@@ -67,7 +67,7 @@ public class AutoRoutines extends SubsystemBase {
                     AutoBuilder.followPath(path1)
                 );
             case 2:
-                return new PathPlannerAuto("testAuto");
+                return tune;
             case 3:
                 return SequentialAutoTest;
             case 4:
