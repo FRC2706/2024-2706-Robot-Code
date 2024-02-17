@@ -64,7 +64,6 @@ public class Shooter extends SubsystemBase {
 
     /**
      * This should be called every loop cycle.
-     * 
      * @param h the value of a hypotenouse drown from the robot distance
      */
     public void setRobotDistance2Target(double h) {
