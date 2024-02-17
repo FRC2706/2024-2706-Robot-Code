@@ -123,6 +123,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     m_armPosPub = ArmDataTable.getDoubleTopic("MeasuredAngleDeg").publish(PubSubOption.periodic(0.02));
     m_armVelPub = ArmDataTable.getDoubleTopic("MeasuredVelocity").publish(PubSubOption.periodic(0.02));
+    m_armFFTestingVolts= ArmDataTable.getDoubleTopic("FFTestingVolts").publish(PubSubOption.periodic(0.02));
     m_targetAngle = ArmDataTable.getDoubleTopic("TargetAngleDeg").publish(PubSubOption.periodic(0.02));
 
     updatePIDSettings();
@@ -187,7 +188,7 @@ public class ArmSubsystem extends SubsystemBase {
     public void testFeedForward(double additionalVoltage) {
       double voltage = additionalVoltage + calculateFF(m_absEncoder.getPosition());
       m_pidControllerArm.setReference(voltage, ControlType.kVoltage);
-     // m_armFFTestingVolts.accept(voltage);
+      m_armFFTestingVolts.accept(voltage);
     }
 
 }
