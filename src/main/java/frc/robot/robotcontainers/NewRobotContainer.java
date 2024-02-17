@@ -79,7 +79,7 @@ public class NewRobotContainer extends RobotContainer {
 
     operator.y().whileTrue (new ArmFFTestCommand(operator, 3, true) );
 
-    operator.b().whileTrue(new IntakeControl(true, false));
+    operator.b().whileTrue(new IntakeControl(true));
     //turns brakes off
     operator.rightBumper().onTrue(Commands.runOnce(() -> ArmPneumaticsSubsystem.getInstance().controlBrake(false, true)));
 

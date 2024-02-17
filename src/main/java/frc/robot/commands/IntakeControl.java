@@ -25,9 +25,8 @@ public class IntakeControl extends Command {
    */
 
 
-  public IntakeControl(boolean direction, boolean bUseSensor) {
+  public IntakeControl(boolean direction) {
     this.direction = direction;
-    this.bUseSensor = bUseSensor;
     intakeSubsystem = IntakeSubsystem.getInstance();
 
     // Use addRequirements() here to declare subsystem dependencies.
@@ -56,9 +55,9 @@ public class IntakeControl extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (bUseSensor)
+    if (direction)
       return intakeSubsystem.isSensor7True() == false;
     else
-      return false;
+      return intakeSubsystem.isSensor7True() == true;
   }
 }
