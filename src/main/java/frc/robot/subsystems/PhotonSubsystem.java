@@ -224,7 +224,7 @@ public class PhotonSubsystem extends SubsystemBase {
       //calculate yaw
       Rotation2d yaw = Rotation2d.fromDegrees(target.getYaw()*-1);
       //calculate range
-      double range = range(target.getPitch());
+      double range = (range(target.getPitch())-1)*1.15+1;
       //convert to field quordinates
       Pose2d fieldToTarget = convertToField(range, yaw, odometryPose);
       //update rolling averages

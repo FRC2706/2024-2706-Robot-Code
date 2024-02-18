@@ -121,25 +121,26 @@ public final class Config {
     public static final double CAMERA_HEIGHT = 0.29;
     public static final Rotation2d CAMERA_PITCH = Rotation2d.fromDegrees(26);
     //x is forwards, y is sideways with +y being left, rotation probobly if + left too
-    public static final Pose2d cameraOffset = new Pose2d(new Translation2d(-0.2,0.28), Rotation2d.fromDegrees(0));
+    public static final Pose2d cameraOffset = new Pose2d(new Translation2d(-0.2,0.28-0.03), Rotation2d.fromDegrees(0));
   
     //networkTableName
     public static final String networkTableName = "PhotonCamera";
     //data max
-    public static final int maxNumSamples = 12;
+    public static final int maxNumSamples = 10;
 
     // these are the heights for the apriltags 4, 5, 6, 7
     public static final double[] APRIL_HEIGHTS = {1.32,1.22,1.22,1.32};
-    public static final double POS_TOLERANCE = 0.03; // meters
+    public static final double POS_TOLERANCE = 0.01; // meters
     public static final double ANGLE_TOLERANCE = Math.toRadians(1.0);
-    public static final double WAYPOINT_POS_TOLERANCE = 0.5; // meters
-    public static final double WAYPOINT_ANGLE_TOLERANCE = Math.toRadians(30.0);
+    public static final double WAYPOINT_POS_TOLERANCE = 0.2; // meters
+    public static final double WAYPOINT_ANGLE_TOLERANCE = Math.toRadians(10.0);
     public static final double VEL_TOLERANCE = 0.1*4;
     public static enum PhotonPositions {
       
       LEFT_SPEAKER_RED(4, new Translation2d(-1,-1), new Translation2d(-0.6,-0.7), Rotation2d.fromDegrees(60)),
       RIGHT_SPEAKER_RED(4, new Translation2d(-0.937,0.937), new Translation2d(-0.637,0.637), Rotation2d.fromDegrees(-60)),
       MIDDLE_SPEAKER_RED(4, new Translation2d(-1.3,0), new Translation2d(-0.95,0), Rotation2d.fromDegrees(0)),
+      FAR_SPEAKER_RED(4, new Translation2d(-2.7,0), new Translation2d(-2,0), Rotation2d.fromDegrees(0)),
       AMP_RED(5, new Translation2d(0,-30), new Translation2d(0,0), Rotation2d.fromDegrees(90)),
       AMP_BLUE(6, new Translation2d(0,-30), new Translation2d(0,0),  Rotation2d.fromDegrees(90)),
       LEFT_SPEAKER_BLUE(7, new Translation2d(0.937,0.937), new Translation2d(0.637,0.637), Rotation2d.fromDegrees(-120)),
