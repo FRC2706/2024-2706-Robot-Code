@@ -61,7 +61,7 @@ public class PhotonSubsystem extends SubsystemBase {
   /** Creates a new photonAprilTag. */
   private PhotonSubsystem() {
     //name of camera, change if using multiple cameras
-    camera1 = new PhotonCamera("OV9281");
+    camera1 = new PhotonCamera("FrontApriltagOV9281");
     //networktable publishers
     pubSetPoint = NetworkTableInstance.getDefault().getTable(PhotonConfig.networkTableName).getDoubleArrayTopic("PhotonAprilPoint").publish(PubSubOption.periodic(0.02));
     pubRange = NetworkTableInstance.getDefault().getTable(PhotonConfig.networkTableName).getDoubleTopic("Range").publish(PubSubOption.periodic(0.02));
@@ -221,9 +221,8 @@ public class PhotonSubsystem extends SubsystemBase {
       }
       
       //get tag info
-      double correctionValueYaw=1.5;
       //calculate yaw
-      Rotation2d yaw = Rotation2d.fromDegrees(target.getYaw()*-correctionValueYaw);
+      Rotation2d yaw = Rotation2d.fromDegrees(target.getYaw()*-1);
       //calculate range
       double range = range(target.getPitch());
       //convert to field quordinates

@@ -87,7 +87,8 @@ public class PhotonMoveToTarget extends Command {
     if (isWaypoint){
       return SwerveSubsystem.getInstance().isAtPose(PhotonConfig.WAYPOINT_POS_TOLERANCE, PhotonConfig.WAYPOINT_ANGLE_TOLERANCE);
     } else {
-      return SwerveSubsystem.getInstance().isAtPose(PhotonConfig.POS_TOLERANCE, PhotonConfig.ANGLE_TOLERANCE) && SwerveSubsystem.getInstance().isChassisMoving();
+      return SwerveSubsystem.getInstance().isAtPose(PhotonConfig.POS_TOLERANCE, PhotonConfig.ANGLE_TOLERANCE) 
+          && !SwerveSubsystem.getInstance().isChassisMoving(PhotonConfig.VEL_TOLERANCE);
     }
   }
 }

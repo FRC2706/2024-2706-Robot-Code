@@ -314,7 +314,7 @@ public class SwerveSubsystem extends SubsystemBase {
     // If the robot isn't moving synchronize the encoders every 100ms (Inspired by democrat's SDS
     // lib)
     // To ensure that everytime we initialize it works.
-    if (!isChassisMoving()) {
+    if (!isChassisMoving(0.01)) {
       if (++moduleSynchronizationCounter > 6 && isSwerveNotSynched()) {
         synchSwerve();
         System.out.println("Resynced" + ++tempSynchCounter);
@@ -367,14 +367,14 @@ public class SwerveSubsystem extends SubsystemBase {
     return ChassisSpeeds.fromRobotRelativeSpeeds(getRobotRelativeSpeeds(), getHeading());
   }
 
-  public boolean isChassisMoving()
+  public boolean isChassisMoving(double velToleranceMPS)
   {
     double sumVelocity = 0;
     for (SwerveModule mod : mSwerveMods) {
       sumVelocity += Math.abs(mod.getState().speedMetersPerSecond);
     }
 
-    if (sumVelocity <= .01) {
+    if (sumVelocity <= velToleranceMPS) {
       return false;
     }
 
@@ -382,8 +382,8 @@ public class SwerveSubsystem extends SubsystemBase {
     {
       return true;
     }
-
   }
+
   public boolean isSwerveNotSynched() {
     for (SwerveModule module : mSwerveMods) {
       if (!module.isModuleSynced()) {
