@@ -40,16 +40,6 @@ public class RotateAngleToVisionSupplier extends TeleopSwerve {
     setpoint = SwerveSubsystem.getInstance().getHeading().getRadians();
   }
 
-  // Called every time the scheduler runs while the command is scheCommandXboxController driver, DoubleSupplier supplierduled.
-  @Override
-  public void execute() {}
-
-
-  @Override
-  public boolean isFinished() {
-    return false;
-  }
-
   @Override
   public double calculateRotationVal() {
     double value = m_supplier.getAsDouble();

@@ -13,6 +13,7 @@ public class RotateAngleToVision extends TeleopSwerve {
 
   ProfiledPIDController pid = new ProfiledPIDController(5.0, 0, 0.4, 
                                         new TrapezoidProfile.Constraints(4 * Math.PI, 8 * Math.PI)); //pid to be tested
+  SwerveSubsystem swerve;
   double angle;
 
   /** Creates a new RotateAngleToVision. */
@@ -26,28 +27,19 @@ public class RotateAngleToVision extends TeleopSwerve {
 
     pid.setTolerance(0.1);
     pid.enableContinuousInput(-Math.PI, Math.PI);
+
+    swerve = s_Swerve;
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
-
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {}
-
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {}
-
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
+  public void initialize() {
+    super.initialize();
+    swerve.resetDriveToPose();
   }
 
   @Override
   protected double calculateRotationVal() {
-    return(pid.calculate(SwerveSubsystem.getInstance().getHeading().getRadians(), this.angle));
+    return(swerve.calculateRotation(SwerveSubsystem.getInstance().getHeading().getRadians(), this.angle));
   }
 }

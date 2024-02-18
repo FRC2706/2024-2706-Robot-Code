@@ -116,6 +116,8 @@ public final class Config {
 
   public static final Boolean swerveTuning = true; //tune swerve? Turn this to false for competition
 
+  public static int ANALOG_SELECTOR_PORT = robotSpecific(0, -1, -1, 0);
+
   public static final class Swerve {
     public static final double stickDeadband = 0.1;
  

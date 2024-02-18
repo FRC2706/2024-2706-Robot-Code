@@ -125,12 +125,18 @@ public class SwerveSubsystem extends SubsystemBase {
     field = new Field2d();
     SmartDashboard.putData("Field", field);
 
-    pidControlX = new ProfiledPIDController(1, 0.0, 0.2,
-            new TrapezoidProfile.Constraints(1,1));
-    pidControlY = new ProfiledPIDController(1, 0.0, 0.2,
-            new TrapezoidProfile.Constraints(1, 1));
-    pidControlRotation = new ProfiledPIDController(4.0, 0, 0.4,
-            new TrapezoidProfile.Constraints(4 * Math.PI, 8 * Math.PI));
+    pidControlX = new ProfiledPIDController(4.5, 0.5, 0.2,
+            new TrapezoidProfile.Constraints(2.5, 2.5));
+    pidControlY = new ProfiledPIDController(4.5, 0.5, 0.2,
+            new TrapezoidProfile.Constraints(2.5, 2.5));
+    pidControlRotation = new ProfiledPIDController(5.0, 0.5, 0.3,
+            new TrapezoidProfile.Constraints(8 * Math.PI, 8 * Math.PI));
+            pidControlRotation.enableContinuousInput(-Math.PI, Math.PI);
+
+
+    pidControlX.setIZone(0.3);
+    pidControlY.setIZone(0.3);
+    pidControlRotation.setIZone(Math.toRadians(3));
 
     updateFeedforward = new UpdateSimpleFeedforward((ff) -> updateModuleFeedforward(ff), swerveTable, Config.Swerve.driveKS, Config.Swerve.driveKV, Config.Swerve.driveKA);
   }
@@ -228,6 +234,10 @@ public class SwerveSubsystem extends SubsystemBase {
     pidControlRotation.reset(getPose().getRotation().getRadians(),getFieldRelativeSpeeds().omegaRadiansPerSecond);
   }
 
+  public double calculateRotation(double currentRotation, double desiredRotation) {
+    return(pidControlRotation.calculate(currentRotation, desiredRotation));
+  }
+
   public void driveToPose(Pose2d pose) {
     //update the currentX and currentY
     
@@ -241,7 +251,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     double x = pidControlX.calculate(currentX, desiredX);
     double y = pidControlY.calculate(currentY, desiredY);
-    double rot = pidControlRotation.calculate(currentRotation, desiredRotation);
+    double rot = calculateRotation(currentRotation, desiredRotation);
 
     drive(new ChassisSpeeds(x, y, rot), true, false);
   }
@@ -350,4 +360,14 @@ public class SwerveSubsystem extends SubsystemBase {
       module.resetToAbsolute();
     }
   }
+
+  public static Rotation2d rotateForAlliance(Rotation2d rot){
+     var alliance = DriverStation.getAlliance();
+            if (alliance.isPresent() && alliance.get()==DriverStation.Alliance.Blue) {
+                return rot;
+            }
+            return rot.rotateBy(new Rotation2d(Math.PI));
+  }
+
+  
 }
