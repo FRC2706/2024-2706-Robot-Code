@@ -1,74 +1,67 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.SparkPIDController.AccelStrategy;
+
+import static frc.robot.Config.ShooterConstants.*;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-
 public class Shooter extends SubsystemBase {
-    
-    private static Shooter shooter; 
-     public static Shooter getInstance()
-    {
-        if (shooter == null)
-            shooter = new Shooter();
- 
-        return shooter;
-    }
-
     private CANSparkMax m_motor;
     private SparkPIDController m_pidController;
     private RelativeEncoder m_encoder;
 
-    private double kP, kD, kFF, kMaxOutput, kMinOutput, maxRPM; 
-    
-        // add Tunable Number later for ajusting Rpm on the flywheels 
-        public Shooter() {  
-            m_motor = new CANSparkMax(32, MotorType.kBrushless);
+    private static Shooter shooter;
+    public static Shooter getInstance() {
+        if (shooter == null)
+            shooter = new Shooter();
 
-            m_motor.restoreFactoryDefaults();
-            m_motor.setSmartCurrentLimit(70);
-            m_pidController = m_motor.getPIDController();
+        return shooter;
+    }
 
-            m_encoder = m_motor.getEncoder();
+    // add Tunable Number later for ajusting Rpm on the flywheels
+    public Shooter() {
+        System.out.println("[Init] Creating Shooter");
+        m_motor.restoreFactoryDefaults();
+        
+        m_motor.setCANTimeout(500); //Units in miliseconds
+        m_motor.setIdleMode(IdleMode.kCoast);
+        m_motor.setInverted(false);
 
-            //confi
-            kP = 6e-5;
-            kD = 0;
-            kFF = 0.000015;
-            kMaxOutput = 1;
-            kMinOutput = -1;
-            maxRPM = 5700; 
+        m_pidController = m_motor.getPIDController();
+        m_encoder = m_motor.getEncoder();
+        m_encoder.setAverageDepth(2);//check if 1 would work better
+        
+        //Voltage compensation
+        m_motor.enableVoltageCompensation(12); 
+        m_motor.setSmartCurrentLimit(40);  
+        setBrake(false);
 
-            m_pidController.setP(kP);
-            m_pidController.setD(kD);
-            m_pidController.setFF(kFF);
-            m_pidController.setOutputRange(kMaxOutput, kMinOutput);
-        }
+        //Smart motion parameters 
+        m_pidController.setOutputRange(kMinOutput, kMinOutput);
+    }
 
-        public double getVelocity() {
+    public double getVelocity() {
+        return m_encoder.getVelocity();
+    }
 
-                return m_encoder.getVelocity();
+    public void setSetPoint(double setPoint) {
+        m_pidController.setReference(setPoint, ControlType.kVelocity);
+    }
 
-        }
+    public void setSetVolt(double setVolt) {
+        m_motor.setVoltage(setVolt);
+    }
 
-        public void setSetPoint(double setPoint){
-
-            
-            m_pidController.setReference(setPoint, ControlType.kVelocity);
-
-        }
-
-        public void setSetVolt(double setVolt){
-            
-           m_motor.setVoltage(setVolt);
-
-           //need to add a delay so the shooter can spin up, then the intake will lunch the note up into the shoorter part.
-            
-        }
+    public void setBrake(boolean enableBreak){
+        m_motor.setIdleMode(enableBreak ? IdleMode.kBrake: IdleMode.kCoast);
+    }
 
 }
