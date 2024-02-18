@@ -149,13 +149,13 @@ public final class Config {
     public static final double voltageComp = 11.0;
 
     /* Swerve Current Limiting, Changed */
-    public static final int angleContinuousCurrentLimit = 20;
+    public static final int angleContinuousCurrentLimit = 30; //20
     public static final int driveContinuousCurrentLimit = 50;
 
     /* Angle Motor PID Values, Changed */
-    public static final double angleKP = 1.0;
+    public static final double angleKP = 2.0; //1.0
     public static final double angleKI = 0.0;
-    public static final double angleKD = 0.0;
+    public static final double angleKD = 0.1; //0.0
     public static final double angleKFF = 0.0;
 
     /* Drive Motor PID Values, Changed*/
