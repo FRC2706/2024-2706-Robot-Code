@@ -375,7 +375,7 @@ public final class Config {
 
   public static final boolean tuningMode = true;
   public static final class ShooterConstants{
-    public static final byte FLY_WHEEL_ID = 4;
+    public static final byte FLY_WHEEL_ID = 32;
     public static final double kP = 0.0,
                                kI = 0.0,
                                kD = 0.0,

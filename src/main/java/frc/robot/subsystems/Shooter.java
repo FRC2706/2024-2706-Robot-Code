@@ -2,7 +2,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
-
+import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
@@ -31,6 +31,7 @@ public class Shooter extends SubsystemBase {
     // add Tunable Number later for ajusting Rpm on the flywheels
     public Shooter() {
         System.out.println("[Init] Creating Shooter");
+        m_motor = new CANSparkMax(Config.ShooterConstants.FLY_WHEEL_ID, MotorType.kBrushless);
         m_motor.restoreFactoryDefaults();
 
         m_motor.setCANTimeout(500); //Units in miliseconds
