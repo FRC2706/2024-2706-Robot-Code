@@ -55,6 +55,7 @@ public class IntakeStates {
         BACKING_NOTE,
         POSITIONING_NOTE,
         NOTE_ENTERING,//Front active 
+        NOTE_ENTERING_IDLE,//Front active 
         NOTE_IN_POS_IDLE, //Front (Center) active, back inactive
         NOTE_OVERINTAKED,//Front (Center) and back active
         SHOOTING,
@@ -130,7 +131,7 @@ public class IntakeStates {
                 if(isCenterActive == null){
                     if(isForntActive)currentState = NOTE_IN_POS_IDLE;//This state would be affected if suddenly stopped
                 }else if(isCenterActive) currentState = NOTE_IN_POS_IDLE;
-                else if(isForntActive) currentState =  NOTE_ENTERING;
+                else if(isForntActive) currentState =  NOTE_ENTERING_IDLE;
                 else currentState = EMPTY_IDLE; 
             break;
              
@@ -140,8 +141,12 @@ public class IntakeStates {
                     setMode(BACK_NOTE); 
                     break;
                 }
-                
-                if(isForntActive){
+
+                if(isCenterActive){//Check if this works now
+                    setMode(STOP);
+                }
+
+                if(isForntActive && !currentState.equals(NOTE_ENTERING_IDLE)){ //compare with NOTE_ENTERING_IDLE;
                     currentState = NOTE_ENTERING;
                     setMode(POSITION_NOTE);
                 } else currentState = INTAKING;
