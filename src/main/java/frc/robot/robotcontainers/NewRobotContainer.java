@@ -5,6 +5,8 @@
 
 package frc.robot.robotcontainers;
 
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.IntegerEntry;
 import edu.wpi.first.networktables.NetworkTable;
@@ -84,7 +86,8 @@ public class NewRobotContainer extends RobotContainer {
     driver.start().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d(0)));
   
     // driver.back().whileTrue(new AutoRoutines().getAutonomousCommand(2));
-    driver.back().whileTrue(autoResetOdometryCommand());
+    driver.leftTrigger().whileTrue(new PathPlannerAuto("tuneAutoX"));
+    driver.rightTrigger().whileTrue(new PathPlannerAuto("tuneAutoY"));
     
     driver.leftBumper().onTrue(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.SLOW))).onFalse(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.MAX)));
     
