@@ -15,6 +15,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Config;
 /**
  * Class for a tunable number. Gets value from dashboard in tuning mode, returns default if not or
  * value not in dashboard.
@@ -56,8 +59,8 @@ public class TunableNumber implements DoubleSupplier {
     if (!hasDefault) {
       hasDefault = true;
       this.defaultValue = defaultValue;
-      if (Constants.tuningMode) {
-        dashboardNumber = new LoggedDashboardNumber(key, defaultValue);
+      if (Config.tuningMode) {
+        SmartDashboard.putNumber(key, SmartDashboard.getNumber(key, defaultValue));
       }
     }
   }
@@ -71,7 +74,7 @@ public class TunableNumber implements DoubleSupplier {
     if (!hasDefault) {
       return 0.0;
     } else {
-      return Constants.tuningMode ? dashboardNumber.get() : defaultValue;
+      return Config.tuningMode ? SmartDashboard.getNumber(key, defaultValue) : defaultValue;
     }
   }
 
@@ -84,7 +87,7 @@ public class TunableNumber implements DoubleSupplier {
    *     otherwise.
    */
   public boolean hasChanged(int id) {
-    if (!Constants.tuningMode) return false;
+    if (!Config.tuningMode) return false;
     double currentValue = get();
     Double lastValue = lastHasChangedValues.get(id);
     if (lastValue == null || currentValue != lastValue) {
@@ -105,14 +108,14 @@ public class TunableNumber implements DoubleSupplier {
    * @param tunableNumbers All tunable numbers to check
    */
   public static void ifChanged(
-      int id, Consumer<double[]> action, LoggedTunableNumber... tunableNumbers) {
+      int id, Consumer<double[]> action, TunableNumber... tunableNumbers) {
     if (Arrays.stream(tunableNumbers).anyMatch(tunableNumber -> tunableNumber.hasChanged(id))) {
-      action.accept(Arrays.stream(tunableNumbers).mapToDouble(LoggedTunableNumber::get).toArray());
+      action.accept(Arrays.stream(tunableNumbers).mapToDouble(TunableNumber::get).toArray());
     }
   }
 
   /** Runs action if any of the tunableNumbers have changed */
-  public static void ifChanged(int id, Runnable action, LoggedTunableNumber... tunableNumbers) {
+  public static void ifChanged(int id, Runnable action, TunableNumber... tunableNumbers) {
     ifChanged(id, values -> action.run(), tunableNumbers);
   }
 
