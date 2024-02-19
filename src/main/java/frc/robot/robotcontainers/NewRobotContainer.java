@@ -89,6 +89,8 @@ public class NewRobotContainer extends RobotContainer {
         new IntakeControl(true).withTimeout(2)),
       new Shooter_tuner(12)
     ));
+
+    
     //turns brakes off
     operator.rightBumper().onTrue(Commands.runOnce(() -> ArmPneumaticsSubsystem.getInstance().controlBrake(false, true)));
 

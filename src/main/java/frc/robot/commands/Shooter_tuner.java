@@ -30,8 +30,11 @@ public class Shooter_tuner extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
+    //set Voltage
     shooter.setSetVolt(setPoint);
+
+    //set RPM
+    //shooter.setSetRPM(1000);
 
   }
   
@@ -40,7 +43,11 @@ public class Shooter_tuner extends Command {
   @Override
   public void end(boolean interrupted) {
 
-    shooter.setSetVolt(0);
+    //shooter.setSetVolt(0);
+
+    //++
+    shooter.stopMotor();
+
 
   }
 
