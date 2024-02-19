@@ -94,8 +94,7 @@ public class IntakeStates {
      */
     public void updateSensors(RunnableBoolean... toRun) {
         if(toRun.length > 3 || toRun == null){
-            System.err.println("No sensors found, or more than 3");
-            return;
+            throw new IllegalArgumentException("No sensors found, or more than 3");
         }
         
         if(toRun.length >= 2){
