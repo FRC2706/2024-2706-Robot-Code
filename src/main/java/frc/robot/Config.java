@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.revrobotics.CANSparkBase.IdleMode;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -115,7 +116,62 @@ public final class Config {
    /** ADD CONSTANTS BELOW THIS LINE */
 
   public static final Boolean swerveTuning = true;
+
+  public static final class PhotonConfig{
+    public static final double CAMERA_HEIGHT = 0.29;
+    public static final Rotation2d CAMERA_PITCH = Rotation2d.fromDegrees(26);
+    //x is forwards, y is sideways with +y being left, rotation probobly if + left too
+    public static final Pose2d cameraOffset = new Pose2d(new Translation2d(-0.2,0.28-0.03), Rotation2d.fromDegrees(0));
   
+    //networkTableName
+    public static final String networkTableName = "PhotonCamera";
+    //data max
+    public static final int maxNumSamples = 10;
+
+    // these are the heights for the apriltags 4, 5, 6, 7
+    public static final double[] APRIL_HEIGHTS = {1.32,1.22,1.22,1.32};
+    public static final double POS_TOLERANCE = 0.01; // meters
+    public static final double ANGLE_TOLERANCE = Math.toRadians(1.0);
+    public static final double WAYPOINT_POS_TOLERANCE = 0.2; // meters
+    public static final double WAYPOINT_ANGLE_TOLERANCE = Math.toRadians(10.0);
+    public static final double VEL_TOLERANCE = 0.1*4;
+    public static enum PhotonPositions {
+      
+      LEFT_SPEAKER_RED(4, new Translation2d(-1,-1), new Translation2d(-0.6,-0.7), Rotation2d.fromDegrees(60)),
+      RIGHT_SPEAKER_RED(4, new Translation2d(-0.937,0.937), new Translation2d(-0.637,0.637), Rotation2d.fromDegrees(-60)),
+      MIDDLE_SPEAKER_RED(4, new Translation2d(-1.3,0), new Translation2d(-0.95,0), Rotation2d.fromDegrees(0)),
+      FAR_SPEAKER_RED(4, new Translation2d(-2.7,0), new Translation2d(-2,0), Rotation2d.fromDegrees(0)),
+      AMP_RED(5, new Translation2d(0,-30), new Translation2d(0,0), Rotation2d.fromDegrees(90)),
+      AMP_BLUE(6, new Translation2d(0,-30), new Translation2d(0,0),  Rotation2d.fromDegrees(90)),
+      LEFT_SPEAKER_BLUE(7, new Translation2d(0.937,0.937), new Translation2d(0.637,0.637), Rotation2d.fromDegrees(-120)),
+      RIGHT_SPEAKER_BLUE(7, new Translation2d(0.937,-0.937), new Translation2d(0.637,-0.637), Rotation2d.fromDegrees(120)),
+      MIDDLE_SPEAKER_BLUE(7, new Translation2d(1.20,0), new Translation2d(0.90,0), Rotation2d.fromDegrees(180)),
+      TEST(4, new Translation2d(-2,0), new Translation2d(-1,0), Rotation2d.fromDegrees(0));
+  
+      public final int id;
+      public final boolean hasWaypoint;
+      public final Translation2d waypoint;
+      public final Translation2d destination;
+      public final Rotation2d direction;
+  
+      PhotonPositions(int id, Translation2d waypoint, Translation2d destination, Rotation2d direction) {
+        this.id = id;
+        this.hasWaypoint = true;
+        this.waypoint = waypoint;
+        this.destination = destination;
+        this.direction = direction;
+      }
+
+      PhotonPositions(int id, Translation2d destination, Rotation2d direction) {
+        this.id = id;
+        this.hasWaypoint = false;
+        this.waypoint = null;
+        this.destination = destination;
+        this.direction = direction;
+      }
+    }  
+  }
+
   public static final class Swerve {
     public static final double stickDeadband = 0.1;
  
@@ -135,7 +191,7 @@ public final class Config {
     public static final double angleGearRatio = (12.8 / 1.0);
 
     public static final double synchTolerance = 3;
-
+    
     public static final SwerveDriveKinematics swerveKinematics =
         new SwerveDriveKinematics(
             new Translation2d(wheelBase / 2.0, trackWidth / 2.0),
@@ -151,13 +207,13 @@ public final class Config {
     public static final int driveContinuousCurrentLimit = 50;
 
     /* Angle Motor PID Values, Changed */
-    public static final double angleKP = 1.0;
+    public static final double angleKP = 1.5;
     public static final double angleKI = 0.0;
     public static final double angleKD = 0.0;
     public static final double angleKFF = 0.0;
 
     /* Drive Motor PID Values, Changed*/
-    public static final double driveKP = 0.0; //0.2
+    public static final double driveKP = 0.2; //0.2
     public static final double driveKI = 0.0;
     public static final double driveKD = 0.0;
     public static final double driveKFF = 0.0;
@@ -172,6 +228,10 @@ public final class Config {
         (wheelDiameter * Math.PI) / driveGearRatio;
     public static final double driveConversionVelocityFactor = driveConversionPositionFactor / 60.0;
     public static final double angleConversionFactor = 2 * Math.PI / angleGearRatio;
+
+    /* Swerve ProfiledPidController values */
+    public static final double translationAllowableError = 0.01;
+    public static final double rotationAllowableError = Math.toRadians(0.7);
 
     /* Swerve Profiling Values Changed*/
     public static enum TeleopSpeeds {

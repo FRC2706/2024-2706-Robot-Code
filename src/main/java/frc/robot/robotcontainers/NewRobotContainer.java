@@ -5,11 +5,13 @@
 
 package frc.robot.robotcontainers;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Config.PhotonConfig.PhotonPositions;
 import frc.robot.Config.Swerve.TeleopSpeeds;
 import frc.robot.Robot;
 import frc.robot.commands.ArmFFTestCommand;
@@ -19,6 +21,7 @@ import frc.robot.commands.Shooter_tuner;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.auto.AutoRoutines;
 import frc.robot.subsystems.ArmPneumaticsSubsystem;
+import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /**
@@ -64,11 +67,13 @@ public class NewRobotContainer extends RobotContainer {
   private void configureButtonBindings() { 
     
     
-    /* Driver Controls */
-    
+    /* Driver Controls */  
     driver.start().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d(0)));
   
     driver.back().whileTrue(SwerveSubsystem.getInstance().setLockWheelsInXCommand());
+    driver.b().onTrue(SwerveSubsystem.getInstance().setOdometryCommand(new Pose2d(3,3,new Rotation2d(0))));
+    driver.a().whileTrue(PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.FAR_SPEAKER_RED)).onFalse(Commands.runOnce(()->{},SwerveSubsystem.getInstance()));
+
     driver.leftBumper().whileTrue(new TeleopSwerve(
         s_Swerve,
         driver,
