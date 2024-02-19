@@ -72,13 +72,11 @@ public class IntakeSubsystem extends SubsystemBase{
         sensor8Debouncer = new Debouncer(0.1, Debouncer.DebounceType.kBoth);
         sensor9Debouncer = new Debouncer(0.1, Debouncer.DebounceType.kBoth);
 
-        NetworkTable intakeStatesTable = NetworkTableInstance.getDefault().getTable("States");
-        statesPub = intakeStatesTable.getStringTopic("Intake's Current State").publish(PubSubOption.periodic(0.02));
-
-        NetworkTable sensorTable = NetworkTableInstance.getDefault().getTable("sensors");
-        sensor7Pub = sensorTable.getBooleanTopic("sensor 7 result").publish(PubSubOption.periodic(0.02));
-        sensor8Pub = sensorTable.getBooleanTopic("sensor 8 result").publish(PubSubOption.periodic(0.02));
-        sensor9Pub = sensorTable.getBooleanTopic("sensor 9 result").publish(PubSubOption.periodic(0.02));
+        NetworkTable intakeTable = NetworkTableInstance.getDefault().getTable("Intake");
+        statesPub = intakeTable.getStringTopic("Intake's Current State").publish(PubSubOption.periodic(0.02));
+        sensor7Pub = intakeTable.getBooleanTopic("sensor 7 result").publish(PubSubOption.periodic(0.02));
+        sensor8Pub = intakeTable.getBooleanTopic("sensor 8 result").publish(PubSubOption.periodic(0.02));
+        sensor9Pub = intakeTable.getBooleanTopic("sensor 9 result").publish(PubSubOption.periodic(0.02));
     }
 
     /*Please Review this for a possible removal */

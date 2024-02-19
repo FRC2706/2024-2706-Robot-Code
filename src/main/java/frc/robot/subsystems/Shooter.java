@@ -7,6 +7,10 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.lib2706.TunableNumber;
 import frc.robot.Config;
@@ -21,6 +25,8 @@ public class Shooter extends SubsystemBase {
     private TunableNumber kD = new TunableNumber("Shooter/kD", Config.ShooterConstants.kD);
     private TunableNumber kFF = new TunableNumber("Shooter/kFF", Config.ShooterConstants.kFF);
  
+    private DoublePublisher velocityPub;
+
     private static Shooter shooter;
     public static Shooter getInstance() {
         if (shooter == null)
@@ -50,17 +56,20 @@ public class Shooter extends SubsystemBase {
         m_pidController.setOutputRange(Config.ShooterConstants.kMinOutput, Config.ShooterConstants.kMaxOutput);
         setPIDGains(kP.get(), kI.get(), kD.get());
         setFFGains(kFF.get());
+
+        NetworkTable shooterTable = NetworkTableInstance.getDefault().getTable("Shooter");
+        velocityPub = shooterTable.getDoubleTopic("Shooter Velocity RPM").publish(PubSubOption.periodic(0.02));
     }
 
-    public double getVelocity() {
+    public double getVelocityRPM() {
         return m_encoder.getVelocity();
     }
 
-    public void setSetPoint(double setPoint) {
+    public void setRPM(double setPoint) {
         m_pidController.setReference(setPoint, ControlType.kVelocity);
     }
 
-    public void setSetVolt(double setVolt) {
+    public void setVoltage(double setVolt) {
         m_motor.setVoltage(setVolt);
     }
 
@@ -82,5 +91,7 @@ public class Shooter extends SubsystemBase {
     public void periodic() {
         TunableNumber.ifChanged(hashCode(), ()->setPIDGains(kP.get(), kI.get(), kD.get()), kP, kI, kD);
         TunableNumber.ifChanged(hashCode(), ()->setFFGains(kFF.get()), kFF);
+
+        velocityPub.accept(getVelocityRPM());
     }
 }
