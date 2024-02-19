@@ -7,11 +7,6 @@ package frc.robot.subsystems;
 import static frc.robot.subsystems.IntakeStates.Modes.*;
 import static frc.robot.subsystems.IntakeStates.States.*;
 
-import java.lang.reflect.Array;
-
-import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
-import edu.wpi.first.math.interpolation.Interpolator;
-import edu.wpi.first.math.interpolation.InverseInterpolator;
 import frc.lib.lib2706.RunnableBoolean;
 
 /** Add your docs here. */
@@ -54,10 +49,10 @@ public class IntakeStates {
         RELEASING,
         BACKING_NOTE,
         POSITIONING_NOTE,
-        NOTE_ENTERING,//Front active 
-        NOTE_ENTERING_IDLE,//Front active 
-        NOTE_IN_POS_IDLE, //Front (Center) active, back inactive
-        NOTE_OVERINTAKED,//Front (Center) and back active
+        NOTE_ENTERING,//Front active [Intake, MOVING]
+        NOTE_ENTERING_IDLE,//Front active [Intake, IDLE]
+        NOTE_IN_POS_IDLE, //Front (Center) active, back inactive [Intake, IDLE]
+        NOTE_OVERINTAKED,//Front (Center) and back active [Intake, MOVING]
         SHOOTING,
         SHOOTED,
     }
@@ -86,7 +81,7 @@ public class IntakeStates {
     }
 
     /**
-     * Method for logging values
+     * Method for checking current state of intake
      */
     public States getCurrentState(){
         return currentState;
@@ -117,7 +112,6 @@ public class IntakeStates {
 
     /**
      * Method that will automatically change the states of the machine
-     * 
      */
     public void updateStates() {
         switch (desiredMode) {
@@ -130,9 +124,11 @@ public class IntakeStates {
 
                 if(isCenterActive == null){
                     if(isForntActive)currentState = NOTE_IN_POS_IDLE;//This state would be affected if suddenly stopped
-                }else if(isCenterActive) currentState = NOTE_IN_POS_IDLE;
-                else if(isForntActive) currentState =  NOTE_ENTERING_IDLE;
-                else currentState = EMPTY_IDLE; 
+                }else if(isCenterActive){
+                    currentState = NOTE_IN_POS_IDLE;
+                }else if(isForntActive){
+                    currentState =  NOTE_ENTERING_IDLE;
+                }else currentState = EMPTY_IDLE; 
             break;
              
             //Intake the Note
@@ -192,8 +188,6 @@ public class IntakeStates {
             default:
             setMode(STOP);
                 break;
-            
         }
-        //return currentState; 
     }
 }
