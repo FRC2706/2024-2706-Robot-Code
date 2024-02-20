@@ -1,13 +1,11 @@
 {
   "NTProvider": {
     "types": {
-      "/FMSInfo": "FMSInfo"
+      "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/BasicDebugging/CommandScheduler": "Scheduler"
     }
   },
   "NetworkTables Info": {
-    "Connections": {
-      "open": true
-    },
     "visible": true
   }
 }

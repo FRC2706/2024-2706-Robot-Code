@@ -5,7 +5,11 @@
 
 package frc.robot.robotcontainers;
 
+
 import com.pathplanner.lib.commands.PathPlannerAuto;
+
+
+import edu.wpi.first.math.geometry.Pose2d;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.IntegerEntry;
@@ -13,11 +17,17 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Config.PhotonConfig.PhotonPositions;
 import frc.robot.Config.Swerve.TeleopSpeeds;
 import frc.robot.Robot;
 import frc.robot.commands.ArmFFTestCommand;
+import frc.robot.commands.IntakeControl;
 import frc.robot.commands.MakeIntakeMotorSpin;
 import frc.robot.commands.RotateAngleToVision;
 import frc.robot.commands.Shooter_tuner;
@@ -25,6 +35,7 @@ import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.auto.AutoRoutines;
 import frc.robot.commands.auto.AutoSelector;
 import frc.robot.subsystems.ArmPneumaticsSubsystem;
+import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /**
@@ -81,10 +92,10 @@ public class NewRobotContainer extends RobotContainer {
   private void configureButtonBindings() { 
     
     
-    /* Driver Controls */
-    
+    /* Driver Controls */  
     driver.start().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d(0)));
   
+
     // driver.back().whileTrue(new AutoRoutines().getAutonomousCommand(2));
     driver.leftTrigger().whileTrue(new PathPlannerAuto("tuneAutoX"));
     driver.rightTrigger().whileTrue(new PathPlannerAuto("tuneAutoY"));
@@ -92,17 +103,36 @@ public class NewRobotContainer extends RobotContainer {
     driver.leftBumper().onTrue(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.SLOW))).onFalse(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.MAX)));
     
     driver.y().whileTrue(new RotateAngleToVision(s_Swerve, driver, 0));
-    driver.b().whileTrue(new RotateAngleToVision(s_Swerve, driver, Math.PI / 2.0));
-    driver.a().whileTrue(new RotateAngleToVision(s_Swerve, driver, Math.PI));
+//     driver.b().whileTrue(new RotateAngleToVision(s_Swerve, driver, Math.PI / 2.0));
+//     driver.a().whileTrue(new RotateAngleToVision(s_Swerve, driver, Math.PI));
     driver.x().whileTrue(new RotateAngleToVision(s_Swerve, driver, -Math.PI / 2.0));
+
+
+    driver.back().whileTrue(SwerveSubsystem.getInstance().setLockWheelsInXCommand());
+    driver.b().onTrue(SwerveSubsystem.getInstance().setOdometryCommand(new Pose2d(3,3,new Rotation2d(0))));
+    driver.a().whileTrue(PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.FAR_SPEAKER_RED)).onFalse(Commands.runOnce(()->{},SwerveSubsystem.getInstance()));
+
+    driver.leftBumper().whileTrue(new TeleopSwerve(
+        s_Swerve,
+        driver,
+        TeleopSpeeds.SLOW
+    ));
 
     /* Operator Controls */
     operator.a().whileTrue(new MakeIntakeMotorSpin(0.6, 0));
     operator.x().whileTrue(new Shooter_tuner(12));
 
-    operator.y().whileTrue (new ArmFFTestCommand(operator, 3, true) );
-
-
+    //operator.y().whileTrue (new ArmFFTestCommand(operator, 3, true));
+  
+    operator.b().whileTrue(new IntakeControl(true));
+    operator.y().whileTrue(new IntakeControl(false));
+    operator.start().whileTrue(Commands.deadline(
+      Commands.sequence(
+        new IntakeControl(false), 
+        new WaitCommand(0.5), 
+        new IntakeControl(true).withTimeout(2)),
+      new Shooter_tuner(12)
+    ));
     //turns brakes off
     operator.rightBumper().onTrue(Commands.runOnce(() -> ArmPneumaticsSubsystem.getInstance().controlBrake(false, true)));
 

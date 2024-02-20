@@ -196,19 +196,20 @@ public class SwerveModule {
    * @param isOpenLoop Op
    */
   private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop) {
+    double speed = desiredState.speedMetersPerSecond * desiredState.angle.minus(getAngle()).getCos();
+
     if (isOpenLoop) {
       // original implementation
       // double percentOutput = desiredState.speedMetersPerSecond / Config.Swerve.maxSpeed;
-      double speed = desiredState.speedMetersPerSecond * desiredState.angle.minus(getAngle()).getCos();
       double percentOutput = speed / Config.Swerve.maxSpeed;
       driveMotor.set(percentOutput);
     } else {
       errSpark("Drive set FF", 
         driveController.setReference(
-          desiredState.speedMetersPerSecond,
+          speed,
           ControlType.kVelocity,
           0,
-          feedforward.calculate(desiredState.speedMetersPerSecond)));
+          feedforward.calculate(speed)));
     }
   }
 
