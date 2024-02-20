@@ -9,6 +9,7 @@ import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -30,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.lib2706.AdvantageUtil;
 import frc.lib.lib2706.PoseBuffer;
+import frc.lib.lib2706.UpdateSimpleFeedforward;
 import frc.robot.Config;
 import frc.robot.Config.PhotonConfig;
 import frc.robot.Config.Swerve;
@@ -45,6 +47,7 @@ public class SwerveSubsystem extends SubsystemBase {
   private DoublePublisher pubCurrentPositionX = swerveTable.getDoubleTopic("Current positionX (m) ").publish(PubSubOption.periodic(0.02));
   private DoublePublisher pubCurrentPositionY = swerveTable.getDoubleTopic("Current positionY (m) ").publish(PubSubOption.periodic(0.02));
   private DoubleArrayPublisher pubCurrentPose = swerveTable.getDoubleArrayTopic("Pose ").publish(PubSubOption.periodic(0.02));
+  private UpdateSimpleFeedforward updateFeedforward;
   private DoublePublisher pubGyroRate = swerveTable.getDoubleTopic("Gyro Rate (degps)").publish(PubSubOption.periodic(0.02));
 
   private NetworkTable visionPidTable = swerveTable.getSubTable("VisionPid");
@@ -108,8 +111,8 @@ public class SwerveSubsystem extends SubsystemBase {
         this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
         this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
         new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-            new PIDConstants(0.0, 0.0, 0.0), // Translation PID constants kP = 5.0
-            new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
+            new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants kP = 5.0
+            new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants kP = 5.0
             3.5, // Max module speed, in m/s
             0.4, // Drive base radius in meters. Distance from robot center to furthest module.
             new ReplanningConfig() // Default path replanning config. See the API for the options here
@@ -145,6 +148,8 @@ public class SwerveSubsystem extends SubsystemBase {
     pidControlX.setIZone(0.3);
     pidControlY.setIZone(0.3);
     pidControlRotation.setIZone(Math.toRadians(3));
+
+    updateFeedforward = new UpdateSimpleFeedforward((ff) -> updateModuleFeedforward(ff), swerveTable, Config.Swerve.driveKS, Config.Swerve.driveKV, Config.Swerve.driveKA);
   }
 
   public void drive(
@@ -201,6 +206,12 @@ public class SwerveSubsystem extends SubsystemBase {
     return positions;
   }
 
+  public void updateModuleFeedforward(SimpleMotorFeedforward ff) {
+    for (SwerveModule mod : mSwerveMods) {
+      mod.setFeedforward(ff);
+    }
+  }
+
   private Rotation2d getYaw() {
     return (Config.Swerve.invertGyro)
         ? Rotation2d.fromDegrees(360 - gyro.getYaw())
@@ -247,6 +258,10 @@ public class SwerveSubsystem extends SubsystemBase {
     pidControlRotation.reset(getPose().getRotation().getRadians(), speeds.omegaRadiansPerSecond);
   }
 
+  public double calculateRotation(double currentRotation, double desiredRotation) {
+    return(pidControlRotation.calculate(currentRotation, desiredRotation));
+  }
+
   public void driveToPose(Pose2d pose) {
     //update the currentX and currentY
     
@@ -258,6 +273,10 @@ public class SwerveSubsystem extends SubsystemBase {
     desiredY = pose.getY();
     desiredRotation = pose.getRotation().getRadians();
 
+    double x = pidControlX.calculate(currentX, desiredX);
+    double y = pidControlY.calculate(currentY, desiredY);
+    double rot = calculateRotation(currentRotation, desiredRotation);
+    
     double xSpeed = 0;
     double ySpeed = 0;
     double rotSpeed = 0;
@@ -334,6 +353,7 @@ public class SwerveSubsystem extends SubsystemBase {
     
     pubGyroRate.accept(getAngularRate());
 
+    updateFeedforward.checkForUpdates();
     ChassisSpeeds speeds = getFieldRelativeSpeeds();
     pubMeasuredSpeedX.accept(speeds.vxMetersPerSecond);
     pubMeasuredSpeedY.accept(speeds.vyMetersPerSecond);
@@ -341,7 +361,8 @@ public class SwerveSubsystem extends SubsystemBase {
   }
   
   public void driveRobotRelative(ChassisSpeeds robotRelativeSpeeds) {
-    ChassisSpeeds targetSpeeds = ChassisSpeeds.discretize(robotRelativeSpeeds, 0.02);
+    // ChassisSpeeds targetSpeeds = ChassisSpeeds.discretize(robotRelativeSpeeds, 0.02);
+    ChassisSpeeds targetSpeeds = robotRelativeSpeeds;
 
     SwerveModuleState[] targetStates = Config.Swerve.swerveKinematics.toSwerveModuleStates(targetSpeeds);
     setModuleStates(targetStates, false);
@@ -397,4 +418,14 @@ public class SwerveSubsystem extends SubsystemBase {
       module.resetToAbsolute();
     }
   }
+
+  public static Rotation2d rotateForAlliance(Rotation2d rot){
+     var alliance = DriverStation.getAlliance();
+            if (alliance.isPresent() && alliance.get()==DriverStation.Alliance.Blue) {
+                return rot;
+            }
+            return rot.rotateBy(new Rotation2d(Math.PI));
+  }
+
+  
 }

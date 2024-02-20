@@ -46,10 +46,10 @@ public final class Config {
    */
   private static int robotId = -1;
   public static class CANID {
-    public static int PIGEON = robotSpecific(30, 27, 27, 27, 30);
+    public static int PIGEON = robotSpecific(30, -1, 27, 30);
 
-    // Arm Subsystem
-    public static final int ARM_SPARK_CAN_ID = robotSpecific(4,0,0,0,0,18,18);
+    public static final int ARM_SPARK_CAN_ID = robotSpecific(5,-1,0,5);
+    
     //PCM Can ID 
     public static final int CTRE_PCM_CAN_ID = 1;
   }
@@ -115,7 +115,10 @@ public final class Config {
 
    /** ADD CONSTANTS BELOW THIS LINE */
 
-  public static final Boolean swerveTuning = true;
+
+  public static final Boolean swerveTuning = true; //tune swerve? Turn this to false for competition
+
+  public static int ANALOG_SELECTOR_PORT = robotSpecific(0, -1, -1, 0);
 
   public static final class PhotonConfig{
     public static final double CAMERA_HEIGHT = 0.29;
@@ -203,13 +206,13 @@ public final class Config {
     public static final double voltageComp = 11.0;
 
     /* Swerve Current Limiting, Changed */
-    public static final int angleContinuousCurrentLimit = 20;
+    public static final int angleContinuousCurrentLimit = 30; //20
     public static final int driveContinuousCurrentLimit = 50;
 
     /* Angle Motor PID Values, Changed */
-    public static final double angleKP = 1.5;
+    public static final double angleKP = 2.0; //1.0
     public static final double angleKI = 0.0;
-    public static final double angleKD = 0.0;
+    public static final double angleKD = 0.1; //0.0
     public static final double angleKFF = 0.0;
 
     /* Drive Motor PID Values, Changed*/
@@ -220,7 +223,7 @@ public final class Config {
 
     /* Drive Motor Characterization Values Changed*/
     public static final double driveKS = 0.667;
-    public static final double driveKV = 2.9;
+    public static final double driveKV = 5.0;
     public static final double driveKA = 0.5;
 
     /* Drive Motor Conversion Factors */
@@ -345,10 +348,10 @@ public final class Config {
     public static final boolean SOFT_LIMIT_ENABLE = true;
     
     //PID constants
-    public static final double arm_kP = 1.4;
-    public static final double arm_kI = 0.0003;
-    public static final double arm_kD = 0.9;
-    public static final double arm_kIz = 0.3;
+    public static final double arm_kP = robotSpecific(1.4, 0.0, 0.0, 1.4);
+    public static final double arm_kI = robotSpecific(0.0003, 0.0, 0.0, 0.0003);
+    public static final double arm_kD = robotSpecific(0.9, 0.0, 0.0, 0.9);
+    public static final double arm_kIz = robotSpecific(0.3, 0.0, 0.0, 0.3);
     public static final double arm_kFF = 0;
     public static final double min_output = -1;
     public static final double max_output = 1;
@@ -379,7 +382,7 @@ public final class Config {
     public static final double MAX_VEL = Math.PI * 0.5;
     public static final double MAX_ACCEL = Math.PI * 0.5;
 
-    public static final double MOMENT_TO_VOLTAGE = 0.000005;    
+    public static final double MOMENT_TO_VOLTAGE = 0.000005;
 }
 
     
@@ -394,24 +397,24 @@ public final class Config {
     public static class DIFF {
 
            // Differential Drive CAN IDs
-        public static int DIFF_LEADER_LEFT = robotSpecific(-01, 6, 2, 5, -01, 35);
-        public static int DIFF_LEADER_RIGHT = robotSpecific(-01, 3, 1, 3, -01, 33);
-        public static int DIFF_FOLLOWER_LEFT = robotSpecific(-01, 5, -1, 7, -01, 37);
-        public static int DIFF_FOLLOWER_RIGHT = robotSpecific(-01, 2, -1, 9, -01, 39);
+        public static int DIFF_LEADER_LEFT = robotSpecific( -01, 0, 2, -01);
+        public static int DIFF_LEADER_RIGHT = robotSpecific( -01, 0, 1, -01);
+        public static int DIFF_FOLLOWER_LEFT = robotSpecific( -01, 0, -1, -01);
+        public static int DIFF_FOLLOWER_RIGHT = robotSpecific( -01, 0, -1, -01);
 
-        public static boolean ISNEOS = robotSpecific(true, false, false, false);
-        public static boolean HAS_FOLLOWERS = robotSpecific(true, true, false, true, true);
-        public static boolean LEFT_FOLLOWER_ISVICTOR = robotSpecific(false, true, false, true);
-        public static boolean RIGHT_FOLLOWER_ISVICTOR = robotSpecific(false, true, false, true);
+        public static boolean ISNEOS = robotSpecific(true, false, false, true);
+        public static boolean HAS_FOLLOWERS = robotSpecific(true, false, false, true);
+        public static boolean LEFT_FOLLOWER_ISVICTOR = robotSpecific(false, false, false, false);
+        public static boolean RIGHT_FOLLOWER_ISVICTOR = robotSpecific(false, false, false, false);
     
         // Invert motors to consider forward as forward (same practice for all objects)
-        public static boolean LEADER_LEFT_INVERTED = robotSpecific(false, false, false, false, false, false);
-        public static boolean LEADER_RIGHT_INVERTED = robotSpecific(false, false, true, true, false, true);
-        public static boolean FOLLOWER_LEFT_INVERTED = robotSpecific(false, false, false, false, false, false);
-        public static boolean FOLLOWER_RIGHT_INVERTED = robotSpecific(false, false, false, true, false, false);
+        public static boolean LEADER_LEFT_INVERTED = robotSpecific(false, false, false, false);
+        public static boolean LEADER_RIGHT_INVERTED = robotSpecific(false, false, false, false);
+        public static boolean FOLLOWER_LEFT_INVERTED = robotSpecific(false, false, false, false);
+        public static boolean FOLLOWER_RIGHT_INVERTED = robotSpecific(false, false, false, false);
     
-        public static boolean LEFT_SENSORPHASE = robotSpecific(false, true, true, true);
-        public static boolean RIGHT_SENSORPHASE = robotSpecific(false, false, true, true);
+        public static boolean LEFT_SENSORPHASE = robotSpecific(false, false, true, false);
+        public static boolean RIGHT_SENSORPHASE = robotSpecific(false, false, true, false);
     
         // Current limiter Constants
         public static boolean TALON_CURRENT_LIMIT = true;   //Enable or disable motor current limiting.
