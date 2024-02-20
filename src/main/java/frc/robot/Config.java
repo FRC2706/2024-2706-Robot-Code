@@ -141,7 +141,7 @@ public final class Config {
       RIGHT_SPEAKER_RED(4, new Translation2d(-0.937,0.937), new Translation2d(-0.637,0.637), Rotation2d.fromDegrees(-60)),
       MIDDLE_SPEAKER_RED(4, new Translation2d(-1.3,0), new Translation2d(-0.95,0), Rotation2d.fromDegrees(0)),
       FAR_SPEAKER_RED(4, new Translation2d(-2.7,0), new Translation2d(-2,0), Rotation2d.fromDegrees(0)),
-      AMP_RED(5, new Translation2d(0,-30), new Translation2d(0,0), Rotation2d.fromDegrees(90)),
+      AMP_RED(5, new Translation2d(0,-0.70), new Translation2d(0,-0.7), Rotation2d.fromDegrees(90)),
       AMP_BLUE(6, new Translation2d(0,-30), new Translation2d(0,0),  Rotation2d.fromDegrees(90)),
       LEFT_SPEAKER_BLUE(7, new Translation2d(0.937,0.937), new Translation2d(0.637,0.637), Rotation2d.fromDegrees(-120)),
       RIGHT_SPEAKER_BLUE(7, new Translation2d(0.937,-0.937), new Translation2d(0.637,-0.637), Rotation2d.fromDegrees(120)),
