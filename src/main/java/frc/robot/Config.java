@@ -120,8 +120,6 @@ public final class Config {
 
   public static int ANALOG_SELECTOR_PORT = robotSpecific(0, -1, -1, 0);
 
-  public static final Boolean swerveTuning = true;
-
   public static final class PhotonConfig{
     public static final double CAMERA_HEIGHT = 0.29;
     public static final Rotation2d CAMERA_PITCH = Rotation2d.fromDegrees(26);
