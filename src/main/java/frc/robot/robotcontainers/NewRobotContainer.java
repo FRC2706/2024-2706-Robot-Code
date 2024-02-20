@@ -112,12 +112,6 @@ public class NewRobotContainer extends RobotContainer {
     driver.b().onTrue(SwerveSubsystem.getInstance().setOdometryCommand(new Pose2d(3,3,new Rotation2d(0))));
     driver.a().whileTrue(PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.FAR_SPEAKER_RED)).onFalse(Commands.runOnce(()->{},SwerveSubsystem.getInstance()));
 
-    driver.leftBumper().whileTrue(new TeleopSwerve(
-        s_Swerve,
-        driver,
-        TeleopSpeeds.SLOW
-    ));
-
     /* Operator Controls */
     operator.a().whileTrue(new MakeIntakeMotorSpin(0.6, 0));
     operator.x().whileTrue(new Shooter_tuner(12));
