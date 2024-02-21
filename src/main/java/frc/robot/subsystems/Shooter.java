@@ -74,6 +74,10 @@ public class Shooter extends SubsystemBase {
         m_motor.setVoltage(setVolt);
     }
 
+    public void stop(){
+        setVoltage(0);
+    }
+
     public void setBrake(boolean enableBreak){
         m_motor.setIdleMode(enableBreak ? IdleMode.kBrake: IdleMode.kCoast);
     }
