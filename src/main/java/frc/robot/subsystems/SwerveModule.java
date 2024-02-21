@@ -61,7 +61,6 @@ public class SwerveModule {
   private SimpleMotorFeedforward feedforward =
       new SimpleMotorFeedforward(
         Config.Swerve.driveKS, Config.Swerve.driveKV, Config.Swerve.driveKA);
-  private UpdateSimpleFeedforward updateFeedforward;
 
   public SwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants, String ModuleName) {
     this.moduleNumber = moduleNumber;
@@ -72,7 +71,6 @@ public class SwerveModule {
     String tableName = "SwerveChassis/SwerveModule" + ModuleName;
     swerveModuleTable = NetworkTableInstance.getDefault().getTable(tableName);
     swerveTable = NetworkTableInstance.getDefault().getTable("SwerveChassis");
-    updateFeedforward = new UpdateSimpleFeedforward((ff) -> feedforward = ff, swerveModuleTable, Config.Swerve.driveKS, Config.Swerve.driveKV, Config.Swerve.driveKA);
   
     /* Angle Encoder Config */
     angleEncoder = new CANCoder(moduleConstants.cancoderID);
@@ -198,19 +196,20 @@ public class SwerveModule {
    * @param isOpenLoop Op
    */
   private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop) {
+    double speed = desiredState.speedMetersPerSecond * desiredState.angle.minus(getAngle()).getCos();
+
     if (isOpenLoop) {
       // original implementation
       // double percentOutput = desiredState.speedMetersPerSecond / Config.Swerve.maxSpeed;
-      double speed = desiredState.speedMetersPerSecond * desiredState.angle.minus(getAngle()).getCos();
       double percentOutput = speed / Config.Swerve.maxSpeed;
       driveMotor.set(percentOutput);
     } else {
       errSpark("Drive set FF", 
         driveController.setReference(
-          desiredState.speedMetersPerSecond,
+          speed,
           ControlType.kVelocity,
           0,
-          feedforward.calculate(desiredState.speedMetersPerSecond)));
+          feedforward.calculate(speed)));
     }
   }
 
@@ -258,11 +257,15 @@ public class SwerveModule {
     return new SwerveModulePosition(driveEncoder.getPosition(), getAngle());
   }
 
+  public void setFeedforward(SimpleMotorFeedforward newFeedforward) {
+    feedforward = newFeedforward;
+  }
+
   public void periodic() {
     //update network tables
     currentSpeedEntry.accept(driveEncoder.getVelocity());
     currentAngleEntry.accept(getAngle().getRadians());
-    updateFeedforward.checkForUpdates();
+    
     canCoderAngleEntry.accept(getCanCoder().getDegrees());
 
     if (Config.swerveTuning) {  

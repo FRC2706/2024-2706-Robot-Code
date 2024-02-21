@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Compressor;
@@ -57,16 +56,17 @@ public class Robot extends TimedRobot {
 
     switch (Config.getRobotId()) {
       case 0:
-        m_robotContainer = new NewRobotContainer(); break;
-      
+        m_robotContainer = new NewRobotContainer(); break; //competition
+        
       case 1:
-        m_robotContainer = new ClutchContainer(); break;
+        m_robotContainer = new ClutchContainer(); break; //simulation
 
       case 2:
-        m_robotContainer = new BeetleContainer(); break;
+        m_robotContainer = new BeetleContainer(); break; //beetle
 
       case 3:
-        m_robotContainer = new CosmobotContainer(); break;
+        m_robotContainer = new NewRobotContainer(); break; //poseidon
+        
 
       default:
         m_robotContainer = new NewRobotContainer();
