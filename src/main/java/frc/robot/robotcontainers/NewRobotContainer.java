@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.lib.lib2706.TunableNumber;
 import frc.robot.Config.Swerve.TeleopSpeeds;
 import frc.robot.Robot;
 import frc.robot.commands.Shooter_tuner;
@@ -34,6 +35,10 @@ public class NewRobotContainer extends RobotContainer {
 
   private final SwerveSubsystem s_Swerve = SwerveSubsystem.getInstance();
   private final IntakeSubsystem intake = IntakeSubsystem.getInstance();
+
+  private TunableNumber shooterTargetRPM = new TunableNumber("Shooter/Target RPM", 0);
+  private TunableNumber shooterDesiredVoltage = new TunableNumber("Shooter/desired Voltage", 0);
+    
 
   /* Create Subsystems in a specific order */
 
@@ -72,8 +77,8 @@ public class NewRobotContainer extends RobotContainer {
     ));
 
     /* --------------- Operator Controls -------------------- */
-    operator.y() //Manually turn on the shooter
-      .whileTrue(new Shooter_tuner(12));
+    operator.y() //Manually turn on the shooter and get voltage from DS
+      .whileTrue(new Shooter_tuner(shooterDesiredVoltage.get()));
 
     operator.a() //Intake the Note
       .whileTrue(Commands.runOnce(()-> intake.setMode(INTAKE)))

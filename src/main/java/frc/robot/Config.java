@@ -374,8 +374,9 @@ public final class Config {
   public static Double DRIVER_JOYSTICK_DEADBAND = 0.1; // TODO: Investigate if this can be better tuned
 
   public static final boolean tuningMode = true;
+  
   public static final class ShooterConstants{
-    public static final byte FLY_WHEEL_ID = 32;
+    public static final byte MOTOR_ID = 32;
     public static final double kP = 0.0,
                                kI = 0.0,
                                kD = 0.0,

@@ -62,7 +62,7 @@ public class IntakeSubsystem extends SubsystemBase{
         m_intake.setInverted(true);
         m_intake.setSmartCurrentLimit(70);
         m_intake.setIdleMode(IdleMode.kBrake);
-        m_intake.enableVoltageCompensation(6);//Check this out
+        m_intake.enableVoltageCompensation(7);
 
         sensor7 = new DigitalInput(7);
         sensor8 = new DigitalInput(8);
@@ -134,8 +134,8 @@ public class IntakeSubsystem extends SubsystemBase{
         sensor9Result = sensor9Debouncer.calculate(!sensor9.get());
         
         intakeStates.updateSensors(
-            ()->{return sensor7Result;}, //Front sensor
-            ()->{return sensor9Result;}, //Back sensor
+            ()->{return sensor7Result;}, //Back sensor
+            ()->{return sensor9Result;}, //Front sensor
             ()->{return sensor8Result;});//Center sensor (Could be removable)
         intakeStates.updateStates();
 

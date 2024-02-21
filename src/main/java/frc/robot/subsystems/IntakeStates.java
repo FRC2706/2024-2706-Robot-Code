@@ -122,7 +122,7 @@ public class IntakeStates {
                 }
 
                 if(isCenterActive == null){
-                    if(isForntActive)currentState = NOTE_IN_POS_IDLE;//This state would be affected if suddenly stopped
+                    if(isForntActive)currentState = NOTE_ENTERING_IDLE;//This state would be affected if suddenly stopped
                 }else if(isCenterActive){
                     currentState = NOTE_IN_POS_IDLE;
                 }else if(isForntActive){

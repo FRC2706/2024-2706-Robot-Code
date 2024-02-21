@@ -11,6 +11,8 @@ import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.lib2706.TunableNumber;
 import frc.robot.Config;
@@ -24,7 +26,7 @@ public class Shooter extends SubsystemBase {
     private TunableNumber kI = new TunableNumber("Shooter/kI", Config.ShooterConstants.kI);
     private TunableNumber kD = new TunableNumber("Shooter/kD", Config.ShooterConstants.kD);
     private TunableNumber kFF = new TunableNumber("Shooter/kFF", Config.ShooterConstants.kFF);
- 
+    
     private DoublePublisher velocityPub;
 
     private static Shooter shooter;
@@ -34,22 +36,21 @@ public class Shooter extends SubsystemBase {
         return shooter;
     }
 
-    // add Tunable Number later for ajusting Rpm on the flywheels
     public Shooter() {
         System.out.println("[Init] Creating Shooter");
-        m_motor = new CANSparkMax(Config.ShooterConstants.FLY_WHEEL_ID, MotorType.kBrushless);
+        m_motor = new CANSparkMax(Config.ShooterConstants.MOTOR_ID, MotorType.kBrushless);
         m_motor.restoreFactoryDefaults();
 
-        m_motor.setCANTimeout(500); //Units in miliseconds
+        m_motor.setCANTimeout(500);//Units in miliseconds
         m_motor.setIdleMode(IdleMode.kCoast);
         m_motor.setInverted(false);
 
         m_pidController = m_motor.getPIDController();
-        m_encoder = m_motor.getEncoder();
-        m_encoder.setAverageDepth(2);//check if 1 would work better
+        m_encoder = m_motor.getEncoder();   
+        m_encoder.setAverageDepth(1);//check if 2 would work better
 
         //Voltage compensation
-        m_motor.enableVoltageCompensation(12); 
+        m_motor.enableVoltageCompensation(12); //adjust on final robot
         m_motor.setSmartCurrentLimit(40);  
         setBrake(false);
 
