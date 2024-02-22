@@ -219,18 +219,17 @@ public final class Config {
 
     /* Drive Motor PID Values, Changed*/
     public static final double driveKP = 0.2; //0.2
-    public static final double driveKI = 0.0;
-    public static final double driveKD = 0.1;
+    public static final double driveKI = 0.0; 
+    public static final double driveKD = 0.0;
     public static final double driveKFF = 0.0;
 
-    /* Drive Motor Characterization Values Changed*/
+    /* Drive Motor Characterization Values Changed */
     public static final double driveKS = 0.667;
     public static final double driveKV = 5.0;
     public static final double driveKA = 0.5;
 
     /* Drive Motor Conversion Factors */
-    public static final double driveConversionPositionFactor =
-        (wheelDiameter * Math.PI) / driveGearRatio;
+    public static final double driveConversionPositionFactor = (wheelDiameter * Math.PI) / driveGearRatio;
     public static final double driveConversionVelocityFactor = driveConversionPositionFactor / 60.0;
     public static final double angleConversionFactor = 2 * Math.PI / angleGearRatio;
 
@@ -238,10 +237,10 @@ public final class Config {
     public static final double translationAllowableError = 0.01;
     public static final double rotationAllowableError = Math.toRadians(0.7);
 
-    /* Swerve Profiling Values Changed*/
+    /* Swerve Profiling Values Changed */
     public static enum TeleopSpeeds {
-      SLOW(0.5, 0.5*Math.PI),
-      MAX(3.0, 4.0*Math.PI);
+      SLOW(0.5, 0.5 * Math.PI),
+      MAX(3.0, 4.0 * Math.PI);
 
       public final double translationalSpeed;
       public final double angularSpeed;
@@ -253,7 +252,7 @@ public final class Config {
     }
 
     public static final double maxSpeed = 3.0; // meters per second
-    public static final double maxAngularVelocity = Math.PI*3.0;
+    public static final double maxAngularVelocity = Math.PI * 3.0;
 
     /* Neutral Modes */
     public static final IdleMode angleNeutralMode = IdleMode.kBrake;
@@ -267,14 +266,14 @@ public final class Config {
     public static final boolean canCoderInvert = false;
 
     /* Module Specific Constants */
-    /* Front Left Module - Module 0 Changed */
+    /* Front Left Module - Module 0 Changed*/
     public static final class Mod0 {
       public static final int driveMotorID = 24;
       public static final int angleMotorID = 23;
       public static final int canCoderID = 9;
       public static final Rotation2d angleOffset = Rotation2d.fromDegrees(270.73);
-      public static final SwerveModuleConstants constants =
-          new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
+      public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
+          canCoderID, angleOffset);
     }
 
     /* Front Right Module - Module 1 Changed*/
@@ -283,8 +282,8 @@ public final class Config {
       public static final int angleMotorID = 25;
       public static final int canCoderID = 6;
       public static final Rotation2d angleOffset = Rotation2d.fromDegrees(159.3);
-      public static final SwerveModuleConstants constants =
-          new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
+      public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
+          canCoderID, angleOffset);
     }
 
     /* Back Left Module - Module 2 Changed*/
@@ -293,8 +292,8 @@ public final class Config {
       public static final int angleMotorID = 26;
       public static final int canCoderID = 8;
       public static final Rotation2d angleOffset = Rotation2d.fromDegrees(194.9);
-      public static final SwerveModuleConstants constants =
-          new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
+      public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
+          canCoderID, angleOffset);
     }
 
     /* Back Right Module - Module 3 Changed*/
@@ -303,8 +302,8 @@ public final class Config {
       public static final int angleMotorID = 22;
       public static final int canCoderID = 7;
       public static final Rotation2d angleOffset = Rotation2d.fromDegrees(8.5);
-      public static final SwerveModuleConstants constants =
-          new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
+      public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
+          canCoderID, angleOffset);
     }
   }
 
@@ -342,12 +341,13 @@ public final class Config {
     public static final int CURRENT_LIMIT = 60;
 
 
+
     public static final double MAX_ARM_ANGLE_DEG = 135;
     public static final double MIN_ARM_ANGLE_DEG = 40;
 
     //soft limit constant for bottom arm
-    public static final float arm_forward_limit = (float)Math.toRadians(MAX_ARM_ANGLE_DEG);
-    public static final float arm_reverse_limit = (float)Math.toRadians(MIN_ARM_ANGLE_DEG);
+    public static final float arm_forward_limit = (float) Math.toRadians(MAX_ARM_ANGLE_DEG);
+    public static final float arm_reverse_limit = (float) Math.toRadians(MIN_ARM_ANGLE_DEG);
     public static final boolean SOFT_LIMIT_ENABLE = true;
     
     //PID constants
@@ -365,15 +365,14 @@ public final class Config {
 
     public static final double LENGTH_ARM_TO_COG = 14.56;
 
-    //arm offsets
-    //public static final double bottom_arm_offset = 307.800000;
-    //public static final double top_arm_offset = 0;
+    // arm offsets
+    // public static final double bottom_arm_offset = 307.800000;
+    // public static final double top_arm_offset = 0;
 
-    //syncing encoders
-    public static double ENCODER_SYNCING_TOLERANCE = 0.01; //radians
+    // syncing encoders
+    public static double ENCODER_SYNCING_TOLERANCE = 0.01; // radians
 
-    
-    public static final double ARM_ENCODER_GEAR_RATIO =  1;
+    public static final double ARM_ENCODER_GEAR_RATIO = 1;
 
     //arm position unit: radians
     public static final double armPositionConversionFactor = 2 * Math.PI / ARM_ENCODER_GEAR_RATIO;
