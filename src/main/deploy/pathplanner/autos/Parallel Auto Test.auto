@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.37670229186612203,
-      "y": 2.7715146028582662
+      "x": 2.0,
+      "y": 7.0
     },
     "rotation": 0
   },
@@ -18,32 +18,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Pick Up Note"
+                  "pathName": "forward_S_curve"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeAndArm"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Place Note"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "OutakeRIng"
+                  "name": "BlingGreen"
                 }
               }
             ]

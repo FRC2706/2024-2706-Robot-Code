@@ -1,19 +1,17 @@
 package frc.robot.commands.auto;
 
-import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.BlingCommand;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class AutoRoutines extends SubsystemBase {
@@ -51,6 +49,9 @@ public class AutoRoutines extends SubsystemBase {
             new WaitCommand(1), // Move arm to intake setpoint
             new WaitCommand(1) // Intake game piece
         ));
+
+        NamedCommands.registerCommand("BlingYellow", new BlingCommand(BlingCommand.BlingColour.YELLOW));
+        NamedCommands.registerCommand("BlingRed", new BlingCommand(BlingCommand.BlingColour.RED));
     }
 
     

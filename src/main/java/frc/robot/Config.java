@@ -184,7 +184,7 @@ public final class Config {
     /* Drivetrain Constants Changed*/
     public static final double trackWidth = Units.inchesToMeters(25.787);
     public static final double wheelBase = Units.inchesToMeters(20.472);
-    public static final double wheelDiameter = Units.inchesToMeters(3.884);
+    public static final double wheelDiameter = Units.inchesToMeters(3.884); //3.884
     public static final double wheelCircumference = wheelDiameter * Math.PI;
 
     public static final double openLoopRamp = 0.25;

@@ -148,8 +148,10 @@ public class NewRobotContainer extends RobotContainer {
     // int autoId = m_autoSelector.getAutoId();
     // System.out.println("*********************** Auto Id"+autoId);
     //  return new AutoRoutines().getAutonomousCommand(autoId);
-    int autoRoutineID = (int)entryAutoRoutine.get();
-    System.out.println(autoRoutineID);
-    return new AutoRoutines().getAutonomousCommand(autoRoutineID);
+
+    // int autoRoutineID = (int)entryAutoRoutine.get();
+    // System.out.println(autoRoutineID);
+    // return new AutoRoutines().getAutonomousCommand(autoRoutineID);
+    return new AutoRoutines().getAutonomousCommand(4);
   }
 }
