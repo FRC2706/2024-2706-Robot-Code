@@ -148,6 +148,15 @@ public class NewRobotContainer extends RobotContainer {
           ,new Shooter_tuner(12)
       ));
 
+      /**
+       * operator.start().whileTrue(Commands.deadline(
+      Commands.sequence(
+        new IntakeControl(false), 
+        new WaitCommand(0.5), 
+        new IntakeControl(true).withTimeout(2)),
+      new Shooter_tuner(12)
+    ));
+       */
 
     //turns brakes off
     operator.rightBumper().onTrue(Commands.runOnce(() -> ArmPneumaticsSubsystem.getInstance().controlBrake(false, true)));
