@@ -87,7 +87,7 @@ public class NewRobotContainer extends RobotContainer {
     //turns brakes on
     operator.rightTrigger().onTrue(Commands.runOnce(() -> ArmPneumaticsSubsystem.getInstance().controlBrake(true, true)));
   }
-  x
+  
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -95,6 +95,6 @@ public class NewRobotContainer extends RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new AutoRoutines().getAutonomousCommand(7);
+    return new AutoRoutines().getAutonomousCommand(6);
   }
 }

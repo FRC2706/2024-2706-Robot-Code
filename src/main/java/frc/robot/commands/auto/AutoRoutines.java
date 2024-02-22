@@ -19,6 +19,7 @@ public class AutoRoutines extends SubsystemBase {
     PathPlannerPath path1 = PathPlannerPath.fromPathFile("4 note");
     PathPlannerPath path2 = PathPlannerPath.fromPathFile("Diagonal45Degrees");
     PathPlannerPath BenPath = PathPlannerPath.fromPathFile("ben ");
+    PathPlannerPath SpeakerPath = PathPlannerPath.fromPathFile("Speaker Path");
     PathPlannerAuto SequentialAutoTest = new PathPlannerAuto("Sequential Auto Test");
     PathPlannerAuto ParallelAutoTest = new PathPlannerAuto("Parallel Auto Test");
     PathPlannerAuto SequentialAndParallelAutoTest = new PathPlannerAuto("Sequential and Parallel Auto Test");
@@ -89,6 +90,11 @@ public class AutoRoutines extends SubsystemBase {
                 return Commands.sequence(
                     SwerveSubsystem.getInstance().setOdometryCommand(BenPath.getPreviewStartingHolonomicPose()),
                     AutoBuilder.followPath(BenPath)
+                );
+            case 8:
+                return Commands.sequence(
+                    SwerveSubsystem.getInstance().setOdometryCommand(SpeakerPath.getPreviewStartingHolonomicPose()),
+                    AutoBuilder.followPath(SpeakerPath)
                 );
         }
     }
