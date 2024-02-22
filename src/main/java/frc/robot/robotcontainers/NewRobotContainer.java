@@ -11,6 +11,13 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.geometry.Pose2d;
 
+
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
+
+import edu.wpi.first.math.geometry.Pose2d;
+
+import static frc.robot.subsystems.IntakeStates.Modes.*;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.IntegerEntry;
 import edu.wpi.first.networktables.NetworkTable;
@@ -25,6 +32,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Config.PhotonConfig.PhotonPositions;
 import frc.robot.Config.Swerve.TeleopSpeeds;
+import frc.lib.lib2706.TunableNumber;
 import frc.robot.Robot;
 import frc.robot.commands.ArmFFTestCommand;
 import frc.robot.commands.IntakeControl;
@@ -35,6 +43,7 @@ import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.auto.AutoRoutines;
 import frc.robot.commands.auto.AutoSelector;
 import frc.robot.subsystems.ArmPneumaticsSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
@@ -52,8 +61,11 @@ public class NewRobotContainer extends RobotContainer {
   private final CommandXboxController operator = new CommandXboxController(1);
 
   private final SwerveSubsystem s_Swerve = SwerveSubsystem.getInstance();
-  //private final SwerveSubsystem s_Swerve = SwerveSubsystem.getInstance();
+  private final IntakeSubsystem intake = IntakeSubsystem.getInstance();
 
+  private TunableNumber shooterTargetRPM = new TunableNumber("Shooter/Target RPM", 0);
+  private TunableNumber shooterDesiredVoltage = new TunableNumber("Shooter/desired Voltage", 0);
+    
   String tableName = "SwerveChassis";
   private NetworkTable swerveTable = NetworkTableInstance.getDefault().getTable(tableName);
   private IntegerEntry entryAutoRoutine;
@@ -76,6 +88,8 @@ public class NewRobotContainer extends RobotContainer {
         )
     );
 
+    intake.setDefaultCommand(intake.autoIntake());
+
     entryAutoRoutine = swerveTable.getIntegerTopic("Auto Selector ID").getEntry(0);
     entryAutoRoutine.setDefault(0);
 
@@ -90,9 +104,7 @@ public class NewRobotContainer extends RobotContainer {
    * created via the {@link CommandXboxController} or other ways.
    */
   private void configureButtonBindings() { 
-    
-    
-    /* Driver Controls */  
+    /* --------------- Driver Controls -------------------- */
     driver.start().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d(0)));
   
 
@@ -112,21 +124,40 @@ public class NewRobotContainer extends RobotContainer {
     driver.b().onTrue(SwerveSubsystem.getInstance().setOdometryCommand(new Pose2d(3,3,new Rotation2d(0))));
     driver.a().whileTrue(PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.FAR_SPEAKER_RED)).onFalse(Commands.runOnce(()->{},SwerveSubsystem.getInstance()));
 
-    /* Operator Controls */
-    operator.a().whileTrue(new MakeIntakeMotorSpin(0.6, 0));
-    operator.x().whileTrue(new Shooter_tuner(12));
+    /* --------------- Operator Controls -------------------- */
+    operator.y() //Manually turn on the shooter and get voltage from DS
+      .whileTrue(new Shooter_tuner(shooterDesiredVoltage.get()));
 
-    //operator.y().whileTrue (new ArmFFTestCommand(operator, 3, true));
-  
-    operator.b().whileTrue(new IntakeControl(true));
-    operator.y().whileTrue(new IntakeControl(false));
-    operator.start().whileTrue(Commands.deadline(
+    operator.a() //Intake the Note
+      .whileTrue(Commands.runOnce(()-> intake.setMode(INTAKE)))
+      .whileFalse(Commands.runOnce(()->intake.setMode(STOP)));    
+
+    operator.b() //Release the Note from the back
+      .whileTrue(Commands.runOnce(()-> intake.setMode(RELEASE)))
+      .whileFalse(Commands.runOnce(()->intake.setMode(STOP)));    
+
+    operator.x() //Drives the note into the shooter
+      .whileTrue(Commands.runOnce(()-> intake.setMode(SHOOT)))
+      .whileFalse(Commands.runOnce(()->intake.setMode(STOP)));    
+
+    operator.start() //Shoots the Note automatically 
+      .onTrue(Commands.deadline(
+        Commands.sequence(
+          Commands.waitSeconds(2), 
+          intake.shootNote())
+          ,new Shooter_tuner(12)
+      ));
+
+      /**
+       * operator.start().whileTrue(Commands.deadline(
       Commands.sequence(
         new IntakeControl(false), 
         new WaitCommand(0.5), 
         new IntakeControl(true).withTimeout(2)),
       new Shooter_tuner(12)
     ));
+       */
+
     //turns brakes off
     operator.rightBumper().onTrue(Commands.runOnce(() -> ArmPneumaticsSubsystem.getInstance().controlBrake(false, true)));
 
