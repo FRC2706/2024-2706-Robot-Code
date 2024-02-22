@@ -5,24 +5,25 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.MakeIntakeMotorSpin;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class AutoRoutines extends SubsystemBase {
-    PathPlannerAuto four_note = new PathPlannerAuto("4note");
+    PathPlannerPath path1 = PathPlannerPath.fromPathFile("4 note");
+    PathPlannerPath path2 = PathPlannerPath.fromPathFile("Diagonal45Degrees");
+    PathPlannerPath BenPath = PathPlannerPath.fromPathFile("ben ");
     PathPlannerAuto SequentialAutoTest = new PathPlannerAuto("Sequential Auto Test");
     PathPlannerAuto ParallelAutoTest = new PathPlannerAuto("Parallel Auto Test");
     PathPlannerAuto SequentialAndParallelAutoTest = new PathPlannerAuto("Sequential and Parallel Auto Test");
-    PathPlannerAuto tuneX = new PathPlannerAuto("tuneAutoX");
-    PathPlannerAuto tuneY = new PathPlannerAuto("tuneAutoY");
+    //PathPlannerAuto tune = new PathPlannerAuto("tuningAuto");
+    PathPlannerAuto testIntakeMotor = new PathPlannerAuto("MakeIntakeMotorSpin Auto Test");
     public AutoRoutines() {
         
     }
@@ -51,6 +52,11 @@ public class AutoRoutines extends SubsystemBase {
             new WaitCommand(1), // Move arm to intake setpoint
             new WaitCommand(1) // Intake game piece
         ));
+
+        NamedCommands.registerCommand("MakeIntakeMotorSpin", new SequentialCommandGroup(
+            new MakeIntakeMotorSpin(3.0,2), // Move arm to intake setpoint
+            new WaitCommand(1)
+        ));
     }
 
     
@@ -59,24 +65,31 @@ public class AutoRoutines extends SubsystemBase {
         switch (selectAuto) {
             case 0:
             default: 
-                return new InstantCommand();
-            case 1:
-                return new SequentialCommandGroup(
-                    SwerveSubsystem.getInstance().setOdometryCommand(new Pose2d(1,1, new Rotation2d(0))),
-                    SwerveSubsystem.getInstance().getDriveToPoseCommand(new Pose2d(3, 1, Rotation2d.fromDegrees(0)))
+                return null;
+            case 1: 
+                if (path1 == null) {
+                    System.out.println("path1 path is null");
+                    return null;
+                }
+                return Commands.sequence(
+                    SwerveSubsystem.getInstance().setOdometryCommand(path1.getPreviewStartingHolonomicPose()),
+                    AutoBuilder.followPath(path1)
                 );
             case 2:
-                return tuneX;
+                return new PathPlannerAuto("testAuto");
             case 3:
-                return tuneY;
-            case 4:
                 return SequentialAutoTest;
-            case 5:
+            case 4:
                 return ParallelAutoTest;
-            case 6:
+            case 5:
                 return SequentialAndParallelAutoTest;
+            case 6:
+                return testIntakeMotor;
             case 7:
-                return four_note;
+                return Commands.sequence(
+                    SwerveSubsystem.getInstance().setOdometryCommand(BenPath.getPreviewStartingHolonomicPose()),
+                    AutoBuilder.followPath(BenPath)
+                );
         }
     }
 }
