@@ -17,7 +17,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.geometry.Pose2d;
 
-import static frc.robot.subsystems.IntakeStates.Modes.*;
+import static frc.robot.subsystems.IntakeStatesVoltage.Modes.*;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.IntegerEntry;
 import edu.wpi.first.networktables.NetworkTable;
@@ -126,7 +126,7 @@ public class NewRobotContainer extends RobotContainer {
 
     /* --------------- Operator Controls -------------------- */
     operator.y() //Manually turn on the shooter and get voltage from DS
-      .whileTrue(new Shooter_tuner(shooterDesiredVoltage.get()));
+      .whileTrue(new Shooter_tuner(()->shooterDesiredVoltage.get()));
 
     operator.a() //Intake the Note
       .whileTrue(Commands.runOnce(()-> intake.setMode(INTAKE)))
@@ -145,7 +145,7 @@ public class NewRobotContainer extends RobotContainer {
         Commands.sequence(
           Commands.waitSeconds(2), 
           intake.shootNote())
-          ,new Shooter_tuner(12)
+          ,new Shooter_tuner(()->12)
       ));
 
       /**
