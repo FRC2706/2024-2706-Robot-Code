@@ -122,7 +122,8 @@ public class NewRobotContainer extends RobotContainer {
 
     driver.back().whileTrue(SwerveSubsystem.getInstance().setLockWheelsInXCommand());
     driver.b().onTrue(SwerveSubsystem.getInstance().setOdometryCommand(new Pose2d(3,3,new Rotation2d(0))));
-    driver.a().whileTrue(PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.FAR_SPEAKER_RED)).onFalse(Commands.runOnce(()->{},SwerveSubsystem.getInstance()));
+    driver.a().whileTrue(PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.MIDDLE_SPEAKER_RED))
+              .onFalse(Commands.runOnce(()->{},SwerveSubsystem.getInstance()));
 
     /* --------------- Operator Controls -------------------- */
     operator.y() //Manually turn on the shooter and get voltage from DS

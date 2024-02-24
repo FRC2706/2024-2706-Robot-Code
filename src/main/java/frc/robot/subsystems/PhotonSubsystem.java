@@ -134,10 +134,11 @@ public class PhotonSubsystem extends SubsystemBase {
     {
       return Commands.sequence(
         getWaitForDataCommand(spacePositions.id),
-        new ScheduleCommand(
+        Commands.runOnce(() -> swerveRequirementCommand.schedule()), // Add delayed requirement to SwerveSubsystem
+        new ProxyCommand( // Proxy this command to prevent SwerveSubsystem requirement conflicting with swerveRequirementCommand
           new PhotonMoveToTarget(spacePositions.destination, spacePositions.direction, false)
         )
-      );
+      ).finallyDo(() -> swerveRequirementCommand.cancel()); // Ensure requirement to SwerveSubsystem ends with this command ending
     }
     
   }
