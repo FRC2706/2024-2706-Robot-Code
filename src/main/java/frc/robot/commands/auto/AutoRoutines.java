@@ -5,7 +5,6 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -13,6 +12,10 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.MakeIntakeMotorSpin;
+import frc.robot.subsystems.IntakeStatesVoltage;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.ShooterStateVoltage;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class AutoRoutines extends SubsystemBase {
@@ -57,6 +60,16 @@ public class AutoRoutines extends SubsystemBase {
         NamedCommands.registerCommand("MakeIntakeMotorSpin", new SequentialCommandGroup(
             new MakeIntakeMotorSpin(3.0,2), // Move arm to intake setpoint
             new WaitCommand(1)
+        ));
+
+        NamedCommands.registerCommand("SetModeIntake", 
+            Commands.runOnce(() -> IntakeSubsystem.getInstance().setMode(IntakeStatesVoltage.Modes.INTAKE)));
+
+        NamedCommands.registerCommand("ShootNoteStateful", 
+        Commands.sequence(
+            Shooter.getInstance().prepare4Speaker(),
+            IntakeSubsystem.getInstance().shootNote(),
+            Commands.runOnce(()->Shooter.getInstance().setMode(ShooterStateVoltage.Modes.STOP_SHOOTER))          
         ));
     }
 

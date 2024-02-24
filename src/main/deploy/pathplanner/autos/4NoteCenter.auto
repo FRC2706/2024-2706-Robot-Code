@@ -12,7 +12,13 @@
     "data": {
       "commands": [
         {
-          "type": "sequential",
+          "type": "named",
+          "data": {
+            "name": "ShootNoteStateful"
+          }
+        },
+        {
+          "type": "deadline",
           "data": {
             "commands": [
               {
@@ -24,7 +30,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeAndArm"
+                  "name": "SetModeIntake"
                 }
               }
             ]
@@ -44,13 +50,25 @@
           }
         },
         {
-          "type": "sequential",
+          "type": "named",
+          "data": {
+            "name": "ShootNoteStateful"
+          }
+        },
+        {
+          "type": "deadline",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
                   "pathName": "P3-4NoteCenter"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "SetModeIntake"
                 }
               }
             ]
@@ -70,13 +88,25 @@
           }
         },
         {
-          "type": "sequential",
+          "type": "named",
+          "data": {
+            "name": "ShootNoteStateful"
+          }
+        },
+        {
+          "type": "deadline",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
                   "pathName": "P5-4NoteCenter"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "SetModeIntake"
                 }
               }
             ]
@@ -93,6 +123,12 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootNoteStateful"
           }
         }
       ]
