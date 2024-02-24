@@ -6,9 +6,9 @@
 package frc.robot.robotcontainers;
 
 
-import static frc.robot.subsystems.IntakeStates.Modes.RELEASE;
-import static frc.robot.subsystems.IntakeStates.Modes.SHOOT;
-import static frc.robot.subsystems.IntakeStates.Modes.STOP;
+import static frc.robot.subsystems.IntakeStatesVoltage.Modes.RELEASE;
+import static frc.robot.subsystems.IntakeStatesVoltage.Modes.SHOOT;
+import static frc.robot.subsystems.IntakeStatesVoltage.Modes.STOP;
 
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -111,9 +111,9 @@ public class NewRobotContainer extends RobotContainer {
 
    // operator.y().whileTrue (new ArmFFTestCommand(operator, 3, true) );
 
-    //operator.a() //Intake the Note
-      //.whileTrue(Commands.runOnce(()-> intake.setMode(INTAKE)))
-      //.whileFalse(Commands.runOnce(()->intake.setMode(STOP)));    
+    operator.a() //Intake the Note
+      .whileTrue(Commands.runOnce(()-> intake.setMode(INTAKE)))
+      .whileFalse(Commands.runOnce(()->intake.setMode(STOP)));    
       
     operator.b() //Release the Note from the back
       .whileTrue(Commands.runOnce(()-> intake.setMode(RELEASE)))
@@ -130,6 +130,7 @@ public class NewRobotContainer extends RobotContainer {
           //intake.shootNote())
           //,new Shooter_tuner(12)
       //));
+      
     operator.start() //Shoots the Note automatically 
       .onTrue(Commands.deadline(
         Commands.sequence(
@@ -171,6 +172,6 @@ public class NewRobotContainer extends RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new AutoRoutines().getAutonomousCommand(6);
+    return new AutoRoutines().getAutonomousCommand(9);
   }
 }
