@@ -29,6 +29,7 @@ public class AutoRoutines extends SubsystemBase {
     //PathPlannerAuto tune = new PathPlannerAuto("tuningAuto");
     PathPlannerAuto testIntakeMotor = new PathPlannerAuto("MakeIntakeMotorSpin Auto Test");
     PathPlannerAuto twoNoteAuto = new PathPlannerAuto("twoNoteSpeaker");
+    PathPlannerAuto threeNoteAuto = new PathPlannerAuto("threeNoteSpeaker");
     private static IntakeSubsystem intake = IntakeSubsystem.getInstance();
 
     public AutoRoutines() {
@@ -153,6 +154,8 @@ public class AutoRoutines extends SubsystemBase {
                 return OneNoteTest;
             case 10:
                 return twoNoteAuto;
+            case 11:
+                return threeNoteAuto;
         }
     }
 }
