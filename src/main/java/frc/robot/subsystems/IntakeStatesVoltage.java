@@ -132,14 +132,15 @@ public class IntakeStatesVoltage {
              
             //Intake the Note
             case INTAKE:
+                if(isCenterActive){//Check if this works now
+                    setMode(STOP);
+                }
+
                 if(isBackActive){
                     setMode(BACK_NOTE); 
                     break;
                 }
 
-                if(isCenterActive){//Check if this works now
-                    setMode(STOP);
-                }
 
                 if(isForntActive && !currentState.equals(NOTE_ENTERING_IDLE)){ //compare with NOTE_ENTERING_IDLE;
                     currentState = NOTE_ENTERING;
