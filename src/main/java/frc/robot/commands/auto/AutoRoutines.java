@@ -1,8 +1,5 @@
 package frc.robot.commands.auto;
 
-import static frc.robot.subsystems.IntakeStatesVoltage.Modes.INTAKE;
-import static frc.robot.subsystems.IntakeStatesVoltage.Modes.STOP;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -14,11 +11,10 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Config.PhotonConfig.PhotonPositions;
+import frc.robot.commands.IntakeControl;
 import frc.robot.commands.MakeIntakeMotorSpin;
 import frc.robot.commands.Shooter_tuner;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class AutoRoutines extends SubsystemBase {
@@ -32,19 +28,20 @@ public class AutoRoutines extends SubsystemBase {
     PathPlannerAuto OneNoteTest = new PathPlannerAuto("One Note");
     //PathPlannerAuto tune = new PathPlannerAuto("tuningAuto");
     PathPlannerAuto testIntakeMotor = new PathPlannerAuto("MakeIntakeMotorSpin Auto Test");
+    PathPlannerAuto twoNoteAuto = new PathPlannerAuto("TwoNoteSpeaker");
     private static IntakeSubsystem intake = IntakeSubsystem.getInstance();
 
     public AutoRoutines() {
         
     }
 
-    private static AutoRoutines instance;
-    public static AutoRoutines getInstance(){
-        if(instance == null){
-            instance = new AutoRoutines();
-        }
-        return instance;
-    }
+    // private static AutoRoutines instance;
+    // public static AutoRoutines getInstance(){
+    //     if(instance == null){
+    //         instance = new AutoRoutines();
+    //     }
+    //     return instance;
+    // }
 
     public static void registerCommandsToPathplanner() {
         IntakeSubsystem.getInstance().setDefaultCommand(IntakeSubsystem.getInstance().autoIntake());
@@ -85,6 +82,14 @@ public class AutoRoutines extends SubsystemBase {
                 new Shooter_tuner(()->5)
             )
         ));
+
+        NamedCommands.registerCommand("simpleShooter", new ParallelCommandGroup
+        (Commands.parallel(
+              Commands.sequence(
+                new IntakeControl(false), 
+                new IntakeControl(true).withTimeout(2)),
+              new Shooter_tuner(()->5)
+            )));
 
         // NamedCommands.registerCommand("turnOffIntake", (
         //     Commands.runOnce(()-> IntakeSubsystem.getInstance().setMode(STOP))));
@@ -146,6 +151,8 @@ public class AutoRoutines extends SubsystemBase {
                 );
             case 9:
                 return OneNoteTest;
+            case 10:
+                return twoNoteAuto;
         }
     }
 }
