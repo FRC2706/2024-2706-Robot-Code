@@ -4,13 +4,13 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.subsystems.IntakeStates.Modes.*;
-import static frc.robot.subsystems.IntakeStates.States.*;
+import static frc.robot.subsystems.IntakeStatesVoltage.Modes.*;
+import static frc.robot.subsystems.IntakeStatesVoltage.States.*;
 
 import frc.lib.lib2706.RunnableBoolean;
 
 /** Add your docs here. */
-public class IntakeStates {
+public class IntakeStatesVoltage {
     private Boolean isForntActive = false;
     private Boolean isBackActive = false;
     private Boolean isCenterActive = null;
@@ -23,11 +23,11 @@ public class IntakeStates {
     */
     public static enum Modes {
         STOP(0.0),
-        INTAKE(5.0),
-        POSITION_NOTE(0.5),
-        BACK_NOTE(-0.5),
-        RELEASE(-5.0),
-        SHOOT(7.0);
+        INTAKE(9.0),
+        POSITION_NOTE(0.7),
+        BACK_NOTE(-0.7),
+        RELEASE(-9.0),
+        SHOOT(9.0);
 
         double v;
 
@@ -132,14 +132,15 @@ public class IntakeStates {
              
             //Intake the Note
             case INTAKE:
+                if(isCenterActive){//Check if this works now
+                    setMode(STOP);
+                }
+
                 if(isBackActive){
                     setMode(BACK_NOTE); 
                     break;
                 }
 
-                if(isCenterActive){//Check if this works now
-                    setMode(STOP);
-                }
 
                 if(isForntActive && !currentState.equals(NOTE_ENTERING_IDLE)){ //compare with NOTE_ENTERING_IDLE;
                     currentState = NOTE_ENTERING;
