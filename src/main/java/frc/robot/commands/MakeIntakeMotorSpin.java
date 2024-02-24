@@ -7,14 +7,14 @@ import edu.wpi.first.wpilibj.Timer;
 public class MakeIntakeMotorSpin extends Command {
 
     private IntakeSubsystem intakeSubsystem;
-    private double targetSpeed;
+    private double targetVoltage;
     private int timeout;
     private Timer timer;
     private boolean m_bUseTimer;
 
 
-    public MakeIntakeMotorSpin(Double Speed, int i) {
-        targetSpeed = Speed;
+    public MakeIntakeMotorSpin(Double Voltage, int i) {
+        targetVoltage = Voltage;
         timeout = i;
 
         if (timeout > 0) {
@@ -45,7 +45,7 @@ public class MakeIntakeMotorSpin extends Command {
     @Override
     public void execute() {
         if ( intakeSubsystem != null ) {
-            intakeSubsystem.setMotorRPM(targetSpeed);
+            intakeSubsystem.setVoltage(targetVoltage);
         }
     }
 
@@ -73,5 +73,4 @@ public class MakeIntakeMotorSpin extends Command {
 
 
 }
-
 

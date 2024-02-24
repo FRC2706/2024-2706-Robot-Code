@@ -31,7 +31,7 @@ public class Shooter_tuner extends Command {
   @Override
   public void execute() {
 
-    shooter.setSetVolt(setPoint);
+    shooter.setVoltage(setPoint);
 
   }
   
@@ -40,7 +40,7 @@ public class Shooter_tuner extends Command {
   @Override
   public void end(boolean interrupted) {
 
-    shooter.setSetVolt(0);
+    shooter.setVoltage(0);
 
   }
 
