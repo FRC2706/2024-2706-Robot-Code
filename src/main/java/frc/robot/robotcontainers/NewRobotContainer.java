@@ -10,6 +10,16 @@ import static frc.robot.subsystems.IntakeStates.Modes.RELEASE;
 import static frc.robot.subsystems.IntakeStates.Modes.SHOOT;
 import static frc.robot.subsystems.IntakeStates.Modes.STOP;
 
+
+import edu.wpi.first.math.geometry.Pose2d;
+
+
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
+
+import edu.wpi.first.math.geometry.Pose2d;
+
+import static frc.robot.subsystems.IntakeStatesVoltage.Modes.*;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -97,7 +107,7 @@ public class NewRobotContainer extends RobotContainer {
 
     /* --------------- Operator Controls -------------------- */
     operator.y() //Manually turn on the shooter and get voltage from DS
-      .whileTrue(new Shooter_tuner(shooterDesiredVoltage.get()));
+      .whileTrue(new Shooter_tuner(()->shooterDesiredVoltage.get()));
 
    // operator.y().whileTrue (new ArmFFTestCommand(operator, 3, true) );
 
@@ -120,6 +130,13 @@ public class NewRobotContainer extends RobotContainer {
           //intake.shootNote())
           //,new Shooter_tuner(12)
       //));
+    operator.start() //Shoots the Note automatically 
+      .onTrue(Commands.deadline(
+        Commands.sequence(
+          Commands.waitSeconds(2), 
+          intake.shootNote())
+          ,new Shooter_tuner(()->12)
+      ));
 
       //    operator.a() 
       // .whileTrue(new MakeIntakeMotorSpin(9.0, 0));

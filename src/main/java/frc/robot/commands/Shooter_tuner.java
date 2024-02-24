@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
 
@@ -11,10 +13,10 @@ public class Shooter_tuner extends Command {
 
   //variable for setpoint
   private final Shooter shooter = Shooter.getInstance() ;
-  private double setPoint;
+  private DoubleSupplier setPoint;
 
   /** Creates a new Shooter_tuner. */
-  public Shooter_tuner(double setPoint) { 
+  public Shooter_tuner(DoubleSupplier setPoint) { 
 
     this.setPoint = setPoint;
 
@@ -31,7 +33,7 @@ public class Shooter_tuner extends Command {
   @Override
   public void execute() {
 
-    shooter.setVoltage(setPoint);
+    shooter.setVoltage(setPoint.getAsDouble());
 
   }
   

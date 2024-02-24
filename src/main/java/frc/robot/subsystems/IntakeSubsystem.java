@@ -7,8 +7,8 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import static frc.robot.subsystems.IntakeStates.Modes.*;
-import static frc.robot.subsystems.IntakeStates.States.*;
+import static frc.robot.subsystems.IntakeStatesVoltage.Modes.*;
+import static frc.robot.subsystems.IntakeStatesVoltage.States.*;
 
 import com.revrobotics.CANSparkMax;
 
@@ -23,13 +23,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Config;
-import frc.robot.subsystems.IntakeStates.Modes;
-import frc.robot.subsystems.IntakeStates.States;
+import frc.robot.subsystems.IntakeStatesVoltage.Modes;
+import frc.robot.subsystems.IntakeStatesVoltage.States;
 
 /** Add your docs here. */
 public class IntakeSubsystem extends SubsystemBase{
     private CANSparkMax m_intake;
-    private IntakeStates intakeStates = new IntakeStates();
+    private IntakeStatesVoltage intakeStates = new IntakeStatesVoltage();
 
     private DigitalInput sensor7;//Back
     private DigitalInput sensor8;//Center
@@ -54,7 +54,8 @@ public class IntakeSubsystem extends SubsystemBase{
             instance = new IntakeSubsystem();
         return instance;
     }
-
+    
+    //TODO: create it to be able to be used with velocity, rpm 
     private IntakeSubsystem() {
         System.out.println("[Init]Creating Intake");
         m_intake = new CANSparkMax(Config.Intake.INTAKE, MotorType.kBrushless);
