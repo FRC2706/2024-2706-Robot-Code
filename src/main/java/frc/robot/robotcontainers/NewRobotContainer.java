@@ -6,20 +6,6 @@
 package frc.robot.robotcontainers;
 
 
-import static frc.robot.subsystems.IntakeStatesVoltage.Modes.RELEASE;
-import static frc.robot.subsystems.IntakeStatesVoltage.Modes.SHOOT;
-import static frc.robot.subsystems.IntakeStatesVoltage.Modes.STOP;
-
-
-import edu.wpi.first.math.geometry.Pose2d;
-
-
-import com.pathplanner.lib.commands.PathPlannerAuto;
-
-
-import edu.wpi.first.math.geometry.Pose2d;
-
-import static frc.robot.subsystems.IntakeStatesVoltage.Modes.*;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -105,39 +91,39 @@ public class NewRobotContainer extends RobotContainer {
     driver.leftBumper().onTrue(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.SLOW))).onFalse(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.MAX)));
     // driver.
 
-    /* --------------- Operator Controls -------------------- */
-    operator.y() //Manually turn on the shooter and get voltage from DS
-      .whileTrue(new Shooter_tuner(()->shooterDesiredVoltage.get()));
+  //   /* --------------- Operator Controls -------------------- */
+  //   operator.y() //Manually turn on the shooter and get voltage from DS
+  //     .whileTrue(new Shooter_tuner(()->shooterDesiredVoltage.get()));
 
-   // operator.y().whileTrue (new ArmFFTestCommand(operator, 3, true) );
+  //  // operator.y().whileTrue (new ArmFFTestCommand(operator, 3, true) );
 
-    operator.a() //Intake the Note
-      .whileTrue(Commands.runOnce(()-> intake.setMode(INTAKE)))
-      .whileFalse(Commands.runOnce(()->intake.setMode(STOP)));    
+  //   // operator.a() //Intake the Note
+  //   //   .whileTrue(Commands.runOnce(()-> intake.setMode(INTAKE)))
+  //   //   .whileFalse(Commands.runOnce(()->intake.setMode(STOP)));    
       
-    operator.b() //Release the Note from the back
-      .whileTrue(Commands.runOnce(()-> intake.setMode(RELEASE)))
-      .whileFalse(Commands.runOnce(()->intake.setMode(STOP)));    
+  //   operator.b() //Release the Note from the back
+  //     .whileTrue(Commands.runOnce(()-> intake.setMode(RELEASE)))
+  //     .whileFalse(Commands.runOnce(()->intake.setMode(STOP)));    
 
-    operator.x() //Drives the note into the shooter
-      .whileTrue(Commands.runOnce(()-> intake.setMode(SHOOT)))
-      .whileFalse(Commands.runOnce(()->intake.setMode(STOP)));    
+  //   operator.x() //Drives the note into the shooter
+  //     .whileTrue(Commands.runOnce(()-> intake.setMode(SHOOT)))
+  //     .whileFalse(Commands.runOnce(()->intake.setMode(STOP)));    
 
-    //operator.start() //Shoots the Note automatically 
-      //.onTrue(Commands.deadline(
-        //Commands.sequence(
-          //Commands.waitSeconds(2), 
-          //intake.shootNote())
-          //,new Shooter_tuner(12)
-      //));
+  //   //operator.start() //Shoots the Note automatically 
+  //     //.onTrue(Commands.deadline(
+  //       //Commands.sequence(
+  //         //Commands.waitSeconds(2), 
+  //         //intake.shootNote())
+  //         //,new Shooter_tuner(12)
+  //     //));
       
-    operator.start() //Shoots the Note automatically 
-      .onTrue(Commands.deadline(
-        Commands.sequence(
-          Commands.waitSeconds(2), 
-          intake.shootNote())
-          ,new Shooter_tuner(()->12)
-      ));
+  //   operator.start() //Shoots the Note automatically 
+  //     .onTrue(Commands.deadline(
+  //       Commands.sequence(
+  //         Commands.waitSeconds(2), 
+  //         intake.shootNote())
+  //         ,new Shooter_tuner(()->5)
+  //     ));
 
       //    operator.a() 
       // .whileTrue(new MakeIntakeMotorSpin(9.0, 0));
@@ -150,12 +136,16 @@ public class NewRobotContainer extends RobotContainer {
     //   new Shooter_tuner(5)
     // ));
 
-    //   operator.start().whileTrue(Commands.parallel(
-    //   Commands.sequence(
-    //     new IntakeControl(false), 
-    //     new IntakeControl(true).withTimeout(2)),
-    //   new Shooter_tuner(5)
-    // ));
+      operator.start().whileTrue(Commands.parallel(
+      Commands.sequence(
+        new IntakeControl(false).withTimeout(0.3), 
+        new WaitCommand(0.5),
+        new IntakeControl(true).withTimeout(2)),
+      new Shooter_tuner(()->5)
+    ));
+
+      operator.a() 
+        .whileTrue(new MakeIntakeMotorSpin(9.0, 1));
        
 
     //turns brakes off

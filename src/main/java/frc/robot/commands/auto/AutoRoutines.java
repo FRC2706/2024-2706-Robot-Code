@@ -28,7 +28,7 @@ public class AutoRoutines extends SubsystemBase {
     PathPlannerAuto OneNoteTest = new PathPlannerAuto("One Note");
     //PathPlannerAuto tune = new PathPlannerAuto("tuningAuto");
     PathPlannerAuto testIntakeMotor = new PathPlannerAuto("MakeIntakeMotorSpin Auto Test");
-    PathPlannerAuto twoNoteAuto = new PathPlannerAuto("TwoNoteSpeaker");
+    PathPlannerAuto twoNoteAuto = new PathPlannerAuto("twoNoteSpeaker");
     private static IntakeSubsystem intake = IntakeSubsystem.getInstance();
 
     public AutoRoutines() {
@@ -83,13 +83,13 @@ public class AutoRoutines extends SubsystemBase {
             )
         ));
 
-        NamedCommands.registerCommand("simpleShooter", new ParallelCommandGroup
-        (Commands.parallel(
+        NamedCommands.registerCommand("simpleShooter", Commands.deadline(
               Commands.sequence(
-                new IntakeControl(false), 
+                new IntakeControl(false).withTimeout(0.3), 
+                new WaitCommand(0.5),
                 new IntakeControl(true).withTimeout(2)),
               new Shooter_tuner(()->5)
-            )));
+            ));
 
         // NamedCommands.registerCommand("turnOffIntake", (
         //     Commands.runOnce(()-> IntakeSubsystem.getInstance().setMode(STOP))));
@@ -99,7 +99,7 @@ public class AutoRoutines extends SubsystemBase {
         //         Commands.runOnce(()-> IntakeSubsystem.getInstance().setMode(INTAKE))));
 
         NamedCommands.registerCommand("simpleIntake", (
-                new MakeIntakeMotorSpin(3.0,0)));
+                new MakeIntakeMotorSpin(7.0,0)));
 
         // NamedCommands.registerCommand("alignToSpeaker", (
         //     PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.FAR_SPEAKER_RED)));
