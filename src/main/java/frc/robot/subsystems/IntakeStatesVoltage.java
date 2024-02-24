@@ -15,19 +15,19 @@ public class IntakeStatesVoltage {
     private Boolean isBackActive = false;
     private Boolean isCenterActive = null;
 
-    private Modes desiredMode = STOP;
+    private Modes desiredMode = STOP_INTAKE;
     private States currentState = EMPTY_IDLE;
 
     /**
      * All possible Modes to control the shooter
     */
     public static enum Modes {
-        STOP(0.0),
-        INTAKE(9.0),
-        POSITION_NOTE(0.7),
-        BACK_NOTE(-0.7),
-        RELEASE(-9.0),
-        SHOOT(9.0);
+        STOP_INTAKE(0.0),
+        INTAKE(6.0),
+        POSITION_NOTE(1.5),
+        BACK_NOTE(-2.5),
+        RELEASE(-7.0),
+        SHOOT(8.0);
 
         double v;
 
@@ -115,8 +115,8 @@ public class IntakeStatesVoltage {
     public void updateStates() {
         switch (desiredMode) {
             //Stop from moving
-            case STOP: 
-                if(isBackActive){
+            case STOP_INTAKE: 
+                if(isBackActive && isCenterActive){
                     setMode(BACK_NOTE); 
                     break;
                 }
@@ -133,7 +133,7 @@ public class IntakeStatesVoltage {
             //Intake the Note
             case INTAKE:
                 if(isCenterActive){//Check if this works now
-                    setMode(STOP);
+                    setMode(STOP_INTAKE);
                 }
 
                 if(isBackActive){
@@ -141,8 +141,7 @@ public class IntakeStatesVoltage {
                     break;
                 }
 
-
-                if(isForntActive && !currentState.equals(NOTE_ENTERING_IDLE)){ //compare with NOTE_ENTERING_IDLE;
+                if(isForntActive && !currentState.equals(NOTE_ENTERING_IDLE)){
                     currentState = NOTE_ENTERING;
                     setMode(POSITION_NOTE);
                 } else currentState = INTAKING;
@@ -152,7 +151,7 @@ public class IntakeStatesVoltage {
             case POSITION_NOTE:
             currentState = POSITIONING_NOTE;
                 if(isCenterActive != null){
-                    if(isCenterActive)setMode(STOP);
+                    if(isCenterActive)setMode(STOP_INTAKE);
                 }else if(isBackActive){
                     setMode(BACK_NOTE); 
                 }
@@ -166,7 +165,7 @@ public class IntakeStatesVoltage {
             //Back the note if overshooted
             case BACK_NOTE:
                 //If we dont have a front intake, this will not work
-                if(!isBackActive && isForntActive)setMode(STOP);
+                if(!isBackActive && isForntActive)setMode(STOP_INTAKE);
                 else currentState = BACKING_NOTE;
             break;
 
@@ -175,19 +174,19 @@ public class IntakeStatesVoltage {
             if(isCenterActive == null){
                 if(!isForntActive && !isBackActive)
                 currentState = SHOOTED;
-                setMode(STOP);
+                setMode(STOP_INTAKE);
                 break;
             }else if(!isBackActive && !isCenterActive && !isForntActive){
                 currentState = SHOOTED;
-                setMode(STOP);
+                setMode(STOP_INTAKE);
                 break;
             }else currentState = SHOOTING;
             break;
 
             //Default
             default:
-            setMode(STOP);
+            setMode(STOP_INTAKE);
                 break;
         }
     }
-}
+} 

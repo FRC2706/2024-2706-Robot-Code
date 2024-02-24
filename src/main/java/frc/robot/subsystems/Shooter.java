@@ -3,19 +3,29 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import static frc.robot.subsystems.ShooterStateVoltage.Modes.*;
+import static frc.robot.subsystems.ShooterStateVoltage.States.*;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
+import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
+import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.lib2706.TunableNumber;
 import frc.robot.Config;
+import frc.robot.subsystems.ShooterStateVoltage.Modes;
+import frc.robot.subsystems.ShooterStateVoltage.States;
 
 public class Shooter extends SubsystemBase {
     private CANSparkMax m_motor;
@@ -28,6 +38,9 @@ public class Shooter extends SubsystemBase {
     private TunableNumber kFF = new TunableNumber("Shooter/kFF", Config.ShooterConstants.kFF);
     
     private DoublePublisher velocityPub;
+    private StringPublisher statePub;
+    private BooleanPublisher shooterReadyPub;
+    private ShooterStateVoltage shooterStates = new ShooterStateVoltage();
 
     private static Shooter shooter;
     public static Shooter getInstance() {
@@ -60,6 +73,8 @@ public class Shooter extends SubsystemBase {
 
         NetworkTable shooterTable = NetworkTableInstance.getDefault().getTable("Shooter");
         velocityPub = shooterTable.getDoubleTopic("Shooter Velocity RPM").publish(PubSubOption.periodic(0.02));
+        shooterReadyPub = shooterTable.getBooleanTopic("Shooter is Ready to shoot").publish(PubSubOption.periodic(0.02));
+        statePub = shooterTable.getStringTopic("Shooter state").publish(PubSubOption.periodic(0.02));
     }
 
     public double getVelocityRPM() {
@@ -78,8 +93,20 @@ public class Shooter extends SubsystemBase {
         setVoltage(0);
     }
 
+    public void setMode(Modes desiredMode){
+        shooterStates.setMode(desiredMode);
+    }
+
+    public void allowAutoMovement(){
+        setVoltage(shooterStates.getDesiredVoltage());
+    }
+
     public void setBrake(boolean enableBreak){
         m_motor.setIdleMode(enableBreak ? IdleMode.kBrake: IdleMode.kCoast);
+    }
+
+    public States getCurrentState(){
+        return shooterStates.getCurrentState();
     }
 
     private void setPIDGains(double kP, double kI, double kD){
@@ -92,11 +119,34 @@ public class Shooter extends SubsystemBase {
         m_pidController.setFF(kFF);
     }   
 
+    public boolean isReadyToShoot(){
+        return getCurrentState().equals(SPEAKER_LAUNCH_READY) || getCurrentState().equals(AMP_LAUNCH_READY);
+    }
+
+    public Command autoShooter(){
+        return Commands.sequence(
+            runOnce(()->setMode(STOP_SHOOTER)), run(()->allowAutoMovement()));
+    }
+
+    public Command prepare4Speaker(){
+        return Commands.deadline(
+                Commands.waitUntil(()->isReadyToShoot()), 
+                Commands.runOnce(()->setMode(SHOOT_SPEAKER))
+            );
+    }
+    
     @Override
     public void periodic() {
         TunableNumber.ifChanged(hashCode(), ()->setPIDGains(kP.get(), kI.get(), kD.get()), kP, kI, kD);
         TunableNumber.ifChanged(hashCode(), ()->setFFGains(kFF.get()), kFF);
 
+        //Check if this method would work like this
+        shooterStates.isInRange(()->getVelocityRPM() > shooterStates.getDesiredVelocityRPM());
+        shooterStates.updateState();
+
         velocityPub.accept(getVelocityRPM());
+        //Display this in the driver station so the people can know when they can shoot
+        shooterReadyPub.accept(isReadyToShoot());
+        statePub.accept(getCurrentState().toString());
     }
 }
