@@ -154,7 +154,7 @@ public class NewRobotContainer extends RobotContainer {
           Commands.runOnce(()->shooter.setMode(STOP_SHOOTER))          
           ));
 
-    /*operator.start() //Shoots the Note automatically 
+    /*operator.start() //Shoots the Note automatically <
       .onTrue(Commands.deadline(
         Commands.sequence(
           Commands.waitSeconds(2), 

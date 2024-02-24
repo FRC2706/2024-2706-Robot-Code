@@ -30,7 +30,7 @@ public class ShooterStateVoltage {
         STOP_SHOOTER(0.0, 0.0),
         PRE_HEAT(4.0, 500.0),
         SHOOT_AMP(6.0, 800.0),
-        SHOOT_SPEAKER(9.0, 1200.0);//MAX 2500 with 9 v
+        SHOOT_SPEAKER(9.0, 1700.0);//MAX 2500 with 9 v
 
         double v, RPM;
 
