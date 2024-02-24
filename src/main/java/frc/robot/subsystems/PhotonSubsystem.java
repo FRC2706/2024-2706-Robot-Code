@@ -226,7 +226,7 @@ public class PhotonSubsystem extends SubsystemBase {
       Rotation2d yaw = Rotation2d.fromDegrees(target.getYaw()*-1);
       //calculate range
       double range = (range(target.getPitch()));
-      if (range < 6 & range > 1.5){
+      if (range < 6 && range > 1.5){
         double va = (range-1.5)/10;
 
         range*=(1-va);
