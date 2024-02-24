@@ -5,6 +5,10 @@
 
 package frc.robot.robotcontainers;
 
+
+import static frc.robot.subsystems.IntakeStatesVoltage.Modes.*;
+import static frc.robot.subsystems.ShooterStateVoltage.Modes.*;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.IntegerEntry;
 import edu.wpi.first.networktables.NetworkTable;
@@ -16,15 +20,13 @@ import frc.lib.lib2706.TunableNumber;
 import frc.robot.Config.Swerve.TeleopSpeeds;
 import frc.robot.Robot;
 import frc.robot.commands.RotateAngleToVision;
-import frc.robot.commands.Shooter_tuner;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.auto.AutoRoutines;
 import frc.robot.commands.auto.AutoSelector;
 import frc.robot.subsystems.ArmPneumaticsSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.SwerveSubsystem;
-
-import static frc.robot.subsystems.IntakeStatesVoltage.Modes.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -41,6 +43,7 @@ public class NewRobotContainer extends RobotContainer {
 
   private final SwerveSubsystem s_Swerve = SwerveSubsystem.getInstance();
   private final IntakeSubsystem intake = IntakeSubsystem.getInstance();
+  private final Shooter shooter = Shooter.getInstance();
 
   private TunableNumber shooterTargetRPM = new TunableNumber("Shooter/Target RPM", 0);
   private TunableNumber shooterDesiredVoltage = new TunableNumber("Shooter/desired Voltage", 0);
@@ -68,6 +71,7 @@ public class NewRobotContainer extends RobotContainer {
     );
 
     intake.setDefaultCommand(intake.autoIntake());
+    shooter.setDefaultCommand(shooter.autoShooter());
 
     entryAutoRoutine = swerveTable.getIntegerTopic("Auto Selector ID").getEntry(0);
     entryAutoRoutine.setDefault(0);
@@ -94,24 +98,32 @@ public class NewRobotContainer extends RobotContainer {
     // driver.
 
     /* --------------- Operator Controls -------------------- */
-    operator.y() //Manually turn on the shooter and get voltage from DS
-      .whileTrue(new Shooter_tuner(()->shooterDesiredVoltage.get()));
+    operator.y() //Turn on the shooter and get voltage from DS
+      .whileTrue(Commands.runOnce(()->shooter.setMode(SHOOT_SPEAKER)))
+      .whileFalse(Commands.runOnce(()->shooter.setMode(STOP_SHOOTER)));
 
     // operator.y().whileTrue (new ArmFFTestCommand(operator, 3, true) );
 
     operator.a() //Intake the Note
       .whileTrue(Commands.runOnce(()-> intake.setMode(INTAKE)))
-      .whileFalse(Commands.runOnce(()->intake.setMode(STOP)));    
+      .whileFalse(Commands.runOnce(()->intake.setMode(STOP_INTAKE)));    
 
     operator.b() //Release the Note from the back
       .whileTrue(Commands.runOnce(()-> intake.setMode(RELEASE)))
-      .whileFalse(Commands.runOnce(()->intake.setMode(STOP)));    
+      .whileFalse(Commands.runOnce(()->intake.setMode(STOP_INTAKE)));    
 
     operator.x() //Drives the note into the shooter
-      .whileTrue(Commands.runOnce(()-> intake.setMode(SHOOT)))
-      .whileFalse(Commands.runOnce(()->intake.setMode(STOP)));    
+      .whileTrue(Commands.runOnce(()-> intake.setMode(shooter.isReadyToShoot() ? SHOOT : STOP_INTAKE)))
+      .whileFalse(Commands.runOnce(()->intake.setMode(STOP_INTAKE)));    
 
     operator.start() //Shoots the Note automatically 
+      .onTrue(Commands.sequence(
+          shooter.prepare4Speaker(),
+          intake.shootNote(),
+          Commands.runOnce(()->shooter.setMode(STOP_SHOOTER))          
+          ));
+
+    /*operator.start() //Shoots the Note automatically <
       .onTrue(Commands.deadline(
         Commands.sequence(
           Commands.waitSeconds(2), 

@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import static frc.robot.subsystems.IntakeStatesVoltage.Modes.*;
 import static frc.robot.subsystems.IntakeStatesVoltage.States.*;
+import static frc.robot.subsystems.ShooterStateVoltage.States.SPEAKER_LAUNCH_READY;
 
 import com.revrobotics.CANSparkMax;
 
@@ -63,7 +64,7 @@ public class IntakeSubsystem extends SubsystemBase{
         m_intake.setInverted(true);
         m_intake.setSmartCurrentLimit(70);
         m_intake.setIdleMode(IdleMode.kBrake);
-        m_intake.enableVoltageCompensation(7);
+        m_intake.enableVoltageCompensation(10);
 
         sensor7 = new DigitalInput(7);
         sensor8 = new DigitalInput(8);
@@ -99,7 +100,11 @@ public class IntakeSubsystem extends SubsystemBase{
     }
 
     public void setMode(Modes mode){
-        intakeStates.setMode(mode);
+        if(mode.equals(INTAKE) && getCurrentState().equals(NOTE_IN_POS_IDLE)){
+            intakeStates.setMode(STOP_INTAKE);
+        }else{  
+            intakeStates.setMode(mode);
+        }
     }
 
     public void allowAutoMovement(){
@@ -118,7 +123,7 @@ public class IntakeSubsystem extends SubsystemBase{
 
     public Command autoIntake(){
         return Commands.sequence(
-            runOnce(()->setMode(STOP)),
+            runOnce(()->setMode(STOP_INTAKE)),
              run(()->allowAutoMovement()));
     }
 
