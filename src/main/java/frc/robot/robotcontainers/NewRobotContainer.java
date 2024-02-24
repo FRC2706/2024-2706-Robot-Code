@@ -6,20 +6,18 @@
 package frc.robot.robotcontainers;
 
 
-import static frc.robot.subsystems.IntakeStatesVoltage.Modes.*;
-import static frc.robot.subsystems.ShooterStateVoltage.Modes.*;
-
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.networktables.IntegerEntry;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.lib2706.TunableNumber;
 import frc.robot.Config.Swerve.TeleopSpeeds;
 import frc.robot.Robot;
+import frc.robot.commands.IntakeControl;
+import frc.robot.commands.MakeIntakeMotorSpin;
 import frc.robot.commands.RotateAngleToVision;
+import frc.robot.commands.Shooter_tuner;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.auto.AutoRoutines;
 import frc.robot.commands.auto.AutoSelector;
@@ -49,8 +47,8 @@ public class NewRobotContainer extends RobotContainer {
   private TunableNumber shooterDesiredVoltage = new TunableNumber("Shooter/desired Voltage", 0);
     
   String tableName = "SwerveChassis";
-  private NetworkTable swerveTable = NetworkTableInstance.getDefault().getTable(tableName);
-  private IntegerEntry entryAutoRoutine;
+  //private NetworkTable swerveTable = NetworkTableInstance.getDefault().getTable(tableName);
+  //private IntegerEntry entryAutoRoutine;
 
   AutoSelector m_autoSelector;
 
@@ -73,8 +71,8 @@ public class NewRobotContainer extends RobotContainer {
     intake.setDefaultCommand(intake.autoIntake());
     shooter.setDefaultCommand(shooter.autoShooter());
 
-    entryAutoRoutine = swerveTable.getIntegerTopic("Auto Selector ID").getEntry(0);
-    entryAutoRoutine.setDefault(0);
+    //entryAutoRoutine = swerveTable.getIntegerTopic("Auto Selector ID").getEntry(0);
+    //entryAutoRoutine.setDefault(0);
 
     // Configure the button bindings
     configureButtonBindings();
@@ -97,49 +95,63 @@ public class NewRobotContainer extends RobotContainer {
     driver.leftBumper().onTrue(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.SLOW))).onFalse(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.MAX)));
     // driver.
 
-    /* --------------- Operator Controls -------------------- */
-    operator.y() //Turn on the shooter and get voltage from DS
-      .whileTrue(Commands.runOnce(()->shooter.setMode(SHOOT_SPEAKER)))
-      .whileFalse(Commands.runOnce(()->shooter.setMode(STOP_SHOOTER)));
+  //   /* --------------- Operator Controls -------------------- */
+  //   operator.y() //Manually turn on the shooter and get voltage from DS
+  //     .whileTrue(new Shooter_tuner(()->shooterDesiredVoltage.get()));
 
-    // operator.y().whileTrue (new ArmFFTestCommand(operator, 3, true) );
+  //  // operator.y().whileTrue (new ArmFFTestCommand(operator, 3, true) );
 
-    operator.a() //Intake the Note
-      .whileTrue(Commands.runOnce(()-> intake.setMode(INTAKE)))
-      .whileFalse(Commands.runOnce(()->intake.setMode(STOP_INTAKE)));    
+  //   // operator.a() //Intake the Note
+  //   //   .whileTrue(Commands.runOnce(()-> intake.setMode(INTAKE)))
+  //   //   .whileFalse(Commands.runOnce(()->intake.setMode(STOP)));    
+      
+  //   operator.b() //Release the Note from the back
+  //     .whileTrue(Commands.runOnce(()-> intake.setMode(RELEASE)))
+  //     .whileFalse(Commands.runOnce(()->intake.setMode(STOP)));    
 
-    operator.b() //Release the Note from the back
-      .whileTrue(Commands.runOnce(()-> intake.setMode(RELEASE)))
-      .whileFalse(Commands.runOnce(()->intake.setMode(STOP_INTAKE)));    
+  //   operator.x() //Drives the note into the shooter
+  //     .whileTrue(Commands.runOnce(()-> intake.setMode(SHOOT)))
+  //     .whileFalse(Commands.runOnce(()->intake.setMode(STOP)));    
 
-    operator.x() //Drives the note into the shooter
-      .whileTrue(Commands.runOnce(()-> intake.setMode(shooter.isReadyToShoot() ? SHOOT : STOP_INTAKE)))
-      .whileFalse(Commands.runOnce(()->intake.setMode(STOP_INTAKE)));    
+  //   //operator.start() //Shoots the Note automatically 
+  //     //.onTrue(Commands.deadline(
+  //       //Commands.sequence(
+  //         //Commands.waitSeconds(2), 
+  //         //intake.shootNote())
+  //         //,new Shooter_tuner(12)
+  //     //));
+      
+  //   operator.start() //Shoots the Note automatically 
+  //     .onTrue(Commands.deadline(
+  //       Commands.sequence(
+  //         Commands.waitSeconds(2), 
+  //         intake.shootNote())
+  //         ,new Shooter_tuner(()->5)
+  //     ));
 
-    operator.start() //Shoots the Note automatically 
-      .onTrue(Commands.sequence(
-          shooter.prepare4Speaker(),
-          intake.shootNote(),
-          Commands.runOnce(()->shooter.setMode(STOP_SHOOTER))          
-          ));
+      //    operator.a() 
+      // .whileTrue(new MakeIntakeMotorSpin(9.0, 0));
 
-    /*operator.start() //Shoots the Note automatically <
-      .onTrue(Commands.deadline(
-        Commands.sequence(
-          Commands.waitSeconds(2), 
-          intake.shootNote())
-          ,new Shooter_tuner(()->12)
-      ));
+    //     operator.start().whileTrue(Commands.deadline(
+    //   Commands.sequence(
+    //     new IntakeControl(false), 
+    //     new WaitCommand(0.5), 
+    //     new IntakeControl(true).withTimeout(2)),
+    //   new Shooter_tuner(5)
+    // ));
 
-      /**
-       * operator.start().whileTrue(Commands.deadline(
+      operator.start().whileTrue(Commands.parallel(
       Commands.sequence(
-        new IntakeControl(false), 
-        new WaitCommand(0.5), 
+        new IntakeControl(false).withTimeout(0.3), 
+        new WaitCommand(0.5),
         new IntakeControl(true).withTimeout(2)),
-      new Shooter_tuner(12)
+      new Shooter_tuner(()->5)
     ));
-       */
+      
+
+      operator.a() 
+        .whileTrue(new MakeIntakeMotorSpin(9.0, 1));
+       
 
     //turns brakes off
     operator.rightBumper().onTrue(Commands.runOnce(() -> ArmPneumaticsSubsystem.getInstance().controlBrake(false, true)));
@@ -155,6 +167,6 @@ public class NewRobotContainer extends RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new AutoRoutines().getAutonomousCommand(6);
+    return new AutoRoutines().getAutonomousCommand(11);
   }
 }

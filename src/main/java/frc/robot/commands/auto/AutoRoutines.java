@@ -11,7 +11,9 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.IntakeControl;
 import frc.robot.commands.MakeIntakeMotorSpin;
+import frc.robot.commands.Shooter_tuner;
 import frc.robot.subsystems.IntakeStatesVoltage;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.Shooter;
@@ -26,15 +28,27 @@ public class AutoRoutines extends SubsystemBase {
     PathPlannerAuto SequentialAutoTest = new PathPlannerAuto("Sequential Auto Test");
     PathPlannerAuto ParallelAutoTest = new PathPlannerAuto("Parallel Auto Test");
     PathPlannerAuto SequentialAndParallelAutoTest = new PathPlannerAuto("Sequential and Parallel Auto Test");
+    PathPlannerAuto OneNoteTest = new PathPlannerAuto("One Note");
     //PathPlannerAuto tune = new PathPlannerAuto("tuningAuto");
     PathPlannerAuto testIntakeMotor = new PathPlannerAuto("MakeIntakeMotorSpin Auto Test");
+    PathPlannerAuto twoNoteAuto = new PathPlannerAuto("twoNoteSpeaker");
+    PathPlannerAuto threeNoteAuto = new PathPlannerAuto("threeNoteSpeaker");
+    private static IntakeSubsystem intake = IntakeSubsystem.getInstance();
+
     public AutoRoutines() {
         
     }
 
+    // private static AutoRoutines instance;
+    // public static AutoRoutines getInstance(){
+    //     if(instance == null){
+    //         instance = new AutoRoutines();
+    //     }
+    //     return instance;
+    // }
 
     public static void registerCommandsToPathplanner() {
-        
+        IntakeSubsystem.getInstance().setDefaultCommand(IntakeSubsystem.getInstance().autoIntake());
         // Intake and Arm Commands
         NamedCommands.registerCommand("IntakeAndArm", new ParallelCommandGroup(
             new WaitCommand(1), // Move arm to intake setpoint
@@ -71,7 +85,46 @@ public class AutoRoutines extends SubsystemBase {
             IntakeSubsystem.getInstance().shootNote(),
             Commands.runOnce(()->Shooter.getInstance().setMode(ShooterStateVoltage.Modes.STOP_SHOOTER))          
         ));
+        
+        NamedCommands.registerCommand("shooter", new SequentialCommandGroup(
+            Commands.deadline(
+                Commands.sequence(
+                    Commands.waitSeconds(2), 
+                    IntakeSubsystem.getInstance().shootNote()
+                ),
+                new Shooter_tuner(()->5)
+            )
+        ));
+
+        NamedCommands.registerCommand("simpleShooter", Commands.deadline(
+              Commands.sequence(
+                new IntakeControl(false).withTimeout(0.3), 
+                new WaitCommand(0.5),
+                new IntakeControl(true).withTimeout(2)),
+              new Shooter_tuner(()->5)
+            ));
+
+        // NamedCommands.registerCommand("turnOffIntake", (
+        //     Commands.runOnce(()-> IntakeSubsystem.getInstance().setMode(STOP))));
+        
+        // NamedCommands.registerCommand("turnOnIntake", (
+            
+        //         Commands.runOnce(()-> IntakeSubsystem.getInstance().setMode(INTAKE))));
+
+        NamedCommands.registerCommand("simpleIntake", (
+                new MakeIntakeMotorSpin(7.0,0)));
+
+        // NamedCommands.registerCommand("alignToSpeaker", (
+        //     PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.FAR_SPEAKER_RED)));
+
+
     }
+        
+
+
+
+
+
 
     
 
@@ -109,6 +162,12 @@ public class AutoRoutines extends SubsystemBase {
                     SwerveSubsystem.getInstance().setOdometryCommand(SpeakerPath.getPreviewStartingHolonomicPose()),
                     AutoBuilder.followPath(SpeakerPath)
                 );
+            case 9:
+                return OneNoteTest;
+            case 10:
+                return twoNoteAuto;
+            case 11:
+                return threeNoteAuto;
         }
     }
 }

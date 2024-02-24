@@ -224,8 +224,8 @@ public final class Config {
     public static final double driveKFF = 0.0;
 
     /* Drive Motor Characterization Values Changed */
-    public static final double driveKS = 0.667;
-    public static final double driveKV = 5.0;
+    public static final double driveKS = 0.667;//667
+    public static final double driveKV = 4.0;//5
     public static final double driveKA = 0.5;
 
     /* Drive Motor Conversion Factors */
