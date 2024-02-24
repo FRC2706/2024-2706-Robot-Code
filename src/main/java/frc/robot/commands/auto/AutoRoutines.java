@@ -76,7 +76,7 @@ public class AutoRoutines extends SubsystemBase {
         ));
 
         
-        NamedCommands.registerCommand("shootNote", new SequentialCommandGroup(
+        NamedCommands.registerCommand("shooter", new SequentialCommandGroup(
             Commands.deadline(
                 Commands.sequence(
                     Commands.waitSeconds(2), 
@@ -86,12 +86,12 @@ public class AutoRoutines extends SubsystemBase {
             )
         ));
 
-        NamedCommands.registerCommand("turnOffIntake", (
-            Commands.runOnce(()-> IntakeSubsystem.getInstance().setMode(STOP))));
+        // NamedCommands.registerCommand("turnOffIntake", (
+        //     Commands.runOnce(()-> IntakeSubsystem.getInstance().setMode(STOP))));
         
-        NamedCommands.registerCommand("turnOnIntake", (
+        // NamedCommands.registerCommand("turnOnIntake", (
             
-                Commands.runOnce(()-> IntakeSubsystem.getInstance().setMode(INTAKE))));
+        //         Commands.runOnce(()-> IntakeSubsystem.getInstance().setMode(INTAKE))));
 
         NamedCommands.registerCommand("simpleIntake", (
                 new MakeIntakeMotorSpin(3.0,0)));
