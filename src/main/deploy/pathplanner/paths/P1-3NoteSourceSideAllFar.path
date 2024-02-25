@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.442282747160915,
-        "y": 5.5981970488114
+        "x": 0.656290778230412,
+        "y": 4.365758146274563
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.442282747160915,
-        "y": 5.5981970488114
+        "x": 0.9382895101668073,
+        "y": 4.135981401733796
       },
       "isLocked": false,
-      "linkedName": "PickupCloseCenterNote"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.3456210118527112,
-        "y": 5.5981970488114
+        "x": 1.460509384123095,
+        "y": 3.6242059252566343
       },
       "prevControl": {
-        "x": 2.3456210118527094,
-        "y": 5.5981970488114
+        "x": 1.1993994471449507,
+        "y": 3.9062046571930296
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "SpeakerShotCenterClose"
+      "linkedName": "3NoteSourceSideAllFar-P1"
     }
   ],
   "rotationTargets": [],
@@ -39,13 +39,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0,
-    "rotateFast": false
+    "rotation": -53.27999999999997,
+    "rotateFast": true
   },
   "reversed": false,
-  "folder": "4NoteCenter",
+  "folder": "3NoteSourceSideAllFar",
   "previewStartingState": {
-    "rotation": 180.0,
+    "rotation": -60.0,
     "velocity": 0
   },
   "useDefaultConstraints": true

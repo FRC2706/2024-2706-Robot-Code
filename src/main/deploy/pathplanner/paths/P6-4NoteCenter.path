@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.431838349681789,
-        "y": 4.32398055635806
+        "x": 2.4527271446400407,
+        "y": 4.438868928628442
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.149839617745394,
-        "y": 4.992421995022108
+        "x": 2.170728412703646,
+        "y": 5.10731036729249
       },
       "isLocked": false,
       "linkedName": "4NoteCenter-SecondNotePickup"
@@ -38,10 +38,10 @@
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.5,
-    "maxAcceleration": 1.5,
-    "maxAngularVelocity": 270.0,
-    "maxAngularAcceleration": 360.0
+    "maxVelocity": 2.7,
+    "maxAcceleration": 3.3,
+    "maxAngularVelocity": 320.0,
+    "maxAngularAcceleration": 400.0
   },
   "goalEndState": {
     "velocity": 0,

@@ -3,15 +3,16 @@
   "robotLength": 0.9,
   "holonomicMode": true,
   "pathFolders": [
-    "4NoteCenter"
+    "4NoteCenter",
+    "3NoteSourceSideAllFar"
   ],
   "autoFolders": [
     "New Folder",
     "New New Folder"
   ],
-  "defaultMaxVel": 1.5,
-  "defaultMaxAccel": 1.5,
-  "defaultMaxAngVel": 270.0,
-  "defaultMaxAngAccel": 360.0,
-  "maxModuleSpeed": 2.5
+  "defaultMaxVel": 2.7,
+  "defaultMaxAccel": 3.3,
+  "defaultMaxAngVel": 320.0,
+  "defaultMaxAngAccel": 400.0,
+  "maxModuleSpeed": 3.2
 }

@@ -167,6 +167,6 @@ public class NewRobotContainer extends RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new AutoRoutines().getAutonomousCommand(11);
+    return new AutoRoutines().getAutonomousCommand(12);
   }
 }

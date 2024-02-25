@@ -33,6 +33,7 @@ public class AutoRoutines extends SubsystemBase {
     PathPlannerAuto testIntakeMotor = new PathPlannerAuto("MakeIntakeMotorSpin Auto Test");
     PathPlannerAuto twoNoteAuto = new PathPlannerAuto("twoNoteSpeaker");
     PathPlannerAuto threeNoteAuto = new PathPlannerAuto("threeNoteSpeaker");
+    PathPlannerAuto fourNoteAuto = new PathPlannerAuto("4NoteCenter");
     private static IntakeSubsystem intake = IntakeSubsystem.getInstance();
 
     public AutoRoutines() {
@@ -81,8 +82,11 @@ public class AutoRoutines extends SubsystemBase {
 
         NamedCommands.registerCommand("ShootNoteStateful", 
         Commands.sequence(
+            Commands.runOnce(() -> {System.out.println("STEP1");}),
             Shooter.getInstance().prepare4Speaker(),
+            Commands.runOnce(() -> {System.out.println("STEP2");}),
             IntakeSubsystem.getInstance().shootNote(),
+            Commands.runOnce(() -> {System.out.println("STEP3");}),
             Commands.runOnce(()->Shooter.getInstance().setMode(ShooterStateVoltage.Modes.STOP_SHOOTER))          
         ));
         
@@ -168,6 +172,8 @@ public class AutoRoutines extends SubsystemBase {
                 return twoNoteAuto;
             case 11:
                 return threeNoteAuto;
+            case 12:
+                return fourNoteAuto;
         }
     }
 }
