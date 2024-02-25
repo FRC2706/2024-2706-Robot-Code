@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.PhotonMoveToTarget;
 import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.lib.lib2706.SelectByAllianceCommand;
 import frc.robot.Config.PhotonConfig.PhotonPositions;
 
 public class AutoRoutines extends SubsystemBase {
@@ -56,11 +57,17 @@ public class AutoRoutines extends SubsystemBase {
         ));
 
         NamedCommands.registerCommand("ResetToSpeakerTag",
-            PhotonSubsystem.getInstance().getResetCommand(4)
+            new SelectByAllianceCommand(
+                PhotonSubsystem.getInstance().getResetCommand(7), // Blue alliance
+                PhotonSubsystem.getInstance().getResetCommand(4) // Red alliance
+            )
         );
 
         NamedCommands.registerCommand("MoveToCenterSpeaker",
-            new PhotonMoveToTarget(PhotonPositions.MIDDLE_SPEAKER_BLUE.destination, false)
+            new SelectByAllianceCommand(
+                new PhotonMoveToTarget(PhotonPositions.MIDDLE_SPEAKER_BLUE.destination, false), 
+                new PhotonMoveToTarget(PhotonPositions.MIDDLE_SPEAKER_RED.destination, false)
+            )
         );
     }
 
