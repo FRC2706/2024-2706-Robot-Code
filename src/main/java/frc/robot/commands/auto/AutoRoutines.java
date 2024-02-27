@@ -18,16 +18,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class AutoRoutines extends SubsystemBase {
-    PathPlannerPath path1 = PathPlannerPath.fromPathFile("4 note");
-    PathPlannerPath path2 = PathPlannerPath.fromPathFile("Diagonal45Degrees");
-    PathPlannerPath BenPath = PathPlannerPath.fromPathFile("ben ");
     PathPlannerPath SpeakerPath = PathPlannerPath.fromPathFile("Speaker Path");
-    PathPlannerAuto SequentialAutoTest = new PathPlannerAuto("Sequential Auto Test");
-    PathPlannerAuto ParallelAutoTest = new PathPlannerAuto("Parallel Auto Test");
-    PathPlannerAuto SequentialAndParallelAutoTest = new PathPlannerAuto("Sequential and Parallel Auto Test");
-    PathPlannerAuto OneNoteTest = new PathPlannerAuto("One Note");
-    //PathPlannerAuto tune = new PathPlannerAuto("tuningAuto");
-    PathPlannerAuto testIntakeMotor = new PathPlannerAuto("MakeIntakeMotorSpin Auto Test");
     PathPlannerAuto twoNoteAuto = new PathPlannerAuto("twoNoteSpeaker");
     PathPlannerAuto threeNoteAuto = new PathPlannerAuto("threeNoteSpeaker");
     private static IntakeSubsystem intake = IntakeSubsystem.getInstance();
@@ -121,40 +112,14 @@ public class AutoRoutines extends SubsystemBase {
             case 0:
             default: 
                 return null;
-            case 1: 
-                if (path1 == null) {
-                    System.out.println("path1 path is null");
-                    return null;
-                }
-                return Commands.sequence(
-                    SwerveSubsystem.getInstance().setOdometryCommand(path1.getPreviewStartingHolonomicPose()),
-                    AutoBuilder.followPath(path1)
-                );
-            case 2:
-                return new PathPlannerAuto("testAuto");
-            case 3:
-                return SequentialAutoTest;
-            case 4:
-                return ParallelAutoTest;
-            case 5:
-                return SequentialAndParallelAutoTest;
-            case 6:
-                return testIntakeMotor;
-            case 7:
-                return Commands.sequence(
-                    SwerveSubsystem.getInstance().setOdometryCommand(BenPath.getPreviewStartingHolonomicPose()),
-                    AutoBuilder.followPath(BenPath)
-                );
-            case 8:
+            case 1:
                 return Commands.sequence(
                     SwerveSubsystem.getInstance().setOdometryCommand(SpeakerPath.getPreviewStartingHolonomicPose()),
                     AutoBuilder.followPath(SpeakerPath)
                 );
-            case 9:
-                return OneNoteTest;
-            case 10:
+            case 2:
                 return twoNoteAuto;
-            case 11:
+            case 3:
                 return threeNoteAuto;
         }
     }
