@@ -22,24 +22,17 @@ import frc.lib.lib2706.SelectByAllianceCommand;
 import frc.robot.Config.PhotonConfig.PhotonPositions;
 
 public class AutoRoutines extends SubsystemBase {
+    
     PathPlannerPath SpeakerPath = PathPlannerPath.fromPathFile("Speaker Path");
     PathPlannerAuto twoNoteAuto = new PathPlannerAuto("twoNoteSpeaker");
     PathPlannerAuto threeNoteAuto = new PathPlannerAuto("threeNoteSpeaker");
-    private static IntakeSubsystem intake = IntakeSubsystem.getInstance();
 
     public AutoRoutines() {
         
     }
 
-    // private static AutoRoutines instance;
-    // public static AutoRoutines getInstance(){
-    //     if(instance == null){
-    //         instance = new AutoRoutines();
-    //     }
-    //     return instance;
-    // }
-
     public static void registerCommandsToPathplanner() {
+        
         // Intake and Arm Commands
         NamedCommands.registerCommand("IntakeAndArm", new ParallelCommandGroup(
             new WaitCommand(1), // Move arm to intake setpoint
@@ -61,11 +54,6 @@ public class AutoRoutines extends SubsystemBase {
             new WaitCommand(1), // Move arm to intake setpoint
             new WaitCommand(1) // Intake game piece
         ));
-        NamedCommands.registerCommand("MakeIntakeMotorSpin", new SequentialCommandGroup(
-            new MakeIntakeMotorSpin(3.0,2), // Move arm to intake setpoint
-            new WaitCommand(1)
-        ));
-
         
         NamedCommands.registerCommand("shooter", new SequentialCommandGroup(
             Commands.deadline(
