@@ -126,7 +126,7 @@ public class PhotonSubsystem extends SubsystemBase {
     if (spacePositions.hasWaypoint){
       return Commands.sequence(
         getWaitForDataCommand(spacePositions.id),
-        new Schedule(new RumbleJoystick(driverStick, RumbleType.kBothRumble, 0.8, 0.2, false)),
+        new ScheduleCommand(new RumbleJoystick(driverStick, RumbleType.kBothRumble, 0.8, 0.2, false)),
         Commands.runOnce(() -> swerveRequirementCommand.schedule()), // Add delayed requirement to SwerveSubsystem
         new ProxyCommand(Commands.sequence( // Proxy these commands to prevent SwerveSubsystem requirement conflicting with swerveRequirementCommand
           new PhotonMoveToTarget(spacePositions.waypoint,true),
@@ -138,7 +138,7 @@ public class PhotonSubsystem extends SubsystemBase {
     {
       return Commands.sequence(
         getWaitForDataCommand(spacePositions.id),
-        new Schedule(new RumbleJoystick(driverStick, RumbleType.kBothRumble, 0.8, 0.2, false)),
+        new ScheduleCommand(new RumbleJoystick(driverStick, RumbleType.kBothRumble, 0.8, 0.2, false)),
         new ScheduleCommand(
           new PhotonMoveToTarget(spacePositions.destination, spacePositions.direction, false)
         )
