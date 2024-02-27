@@ -3,7 +3,11 @@
   "robotLength": 0.9,
   "holonomicMode": true,
   "pathFolders": [],
-  "autoFolders": [],
+  "autoFolders": [
+    "StartingFromBottom",
+    "StartingFromSpeaker",
+    "StartingFromTop"
+  ],
   "defaultMaxVel": 1.5,
   "defaultMaxAccel": 1.5,
   "defaultMaxAngVel": 270.0,
