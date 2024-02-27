@@ -44,11 +44,7 @@ public class NewRobotContainer extends RobotContainer {
   private TunableNumber shooterDesiredVoltage = new TunableNumber("Shooter/desired Voltage", 0);
     
   String tableName = "SwerveChassis";
-  //private NetworkTable swerveTable = NetworkTableInstance.getDefault().getTable(tableName);
-  //private IntegerEntry entryAutoRoutine;
-
-  // AutoSelector m_autoSelector;
-
+  
   /* Create Subsystems in a specific order */
 
   /**
@@ -67,9 +63,6 @@ public class NewRobotContainer extends RobotContainer {
 
     intake.setDefaultCommand(intake.autoIntake());
 
-    //entryAutoRoutine = swerveTable.getIntegerTopic("Auto Selector ID").getEntry(0);
-    //entryAutoRoutine.setDefault(0);
-
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -79,17 +72,10 @@ public class NewRobotContainer extends RobotContainer {
    * created via the {@link CommandXboxController} or other ways.
    */
   private void configureButtonBindings() { 
-    
-    
-    /* Driver Controls */
-    
+    /* --------------- Driver Controls -------------------- */ 
     driver.back().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d(0)));
-    /* --------------- Driver Controls -------------------- */
-  
-    //driver.back().whileTrue(SwerveSubsystem.getInstance().setLockWheelsInXCommand());
     driver.start().whileTrue(new RotateAngleToVision(s_Swerve, driver, 0));
     driver.leftBumper().onTrue(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.SLOW))).onFalse(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.MAX)));
-    // driver.
 
   //   /* --------------- Operator Controls -------------------- */
   //   operator.y() //Manually turn on the shooter and get voltage from DS
