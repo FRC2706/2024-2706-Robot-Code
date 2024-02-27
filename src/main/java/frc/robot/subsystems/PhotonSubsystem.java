@@ -20,16 +20,19 @@ import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Config;
 import frc.robot.Config.PhotonConfig;
 import frc.robot.Config.PhotonConfig.PhotonPositions;
 import frc.robot.commands.PhotonMoveToTarget;
+import frc.robot.commands.RumbleJoystick;
 
 //class
 public class PhotonSubsystem extends SubsystemBase {
@@ -117,12 +120,13 @@ public class PhotonSubsystem extends SubsystemBase {
  * @return
  * the command to run
  */
-  public Command getAprilTagCommand(PhotonPositions spacePositions){
+  public Command getAprilTagCommand(PhotonPositions spacePositions, CommandXboxController driverStick){
     Command swerveRequirementCommand = Commands.run(() -> {}, SwerveSubsystem.getInstance())
             .withName("AprilTagCommandSwerveRequirement");
     if (spacePositions.hasWaypoint){
       return Commands.sequence(
         getWaitForDataCommand(spacePositions.id),
+        new ScheduleCommand(new RumbleJoystick(driverStick, RumbleType.kBothRumble, 0.8, 0.2, false)),
         Commands.runOnce(() -> swerveRequirementCommand.schedule()), // Add delayed requirement to SwerveSubsystem
         new ProxyCommand(Commands.sequence( // Proxy these commands to prevent SwerveSubsystem requirement conflicting with swerveRequirementCommand
           new PhotonMoveToTarget(spacePositions.waypoint,true),
@@ -134,6 +138,7 @@ public class PhotonSubsystem extends SubsystemBase {
     {
       return Commands.sequence(
         getWaitForDataCommand(spacePositions.id),
+        new ScheduleCommand(new RumbleJoystick(driverStick, RumbleType.kBothRumble, 0.8, 0.2, false)),
         Commands.runOnce(() -> swerveRequirementCommand.schedule()), // Add delayed requirement to SwerveSubsystem
         new ProxyCommand( // Proxy this command to prevent SwerveSubsystem requirement conflicting with swerveRequirementCommand
           new PhotonMoveToTarget(spacePositions.destination, spacePositions.direction, false)
