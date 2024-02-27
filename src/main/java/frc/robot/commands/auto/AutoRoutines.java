@@ -11,15 +11,16 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.IntakeControl;
-import frc.robot.commands.MakeIntakeMotorSpin;
-import frc.robot.commands.Shooter_tuner;
-import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.commands.PhotonMoveToTarget;
-import frc.robot.subsystems.PhotonSubsystem;
-import frc.robot.subsystems.SwerveSubsystem;
 import frc.lib.lib2706.SelectByAllianceCommand;
 import frc.robot.Config.PhotonConfig.PhotonPositions;
+import frc.robot.commands.IntakeControl;
+import frc.robot.commands.MakeIntakeMotorSpin;
+import frc.robot.commands.PhotonMoveToTarget;
+import frc.robot.commands.Shooter_tuner;
+import frc.robot.subsystems.IntakeStatesVoltage;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.PhotonSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
 
 public class AutoRoutines extends SubsystemBase {
     
@@ -32,28 +33,8 @@ public class AutoRoutines extends SubsystemBase {
     }
 
     public static void registerCommandsToPathplanner() {
-        
-        // Intake and Arm Commands
-        NamedCommands.registerCommand("IntakeAndArm", new ParallelCommandGroup(
-            new WaitCommand(1), // Move arm to intake setpoint
-            new WaitCommand(1) // Intake game piece
-        ));
 
-        NamedCommands.registerCommand("OutakeRing", new ParallelCommandGroup(
-            new WaitCommand(1), // Move arm to speaker 
-            new WaitCommand(1) // Outake game piece
-        ));
-
-        NamedCommands.registerCommand("StartingZoneAmp", new ParallelCommandGroup(
-            new WaitCommand(1), // Exit starting zone
-            new WaitCommand(1), // Intake note
-            new WaitCommand(1) // Score in amp
-        ));
-
-        NamedCommands.registerCommand("IntakeAndArm", new ParallelCommandGroup(
-            new WaitCommand(1), // Move arm to intake setpoint
-            new WaitCommand(1) // Intake game piece
-        ));
+        IntakeSubsystem.getInstance().setDefaultCommand(IntakeSubsystem.getInstance().autoIntake());
         
         NamedCommands.registerCommand("shooter", new SequentialCommandGroup(
             Commands.deadline(
@@ -74,17 +55,17 @@ public class AutoRoutines extends SubsystemBase {
             ));
 
         // NamedCommands.registerCommand("turnOffIntake", (
-        //     Commands.runOnce(()-> IntakeSubsystem.getInstance().setMode(STOP))));
+        //     Commands.runOnce(()-> IntakeSubsystem.getInstance().setMode(IntakeStatesVoltage.Modes.STOP))));
         
         // NamedCommands.registerCommand("turnOnIntake", (
-            
-        //         Commands.runOnce(()-> IntakeSubsystem.getInstance().setMode(INTAKE))));
+        //         Commands.runOnce(()-> IntakeSubsystem.getInstance().setMode(IntakeStatesVoltage.Modes.INTAKE))));
 
         NamedCommands.registerCommand("simpleIntake", (
                 new MakeIntakeMotorSpin(7.0,0)));
 
         // NamedCommands.registerCommand("alignToSpeaker", (
         //     PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.FAR_SPEAKER_RED)));
+
         NamedCommands.registerCommand("ResetToSpeakerTag",
             new SelectByAllianceCommand(
                 PhotonSubsystem.getInstance().getResetCommand(7), // Blue alliance
@@ -99,14 +80,6 @@ public class AutoRoutines extends SubsystemBase {
             )
         );
     }
-        
-
-
-
-
-
-
-    
 
     public Command getAutonomousCommand(int selectAuto) {
         switch (selectAuto) {
