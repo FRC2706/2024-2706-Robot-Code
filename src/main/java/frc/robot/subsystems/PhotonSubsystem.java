@@ -139,10 +139,11 @@ public class PhotonSubsystem extends SubsystemBase {
       return Commands.sequence(
         getWaitForDataCommand(spacePositions.id),
         new ScheduleCommand(new RumbleJoystick(driverStick, RumbleType.kBothRumble, 0.8, 0.2, false)),
-        new ScheduleCommand(
+        Commands.runOnce(() -> swerveRequirementCommand.schedule()), // Add delayed requirement to SwerveSubsystem
+        new ProxyCommand( // Proxy this command to prevent SwerveSubsystem requirement conflicting with swerveRequirementCommand
           new PhotonMoveToTarget(spacePositions.destination, spacePositions.direction, false)
         )
-      );
+      ).finallyDo(() -> swerveRequirementCommand.cancel()); // Ensure requirement to SwerveSubsystem ends with this command ending
     }
     
   }
@@ -229,7 +230,12 @@ public class PhotonSubsystem extends SubsystemBase {
       //calculate yaw
       Rotation2d yaw = Rotation2d.fromDegrees(target.getYaw()*-1);
       //calculate range
-      double range = (range(target.getPitch())-1)*1.15+1;
+      double range = (range(target.getPitch()));
+      if (range < 6 && range > 1.5){
+        double va = (range-1.5)/10;
+
+        range*=(1-va);
+      }
       //convert to field quordinates
       Pose2d fieldToTarget = convertToField(range, yaw, odometryPose);
       //update rolling averages

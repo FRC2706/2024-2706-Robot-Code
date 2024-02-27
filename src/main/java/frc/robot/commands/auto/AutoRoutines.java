@@ -14,7 +14,11 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.PhotonMoveToTarget;
+import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.lib.lib2706.SelectByAllianceCommand;
+import frc.robot.Config.PhotonConfig.PhotonPositions;
 
 public class AutoRoutines extends SubsystemBase {
     PathPlannerAuto four_note = new PathPlannerAuto("4note");
@@ -51,6 +55,20 @@ public class AutoRoutines extends SubsystemBase {
             new WaitCommand(1), // Move arm to intake setpoint
             new WaitCommand(1) // Intake game piece
         ));
+
+        NamedCommands.registerCommand("ResetToSpeakerTag",
+            new SelectByAllianceCommand(
+                PhotonSubsystem.getInstance().getResetCommand(7), // Blue alliance
+                PhotonSubsystem.getInstance().getResetCommand(4) // Red alliance
+            )
+        );
+
+        NamedCommands.registerCommand("MoveToCenterSpeaker",
+            new SelectByAllianceCommand(
+                new PhotonMoveToTarget(PhotonPositions.MIDDLE_SPEAKER_BLUE.destination, false), 
+                new PhotonMoveToTarget(PhotonPositions.MIDDLE_SPEAKER_RED.destination, false)
+            )
+        );
     }
 
     
