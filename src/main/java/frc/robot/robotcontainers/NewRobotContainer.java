@@ -44,6 +44,8 @@ public class NewRobotContainer extends RobotContainer {
   private TunableNumber shooterDesiredVoltage = new TunableNumber("Shooter/desired Voltage", 0);
     
   String tableName = "SwerveChassis";
+
+  AutoSelector m_autoSelector;
   
   /* Create Subsystems in a specific order */
 
@@ -65,6 +67,8 @@ public class NewRobotContainer extends RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+
+    m_autoSelector = new AutoSelector();
   }
 
   /**
@@ -139,6 +143,9 @@ public class NewRobotContainer extends RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+    // int autoId = m_autoSelector.getAutoId();
+    // System.out.println("*********************** Auto Id"+autoId);
+    //  return new AutoRoutines().getAutonomousCommand(autoId);
     return new AutoRoutines().getAutonomousCommand(11);
   }
 }
