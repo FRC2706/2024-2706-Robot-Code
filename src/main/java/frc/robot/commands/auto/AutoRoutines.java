@@ -45,7 +45,6 @@ public class AutoRoutines extends SubsystemBase {
     // }
 
     public static void registerCommandsToPathplanner() {
-        IntakeSubsystem.getInstance().setDefaultCommand(IntakeSubsystem.getInstance().autoIntake());
         // Intake and Arm Commands
         NamedCommands.registerCommand("IntakeAndArm", new ParallelCommandGroup(
             new WaitCommand(1), // Move arm to intake setpoint
