@@ -44,11 +44,7 @@ public class NewRobotContainer extends RobotContainer {
   private TunableNumber shooterDesiredVoltage = new TunableNumber("Shooter/desired Voltage", 0);
     
   String tableName = "SwerveChassis";
-  //private NetworkTable swerveTable = NetworkTableInstance.getDefault().getTable(tableName);
-  //private IntegerEntry entryAutoRoutine;
-
-  // AutoSelector m_autoSelector;
-
+  
   /* Create Subsystems in a specific order */
 
   /**
@@ -67,9 +63,6 @@ public class NewRobotContainer extends RobotContainer {
 
     intake.setDefaultCommand(intake.autoIntake());
 
-    //entryAutoRoutine = swerveTable.getIntegerTopic("Auto Selector ID").getEntry(0);
-    //entryAutoRoutine.setDefault(0);
-
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -80,63 +73,47 @@ public class NewRobotContainer extends RobotContainer {
    */
   private void configureButtonBindings() { 
     
-    
-    /* Driver Controls */
-    
+    /* --------------- Driver Controls -------------------- */ 
     driver.back().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d(0)));
-    /* --------------- Driver Controls -------------------- */
-  
-    //driver.back().whileTrue(SwerveSubsystem.getInstance().setLockWheelsInXCommand());
     driver.start().whileTrue(new RotateAngleToVision(s_Swerve, driver, 0));
     driver.leftBumper().onTrue(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.SLOW))).onFalse(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.MAX)));
-    // driver.
+    
+    driver.y().whileTrue(new RotateAngleToVision(s_Swerve, driver, 0));
+//     driver.b().whileTrue(new RotateAngleToVision(s_Swerve, driver, Math.PI / 2.0));
+//     driver.a().whileTrue(new RotateAngleToVision(s_Swerve, driver, Math.PI));
+    driver.x().whileTrue(new RotateAngleToVision(s_Swerve, driver, -Math.PI / 2.0));
 
-  //   /* --------------- Operator Controls -------------------- */
-  //   operator.y() //Manually turn on the shooter and get voltage from DS
-  //     .whileTrue(new Shooter_tuner(()->shooterDesiredVoltage.get()));
 
-  //  // operator.y().whileTrue (new ArmFFTestCommand(operator, 3, true) );
+    driver.back().whileTrue(SwerveSubsystem.getInstance().setLockWheelsInXCommand());
+    driver.b().onTrue(SwerveSubsystem.getInstance().setOdometryCommand(new Pose2d(3,3,new Rotation2d(0))));
+    driver.a().whileTrue(PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.MIDDLE_SPEAKER_RED))
+              .onFalse(Commands.runOnce(()->{},SwerveSubsystem.getInstance()));
 
-  //   // operator.a() //Intake the Note
-  //   //   .whileTrue(Commands.runOnce(()-> intake.setMode(INTAKE)))
-  //   //   .whileFalse(Commands.runOnce(()->intake.setMode(STOP)));    
-      
-  //   operator.b() //Release the Note from the back
-  //     .whileTrue(Commands.runOnce(()-> intake.setMode(RELEASE)))
-  //     .whileFalse(Commands.runOnce(()->intake.setMode(STOP)));    
+    /* --------------- Operator Controls -------------------- */
+    operator.y() //Manually turn on the shooter and get voltage from DS
+      .whileTrue(new Shooter_tuner(()->shooterDesiredVoltage.get()));
 
-  //   operator.x() //Drives the note into the shooter
-  //     .whileTrue(Commands.runOnce(()-> intake.setMode(SHOOT)))
-  //     .whileFalse(Commands.runOnce(()->intake.setMode(STOP)));    
+    operator.a() //Intake the Note
+      .whileTrue(Commands.runOnce(()-> intake.setMode(INTAKE)))
+      .whileFalse(Commands.runOnce(()->intake.setMode(STOP)));    
 
-  //   //operator.start() //Shoots the Note automatically 
-  //     //.onTrue(Commands.deadline(
-  //       //Commands.sequence(
-  //         //Commands.waitSeconds(2), 
-  //         //intake.shootNote())
-  //         //,new Shooter_tuner(12)
-  //     //));
-      
-  //   operator.start() //Shoots the Note automatically 
-  //     .onTrue(Commands.deadline(
-  //       Commands.sequence(
-  //         Commands.waitSeconds(2), 
-  //         intake.shootNote())
-  //         ,new Shooter_tuner(()->5)
-  //     ));
+    operator.b() //Release the Note from the back
+      .whileTrue(Commands.runOnce(()-> intake.setMode(RELEASE)))
+      .whileFalse(Commands.runOnce(()->intake.setMode(STOP)));    
 
-      //    operator.a() 
-      // .whileTrue(new MakeIntakeMotorSpin(9.0, 0));
+    operator.x() //Drives the note into the shooter
+      .whileTrue(Commands.runOnce(()-> intake.setMode(SHOOT)))
+      .whileFalse(Commands.runOnce(()->intake.setMode(STOP)));    
 
-    //     operator.start().whileTrue(Commands.deadline(
-    //   Commands.sequence(
-    //     new IntakeControl(false), 
-    //     new WaitCommand(0.5), 
-    //     new IntakeControl(true).withTimeout(2)),
-    //   new Shooter_tuner(5)
-    // ));
+    operator.start() //Shoots the Note automatically 
+      .onTrue(Commands.deadline(
+        Commands.sequence(
+          Commands.waitSeconds(2), 
+          intake.shootNote())
+          ,new Shooter_tuner(()->12)
+      ));
 
-      operator.start().whileTrue(Commands.parallel(
+    operator.start().whileTrue(Commands.deadline(
       Commands.sequence(
         new IntakeControl(false).withTimeout(0.3), 
         new WaitCommand(0.5),
@@ -144,7 +121,7 @@ public class NewRobotContainer extends RobotContainer {
       new Shooter_tuner(()->5)
     ));
 
-      operator.a() 
+    operator.a() 
         .whileTrue(new MakeIntakeMotorSpin(9.0, 1));
        
 
