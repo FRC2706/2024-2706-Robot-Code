@@ -7,9 +7,9 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import static frc.robot.subsystems.IntakeStatesVoltage.Modes.*;
-import static frc.robot.subsystems.IntakeStatesVoltage.States.*;
-import static frc.robot.subsystems.ShooterStateVoltage.States.SPEAKER_LAUNCH_READY;
+import static frc.robot.subsystems.IntakeStatesVoltage.IntakeModes.*;
+import static frc.robot.subsystems.IntakeStatesVoltage.IntakeStates.*;
+import static frc.robot.subsystems.ShooterStates.States.SPEAKER_LAUNCH_READY;
 
 import com.revrobotics.CANSparkMax;
 
@@ -24,8 +24,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Config;
-import frc.robot.subsystems.IntakeStatesVoltage.Modes;
-import frc.robot.subsystems.IntakeStatesVoltage.States;
+import frc.robot.subsystems.IntakeStatesVoltage.IntakeModes;
+import frc.robot.subsystems.IntakeStatesVoltage.IntakeStates;
 
 /** Add your docs here. */
 public class IntakeSubsystem extends SubsystemBase{
@@ -44,7 +44,7 @@ public class IntakeSubsystem extends SubsystemBase{
     private BooleanPublisher sensor8Pub;
     private BooleanPublisher sensor9Pub;
     private StringPublisher statesPub;
-    
+
     private boolean sensor7Result;
     private boolean sensor8Result;
     private boolean sensor9Result;
@@ -55,8 +55,7 @@ public class IntakeSubsystem extends SubsystemBase{
             instance = new IntakeSubsystem();
         return instance;
     }
-    
-    //TODO: create it to be able to be used with velocity, rpm 
+
     private IntakeSubsystem() {
         System.out.println("[Init]Creating Intake");
         m_intake = new CANSparkMax(Config.Intake.INTAKE, MotorType.kBrushless);
@@ -81,7 +80,6 @@ public class IntakeSubsystem extends SubsystemBase{
         sensor9Pub = intakeTable.getBooleanTopic("sensor 9 result").publish(PubSubOption.periodic(0.02));
     }
 
-    /*Please Review this for a possible removal */
     public boolean isSensor7True() {
         return sensor7Result;
     }
@@ -93,14 +91,15 @@ public class IntakeSubsystem extends SubsystemBase{
     public boolean isSensor9True() {
         return sensor9Result;
     }
-    /*---------------------------------------- */
 
     public void setVoltage(double voltage){
         m_intake.setVoltage(voltage);
     }
 
-    public void setMode(Modes mode){
+    public void setMode(IntakeModes mode){
         if(mode.equals(INTAKE) && getCurrentState().equals(NOTE_IN_POS_IDLE)){
+            intakeStates.setMode(STOP_INTAKE);
+        }else if(mode.equals(SHOOT) && getCurrentState().equals(INTAKING)){
             intakeStates.setMode(STOP_INTAKE);
         }else{  
             intakeStates.setMode(mode);
@@ -111,26 +110,60 @@ public class IntakeSubsystem extends SubsystemBase{
         setVoltage(intakeStates.getDesiredVoltage());
     }
 
-    public States getCurrentState(){
+    public IntakeStates getCurrentState(){
         return intakeStates.getCurrentState();
     }
 
-    /*This one for removal too */
     public void stop(){
         m_intake.stopMotor();
     }
-    /*----------------------- */
 
-    public Command autoIntake(){
+    /*---------------------------Commands---------------------------*/
+
+    /**
+     * This allows the Intake's state machine to have effect on the beheavior of the intake
+     * This should be called every run loop cycle, set it as the default command 
+     * @return Default Intake Command
+     */
+    public Command defaultIntakeCommand(){
         return Commands.sequence(
             runOnce(()->setMode(STOP_INTAKE)),
              run(()->allowAutoMovement()));
     }
 
-    public Command shootNote(){
+    /**
+     * Sets the mode of the Intake's state machine to "SHOOT" mode when scheduled,
+     * it ends when non of the sensors detect a game piece(when the state is "SHOOTED")
+     * @return Shoot Note Command
+     */
+    public Command shootNoteCommand(){
         return Commands.deadline(
             Commands.waitUntil(()->getCurrentState().equals(SHOOTED)), 
             Commands.runOnce(()->setMode(SHOOT)));
+    }
+
+    /**
+     * Sets the mode of the Intake's state machine to "INTAKE" mode when scheduled
+     * If is interrupted it sets the mode to "STOP_INTAKE"
+     *  <-This is for TeleOp Only->
+     * @return Intake Command
+     */
+    public Command intakeNoteCommand(){
+        return Commands.startEnd(
+            ()->setMode(INTAKE), ()->setMode(STOP_INTAKE)
+        );
+    }
+
+    /**
+     * Sets the mode of the Intake's state machine to "RELEASE" mode when scheduled
+     * If is interrupted it sets the mode to "STOP_INTAKE"
+     * <-This is for TeleOp Only->
+     * @return Release Command
+     */
+    public Command releaseNoteCommand(){
+        return Commands.startEnd(
+            ()->setMode(RELEASE), ()->setMode(STOP_INTAKE)
+        );
     }
 
     @Override
@@ -138,7 +171,7 @@ public class IntakeSubsystem extends SubsystemBase{
         sensor7Result = sensor7Debouncer.calculate(!sensor7.get());
         sensor8Result = sensor8Debouncer.calculate(!sensor8.get());
         sensor9Result = sensor9Debouncer.calculate(!sensor9.get());
-        
+
         intakeStates.updateSensors(
             ()->{return sensor7Result;}, //Back sensor
             ()->{return sensor9Result;}, //Front sensor
@@ -148,7 +181,6 @@ public class IntakeSubsystem extends SubsystemBase{
         sensor7Pub.accept(sensor7Result);
         sensor8Pub.accept(sensor8Result);
         sensor9Pub.accept(sensor9Result);
-        statesPub.accept(getCurrentState().toString());//Check if this works
-        //SmartDashboard.putString("states", getCurrentState().toString());
+        statesPub.accept(getCurrentState().toString());
     }
 }

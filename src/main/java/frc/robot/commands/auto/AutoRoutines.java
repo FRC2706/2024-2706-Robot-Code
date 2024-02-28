@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.SwerveSubsystem;
 
+//TODO: The autos are beginning a sec after the robot is enabled, we have to 
+//load all of the paths and initializate everything right after we turn on the robot
 public class AutoRoutines extends SubsystemBase {
     PathPlannerAuto four_note = new PathPlannerAuto("4note");
     PathPlannerAuto SequentialAutoTest = new PathPlannerAuto("Sequential Auto Test");

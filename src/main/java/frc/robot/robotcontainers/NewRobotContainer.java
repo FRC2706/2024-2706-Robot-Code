@@ -17,8 +17,8 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.geometry.Pose2d;
 
-import static frc.robot.subsystems.IntakeStatesVoltage.Modes.*;
-import static frc.robot.subsystems.ShooterStateVoltage.Modes.*;
+import static frc.robot.subsystems.IntakeStatesVoltage.IntakeModes.*;
+import static frc.robot.subsystems.ShooterStates.ShooterModes.*;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.IntegerEntry;
@@ -40,16 +40,16 @@ import frc.robot.commands.ArmFFTestCommand;
 import frc.robot.commands.IntakeControl;
 import frc.robot.commands.MakeIntakeMotorSpin;
 import frc.robot.commands.RotateAngleToVision;
-import frc.robot.commands.Shooter_tuner;
+import frc.robot.commands.Shooter_Voltage;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.auto.AutoRoutines;
 import frc.robot.commands.auto.AutoSelector;
 import frc.robot.subsystems.ArmPneumaticsSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PhotonSubsystem;
-import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.IntakeStatesVoltage.States;
+import frc.robot.subsystems.IntakeStatesVoltage.IntakeStates;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -66,7 +66,7 @@ public class NewRobotContainer extends RobotContainer {
 
   private final SwerveSubsystem s_Swerve = SwerveSubsystem.getInstance();
   private final IntakeSubsystem intake = IntakeSubsystem.getInstance();
-  private final Shooter shooter = Shooter.getInstance();
+  private final ShooterSubsystem shooter = ShooterSubsystem.getInstance();
 
   private TunableNumber shooterTargetRPM = new TunableNumber("Shooter/Target RPM", 0);
   private TunableNumber shooterDesiredVoltage = new TunableNumber("Shooter/desired Voltage", 0);
@@ -93,8 +93,8 @@ public class NewRobotContainer extends RobotContainer {
         )
     );
 
-    intake.setDefaultCommand(intake.autoIntake());
-    shooter.setDefaultCommand(shooter.autoShooter());
+    intake.setDefaultCommand(intake.defaultIntakeCommand());
+    shooter.setDefaultCommand(shooter.defaultShooterCommand());
 
     entryAutoRoutine = swerveTable.getIntegerTopic("Auto Selector ID").getEntry(0);
     entryAutoRoutine.setDefault(0);
@@ -149,8 +149,8 @@ public class NewRobotContainer extends RobotContainer {
 
     operator.start() //Shoots the Note automatically 
       .onTrue(Commands.sequence(
-          shooter.prepare4Speaker(),
-          intake.shootNote(),
+          shooter.speedUpForSpeakerCommand(),
+          intake.shootNoteCommand(),
           Commands.runOnce(()->shooter.setMode(STOP_SHOOTER))          
           ));
 

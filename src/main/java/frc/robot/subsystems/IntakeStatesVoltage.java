@@ -4,10 +4,10 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.subsystems.IntakeStatesVoltage.Modes.*;
-import static frc.robot.subsystems.IntakeStatesVoltage.States.*;
+import static frc.robot.subsystems.IntakeStatesVoltage.IntakeModes.*;
+import static frc.robot.subsystems.IntakeStatesVoltage.IntakeStates.*;
 
-import frc.lib.lib2706.RunnableBoolean;
+import java.util.function.BooleanSupplier;
 
 /** Add your docs here. */
 public class IntakeStatesVoltage {
@@ -15,13 +15,13 @@ public class IntakeStatesVoltage {
     private Boolean isBackActive = false;
     private Boolean isCenterActive = null;
 
-    private Modes desiredMode = STOP_INTAKE;
-    private States currentState = EMPTY_IDLE;
+    private IntakeModes desiredMode = STOP_INTAKE;
+    private IntakeStates currentState = EMPTY_IDLE;
 
     /**
      * All possible Modes to control the shooter
     */
-    public static enum Modes {
+    public static enum IntakeModes {
         STOP_INTAKE(0.0),
         INTAKE(6.0),
         POSITION_NOTE(1.5),
@@ -31,7 +31,7 @@ public class IntakeStatesVoltage {
 
         double v;
 
-        private Modes(double voltage) {
+        private IntakeModes(double voltage) {
             v = voltage;
         }
 
@@ -43,7 +43,7 @@ public class IntakeStatesVoltage {
     /** 
      * All possible states of the shooter
      */
-    public static enum States {
+    public static enum IntakeStates {
         EMPTY_IDLE,
         INTAKING,
         RELEASING,
@@ -61,7 +61,7 @@ public class IntakeStatesVoltage {
      * Method to set the desired mode
      * @param desiredMode
      */
-    public void setMode(Modes desiredMode) {
+    public void setMode(IntakeModes desiredMode) {
         this.desiredMode = desiredMode;
     }
 
@@ -76,14 +76,14 @@ public class IntakeStatesVoltage {
     /**
      * Method for logging values
      */
-    public Modes getDesiredMode(){
+    public IntakeModes getDesiredMode(){
         return desiredMode;
     }
 
     /**
      * Method for checking current state of intake
      */
-    public States getCurrentState(){
+    public IntakeStates getCurrentState(){
         return currentState;
     }
 
@@ -92,19 +92,19 @@ public class IntakeStatesVoltage {
      * This should be called every loop cycle
      * @param toRun First Argument must be the Back Sensor, Second Front, Third the center
      */
-    public void updateSensors(RunnableBoolean... toRun) {
+    public void updateSensors(BooleanSupplier... toRun) {
         if(toRun.length > 3 || toRun == null){
             throw new IllegalArgumentException("No sensors found, or more than 3");
         }
         
         if(toRun.length >= 2){
-            isForntActive = toRun[1].run();
+            isForntActive = toRun[1].getAsBoolean();
         }
 
-        isBackActive = toRun[0].run();
+        isBackActive = toRun[0].getAsBoolean();
 
         if(toRun.length == 3){
-            isCenterActive = toRun[2].run();
+            isCenterActive = toRun[2].getAsBoolean();
         }
         
     }

@@ -7,22 +7,20 @@ package frc.robot.commands;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Shooter;
+import frc.robot.Config;
+import frc.robot.subsystems.ShooterSubsystem;
 
-public class Shooter_tuner extends Command {
+public class Shooter_PID_Tuner extends Command {
 
   //variable for setpoint
-  private final Shooter shooter = Shooter.getInstance() ;
-  private DoubleSupplier setPoint;
+  private final ShooterSubsystem shooter = ShooterSubsystem.getInstance() ;
+  private DoubleSupplier setPointInRPM;
 
   /** Creates a new Shooter_tuner. */
-  public Shooter_tuner(DoubleSupplier setPoint) { 
+  public Shooter_PID_Tuner(DoubleSupplier setPointInRPM) { 
+    this.setPointInRPM = setPointInRPM;
 
-    this.setPoint = setPoint;
-
-    // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(shooter);
-    
   }
 
   // Called when the command is initially scheduled.
@@ -32,18 +30,13 @@ public class Shooter_tuner extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
-    shooter.setVoltage(setPoint.getAsDouble());
-
-  }
-  
+    shooter.setRPM(setPointInRPM.getAsDouble());
+  } 
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-
     shooter.setVoltage(0);
-
   }
 
   // Returns true when the command should end.
