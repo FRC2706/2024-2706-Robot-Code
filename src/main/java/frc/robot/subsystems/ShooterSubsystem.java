@@ -35,7 +35,8 @@ public class ShooterSubsystem extends SubsystemBase {
     private SparkPIDController m_pidController;
     private RelativeEncoder m_encoder;
     private boolean closedLoopControl = false;
-    private boolean stateFulControl = false; 
+    private boolean stateFulControl = false;
+
 
     private TunableNumber kP = new TunableNumber("Shooter/kP", Config.ShooterConstants.kP);
     private TunableNumber kI = new TunableNumber("Shooter/kI", Config.ShooterConstants.kI);
@@ -104,7 +105,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void allowAutoMovement(boolean isThereNote){
-        if(!isThereNote)setMode(STOP_SHOOTER);
+        if(!isThereNote && stateFulControl)setMode(STOP_SHOOTER);//it should set to stop now when there is no note in intake
 
         if(closedLoopControl){
             setRPM(shooterStates.getDesiredVelocityRPM());
@@ -135,11 +136,11 @@ public class ShooterSubsystem extends SubsystemBase {
         return getCurrentState().equals(SPEAKER_LAUNCH_READY) || getCurrentState().equals(AMP_LAUNCH_READY);
     }
 
-    public void changeToNonStateFull(){
+    public void setStateMachineOff(){
         stateFulControl = false;
     }
 
-    public void changeToStateFull(){
+    public void setStateMachineOn(){
         stateFulControl = true;
     }
 
@@ -173,9 +174,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
         //Check if this method would work like this
         shooterStates.isInRange(()->getVelocityRPM() > shooterStates.getDesiredVelocityRPM() - shooterTreshHold.get());
-        if(stateFulControl){
-            shooterStates.updateState();
-        }
+        shooterStates.updateState();
+        
 
         velocityPub.accept(getVelocityRPM());
         shooterReadyPub.accept(isReadyToShoot());

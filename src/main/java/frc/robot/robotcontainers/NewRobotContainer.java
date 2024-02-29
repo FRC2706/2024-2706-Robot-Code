@@ -147,6 +147,12 @@ public class NewRobotContainer extends RobotContainer {
       .whileTrue(Commands.runOnce(()-> intake.setMode(shooter.isReadyToShoot() ? SHOOT : STOP_INTAKE)))
       .whileFalse(Commands.runOnce(()->intake.setMode(STOP_INTAKE)));    
 
+    operator.povDown() //Stops the state machine from jumping automaticly between states
+      .onTrue(Commands.runOnce(()->{intake.setStateMachineOff();shooter.setStateMachineOff();}));
+
+    operator.povUp() //Re-activates the state
+      .onTrue(Commands.runOnce(()->{intake.setStateMachineOn();shooter.setStateMachineOn();}));
+
     operator.start() //Shoots the Note automatically 
       .onTrue(Commands.sequence(
           shooter.speedUpForSpeakerCommand(),

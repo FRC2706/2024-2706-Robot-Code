@@ -30,6 +30,7 @@ import frc.robot.subsystems.IntakeStatesMachine.IntakeStates;
 /** Add your docs here. */
 public class IntakeSubsystem extends SubsystemBase{
     private CANSparkMax m_intake;
+    private boolean stateFulControl = false;
     private IntakeStatesMachine intakeStates = new IntakeStatesMachine();
 
     private DigitalInput sensor7;//Back
@@ -97,6 +98,11 @@ public class IntakeSubsystem extends SubsystemBase{
     }
 
     public void setMode(IntakeModes mode){
+        if(!stateFulControl){
+            intakeStates.setMode(mode);
+            return;
+        }
+        
         if(mode.equals(INTAKE) && getCurrentState().equals(NOTE_IN_POS_IDLE)){
             intakeStates.setMode(STOP_INTAKE);
         }else if(mode.equals(SHOOT) && getCurrentState().equals(INTAKING)){
@@ -115,11 +121,19 @@ public class IntakeSubsystem extends SubsystemBase{
     }
 
     public void stop(){
-        m_intake.stopMotor();
+        setVoltage(0);
     }
 
     public boolean isNoteIn(){
         return getCurrentState().equals(NOTE_IN_POS_IDLE);
+    }
+
+    public void setStateMachineOff(){
+        stateFulControl = false;
+    }
+
+    public void setStateMachineOn(){
+        stateFulControl = true;
     }
 
     /*---------------------------Commands---------------------------*/
@@ -176,15 +190,17 @@ public class IntakeSubsystem extends SubsystemBase{
         sensor8Result = sensor8Debouncer.calculate(!sensor8.get());
         sensor9Result = sensor9Debouncer.calculate(!sensor9.get());
 
-        intakeStates.updateSensors(
-            ()->{return sensor7Result;}, //Back sensor
-            ()->{return sensor9Result;}, //Front sensor
-            ()->{return sensor8Result;});//Center sensor (Could be removable)
-        intakeStates.updateStates();
+        if(stateFulControl){
+            intakeStates.updateSensors(
+                ()->{return sensor7Result;}, //Back sensor
+                ()->{return sensor9Result;}, //Front sensor
+                ()->{return sensor8Result;});//Center sensor (Could be removable)
+            intakeStates.updateStates();
+        }
 
         sensor7Pub.accept(sensor7Result);
         sensor8Pub.accept(sensor8Result);
         sensor9Pub.accept(sensor9Result);
-        statesPub.accept(getCurrentState().toString());
+        statesPub.accept(stateFulControl?getCurrentState().toString(): "No State Machine");
     }
 }
