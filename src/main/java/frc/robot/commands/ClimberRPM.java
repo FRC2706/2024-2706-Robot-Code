@@ -36,9 +36,6 @@ public class ClimberRPM extends CommandBase {
   public void execute() {
     if (climber == null){
       return;
-
-      //System.out.println("auto mode: "+ Robot.m_bAutoMode);
-      // System.out.println("indexer sensor: "+ indexer.m_bForIntakeGoodSensors);
     }
     else{
       climber.StartClimberRPM(m_getPercentOutput.getAsDouble());
@@ -62,59 +59,3 @@ public class ClimberRPM extends CommandBase {
   }
 
 }
-
-//for the case when the switch is at the end of the indexer, closer to shooter
-//  // Called every time the scheduler runs while the command is scheduled.
-//  @Override
-//  public void execute() {
-   
-//    //@todo: only consider one detection, ignore all of the following detections.
-//    if(bFirstSwitchDetected == false)
-//    {
-//      switchDetected = switchDetector.isDetected();
-//      System.out.println("switch detected: "+switchDetected);
-//    }
-
-//    if (switchDetected == true) 
-//    {
-//      bFirstSwitchDetected = true;
-//      indexer.stop();
-//    } 
-//    else 
-//    {
-//      colorSensorDetected = colorSensor.isDetected();
-//      if ( colorSensorDetected == true)
-//      {
-//        System.out.println("detected one cargo");
-//      }
-
-//      if (colorSensorDetected == true && colorSensorFirstDetected == false) 
-//      {
-//        colorSensorFirstDetected = true;
-//        System.out.println("start shuffling the cargo");
-//      }
-     
-//      if (colorSensorFirstDetected == true) 
-//      {
-       
-//        indexer.runForIntake();
-//        counter++;
-       
-//        // TODO tune for 100
-//        if (counter > 200) {
-//          // At this time, the cargo should be in the indexer, and the indexer should stop
-
-//          //reset for the next cargo 
-//          colorSensorFirstDetected = false;
-//          colorSensorDetected = false;
-//          counter = 0;
-//          indexer.setIndexerPosition();
-//          System.out.println("stop shuffling the cargo");
-//          indexer.stop();
-
-//        }
-//      } else {
-//        indexer.stop();
-//      }
-//    }
-//  }

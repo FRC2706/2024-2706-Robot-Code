@@ -27,7 +27,7 @@ public class ClimberSubsystem extends SubsystemBase {
   /** Creates a new ClimberSubSystem. */
   private ClimberSubsystem() {
     
-    if (Config.Climber.CLIMBER != -1) {
+    if (Config.Climber_CANID.CLIMBER != -1) {
       initializeSubsystem();
     }
     else
@@ -39,7 +39,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
   private void initializeSubsystem() 
   {
-    m_climber = new CANSparkMax(Config.Climber.CLIMBER, MotorType.kBrushless);
+    m_climber = new CANSparkMax(Config.Climber_CANID.CLIMBER, MotorType.kBrushless);
 
     if ( m_climber != null )
     {      
@@ -48,20 +48,6 @@ public class ClimberSubsystem extends SubsystemBase {
       // Factory Default to prevent unexpected behaviour
       m_climber.restoreFactoryDefaults();
       m_climber.setInverted(false);
-
-      // PID controller for the Climber
-      m_encoder = m_climber.getEncoder();
-
-      REVLibError errorCode;
-      
-      //Use smart position closed loop controller
-        
-      //Set max acceleration, velocity, and minimum velocity
-  
-      
-      // the following line cause the trouble: make m_bGoodSensors to false
-      //  errorCode = m_pidController.setSmartMotionMinOutputVelocity(-1, 0);
-      // m_bGoodSensors = m_bGoodSensors && (errorCode == REVLibError.kOk);
 
       //Set maximum current
       m_climber.setSmartCurrentLimit(60);
@@ -81,49 +67,12 @@ public class ClimberSubsystem extends SubsystemBase {
         return INSTANCE_CLIMBER;
       else
         return null;
-    }
-
-    public void setClimberPosition()
-    {
-      if( m_bGoodSensors == true )
-      { 
-        //Get the current motor position from encoder
-        currentPosition = m_encoder.getPosition();
-      }
-    }
+    } 
 
     //Run the climber
-    public void startClimber( int increPosition) {
-
-      if( m_bGoodSensors == true )
-      {
-        //Use smartmotion to go from current position to new position
-
-        //use the finxed incrementalPosition
-        //m_pidController.setReference(currentPosition + incrementalPosition, ControlType.kSmartMotion, 0);
-
-        //Use arbitrary feed forward: 0.5 voltage
-        //note: arbitraryFF could be dependent on if there is already one cargo in the climber
-        //m_pidController.setReference(currentPosition + incrementalPosition, ControlType.kSmartMotion, 0, 0.5, com.revrobotics.SparkMaxPIDController.ArbFFUnits.kVoltage);
-      }
-      else
-      {
-        //a constant speed, then only for one cargo
-        //@todo: test this default speed
-        m_climber.set(0.1);
-      }
-
-    }
 
     public void StartClimberRPM(double percentOutput){
-      //if(m_bGoodSensors == true)
-      //{
-      //  m_pidController.setReference(targetRPM, ControlType.kVelocity, 1);
-      //}
-      //else
-      //{
         m_climber.set(percentOutput);
-      //}
     }
 
     public void stop() 
