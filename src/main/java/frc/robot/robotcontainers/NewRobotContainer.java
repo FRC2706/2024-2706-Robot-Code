@@ -7,6 +7,10 @@ package frc.robot.robotcontainers;
 
 
 import edu.wpi.first.math.geometry.Pose2d;
+
+import static frc.robot.subsystems.IntakeStatesMachine.IntakeModes.*;
+import static frc.robot.subsystems.ShooterStateMachine.ShooterModes.*;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -19,7 +23,7 @@ import frc.robot.Robot;
 import frc.robot.commands.IntakeControl;
 import frc.robot.commands.MakeIntakeMotorSpin;
 import frc.robot.commands.RotateAngleToVision;
-import frc.robot.commands.Shooter_tuner;
+import frc.robot.commands.Shooter_Voltage;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.auto.AutoRoutines;
 import frc.robot.commands.auto.AutoSelector;
@@ -27,7 +31,9 @@ import frc.robot.subsystems.ArmPneumaticsSubsystem;
 import frc.robot.subsystems.IntakeStatesVoltage;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PhotonSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.IntakeStatesMachine.IntakeStates.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -44,6 +50,7 @@ public class NewRobotContainer extends RobotContainer {
 
   private final SwerveSubsystem s_Swerve = SwerveSubsystem.getInstance();
   private final IntakeSubsystem intake = IntakeSubsystem.getInstance();
+  private final ShooterSubsystem shooter = ShooterSubsystem.getInstance();
 
   private TunableNumber shooterTargetRPM = new TunableNumber("Shooter/Target RPM", 0);
   private TunableNumber shooterDesiredVoltage = new TunableNumber("Shooter/desired Voltage", 0);
@@ -68,7 +75,8 @@ public class NewRobotContainer extends RobotContainer {
         )
     );
 
-    intake.setDefaultCommand(intake.autoIntake());
+    intake.setDefaultCommand(intake.defaultIntakeCommand());
+    shooter.setDefaultCommand(shooter.defaultShooterCommand(()-> intake.isNoteIn()));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -99,22 +107,36 @@ public class NewRobotContainer extends RobotContainer {
               .onFalse(Commands.runOnce(()->{},SwerveSubsystem.getInstance()));
 
     /* --------------- Operator Controls -------------------- */
-    operator.y() //Manually turn on the shooter and get voltage from DS
-      .whileTrue(new Shooter_tuner(()->shooterDesiredVoltage.get()));
+    operator.y() //Turn on the shooter and get voltage from DS
+      .whileTrue(Commands.runOnce(()->shooter.setMode(SHOOT_SPEAKER)))
+      .whileFalse(Commands.runOnce(()->shooter.setMode(STOP_SHOOTER)));
 
     operator.a() //Intake the Note
-      .whileTrue(Commands.runOnce(()-> intake.setMode(IntakeStatesVoltage.Modes.INTAKE)))
-      .whileFalse(Commands.runOnce(()->intake.setMode(IntakeStatesVoltage.Modes.STOP)));    
+      .whileTrue(Commands.runOnce(()-> intake.setMode(INTAKE)))
+      .whileFalse(Commands.runOnce(()->intake.setMode(STOP_INTAKE)));    
 
     operator.b() //Release the Note from the back
-      .whileTrue(Commands.runOnce(()-> intake.setMode(IntakeStatesVoltage.Modes.RELEASE)))
-      .whileFalse(Commands.runOnce(()->intake.setMode(IntakeStatesVoltage.Modes.STOP)));    
+      .whileTrue(Commands.runOnce(()-> intake.setMode(RELEASE)))
+      .whileFalse(Commands.runOnce(()->intake.setMode(STOP_INTAKE)));    
 
     operator.x() //Drives the note into the shooter
-      .whileTrue(Commands.runOnce(()-> intake.setMode(IntakeStatesVoltage.Modes.SHOOT)))
-      .whileFalse(Commands.runOnce(()->intake.setMode(IntakeStatesVoltage.Modes.STOP)));    
+      .whileTrue(Commands.runOnce(()-> intake.setMode(shooter.isReadyToShoot() ? SHOOT : STOP_INTAKE)))
+      .whileFalse(Commands.runOnce(()->intake.setMode(STOP_INTAKE)));    
+
+    operator.povDown() //Stops the state machine from jumping automaticly between states
+      .onTrue(Commands.runOnce(()->{intake.setStateMachineOff();shooter.setStateMachineOff();}));
+
+    operator.povUp() //Re-activates the state
+      .onTrue(Commands.runOnce(()->{intake.setStateMachineOn();shooter.setStateMachineOn();}));
 
     operator.start() //Shoots the Note automatically 
+      .onTrue(Commands.sequence(
+          shooter.speedUpForSpeakerCommand(),
+          intake.shootNoteCommand(),
+          Commands.runOnce(()->shooter.setMode(STOP_SHOOTER))          
+          ));
+
+    /*operator.start() //Shoots the Note automatically <
       .onTrue(Commands.deadline(
         Commands.sequence(
           Commands.waitSeconds(2), 

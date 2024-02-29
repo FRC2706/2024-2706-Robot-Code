@@ -22,6 +22,8 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
+//TODO: The autos are beginning a sec after the robot is enabled, we have to 
+//load all of the paths and initializate everything right after we turn on the robot
 public class AutoRoutines extends SubsystemBase {
     
     PathPlannerPath SpeakerPath = PathPlannerPath.fromPathFile("Speaker Path");

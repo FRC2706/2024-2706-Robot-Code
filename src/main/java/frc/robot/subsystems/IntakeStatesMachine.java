@@ -4,34 +4,34 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.subsystems.IntakeStatesVoltage.Modes.*;
-import static frc.robot.subsystems.IntakeStatesVoltage.States.*;
+import static frc.robot.subsystems.IntakeStatesMachine.IntakeModes.*;
+import static frc.robot.subsystems.IntakeStatesMachine.IntakeStates.*;
 
-import frc.lib.lib2706.RunnableBoolean;
+import java.util.function.BooleanSupplier;
 
 /** Add your docs here. */
-public class IntakeStatesVoltage {
+public class IntakeStatesMachine {
     private Boolean isForntActive = false;
     private Boolean isBackActive = false;
     private Boolean isCenterActive = null;
 
-    private Modes desiredMode = STOP;
-    private States currentState = EMPTY_IDLE;
+    private IntakeModes desiredMode = STOP_INTAKE;
+    private IntakeStates currentState = EMPTY_IDLE;
 
     /**
      * All possible Modes to control the shooter
     */
-    public static enum Modes {
-        STOP(0.0),
-        INTAKE(9.0),
-        POSITION_NOTE(0.7),
-        BACK_NOTE(-0.7),
-        RELEASE(-9.0),
-        SHOOT(9.0);
+    public static enum IntakeModes {
+        STOP_INTAKE(0.0),
+        INTAKE(6.0),
+        POSITION_NOTE(1.5),
+        BACK_NOTE(-2.5),
+        RELEASE(-7.0),
+        SHOOT(8.0);
 
         double v;
 
-        private Modes(double voltage) {
+        private IntakeModes(double voltage) {
             v = voltage;
         }
 
@@ -43,7 +43,7 @@ public class IntakeStatesVoltage {
     /** 
      * All possible states of the shooter
      */
-    public static enum States {
+    public static enum IntakeStates {
         EMPTY_IDLE,
         INTAKING,
         RELEASING,
@@ -61,7 +61,7 @@ public class IntakeStatesVoltage {
      * Method to set the desired mode
      * @param desiredMode
      */
-    public void setMode(Modes desiredMode) {
+    public void setMode(IntakeModes desiredMode) {
         this.desiredMode = desiredMode;
     }
 
@@ -76,14 +76,14 @@ public class IntakeStatesVoltage {
     /**
      * Method for logging values
      */
-    public Modes getDesiredMode(){
+    public IntakeModes getDesiredMode(){
         return desiredMode;
     }
 
     /**
      * Method for checking current state of intake
      */
-    public States getCurrentState(){
+    public IntakeStates getCurrentState(){
         return currentState;
     }
 
@@ -92,19 +92,19 @@ public class IntakeStatesVoltage {
      * This should be called every loop cycle
      * @param toRun First Argument must be the Back Sensor, Second Front, Third the center
      */
-    public void updateSensors(RunnableBoolean... toRun) {
+    public void updateSensors(BooleanSupplier... toRun) {
         if(toRun.length > 3 || toRun == null){
             throw new IllegalArgumentException("No sensors found, or more than 3");
         }
         
         if(toRun.length >= 2){
-            isForntActive = toRun[1].run();
+            isForntActive = toRun[1].getAsBoolean();
         }
 
-        isBackActive = toRun[0].run();
+        isBackActive = toRun[0].getAsBoolean();
 
         if(toRun.length == 3){
-            isCenterActive = toRun[2].run();
+            isCenterActive = toRun[2].getAsBoolean();
         }
         
     }
@@ -115,8 +115,8 @@ public class IntakeStatesVoltage {
     public void updateStates() {
         switch (desiredMode) {
             //Stop from moving
-            case STOP: 
-                if(isBackActive){
+            case STOP_INTAKE: 
+                if(isBackActive && isCenterActive){
                     setMode(BACK_NOTE); 
                     break;
                 }
@@ -133,7 +133,7 @@ public class IntakeStatesVoltage {
             //Intake the Note
             case INTAKE:
                 if(isCenterActive){//Check if this works now
-                    setMode(STOP);
+                    setMode(STOP_INTAKE);
                 }
 
                 if(isBackActive){
@@ -141,8 +141,7 @@ public class IntakeStatesVoltage {
                     break;
                 }
 
-
-                if(isForntActive && !currentState.equals(NOTE_ENTERING_IDLE)){ //compare with NOTE_ENTERING_IDLE;
+                if(isForntActive && !currentState.equals(NOTE_ENTERING_IDLE)){
                     currentState = NOTE_ENTERING;
                     setMode(POSITION_NOTE);
                 } else currentState = INTAKING;
@@ -152,7 +151,7 @@ public class IntakeStatesVoltage {
             case POSITION_NOTE:
             currentState = POSITIONING_NOTE;
                 if(isCenterActive != null){
-                    if(isCenterActive)setMode(STOP);
+                    if(isCenterActive)setMode(STOP_INTAKE);
                 }else if(isBackActive){
                     setMode(BACK_NOTE); 
                 }
@@ -166,7 +165,7 @@ public class IntakeStatesVoltage {
             //Back the note if overshooted
             case BACK_NOTE:
                 //If we dont have a front intake, this will not work
-                if(!isBackActive && isForntActive)setMode(STOP);
+                if(!isBackActive && isForntActive)setMode(STOP_INTAKE);
                 else currentState = BACKING_NOTE;
             break;
 
@@ -175,19 +174,19 @@ public class IntakeStatesVoltage {
             if(isCenterActive == null){
                 if(!isForntActive && !isBackActive)
                 currentState = SHOOTED;
-                setMode(STOP);
+                setMode(STOP_INTAKE);
                 break;
             }else if(!isBackActive && !isCenterActive && !isForntActive){
                 currentState = SHOOTED;
-                setMode(STOP);
+                setMode(STOP_INTAKE);
                 break;
             }else currentState = SHOOTING;
             break;
 
             //Default
             default:
-            setMode(STOP);
+            setMode(STOP_INTAKE);
                 break;
         }
     }
-}
+} 
