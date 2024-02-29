@@ -23,6 +23,7 @@ import frc.robot.commands.Shooter_tuner;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.auto.AutoRoutines;
 import frc.robot.commands.auto.AutoSelector;
+import frc.robot.commands.auto.CombinedCommands;
 import frc.robot.subsystems.ArmPneumaticsSubsystem;
 import frc.robot.subsystems.IntakeStatesVoltage;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -50,6 +51,7 @@ public class NewRobotContainer extends RobotContainer {
     
   String tableName = "SwerveChassis";
 
+  AutoRoutines m_autoRoutines;
   AutoSelector m_autoSelector;
   
   /* Create Subsystems in a specific order */
@@ -58,7 +60,8 @@ public class NewRobotContainer extends RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public NewRobotContainer() {
-    AutoRoutines.registerCommandsToPathplanner();
+    m_autoRoutines = new AutoRoutines();
+    m_autoRoutines.registerCommandsToPathplanner();
 
     /*  Setup default commands */
     s_Swerve.setDefaultCommand(
@@ -122,13 +125,7 @@ public class NewRobotContainer extends RobotContainer {
           ,new Shooter_tuner(()->12)
       ));
 
-    operator.start().whileTrue(Commands.deadline(
-      Commands.sequence(
-        new IntakeControl(false).withTimeout(0.3), 
-        new WaitCommand(0.5),
-        new IntakeControl(true).withTimeout(2)),
-      new Shooter_tuner(()->5)
-    ));
+    operator.start().whileTrue(CombinedCommands.simpleShootNote());
 
     operator.a() 
         .whileTrue(new MakeIntakeMotorSpin(9.0, 1));
@@ -140,6 +137,9 @@ public class NewRobotContainer extends RobotContainer {
     //turns brakes on
     operator.rightTrigger().onTrue(Commands.runOnce(() -> ArmPneumaticsSubsystem.getInstance().controlBrake(true, true)));
   }
+
+
+
   
 
   /**
@@ -151,6 +151,6 @@ public class NewRobotContainer extends RobotContainer {
     // int autoId = m_autoSelector.getAutoId();
     // System.out.println("*********************** Auto Id"+autoId);
     //  return new AutoRoutines().getAutonomousCommand(autoId);
-    return new AutoRoutines().getAutonomousCommand(0);
+    return m_autoRoutines.getAutonomousCommand(0);
   }
 }

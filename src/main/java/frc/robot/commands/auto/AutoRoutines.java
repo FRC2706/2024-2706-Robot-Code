@@ -28,11 +28,9 @@ public class AutoRoutines extends SubsystemBase {
     PathPlannerAuto twoNoteAuto = new PathPlannerAuto("twoNoteSpeaker");
     PathPlannerAuto threeNoteAuto = new PathPlannerAuto("threeNoteSpeaker");
 
-    public AutoRoutines() {
-        
-    }
+    public AutoRoutines() {}
 
-    public static void registerCommandsToPathplanner() {
+    public void registerCommandsToPathplanner() {
 
         IntakeSubsystem.getInstance().setDefaultCommand(IntakeSubsystem.getInstance().autoIntake());
         
