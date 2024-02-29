@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.commands;
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -11,10 +12,10 @@ import frc.robot.subsystems.ClimberSubsystem;
 public class ClimberRPM extends CommandBase {
 
   private ClimberSubsystem climber;
-  private double m_getPercentOutput;
+  private DoubleSupplier m_getPercentOutput;
   /** Creates a new IndexerCargo. */
-  public ClimberRPM(double getPercentOutput) {
-
+  public ClimberRPM(DoubleSupplier getPercentOutput) {
+    
     climber = ClimberSubsystem.getInstance();
     
     // Use addRequirements() here to declare subsystem dependencies.
@@ -40,7 +41,8 @@ public class ClimberRPM extends CommandBase {
       // System.out.println("indexer sensor: "+ indexer.m_bForIntakeGoodSensors);
     }
     else{
-      climber.StartClimberRPM(m_getPercentOutput);
+      climber.StartClimberRPM(m_getPercentOutput.getAsDouble());
+      System.out.println(m_getPercentOutput);
     }
   }
   

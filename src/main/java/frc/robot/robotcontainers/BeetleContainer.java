@@ -4,11 +4,9 @@
 
 package frc.robot.robotcontainers;
 
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Robot;
 import frc.robot.commands.ClimberRPM;
 
@@ -30,8 +28,8 @@ private void configureButtonBindings(){
 
   CommandXboxController driver = new CommandXboxController(0);
   CommandXboxController operator = new CommandXboxController(1);
-  driver.y().whileTrue(new ClimberRPM(-0.1));
-
+  // ()-> is double supplier, this makes the code repeat and continue updating every time so the speed is not a single value
+  driver.rightTrigger().whileTrue(new ClimberRPM(()->  driver.getRightTriggerAxis()));
 }
 
   /**
