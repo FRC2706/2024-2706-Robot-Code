@@ -5,80 +5,98 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.lib.lib2706.SelectByAllianceCommand;
+import frc.robot.Config.PhotonConfig.PhotonPositions;
+import frc.robot.commands.IntakeControl;
+import frc.robot.commands.MakeIntakeMotorSpin;
+import frc.robot.commands.PhotonMoveToTarget;
+import frc.robot.commands.Shooter_tuner;
+import frc.robot.subsystems.IntakeStatesVoltage;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 //TODO: The autos are beginning a sec after the robot is enabled, we have to 
 //load all of the paths and initializate everything right after we turn on the robot
 public class AutoRoutines extends SubsystemBase {
-    PathPlannerAuto four_note = new PathPlannerAuto("4note");
-    PathPlannerAuto SequentialAutoTest = new PathPlannerAuto("Sequential Auto Test");
-    PathPlannerAuto ParallelAutoTest = new PathPlannerAuto("Parallel Auto Test");
-    PathPlannerAuto SequentialAndParallelAutoTest = new PathPlannerAuto("Sequential and Parallel Auto Test");
-    PathPlannerAuto tuneX = new PathPlannerAuto("tuneAutoX");
-    PathPlannerAuto tuneY = new PathPlannerAuto("tuneAutoY");
+    
+    PathPlannerPath SpeakerPath = PathPlannerPath.fromPathFile("Speaker Path");
+    PathPlannerAuto twoNoteAuto = new PathPlannerAuto("twoNoteSpeaker");
+    PathPlannerAuto threeNoteAuto = new PathPlannerAuto("threeNoteSpeaker");
+
     public AutoRoutines() {
         
     }
 
-
     public static void registerCommandsToPathplanner() {
+
+        IntakeSubsystem.getInstance().setDefaultCommand(IntakeSubsystem.getInstance().autoIntake());
         
-        // Intake and Arm Commands
-        NamedCommands.registerCommand("IntakeAndArm", new ParallelCommandGroup(
-            new WaitCommand(1), // Move arm to intake setpoint
-            new WaitCommand(1) // Intake game piece
+        NamedCommands.registerCommand("shooter", new SequentialCommandGroup(
+            Commands.deadline(
+                Commands.sequence(
+                    Commands.waitSeconds(2), 
+                    IntakeSubsystem.getInstance().shootNote()
+                ),
+                new Shooter_tuner(()->5)
+            )
         ));
 
-        NamedCommands.registerCommand("OutakeRing", new ParallelCommandGroup(
-            new WaitCommand(1), // Move arm to speaker 
-            new WaitCommand(1) // Outake game piece
-        ));
+        NamedCommands.registerCommand("simpleShooter", Commands.deadline(
+              Commands.sequence(
+                new IntakeControl(false).withTimeout(0.3), 
+                new WaitCommand(0.5),
+                new IntakeControl(true).withTimeout(2)),
+              new Shooter_tuner(()->5)
+            ));
 
-        NamedCommands.registerCommand("StartingZoneAmp", new ParallelCommandGroup(
-            new WaitCommand(1), // Exit starting zone
-            new WaitCommand(1), // Intake note
-            new WaitCommand(1) // Score in amp
-        ));
+        // NamedCommands.registerCommand("turnOffIntake", (
+        //     Commands.runOnce(()-> IntakeSubsystem.getInstance().setMode(IntakeStatesVoltage.Modes.STOP))));
+        
+        // NamedCommands.registerCommand("turnOnIntake", (
+        //         Commands.runOnce(()-> IntakeSubsystem.getInstance().setMode(IntakeStatesVoltage.Modes.INTAKE))));
 
-        NamedCommands.registerCommand("IntakeAndArm", new ParallelCommandGroup(
-            new WaitCommand(1), // Move arm to intake setpoint
-            new WaitCommand(1) // Intake game piece
-        ));
+        NamedCommands.registerCommand("simpleIntake", (
+                new MakeIntakeMotorSpin(7.0,0)));
+
+        // NamedCommands.registerCommand("alignToSpeaker", (
+        //     PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.FAR_SPEAKER_RED)));
+
+        NamedCommands.registerCommand("ResetToSpeakerTag",
+            new SelectByAllianceCommand(
+                PhotonSubsystem.getInstance().getResetCommand(7), // Blue alliance
+                PhotonSubsystem.getInstance().getResetCommand(4) // Red alliance
+            )
+        );
+
+        NamedCommands.registerCommand("MoveToCenterSpeaker",
+            new SelectByAllianceCommand(
+                new PhotonMoveToTarget(PhotonPositions.MIDDLE_SPEAKER_BLUE.destination, false), 
+                new PhotonMoveToTarget(PhotonPositions.MIDDLE_SPEAKER_RED.destination, false)
+            )
+        );
     }
-
-    
 
     public Command getAutonomousCommand(int selectAuto) {
         switch (selectAuto) {
             case 0:
             default: 
-                return new InstantCommand();
+                return null;
             case 1:
-                return new SequentialCommandGroup(
-                    SwerveSubsystem.getInstance().setOdometryCommand(new Pose2d(1,1, new Rotation2d(0))),
-                    SwerveSubsystem.getInstance().getDriveToPoseCommand(new Pose2d(3, 1, Rotation2d.fromDegrees(0)))
+                return Commands.sequence(
+                    SwerveSubsystem.getInstance().setOdometryCommand(SpeakerPath.getPreviewStartingHolonomicPose()),
+                    AutoBuilder.followPath(SpeakerPath)
                 );
             case 2:
-                return tuneX;
+                return twoNoteAuto;
             case 3:
-                return tuneY;
-            case 4:
-                return SequentialAutoTest;
-            case 5:
-                return ParallelAutoTest;
-            case 6:
-                return SequentialAndParallelAutoTest;
-            case 7:
-                return four_note;
+                return threeNoteAuto;
         }
     }
 }

@@ -165,10 +165,10 @@ public class SwerveModule {
     configureSpark("Drive idle mode", () -> driveMotor.setIdleMode(Config.Swerve.driveNeutralMode));
     configureSpark("Drive velocity conversion factor", () -> driveEncoder.setVelocityConversionFactor(Config.Swerve.driveConversionVelocityFactor));
     configureSpark("Drive position conversion factor", () -> driveEncoder.setPositionConversionFactor(Config.Swerve.driveConversionPositionFactor));
-    configureSpark("Drive set P", () -> driveController.setP(Config.Swerve.angleKP));
-    configureSpark("Drive set I", () -> driveController.setI(Config.Swerve.angleKI));
-    configureSpark("Drive set D", () -> driveController.setD(Config.Swerve.angleKD));
-    configureSpark("Drive set FF", () -> driveController.setFF(Config.Swerve.angleKFF));
+    configureSpark("Drive set P", () -> driveController.setP(Config.Swerve.driveKP));
+    configureSpark("Drive set I", () -> driveController.setI(Config.Swerve.driveKI));
+    configureSpark("Drive set D", () -> driveController.setD(Config.Swerve.driveKD));
+    configureSpark("Drive set FF", () -> driveController.setFF(Config.Swerve.driveKFF));
     configureSpark("Drive set pid wrap min", () -> driveController.setPositionPIDWrappingMinInput(0));
     configureSpark("Drive set pid wrap max", () -> driveController.setPositionPIDWrappingMaxInput(2 * Math.PI));
     configureSpark("Drive set pid wrap", () -> driveController.setPositionPIDWrappingEnabled(true));

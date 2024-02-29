@@ -39,7 +39,7 @@ public class IntakeControl extends Command {
     if (direction == true) 
       intakeSubsystem.setVoltage(4.0);
     else 
-      intakeSubsystem.setVoltage(-1.0);
+      intakeSubsystem.setVoltage(-3.0);
   }
 
   // Called once the command ends or is interrupted.
