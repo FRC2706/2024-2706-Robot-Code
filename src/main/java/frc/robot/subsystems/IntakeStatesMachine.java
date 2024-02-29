@@ -4,13 +4,13 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.subsystems.IntakeStatesVoltage.IntakeModes.*;
-import static frc.robot.subsystems.IntakeStatesVoltage.IntakeStates.*;
+import static frc.robot.subsystems.IntakeStatesMachine.IntakeModes.*;
+import static frc.robot.subsystems.IntakeStatesMachine.IntakeStates.*;
 
 import java.util.function.BooleanSupplier;
 
 /** Add your docs here. */
-public class IntakeStatesVoltage {
+public class IntakeStatesMachine {
     private Boolean isForntActive = false;
     private Boolean isBackActive = false;
     private Boolean isCenterActive = null;

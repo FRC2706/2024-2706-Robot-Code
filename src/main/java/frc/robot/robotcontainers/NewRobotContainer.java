@@ -17,8 +17,8 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.geometry.Pose2d;
 
-import static frc.robot.subsystems.IntakeStatesVoltage.IntakeModes.*;
-import static frc.robot.subsystems.ShooterStates.ShooterModes.*;
+import static frc.robot.subsystems.IntakeStatesMachine.IntakeModes.*;
+import static frc.robot.subsystems.ShooterStateMachine.ShooterModes.*;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.IntegerEntry;
@@ -49,7 +49,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.IntakeStatesVoltage.IntakeStates;
+import frc.robot.subsystems.IntakeStatesMachine.IntakeStates.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -94,7 +94,7 @@ public class NewRobotContainer extends RobotContainer {
     );
 
     intake.setDefaultCommand(intake.defaultIntakeCommand());
-    shooter.setDefaultCommand(shooter.defaultShooterCommand());
+    shooter.setDefaultCommand(shooter.defaultShooterCommand(()-> intake.isNoteIn()));
 
     entryAutoRoutine = swerveTable.getIntegerTopic("Auto Selector ID").getEntry(0);
     entryAutoRoutine.setDefault(0);

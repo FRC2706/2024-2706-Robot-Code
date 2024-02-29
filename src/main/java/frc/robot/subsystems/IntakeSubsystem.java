@@ -7,9 +7,9 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import static frc.robot.subsystems.IntakeStatesVoltage.IntakeModes.*;
-import static frc.robot.subsystems.IntakeStatesVoltage.IntakeStates.*;
-import static frc.robot.subsystems.ShooterStates.States.SPEAKER_LAUNCH_READY;
+import static frc.robot.subsystems.IntakeStatesMachine.IntakeModes.*;
+import static frc.robot.subsystems.IntakeStatesMachine.IntakeStates.*;
+import static frc.robot.subsystems.ShooterStateMachine.States.SPEAKER_LAUNCH_READY;
 
 import com.revrobotics.CANSparkMax;
 
@@ -24,13 +24,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Config;
-import frc.robot.subsystems.IntakeStatesVoltage.IntakeModes;
-import frc.robot.subsystems.IntakeStatesVoltage.IntakeStates;
+import frc.robot.subsystems.IntakeStatesMachine.IntakeModes;
+import frc.robot.subsystems.IntakeStatesMachine.IntakeStates;
 
 /** Add your docs here. */
 public class IntakeSubsystem extends SubsystemBase{
     private CANSparkMax m_intake;
-    private IntakeStatesVoltage intakeStates = new IntakeStatesVoltage();
+    private IntakeStatesMachine intakeStates = new IntakeStatesMachine();
 
     private DigitalInput sensor7;//Back
     private DigitalInput sensor8;//Center
@@ -116,6 +116,10 @@ public class IntakeSubsystem extends SubsystemBase{
 
     public void stop(){
         m_intake.stopMotor();
+    }
+
+    public boolean isNoteIn(){
+        return getCurrentState().equals(NOTE_IN_POS_IDLE);
     }
 
     /*---------------------------Commands---------------------------*/

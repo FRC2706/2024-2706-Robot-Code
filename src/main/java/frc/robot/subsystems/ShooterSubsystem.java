@@ -4,8 +4,10 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import static frc.robot.subsystems.ShooterStates.ShooterModes.*;
-import static frc.robot.subsystems.ShooterStates.States.*;
+import static frc.robot.subsystems.ShooterStateMachine.ShooterModes.*;
+import static frc.robot.subsystems.ShooterStateMachine.States.*;
+
+import java.util.function.BooleanSupplier;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -25,14 +27,15 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.lib2706.TunableNumber;
 import frc.robot.Config;
-import frc.robot.subsystems.ShooterStates.ShooterModes;
-import frc.robot.subsystems.ShooterStates.States;
+import frc.robot.subsystems.ShooterStateMachine.ShooterModes;
+import frc.robot.subsystems.ShooterStateMachine.States;
 
 public class ShooterSubsystem extends SubsystemBase {
     private CANSparkMax m_motor;
     private SparkPIDController m_pidController;
     private RelativeEncoder m_encoder;
-    private boolean closedLoopControl = false; 
+    private boolean closedLoopControl = false;
+    private boolean stateFulControl = false; 
 
     private TunableNumber kP = new TunableNumber("Shooter/kP", Config.ShooterConstants.kP);
     private TunableNumber kI = new TunableNumber("Shooter/kI", Config.ShooterConstants.kI);
@@ -43,7 +46,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private DoublePublisher velocityPub;
     private StringPublisher statePub;
     private BooleanPublisher shooterReadyPub;
-    private ShooterStates shooterStates = new ShooterStates();
+    private ShooterStateMachine shooterStates = new ShooterStateMachine();
 
     private static ShooterSubsystem shooter;
     public static ShooterSubsystem getInstance() {
@@ -100,7 +103,9 @@ public class ShooterSubsystem extends SubsystemBase {
         shooterStates.setMode(desiredMode);
     }
 
-    public void allowAutoMovement(){
+    public void allowAutoMovement(boolean isThereNote){
+        if(!isThereNote)setMode(STOP_SHOOTER);
+
         if(closedLoopControl){
             setRPM(shooterStates.getDesiredVelocityRPM());
         }else{
@@ -130,6 +135,14 @@ public class ShooterSubsystem extends SubsystemBase {
         return getCurrentState().equals(SPEAKER_LAUNCH_READY) || getCurrentState().equals(AMP_LAUNCH_READY);
     }
 
+    public void changeToNonStateFull(){
+        stateFulControl = false;
+    }
+
+    public void changeToStateFull(){
+        stateFulControl = true;
+    }
+
     /*---------------------------Commands---------------------------*/
 
     /**
@@ -137,9 +150,9 @@ public class ShooterSubsystem extends SubsystemBase {
      * This should be called every run loop cycle, set it as the default command 
      * @return Default Intake Command
      */
-    public Command defaultShooterCommand(){
+    public Command defaultShooterCommand(BooleanSupplier isThereNote){
         return Commands.sequence(
-            runOnce(()->setMode(STOP_SHOOTER)), run(()->allowAutoMovement()));
+            runOnce(()->setMode(STOP_SHOOTER)), run(()->allowAutoMovement(isThereNote.getAsBoolean())));
     }
     /**
      * Sets the mode of the Shooter's state nachine to "SHOOT_SPEAKER"
@@ -160,7 +173,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
         //Check if this method would work like this
         shooterStates.isInRange(()->getVelocityRPM() > shooterStates.getDesiredVelocityRPM() - shooterTreshHold.get());
-        shooterStates.updateState();
+        if(stateFulControl){
+            shooterStates.updateState();
+        }
 
         velocityPub.accept(getVelocityRPM());
         shooterReadyPub.accept(isReadyToShoot());

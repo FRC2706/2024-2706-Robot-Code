@@ -7,8 +7,8 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.subsystems.ShooterStates.ShooterModes.*;
-import static frc.robot.subsystems.ShooterStates.States.*;
+import static frc.robot.subsystems.ShooterStateMachine.ShooterModes.*;
+import static frc.robot.subsystems.ShooterStateMachine.States.*;
 
 import java.util.function.BooleanSupplier;
 
@@ -17,7 +17,7 @@ import edu.wpi.first.math.interpolation.Interpolator;
 import edu.wpi.first.math.interpolation.InverseInterpolator;
 
 /** Add your docs here. */
-public class ShooterStates {
+public class ShooterStateMachine {
     private boolean isInRange = false;
     private static double distanceFromSpeaker = 0.0;
 

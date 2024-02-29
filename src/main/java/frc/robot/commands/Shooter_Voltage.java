@@ -39,7 +39,7 @@ public class Shooter_Voltage extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shooter.setVoltage(0);
+    shooter.stop();
   }
 
   // Returns true when the command should end.
