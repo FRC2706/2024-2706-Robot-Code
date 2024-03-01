@@ -104,13 +104,55 @@ public class NewRobotContainer extends RobotContainer {
     driver.start().whileTrue(new RotateAngleToVisionSupplier(driver, "photonvision/" + PhotonConfig.apriltagCameraName));    
 
     // Vision scoring commands with no intake, shooter, arm
-    driver.leftBumper().whileTrue(new SelectByAllianceCommand( // Implement command group that also controls the arm, intake, shooter
-      PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.AMP_BLUE, driver), 
-      PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.AMP_RED, driver)));
+    // driver.leftBumper().whileTrue(new SelectByAllianceCommand( // Implement command group that also controls the arm, intake, shooter
+    //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.AMP_BLUE, driver), 
+    //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.AMP_RED, driver)));
 
-    driver.rightBumper().whileTrue(new SelectByAllianceCommand( // Implement command group that also controls the arm, intake, shooter
-      PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.MIDDLE_SPEAKER_BLUE, driver), 
-      PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.MIDDLE_SPEAKER_RED, driver)));
+    // driver.rightBumper().whileTrue(new SelectByAllianceCommand( // Implement command group that also controls the arm, intake, shooter
+    //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.MIDDLE_SPEAKER_BLUE, driver), 
+    //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.MIDDLE_SPEAKER_RED, driver)));
+
+    // Complete vision scoring commands with all subsystems
+    if (Config.disableStateBasedProgramming) {
+      driver.leftBumper().whileTrue(CombinedCommands.visionScoreTeleopSimple(
+        driver, 
+        25, 
+        2, 
+        130, // TODO: Set correct arm angle for amp 
+        5,  
+        PhotonPositions.AMP_BLUE,
+        PhotonPositions.AMP_RED
+      ));
+
+      driver.rightBumper().whileTrue(CombinedCommands.visionScoreTeleopSimple(
+        driver, 
+        25, 
+        2, 
+        35,  // TODO: Set correct arm angle for speaker kitbot shot 
+        9, 
+        PhotonPositions.MIDDLE_SPEAKER_BLUE,
+        PhotonPositions.MIDDLE_SPEAKER_RED
+      ));
+
+    } else {
+      driver.leftBumper().whileTrue(CombinedCommands.visionScoreTeleopStateful(
+        driver, 
+        25, 
+        2, 
+        120, // TODO: Set correct arm angle for amp 
+        PhotonPositions.AMP_BLUE,
+        PhotonPositions.AMP_RED
+      ));
+
+      driver.leftBumper().whileTrue(CombinedCommands.visionScoreTeleopStateful(
+        driver, 
+        25, 
+        2, 
+        35, // TODO: Set correct arm angle for speaker kitbot shot 
+        PhotonPositions.MIDDLE_SPEAKER_BLUE,
+        PhotonPositions.MIDDLE_SPEAKER_RED
+      ));
+    }
 
     /**
      * Operator Controls

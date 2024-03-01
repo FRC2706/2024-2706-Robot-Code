@@ -434,6 +434,12 @@ public class SwerveSubsystem extends SubsystemBase {
     }
   }
 
+  public void stopMotors() {
+    for (SwerveModule mod : mSwerveMods) {
+      mod.stopMotors();
+    }
+  }
+
   /**
    * Rotates the given angle by 180 if the red alliance or 0 if blue and returns it.
    * Aka defaults to assuming we are on the blue alliance.
