@@ -6,9 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -33,8 +31,6 @@ public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer;
   public static CTREConfigs ctreConfigs = new CTREConfigs();
 
-
-  Compressor pcmCompressor = new Compressor (1, PneumaticsModuleType.CTREPCM);
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -43,7 +39,6 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
-    pcmCompressor.enableDigital();
     NetworkTableInstance inst = NetworkTableInstance.getDefault();
     NetworkTable table = inst.getTable("datatable");
 
