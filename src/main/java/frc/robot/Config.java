@@ -336,14 +336,14 @@ public final class Config {
   public class ArmConfig {
     public static final boolean SET_INVERTED = true;
     public static final boolean setInvered = true;
-    public static final boolean INVERT_ENCODER = true;
+    public static final boolean INVERT_ENCODER = false;
 
-    public static final int CURRENT_LIMIT = 60;
+    public static final int CURRENT_LIMIT = 20;
 
 
 
-    public static final double MAX_ARM_ANGLE_DEG = 135;
-    public static final double MIN_ARM_ANGLE_DEG = 40;
+    public static final double MAX_ARM_ANGLE_DEG = 150;
+    public static final double MIN_ARM_ANGLE_DEG = 5;
 
     //soft limit constant for bottom arm
     public static final float arm_forward_limit = (float) Math.toRadians(MAX_ARM_ANGLE_DEG);
@@ -351,10 +351,10 @@ public final class Config {
     public static final boolean SOFT_LIMIT_ENABLE = true;
     
     //PID constants
-    public static final double arm_kP = robotSpecific(1.4, 0.0, 0.0, 1.4);
-    public static final double arm_kI = robotSpecific(0.0003, 0.0, 0.0, 0.0003);
-    public static final double arm_kD = robotSpecific(0.9, 0.0, 0.0, 0.9);
-    public static final double arm_kIz = robotSpecific(0.3, 0.0, 0.0, 0.3);
+    public static final double arm_kP = robotSpecific(2.865, 0.0, 0.0, 1.4);
+    public static final double arm_kI = robotSpecific(0.00286, 0.0, 0.0, 0.0003);
+    public static final double arm_kD = robotSpecific(0.0, 0.0, 0.0, 0.9);
+    public static final double arm_kIz = robotSpecific(Math.toRadians(5), 0.0, 0.0, 0.3);
     public static final double arm_kFF = 0;
     public static final double min_output = -1;
     public static final double max_output = 1;
@@ -365,13 +365,6 @@ public final class Config {
 
     public static final double LENGTH_ARM_TO_COG = 14.56;
 
-    // arm offsets
-    // public static final double bottom_arm_offset = 307.800000;
-    // public static final double top_arm_offset = 0;
-
-    // syncing encoders
-    public static double ENCODER_SYNCING_TOLERANCE = 0.01; // radians
-
     public static final double ARM_ENCODER_GEAR_RATIO = 1;
 
     //arm position unit: radians
@@ -379,7 +372,7 @@ public final class Config {
     //arm velocity unit: radians/sec
     public static final double armVelocityConversionFactor = armPositionConversionFactor / 60.0;
     //offset unit: degrees
-    public static final double armAbsEncoderOffset = 27;
+    public static final double armAbsEncoderOffset = Math.toDegrees(3.20433);
 
     public static final double MAX_VEL = Math.PI * 0.5;
     public static final double MAX_ACCEL = Math.PI * 0.5;
@@ -387,11 +380,19 @@ public final class Config {
     public static final double MOMENT_TO_VOLTAGE = 0.000005;    
 }
 
-  
-      //Constants for arm pneumatics
-  public static final int ARMLOW_PNEUMATIC_FORWARD_CHANNEL = 0;
-  public static final int ARMLOW_PNEUMATIC_REVERSE_CHANNEL = 1;
+public static enum ArmSetPoints {
+  //@todo: to be calibrated
+  IDLE(60),
+  INTAKE(5),
+  SPEAKER(35),
+  AMP(100);
 
+  public final double angleDeg;
+
+  ArmSetPoints(double angleDeg) {
+    this.angleDeg = angleDeg;
+  }
+}
 
   /**
    * Differential Drive Constants
