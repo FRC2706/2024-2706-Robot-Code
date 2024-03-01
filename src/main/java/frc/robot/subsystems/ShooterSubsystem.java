@@ -97,7 +97,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void stop(){
-        setVoltage(0);
+        m_motor.stopMotor();
     }
 
     public void setMode(ShooterModes desiredMode){
@@ -173,8 +173,10 @@ public class ShooterSubsystem extends SubsystemBase {
         TunableNumber.ifChanged(hashCode(), ()->setFFGains(kFF.get()), kFF);
 
         //Check if this method would work like this
-        shooterStates.isInRange(()->getVelocityRPM() > shooterStates.getDesiredVelocityRPM() - shooterTreshHold.get());
-        shooterStates.updateState();
+        if(stateFulControl == true) {
+            shooterStates.isInRange(()->getVelocityRPM() > shooterStates.getDesiredVelocityRPM() - shooterTreshHold.get());
+            shooterStates.updateState();
+        }
         
 
         velocityPub.accept(getVelocityRPM());
