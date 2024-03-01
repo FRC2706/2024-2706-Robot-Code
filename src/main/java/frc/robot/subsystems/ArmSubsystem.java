@@ -66,7 +66,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   private ArmSubsystem() {
-    m_arm = new CANSparkMax(Config.CANID.ARM_SPARK_CAN_ID, motorType); // creates SparkMax motor controller
+    m_arm = new CANSparkMax(Config.ArmConfig.ARM_SPARK_CAN_ID, motorType); // creates SparkMax motor controller
     configureSpark("Arm restore factory defaults", () -> (m_arm.restoreFactoryDefaults()));
     configureSpark("arm set CANTimeout", () -> m_arm.setCANTimeout(Config.CANTIMEOUT_MS));
     configureSpark("Arm set current limits", () -> m_arm.setSmartCurrentLimit(Config.ArmConfig.CURRENT_LIMIT));
