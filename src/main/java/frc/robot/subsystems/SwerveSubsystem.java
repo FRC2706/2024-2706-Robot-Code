@@ -220,9 +220,10 @@ public class SwerveSubsystem extends SubsystemBase {
   
   /**
    * Returns a command to set the given angle as the heading.
-   * Rotates the angle by 180 degrees 
-   * @param angle to set for the blue alliance.
-   * @return 
+   * Rotates the angle by 180 degrees if on the red alliance.
+   * 
+   * @param angle to set for the blue alliance
+   * @return Command to reset the heading
    */
   public Command setHeadingCommand(Rotation2d angle) {
     return Commands.runOnce(
