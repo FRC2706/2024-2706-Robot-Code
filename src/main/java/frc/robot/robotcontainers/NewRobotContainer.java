@@ -180,17 +180,7 @@ public class NewRobotContainer extends RobotContainer {
           ,new Shooter_Voltage(()->12)
       ));
 
-<<<<<<< HEAD
-      /**
-       * operator.start().whileTrue(Commands.deadline(
-      Commands.sequence(
-        new IntakeControl(false), 
-        new WaitCommand(0.5), 
-        new IntakeControl(true).withTimeout(2)),
-      new Shooter_tuner(12)
-    )); 
-    */
-=======
+
     // operator.start().whileTrue(Commands.deadline(
     //   Commands.sequence(
     //     new IntakeControl(false).withTimeout(0.3), 
@@ -204,12 +194,6 @@ public class NewRobotContainer extends RobotContainer {
     //     .whileTrue(new MakeIntakeMotorSpin(9.0, 1));
        
 
-    //turns brakes off
-    // operator.rightBumper().onTrue(Commands.runOnce(() -> ArmPneumaticsSubsystem.getInstance().controlBrake(false, true)));
-
-    //turns brakes on
-    // operator.rightTrigger().onTrue(Commands.runOnce(() -> ArmPneumaticsSubsystem.getInstance().controlBrake(true, true)));
->>>>>>> 1cc5e2e932c9ad4ba5ee1c9d99c8595e5ebb4950
   }
   
 
