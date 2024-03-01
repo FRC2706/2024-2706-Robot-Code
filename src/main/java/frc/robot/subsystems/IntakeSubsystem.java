@@ -121,7 +121,7 @@ public class IntakeSubsystem extends SubsystemBase{
     }
 
     public void stop(){
-        setVoltage(0);
+        m_intake.stopMotor();
     }
 
     public boolean isNoteIn(){
