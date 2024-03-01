@@ -73,8 +73,10 @@ public class NewRobotContainer extends RobotContainer {
 
     /*  Setup default commands */
     s_Swerve.setDefaultCommand(new TeleopSwerve(driver));
-    intake.setDefaultCommand(intake.defaultIntakeCommand());
-    shooter.setDefaultCommand(shooter.defaultShooterCommand(()-> intake.isNoteIn()));
+    if (!Config.disableStateBasedProgramming) {
+      intake.setDefaultCommand(intake.defaultIntakeCommand());
+      shooter.setDefaultCommand(shooter.defaultShooterCommand(()-> intake.isNoteIn()));
+    }
 
     configureButtonBindings();
   }
