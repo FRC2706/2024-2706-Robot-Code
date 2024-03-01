@@ -7,8 +7,9 @@
     "3NoteSourceSideAllFar"
   ],
   "autoFolders": [
-    "New Folder",
-    "New New Folder"
+    "StartingFromBottom",
+    "StartingFromSpeaker",
+    "StartingFromTop"
   ],
   "defaultMaxVel": 2.7,
   "defaultMaxAccel": 3.3,

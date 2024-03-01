@@ -7,26 +7,27 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.subsystems.ShooterStateVoltage.Modes.*;
-import static frc.robot.subsystems.ShooterStateVoltage.States.*;
+import static frc.robot.subsystems.ShooterStateMachine.ShooterModes.*;
+import static frc.robot.subsystems.ShooterStateMachine.States.*;
+
+import java.util.function.BooleanSupplier;
 
 import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.math.interpolation.Interpolator;
 import edu.wpi.first.math.interpolation.InverseInterpolator;
-import frc.lib.lib2706.RunnableBoolean;
 
 /** Add your docs here. */
-public class ShooterStateVoltage {
+public class ShooterStateMachine {
     private boolean isInRange = false;
     private static double distanceFromSpeaker = 0.0;
 
-    private Modes desiredMode = STOP_SHOOTER;
+    private ShooterModes desiredMode = STOP_SHOOTER;
     private States currentState = IN_IDLE;
 
     /**
      * All possible Modes to control the shooter
     */
-    public static enum Modes {
+    public static enum ShooterModes {
         STOP_SHOOTER(0.0, 0.0),
         PRE_HEAT(4.0, 500.0),
         SHOOT_AMP(6.0, 800.0),
@@ -34,7 +35,7 @@ public class ShooterStateVoltage {
 
         double v, RPM;
 
-        private Modes(double voltage, double velo) {
+        private ShooterModes(double voltage, double velo) {
             v = voltage;
             RPM = velo;
         }
@@ -64,7 +65,7 @@ public class ShooterStateVoltage {
      * Method to set the desired mode
      * @param desiredMode
      */
-    public void setMode(Modes desiredMode) {
+    public void setMode(ShooterModes desiredMode) {
         this.desiredMode = desiredMode;
     }
 
@@ -86,7 +87,7 @@ public class ShooterStateVoltage {
     /**
      * Method for logging values
      */
-    public Modes getDesiredMode(){
+    public ShooterModes getDesiredMode(){
         return desiredMode;
     }
 
@@ -109,9 +110,9 @@ public class ShooterStateVoltage {
      * Method used by the state machine to switch from states
      * @param toRun
      */
-    public void isInRange(RunnableBoolean toRun) {
+    public void isInRange(BooleanSupplier toRun) {
         if (toRun != null)
-            isInRange = toRun.run();
+            isInRange = toRun.getAsBoolean();
         else
             isInRange = false;
     }
