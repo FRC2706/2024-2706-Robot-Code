@@ -3,35 +3,35 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.59,
-        "y": 6.68
+        "x": 2.4527271446400407,
+        "y": 4.438868928628442
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.4784847564682604,
-        "y": 6.234127355472756
+        "x": 2.170728412703646,
+        "y": 5.10731036729249
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "4NoteCenter-SecondNotePickup"
     },
     {
       "anchor": {
-        "x": 1.33,
-        "y": 5.56
+        "x": 1.3456210118527112,
+        "y": 5.5981970488114
       },
       "prevControl": {
-        "x": 2.5710708063020142,
-        "y": 5.555162990025228
+        "x": 2.0871732328706396,
+        "y": 5.608641446290526
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "SpeakerShotCenterClose"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.85,
-      "rotationDegrees": 180.0,
+      "waypointRelativePos": 0.1,
+      "rotationDegrees": 140.0,
       "rotateFast": true
     }
   ],
@@ -45,13 +45,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -179.12,
+    "rotation": 180.0,
     "rotateFast": true
   },
   "reversed": false,
-  "folder": null,
+  "folder": "4NoteCenter",
   "previewStartingState": {
-    "rotation": -142.22,
+    "rotation": 140.0,
     "velocity": 0
   },
   "useDefaultConstraints": true
