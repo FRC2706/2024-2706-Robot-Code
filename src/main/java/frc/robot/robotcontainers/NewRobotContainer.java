@@ -91,8 +91,8 @@ public class NewRobotContainer extends RobotContainer {
     driver.back().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d(0)));
     driver.leftBumper().onTrue(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.SLOW)))
                        .onFalse(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.MAX)));
-    // driver.rightBumper().onTrue(Commands.runOnce(() -> TeleopSwerve.setFieldOriented())) // setFieldOriented is not yet implemeneted
-    //                    .onFalse(Commands.runOnce(() -> TeleopSwerve.setCameraOriented())); // setCameraOriented is not yet implemeneted
+    // driver.rightBumper().onTrue(Commands.runOnce(() -> TeleopSwerve.setCameraOriented())) // setCameraOriented is not yet implemeneted
+    //                    .onFalse(Commands.runOnce(() -> TeleopSwerve.setFieldOriented())); // setFieldOriented is not yet implemeneted
 
     // Commands that take control of the rotation stick
     driver.y().whileTrue(new RotateToAngle(driver, Rotation2d.fromDegrees(0)));
