@@ -1,0 +1,58 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.4527271446400407,
+        "y": 4.438868928628442
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.170728412703646,
+        "y": 5.10731036729249
+      },
+      "isLocked": false,
+      "linkedName": "4NoteCenter-SecondNotePickup"
+    },
+    {
+      "anchor": {
+        "x": 1.3456210118527112,
+        "y": 5.5981970488114
+      },
+      "prevControl": {
+        "x": 2.0871732328706396,
+        "y": 5.608641446290526
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "SpeakerShotCenterClose"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.1,
+      "rotationDegrees": 140.0,
+      "rotateFast": true
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 2.7,
+    "maxAcceleration": 3.3,
+    "maxAngularVelocity": 320.0,
+    "maxAngularAcceleration": 400.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 180.0,
+    "rotateFast": true
+  },
+  "reversed": false,
+  "folder": "4NoteCenter",
+  "previewStartingState": {
+    "rotation": 140.0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

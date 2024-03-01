@@ -131,8 +131,8 @@ public final class Config {
    * 
    * ID 0: Competition Robot (Crescendo) (NEEDS UPDATE ON robot.conf)
    * ID 1: Simulation of Comp Robot (Crescendo in Simulation)
-   * ID 2: Beetle (Test robot) (NEEDS UPDATE ON robot.conf)
-   * ID 3: Poseidon (Charged up) (NEEDS UPDATE ON robot.conf)
+   * ID 2: Beetle (Small Talon Tank Drive)
+   * ID 3: Poseidon (Charged Up) (NEEDS UPDATE ON robot.conf)
    **/
 
   /** ADD CONSTANTS BELOW THIS LINE */
@@ -165,8 +165,8 @@ public final class Config {
       LEFT_SPEAKER_RED(4, new Translation2d(-1,-1), new Translation2d(-0.6,-0.7), Rotation2d.fromDegrees(60)),
       RIGHT_SPEAKER_RED(4, new Translation2d(-0.937,0.937), new Translation2d(-0.637,0.637), Rotation2d.fromDegrees(-60)),
       MIDDLE_SPEAKER_RED(4, new Translation2d(-1.3,0), new Translation2d(-0.95,0), Rotation2d.fromDegrees(0)),
-      FAR_SPEAKER_RED(4, new Translation2d(-2.7,0), new Translation2d(-2,0), Rotation2d.fromDegrees(0)),
-      AMP_RED(5, new Translation2d(0,-30), new Translation2d(0,0), Rotation2d.fromDegrees(90)),
+      FAR_SPEAKER_RED(4, new Translation2d(-2.4,0), new Translation2d(-2.2,0), Rotation2d.fromDegrees(0)),
+      AMP_RED(5, new Translation2d(0,-0.70), new Translation2d(0,-0.5), Rotation2d.fromDegrees(90)),
       AMP_BLUE(6, new Translation2d(0,-30), new Translation2d(0,0),  Rotation2d.fromDegrees(90)),
       LEFT_SPEAKER_BLUE(7, new Translation2d(0.937,0.937), new Translation2d(0.637,0.637), Rotation2d.fromDegrees(-120)),
       RIGHT_SPEAKER_BLUE(7, new Translation2d(0.937,-0.937), new Translation2d(0.637,-0.637), Rotation2d.fromDegrees(120)),
@@ -195,6 +195,10 @@ public final class Config {
         this.direction = direction;
       }
     }  
+  }
+
+  public static final class Climber_CANID {
+     public static int CLIMBER = robotSpecific(-01, 4, 5, -1);  
   }
 
   public static final class Swerve {
@@ -245,7 +249,7 @@ public final class Config {
 
     /* Drive Motor Characterization Values Changed */
     public static final double driveKS = 0.667;
-    public static final double driveKV = 5.0;
+    public static final double driveKV = 4.0;//5
     public static final double driveKA = 0.5;
 
     /* Drive Motor Conversion Factors */
@@ -353,18 +357,19 @@ public final class Config {
     public static final int INTAKE = CANID.INTAKE;
   }
 
+
   public class ArmConfig {
     public static final int ARM_SPARK_CAN_ID = CANID.ARM;
     public static final boolean SET_INVERTED = true;
     public static final boolean setInvered = true;
-    public static final boolean INVERT_ENCODER = true;
+    public static final boolean INVERT_ENCODER = false;
 
-    public static final int CURRENT_LIMIT = 60;
+    public static final int CURRENT_LIMIT = 20;
 
 
 
-    public static final double MAX_ARM_ANGLE_DEG = 135;
-    public static final double MIN_ARM_ANGLE_DEG = 40;
+    public static final double MAX_ARM_ANGLE_DEG = 150;
+    public static final double MIN_ARM_ANGLE_DEG = 5;
 
     //soft limit constant for bottom arm
     public static final float arm_forward_limit = (float) Math.toRadians(MAX_ARM_ANGLE_DEG);
@@ -372,10 +377,10 @@ public final class Config {
     public static final boolean SOFT_LIMIT_ENABLE = true;
     
     //PID constants
-    public static final double arm_kP = robotSpecific(1.4, 0.0, 0.0, 1.4);
-    public static final double arm_kI = robotSpecific(0.0003, 0.0, 0.0, 0.0003);
-    public static final double arm_kD = robotSpecific(0.9, 0.0, 0.0, 0.9);
-    public static final double arm_kIz = robotSpecific(0.3, 0.0, 0.0, 0.3);
+    public static final double arm_kP = robotSpecific(2.865, 0.0, 0.0, 1.4);
+    public static final double arm_kI = robotSpecific(0.00286, 0.0, 0.0, 0.0003);
+    public static final double arm_kD = robotSpecific(0.0, 0.0, 0.0, 0.9);
+    public static final double arm_kIz = robotSpecific(Math.toRadians(5), 0.0, 0.0, 0.3);
     public static final double arm_kFF = 0;
     public static final double min_output = -1;
     public static final double max_output = 1;
@@ -386,13 +391,6 @@ public final class Config {
 
     public static final double LENGTH_ARM_TO_COG = 14.56;
 
-    // arm offsets
-    // public static final double bottom_arm_offset = 307.800000;
-    // public static final double top_arm_offset = 0;
-
-    // syncing encoders
-    public static double ENCODER_SYNCING_TOLERANCE = 0.01; // radians
-
     public static final double ARM_ENCODER_GEAR_RATIO = 1;
 
     //arm position unit: radians
@@ -400,7 +398,7 @@ public final class Config {
     //arm velocity unit: radians/sec
     public static final double armVelocityConversionFactor = armPositionConversionFactor / 60.0;
     //offset unit: degrees
-    public static final double armAbsEncoderOffset = 27;
+    public static final double armAbsEncoderOffset = Math.toDegrees(3.20433);
 
     public static final double MAX_VEL = Math.PI * 0.5;
     public static final double MAX_ACCEL = Math.PI * 0.5;
@@ -408,11 +406,19 @@ public final class Config {
     public static final double MOMENT_TO_VOLTAGE = 0.000005;    
 }
 
-  
-      //Constants for arm pneumatics
-  public static final int ARMLOW_PNEUMATIC_FORWARD_CHANNEL = 0;
-  public static final int ARMLOW_PNEUMATIC_REVERSE_CHANNEL = 1;
+public static enum ArmSetPoints {
+  //@todo: to be calibrated
+  IDLE(60),
+  INTAKE(5),
+  SPEAKER(35),
+  AMP(100);
 
+  public final double angleDeg;
+
+  ArmSetPoints(double angleDeg) {
+    this.angleDeg = angleDeg;
+  }
+}
 
   /**
    * Differential Drive Constants

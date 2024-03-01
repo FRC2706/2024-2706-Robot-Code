@@ -50,11 +50,10 @@ public class RumbleJoystick extends Command {
   @Override
   public void execute() {
     if (doDoubleRumble == true) {
-      
       if (m_timer.hasElapsed(x+(duration/3))){
         x+=(duration/3);
         counter++;
-    }
+      }
       if (counter ==1) {
         m_joystick.getHID().setRumble(rumbleType,0);
       }
