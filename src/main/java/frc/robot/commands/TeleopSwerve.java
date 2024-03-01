@@ -32,9 +32,8 @@ public class TeleopSwerve extends Command {
   private double rotationVal;
 
   public TeleopSwerve(
-      SwerveSubsystem s_Swerve,
       CommandXboxController driver) {
-    this.s_Swerve = s_Swerve;
+    this.s_Swerve = SwerveSubsystem.getInstance();
     addRequirements(s_Swerve);
     this.driver = driver;
   }

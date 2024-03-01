@@ -166,6 +166,23 @@ public class ShooterSubsystem extends SubsystemBase {
                 Commands.runOnce(()->setMode(SHOOT_SPEAKER))
             );
     }
+
+    /**
+     * Command that will set the the given mode if shooter is stopped,
+     * or stop the shooter if it's currently doing an action.
+     * 
+     * @param mode Mode to toggle.
+     * @return Command to attach to a button as onTrue.
+     */
+    public Command toggleSpinUpCommand(ShooterModes mode) {
+        return Commands.runOnce(() -> {
+            if (shooterStates.getDesiredMode() != ShooterModes.STOP_SHOOTER) {
+                shooterStates.setMode(ShooterModes.STOP_SHOOTER);
+            } else {
+                shooterStates.setMode(mode);
+            }
+        });
+    }
     
     @Override
     public void periodic() {

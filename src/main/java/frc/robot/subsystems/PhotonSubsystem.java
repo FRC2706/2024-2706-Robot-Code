@@ -64,7 +64,7 @@ public class PhotonSubsystem extends SubsystemBase {
   /** Creates a new photonAprilTag. */
   private PhotonSubsystem() {
     //name of camera, change if using multiple cameras
-    camera1 = new PhotonCamera("FrontApriltagOV9281");
+    camera1 = new PhotonCamera(PhotonConfig.apriltagCameraName);
     //networktable publishers
     pubSetPoint = NetworkTableInstance.getDefault().getTable(PhotonConfig.networkTableName).getDoubleArrayTopic("PhotonAprilPoint").publish(PubSubOption.periodic(0.02));
     pubRange = NetworkTableInstance.getDefault().getTable(PhotonConfig.networkTableName).getDoubleTopic("Range").publish(PubSubOption.periodic(0.02));

@@ -118,7 +118,8 @@ public final class Config {
   /** ADD CONSTANTS BELOW THIS LINE */
 
 
-  public static final Boolean swerveTuning = true; //tune swerve? Turn this to false for competition
+  public static final boolean swerveTuning = true; //tune swerve? Turn this to false for competition
+  public static final boolean disableStateBasedProgramming = true; // True to disable state based programming and use only simple commands
 
   public static int ANALOG_SELECTOR_PORT = robotSpecific(0, -1, -1, 0);
 
@@ -129,6 +130,7 @@ public final class Config {
     public static final Pose2d cameraOffset = new Pose2d(new Translation2d(-0.2,0.28-0.03), Rotation2d.fromDegrees(0));
   
     //networkTableName
+    public static final String apriltagCameraName = "FrontApriltagOV9281";
     public static final String networkTableName = "PhotonCamera";
     //data max
     public static final int maxNumSamples = 10;
@@ -438,7 +440,7 @@ public final class Config {
   }
   public static final int CAN_TIMEOUT_SHORT = 10;
   public static final int CAN_TIMEOUT_LONG = 100;
-  public static Double DRIVER_JOYSTICK_DEADBAND = 0.1; // TODO: Investigate if this can be better tuned
+  public static Double DRIVER_JOYSTICK_DEADBAND = 0.15;
 
   public static final boolean tuningMode = true;
   
