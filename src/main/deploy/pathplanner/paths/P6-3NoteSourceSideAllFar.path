@@ -3,38 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.59,
-        "y": 6.68
+        "x": 1.460509384123095,
+        "y": 3.6242059252566343
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.4784847564682604,
-        "y": 6.234127355472756
+        "x": 2.6616150942225554,
+        "y": 2.7155433445726946
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "3NoteSourceSideAllFar-P1"
     },
     {
       "anchor": {
-        "x": 1.33,
-        "y": 5.56
+        "x": 7.006484445538867,
+        "y": 1.462215647077605
       },
       "prevControl": {
-        "x": 2.5710708063020142,
-        "y": 5.555162990025228
+        "x": 4.656495012735573,
+        "y": 1.4831044420358555
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.85,
-      "rotationDegrees": 180.0,
-      "rotateFast": true
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -45,13 +39,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -179.12,
+    "rotation": 0.0,
     "rotateFast": true
   },
   "reversed": false,
-  "folder": null,
+  "folder": "3NoteSourceSideAllFar",
   "previewStartingState": {
-    "rotation": -142.22,
+    "rotation": -53.76999999999998,
     "velocity": 0
   },
   "useDefaultConstraints": true

@@ -6,13 +6,6 @@
 package frc.robot.robotcontainers;
 
 
-import static frc.robot.subsystems.IntakeStatesMachine.IntakeModes.INTAKE;
-import static frc.robot.subsystems.IntakeStatesMachine.IntakeModes.RELEASE;
-import static frc.robot.subsystems.IntakeStatesMachine.IntakeModes.SHOOT;
-import static frc.robot.subsystems.IntakeStatesMachine.IntakeModes.STOP_INTAKE;
-import static frc.robot.subsystems.ShooterStateMachine.ShooterModes.SHOOT_SPEAKER;
-import static frc.robot.subsystems.ShooterStateMachine.ShooterModes.STOP_SHOOTER;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -26,8 +19,10 @@ import frc.robot.commands.RotateAngleToVision;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.auto.AutoRoutines;
 import frc.robot.commands.auto.AutoSelector;
+import frc.robot.subsystems.IntakeStatesMachine.IntakeModes;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PhotonSubsystem;
+import frc.robot.subsystems.ShooterStateMachine.ShooterModes;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
@@ -52,6 +47,8 @@ public class NewRobotContainer extends RobotContainer {
   private TunableNumber shooterDesiredVoltage = new TunableNumber("Shooter/desired Voltage", 0);
     
   String tableName = "SwerveChassis";
+  //private NetworkTable swerveTable = NetworkTableInstance.getDefault().getTable(tableName);
+  //private IntegerEntry entryAutoRoutine;
 
   AutoSelector m_autoSelector;
   
@@ -102,22 +99,61 @@ public class NewRobotContainer extends RobotContainer {
     driver.a().whileTrue(PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.FAR_SPEAKER_RED, driver))
               .onFalse(Commands.runOnce(()->{},SwerveSubsystem.getInstance()));
 
+  //   // operator.a() //Intake the Note
+  //   //   .whileTrue(Commands.runOnce(()-> intake.setMode(INTAKE)))
+  //   //   .whileFalse(Commands.runOnce(()->intake.setMode(STOP)));    
+      
+  //   operator.b() //Release the Note from the back
+  //     .whileTrue(Commands.runOnce(()-> intake.setMode(RELEASE)))
+  //     .whileFalse(Commands.runOnce(()->intake.setMode(STOP)));    
+
+  //   operator.x() //Drives the note into the shooter
+  //     .whileTrue(Commands.runOnce(()-> intake.setMode(SHOOT)))
+  //     .whileFalse(Commands.runOnce(()->intake.setMode(STOP)));    
+
+  //   //operator.start() //Shoots the Note automatically 
+  //     //.onTrue(Commands.deadline(
+  //       //Commands.sequence(
+  //         //Commands.waitSeconds(2), 
+  //         //intake.shootNote())
+  //         //,new Shooter_tuner(12)
+  //     //));
+      
+  //   operator.start() //Shoots the Note automatically 
+  //     .onTrue(Commands.deadline(
+  //       Commands.sequence(
+  //         Commands.waitSeconds(2), 
+  //         intake.shootNote())
+  //         ,new Shooter_tuner(()->5)
+  //     ));
+
+      //    operator.a() 
+      // .whileTrue(new MakeIntakeMotorSpin(9.0, 0));
+
+    //     operator.start().whileTrue(Commands.deadline(
+    //   Commands.sequence(
+    //     new IntakeControl(false), 
+    //     new WaitCommand(0.5), 
+    //     new IntakeControl(true).withTimeout(2)),
+    //   new Shooter_tuner(5)
+    // ));
+
     /* --------------- Operator Controls -------------------- */
     operator.y() //Turn on the shooter and get voltage from DS
-      .whileTrue(Commands.runOnce(()->shooter.setMode(SHOOT_SPEAKER)))
-      .whileFalse(Commands.runOnce(()->shooter.setMode(STOP_SHOOTER)));
+      .whileTrue(Commands.runOnce(()->shooter.setMode(ShooterModes.SHOOT_SPEAKER)))
+      .whileFalse(Commands.runOnce(()->shooter.setMode(ShooterModes.STOP_SHOOTER)));
 
     operator.a() //Intake the Note
-      .whileTrue(Commands.runOnce(()-> intake.setMode(INTAKE)))
-      .whileFalse(Commands.runOnce(()->intake.setMode(STOP_INTAKE)));    
+      .whileTrue(Commands.runOnce(()-> intake.setMode(IntakeModes.INTAKE)))
+      .whileFalse(Commands.runOnce(()->intake.setMode(IntakeModes.STOP_INTAKE)));    
 
     operator.b() //Release the Note from the back
-      .whileTrue(Commands.runOnce(()-> intake.setMode(RELEASE)))
-      .whileFalse(Commands.runOnce(()->intake.setMode(STOP_INTAKE)));    
+      .whileTrue(Commands.runOnce(()-> intake.setMode(IntakeModes.RELEASE)))
+      .whileFalse(Commands.runOnce(()->intake.setMode(IntakeModes.STOP_INTAKE)));    
 
     operator.x() //Drives the note into the shooter
-      .whileTrue(Commands.runOnce(()-> intake.setMode(shooter.isReadyToShoot() ? SHOOT : STOP_INTAKE)))
-      .whileFalse(Commands.runOnce(()->intake.setMode(STOP_INTAKE)));    
+      .whileTrue(Commands.runOnce(()-> intake.setMode(shooter.isReadyToShoot() ? IntakeModes.SHOOT : IntakeModes.STOP_INTAKE)))
+      .whileFalse(Commands.runOnce(()->intake.setMode(IntakeModes.STOP_INTAKE)));    
 
     operator.povDown() //Stops the state machine from jumping automaticly between states
       .onTrue(Commands.runOnce(()->{intake.setStateMachineOff();shooter.setStateMachineOff();}));
@@ -129,7 +165,7 @@ public class NewRobotContainer extends RobotContainer {
       .onTrue(Commands.sequence(
           shooter.speedUpForSpeakerCommand(),
           intake.shootNoteCommand(),
-          Commands.runOnce(()->shooter.setMode(STOP_SHOOTER))          
+          Commands.runOnce(()->shooter.setMode(ShooterModes.STOP_SHOOTER))          
           ));
 
     // operator.start() //Shoots the Note automatically <
@@ -152,10 +188,10 @@ public class NewRobotContainer extends RobotContainer {
     //     .whileTrue(new MakeIntakeMotorSpin(9.0, 1));
        
 
-    // //turns brakes off
+    // turns brakes off
     // operator.rightBumper().onTrue(Commands.runOnce(() -> ArmPneumaticsSubsystem.getInstance().controlBrake(false, true)));
 
-    // //turns brakes on
+    // turns brakes on
     // operator.rightTrigger().onTrue(Commands.runOnce(() -> ArmPneumaticsSubsystem.getInstance().controlBrake(true, true)));
   }
   

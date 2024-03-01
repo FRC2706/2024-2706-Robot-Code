@@ -1,0 +1,68 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.821147448910675,
+        "y": 2.4439890101154256
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.821147448910674,
+        "y": 2.4439890101154256
+      },
+      "isLocked": false,
+      "linkedName": "3NoteSourceSideAllFar-P2"
+    },
+    {
+      "anchor": {
+        "x": 5.199603681650112,
+        "y": 1.4099936596819755
+      },
+      "prevControl": {
+        "x": 6.1808965558422635,
+        "y": 1.4424330935395675
+      },
+      "nextControl": {
+        "x": 3.9358315866758966,
+        "y": 1.3682160697654724
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.460509384123095,
+        "y": 3.6242059252566343
+      },
+      "prevControl": {
+        "x": 2.4109495547235373,
+        "y": 3.1333192437377244
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "3NoteSourceSideAllFar-P1"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 2.7,
+    "maxAcceleration": 3.3,
+    "maxAngularVelocity": 320.0,
+    "maxAngularAcceleration": 400.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -56.89999999999998,
+    "rotateFast": true
+  },
+  "reversed": false,
+  "folder": "3NoteSourceSideAllFar",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

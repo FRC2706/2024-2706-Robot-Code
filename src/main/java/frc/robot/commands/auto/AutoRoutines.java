@@ -17,9 +17,13 @@ import frc.robot.commands.IntakeControl;
 import frc.robot.commands.MakeIntakeMotorSpin;
 import frc.robot.commands.PhotonMoveToTarget;
 import frc.robot.commands.Shooter_Voltage;
+import frc.robot.subsystems.IntakeStatesMachine.IntakeModes;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PhotonSubsystem;
+import frc.robot.subsystems.ShooterStateMachine.ShooterModes;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
+
 
 //TODO: The autos are beginning a sec after the robot is enabled, we have to 
 //load all of the paths and initializate everything right after we turn on the robot
@@ -28,12 +32,53 @@ public class AutoRoutines extends SubsystemBase {
     PathPlannerPath SpeakerPath = PathPlannerPath.fromPathFile("Speaker Path");
     PathPlannerAuto twoNoteAuto = new PathPlannerAuto("twoNoteSpeaker");
     PathPlannerAuto threeNoteAuto = new PathPlannerAuto("threeNoteSpeaker");
+    PathPlannerAuto fourNoteAuto = new PathPlannerAuto("4NoteCenter");
 
     public AutoRoutines() {
         
     }
 
-    public static void registerCommandsToPathplanner() { 
+    public static void registerCommandsToPathplanner() {
+        // Intake and Arm Commands
+        NamedCommands.registerCommand("IntakeAndArm", new ParallelCommandGroup(
+            new WaitCommand(1), // Move arm to intake setpoint
+            new WaitCommand(1) // Intake game piece
+        ));
+
+        NamedCommands.registerCommand("OutakeRing", new ParallelCommandGroup(
+            new WaitCommand(1), // Move arm to speaker 
+            new WaitCommand(1) // Outake game piece
+        ));
+
+        NamedCommands.registerCommand("StartingZoneAmp", new ParallelCommandGroup(
+            new WaitCommand(1), // Exit starting zone
+            new WaitCommand(1), // Intake note
+            new WaitCommand(1) // Score in amp
+        ));
+
+        NamedCommands.registerCommand("IntakeAndArm", new ParallelCommandGroup(
+            new WaitCommand(1), // Move arm to intake setpoint
+            new WaitCommand(1) // Intake game piece
+        ));
+
+        NamedCommands.registerCommand("MakeIntakeMotorSpin", new SequentialCommandGroup(
+            new MakeIntakeMotorSpin(3.0,2), // Move arm to intake setpoint
+            new WaitCommand(1)
+        ));
+
+        NamedCommands.registerCommand("SetModeIntake", 
+            Commands.runOnce(() -> IntakeSubsystem.getInstance().setMode(IntakeModes.INTAKE)));
+
+        NamedCommands.registerCommand("ShootNoteStateful", 
+        Commands.sequence(
+            Commands.runOnce(() -> {System.out.println("STEP1");}),
+            ShooterSubsystem.getInstance().speedUpForSpeakerCommand(),
+            Commands.runOnce(() -> {System.out.println("STEP2");}),
+            IntakeSubsystem.getInstance().shootNoteCommand(),
+            Commands.runOnce(() -> {System.out.println("STEP3");}),
+            Commands.runOnce(()->ShooterSubsystem.getInstance().setMode(ShooterModes.STOP_SHOOTER))          
+        ));
+
         NamedCommands.registerCommand("simpleShooter", Commands.deadline(
               Commands.sequence(
                 new IntakeControl(false).withTimeout(0.3), 
@@ -83,6 +128,8 @@ public class AutoRoutines extends SubsystemBase {
                 return twoNoteAuto;
             case 3:
                 return threeNoteAuto;
+            case 12:
+                return fourNoteAuto;
         }
     }
 }
