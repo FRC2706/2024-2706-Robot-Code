@@ -42,7 +42,6 @@ import frc.robot.commands.Shooter_tuner;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.auto.AutoRoutines;
 import frc.robot.commands.auto.AutoSelector;
-import frc.robot.subsystems.ArmPneumaticsSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -155,14 +154,8 @@ public class NewRobotContainer extends RobotContainer {
         new WaitCommand(0.5), 
         new IntakeControl(true).withTimeout(2)),
       new Shooter_tuner(12)
-    ));
-       */
-
-    //turns brakes off
-    operator.rightBumper().onTrue(Commands.runOnce(() -> ArmPneumaticsSubsystem.getInstance().controlBrake(false, true)));
-
-    //turns brakes on
-    operator.rightTrigger().onTrue(Commands.runOnce(() -> ArmPneumaticsSubsystem.getInstance().controlBrake(true, true)));
+    )); 
+    */
   }
   
   public Command autoResetOdometryCommand() {

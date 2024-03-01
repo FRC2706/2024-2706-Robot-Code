@@ -19,7 +19,6 @@ public class SetArm extends Command {
     armAngleRadians = Math.toRadians(angleDegree);
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(ArmSubsystem.getInstance());
-    addRequirements(ArmPneumaticsSubsystem.getInstance());
   }
 
   // Called when the command is initially scheduled.
