@@ -111,8 +111,8 @@ public final class Config {
    * 
    * ID 0: Competition Robot (Crescendo) (NEEDS UPDATE ON robot.conf)
    * ID 1: Simulation of Comp Robot (Crescendo in Simulation)
-   * ID 2: Beetle (Test robot) (NEEDS UPDATE ON robot.conf)
-   * ID 3: Poseidon (Charged up) (NEEDS UPDATE ON robot.conf)
+   * ID 2: Beetle (Small Talon Tank Drive)
+   * ID 3: Poseidon (Charged Up) (NEEDS UPDATE ON robot.conf)
    **/
 
   /** ADD CONSTANTS BELOW THIS LINE */
@@ -175,6 +175,10 @@ public final class Config {
         this.direction = direction;
       }
     }  
+  }
+
+  public static final class Climber_CANID {
+     public static int CLIMBER = robotSpecific(-01, 4, 5, -1);  
   }
 
   public static final class Swerve {
@@ -333,6 +337,7 @@ public final class Config {
     public static final int INTAKE = 31;
   }
 
+
   public class ArmConfig {
     public static final boolean SET_INVERTED = true;
     public static final boolean setInvered = true;
@@ -391,7 +396,6 @@ public final class Config {
       //Constants for arm pneumatics
   public static final int ARMLOW_PNEUMATIC_FORWARD_CHANNEL = 0;
   public static final int ARMLOW_PNEUMATIC_REVERSE_CHANNEL = 1;
-
 
   /**
    * Differential Drive Constants
