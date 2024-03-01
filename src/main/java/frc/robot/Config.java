@@ -49,6 +49,8 @@ public final class Config {
   public static class CANID {
     public static int PIGEON = robotSpecific(16, -1, 27, 30);
     public static final int CANDLE = robotSpecific(25,-1,15,15);
+        public static final int CLIMBER = robotSpecific(18, 4, 5 ,-1);
+
 
     //to be deleted
     public static final int CTRE_PCM_CAN_ID = 1;
@@ -68,7 +70,6 @@ public final class Config {
     public static final int SWERVE_RR_CANCODER = 15;
     
     //mechanism CAN IDs
-    public static final int CLIMBER = 18; 
     public static final int ARM = 19; 
     public static final int INTAKE = 21; 
     public static final int SHOOTER = 22;
