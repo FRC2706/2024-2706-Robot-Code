@@ -16,8 +16,7 @@ import frc.robot.Config.PhotonConfig.PhotonPositions;
 import frc.robot.commands.IntakeControl;
 import frc.robot.commands.MakeIntakeMotorSpin;
 import frc.robot.commands.PhotonMoveToTarget;
-import frc.robot.commands.Shooter_tuner;
-import frc.robot.subsystems.IntakeStatesVoltage;
+import frc.robot.commands.Shooter_Voltage;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -34,26 +33,13 @@ public class AutoRoutines extends SubsystemBase {
         
     }
 
-    public static void registerCommandsToPathplanner() {
-
-        IntakeSubsystem.getInstance().setDefaultCommand(IntakeSubsystem.getInstance().autoIntake());
-        
-        NamedCommands.registerCommand("shooter", new SequentialCommandGroup(
-            Commands.deadline(
-                Commands.sequence(
-                    Commands.waitSeconds(2), 
-                    IntakeSubsystem.getInstance().shootNote()
-                ),
-                new Shooter_tuner(()->5)
-            )
-        ));
-
+    public static void registerCommandsToPathplanner() { 
         NamedCommands.registerCommand("simpleShooter", Commands.deadline(
               Commands.sequence(
                 new IntakeControl(false).withTimeout(0.3), 
                 new WaitCommand(0.5),
                 new IntakeControl(true).withTimeout(2)),
-              new Shooter_tuner(()->5)
+              new Shooter_Voltage(()->5)
             ));
 
         // NamedCommands.registerCommand("turnOffIntake", (

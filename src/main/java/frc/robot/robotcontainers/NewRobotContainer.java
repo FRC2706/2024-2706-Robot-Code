@@ -6,34 +6,30 @@
 package frc.robot.robotcontainers;
 
 
+import static frc.robot.subsystems.IntakeStatesMachine.IntakeModes.INTAKE;
+import static frc.robot.subsystems.IntakeStatesMachine.IntakeModes.RELEASE;
+import static frc.robot.subsystems.IntakeStatesMachine.IntakeModes.SHOOT;
+import static frc.robot.subsystems.IntakeStatesMachine.IntakeModes.STOP_INTAKE;
+import static frc.robot.subsystems.ShooterStateMachine.ShooterModes.SHOOT_SPEAKER;
+import static frc.robot.subsystems.ShooterStateMachine.ShooterModes.STOP_SHOOTER;
+
 import edu.wpi.first.math.geometry.Pose2d;
-
-import static frc.robot.subsystems.IntakeStatesMachine.IntakeModes.*;
-import static frc.robot.subsystems.ShooterStateMachine.ShooterModes.*;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.lib2706.TunableNumber;
 import frc.robot.Config.PhotonConfig.PhotonPositions;
 import frc.robot.Config.Swerve.TeleopSpeeds;
 import frc.robot.Robot;
-import frc.robot.commands.IntakeControl;
-import frc.robot.commands.MakeIntakeMotorSpin;
 import frc.robot.commands.RotateAngleToVision;
-import frc.robot.commands.Shooter_Voltage;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.auto.AutoRoutines;
 import frc.robot.commands.auto.AutoSelector;
-import frc.robot.subsystems.ArmPneumaticsSubsystem;
-import frc.robot.subsystems.IntakeStatesVoltage;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.IntakeStatesMachine.IntakeStates.*;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -136,31 +132,31 @@ public class NewRobotContainer extends RobotContainer {
           Commands.runOnce(()->shooter.setMode(STOP_SHOOTER))          
           ));
 
-    /*operator.start() //Shoots the Note automatically <
-      .onTrue(Commands.deadline(
-        Commands.sequence(
-          Commands.waitSeconds(2), 
-          intake.shootNote())
-          ,new Shooter_tuner(()->12)
-      ));
+    // operator.start() //Shoots the Note automatically <
+    //   .onTrue(Commands.deadline(
+    //     Commands.sequence(
+    //       Commands.waitSeconds(2), 
+    //       intake.shootNote())
+    //       ,new Shooter_tuner(()->12)
+    //   ));
 
-    operator.start().whileTrue(Commands.deadline(
-      Commands.sequence(
-        new IntakeControl(false).withTimeout(0.3), 
-        new WaitCommand(0.5),
-        new IntakeControl(true).withTimeout(2)),
-      new Shooter_tuner(()->5)
-    ));
+    // operator.start().whileTrue(Commands.deadline(
+    //   Commands.sequence(
+    //     new IntakeControl(false).withTimeout(0.3), 
+    //     new WaitCommand(0.5),
+    //     new IntakeControl(true).withTimeout(2)),
+    //   new Shooter_tuner(()->5)
+    // ));
 
-    operator.a() 
-        .whileTrue(new MakeIntakeMotorSpin(9.0, 1));
+    // operator.a() 
+    //     .whileTrue(new MakeIntakeMotorSpin(9.0, 1));
        
 
-    //turns brakes off
-    operator.rightBumper().onTrue(Commands.runOnce(() -> ArmPneumaticsSubsystem.getInstance().controlBrake(false, true)));
+    // //turns brakes off
+    // operator.rightBumper().onTrue(Commands.runOnce(() -> ArmPneumaticsSubsystem.getInstance().controlBrake(false, true)));
 
-    //turns brakes on
-    operator.rightTrigger().onTrue(Commands.runOnce(() -> ArmPneumaticsSubsystem.getInstance().controlBrake(true, true)));
+    // //turns brakes on
+    // operator.rightTrigger().onTrue(Commands.runOnce(() -> ArmPneumaticsSubsystem.getInstance().controlBrake(true, true)));
   }
   
 
