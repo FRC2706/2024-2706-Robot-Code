@@ -20,6 +20,7 @@ import frc.robot.Config.PhotonConfig;
 import frc.robot.Config.PhotonConfig.PhotonPositions;
 import frc.robot.Config.Swerve.TeleopSpeeds;
 import frc.robot.Robot;
+import frc.robot.commands.ClimberRPM;
 import frc.robot.commands.CombinedCommands;
 import frc.robot.commands.IntakeControl;
 import frc.robot.commands.RotateAngleToVisionSupplier;
@@ -122,7 +123,7 @@ public class NewRobotContainer extends RobotContainer {
     XBoxControllerUtil.leftPOV(operator).debounce(0.1).onTrue(new SetArm(0)); // Kickbot Shot
 
     // Climber
-    // operator.leftTrigger() // Implement climb command here
+    operator.rightTrigger(0.25).whileTrue(new ClimberRPM(()->  driver.getRightTriggerAxis()));
 
     // Simple shooter and intake
     if (Config.disableStateBasedProgramming) {
