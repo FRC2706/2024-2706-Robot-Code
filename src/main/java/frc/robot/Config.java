@@ -111,8 +111,8 @@ public final class Config {
    * 
    * ID 0: Competition Robot (Crescendo) (NEEDS UPDATE ON robot.conf)
    * ID 1: Simulation of Comp Robot (Crescendo in Simulation)
-   * ID 2: Beetle (Test robot) (NEEDS UPDATE ON robot.conf)
-   * ID 3: Poseidon (Charged up) (NEEDS UPDATE ON robot.conf)
+   * ID 2: Beetle (Small Talon Tank Drive)
+   * ID 3: Poseidon (Charged Up) (NEEDS UPDATE ON robot.conf)
    **/
 
   /** ADD CONSTANTS BELOW THIS LINE */
@@ -145,8 +145,8 @@ public final class Config {
       LEFT_SPEAKER_RED(4, new Translation2d(-1,-1), new Translation2d(-0.6,-0.7), Rotation2d.fromDegrees(60)),
       RIGHT_SPEAKER_RED(4, new Translation2d(-0.937,0.937), new Translation2d(-0.637,0.637), Rotation2d.fromDegrees(-60)),
       MIDDLE_SPEAKER_RED(4, new Translation2d(-1.3,0), new Translation2d(-0.95,0), Rotation2d.fromDegrees(0)),
-      FAR_SPEAKER_RED(4, new Translation2d(-2.7,0), new Translation2d(-2,0), Rotation2d.fromDegrees(0)),
-      AMP_RED(5, new Translation2d(0,-30), new Translation2d(0,0), Rotation2d.fromDegrees(90)),
+      FAR_SPEAKER_RED(4, new Translation2d(-2.4,0), new Translation2d(-2.2,0), Rotation2d.fromDegrees(0)),
+      AMP_RED(5, new Translation2d(0,-0.70), new Translation2d(0,-0.5), Rotation2d.fromDegrees(90)),
       AMP_BLUE(6, new Translation2d(0,-30), new Translation2d(0,0),  Rotation2d.fromDegrees(90)),
       LEFT_SPEAKER_BLUE(7, new Translation2d(0.937,0.937), new Translation2d(0.637,0.637), Rotation2d.fromDegrees(-120)),
       RIGHT_SPEAKER_BLUE(7, new Translation2d(0.937,-0.937), new Translation2d(0.637,-0.637), Rotation2d.fromDegrees(120)),
@@ -175,6 +175,10 @@ public final class Config {
         this.direction = direction;
       }
     }  
+  }
+
+  public static final class Climber_CANID {
+     public static int CLIMBER = robotSpecific(-01, 4, 5, -1);  
   }
 
   public static final class Swerve {
@@ -225,7 +229,7 @@ public final class Config {
 
     /* Drive Motor Characterization Values Changed */
     public static final double driveKS = 0.667;
-    public static final double driveKV = 5.0;
+    public static final double driveKV = 4.0;//5
     public static final double driveKA = 0.5;
 
     /* Drive Motor Conversion Factors */
@@ -332,6 +336,7 @@ public final class Config {
   public static final class Intake {
     public static final int INTAKE = 31;
   }
+
 
   public class ArmConfig {
     public static final boolean SET_INVERTED = true;
