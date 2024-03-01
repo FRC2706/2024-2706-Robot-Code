@@ -16,6 +16,7 @@ import frc.lib.lib2706.SelectByAllianceCommand;
 import frc.lib.lib2706.TunableNumber;
 import frc.lib.lib2706.XBoxControllerUtil;
 import frc.robot.Config;
+import frc.robot.Config.ArmSetPoints;
 import frc.robot.Config.PhotonConfig;
 import frc.robot.Config.PhotonConfig.PhotonPositions;
 import frc.robot.Config.Swerve.TeleopSpeeds;
@@ -116,41 +117,45 @@ public class NewRobotContainer extends RobotContainer {
 
     // Complete vision scoring commands with all subsystems
     if (Config.disableStateBasedProgramming) {
+      // Score in amp with vision using simple intake/shooter
       driver.leftBumper().whileTrue(CombinedCommands.visionScoreTeleopSimple(
         driver, 
         25, 
         2, 
-        130, // TODO: Set correct arm angle for amp 
+        ArmSetPoints.AMP.angleDeg,
         5,  
         PhotonPositions.AMP_BLUE,
         PhotonPositions.AMP_RED
       ));
 
+      // Score in speaker with vision using simple intake/shooter
       driver.rightBumper().whileTrue(CombinedCommands.visionScoreTeleopSimple(
         driver, 
         25, 
         2, 
-        35,  // TODO: Set correct arm angle for speaker kitbot shot 
+        ArmSetPoints.KITBOT_SHOT_SPEAKER.angleDeg,
         9, 
         PhotonPositions.MIDDLE_SPEAKER_BLUE,
         PhotonPositions.MIDDLE_SPEAKER_RED
       ));
 
     } else {
+      // Score in amp with vision using stateful intake/shooter
       driver.leftBumper().whileTrue(CombinedCommands.visionScoreTeleopStateful(
         driver, 
         25, 
-        2, 
-        120, // TODO: Set correct arm angle for amp 
+        4, 
+        ArmSetPoints.AMP.angleDeg,
         PhotonPositions.AMP_BLUE,
         PhotonPositions.AMP_RED
       ));
 
+      // Score in speaker with vision using stateful intake/shooter
       driver.leftBumper().whileTrue(CombinedCommands.visionScoreTeleopStateful(
         driver, 
         25, 
-        2, 
-        35, // TODO: Set correct arm angle for speaker kitbot shot 
+        4, 
+        ArmSetPoints.KITBOT_SHOT_SPEAKER.angleDeg,
         PhotonPositions.MIDDLE_SPEAKER_BLUE,
         PhotonPositions.MIDDLE_SPEAKER_RED
       ));
@@ -161,10 +166,10 @@ public class NewRobotContainer extends RobotContainer {
      * KingstonV1: https://drive.google.com/file/d/18HyIpIeW08CC6r6u-Z74xBWRv9opHnoZ
      */
     // Arm
-    operator.y().onTrue(new SetArm(0)); // Amp
-    operator.b().onTrue(new SetArm(0)); // Idle
-    operator.a().onTrue(new SetArm(0)); // Pickup
-    XBoxControllerUtil.leftPOV(operator).debounce(0.1).onTrue(new SetArm(0)); // Kickbot Shot
+    operator.y().onTrue(new SetArm(ArmSetPoints.AMP.angleDeg)); // Amp
+    operator.b().onTrue(new SetArm(ArmSetPoints.IDLE.angleDeg)); // Idle
+    operator.a().onTrue(new SetArm(ArmSetPoints.INTAKE.angleDeg)); // Pickup
+    XBoxControllerUtil.leftPOV(operator).debounce(0.1).onTrue(new SetArm(ArmSetPoints.KITBOT_SHOT_SPEAKER.angleDeg)); // Kickbot Shot
 
     // Climber
     operator.rightTrigger(0.25).whileTrue(new ClimberRPM(()->  driver.getRightTriggerAxis()));

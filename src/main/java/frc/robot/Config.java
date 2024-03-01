@@ -413,7 +413,7 @@ public static enum ArmSetPoints {
   //@todo: to be calibrated
   IDLE(60),
   INTAKE(5),
-  SPEAKER(35),
+  KITBOT_SHOT_SPEAKER(35),
   AMP(100);
 
   public final double angleDeg;
