@@ -10,9 +10,7 @@ import frc.robot.subsystems.ArmSubsystem;
 
 public class SetArm extends Command {
   double armAngleRadians;
-  final double TIMEOUT_S=2;
 
-  Timer m_timer = new Timer();
   /** Creates a new SetArm. */
   public SetArm(double angleDegree) {
     armAngleRadians = Math.toRadians(angleDegree);
@@ -23,10 +21,6 @@ public class SetArm extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_timer.stop();
-    m_timer.reset();
-    //todo: 
-    m_timer.start();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -39,15 +33,13 @@ public class SetArm extends Command {
   @Override
   public void end(boolean interrupted) {
     ArmSubsystem.getInstance().stopMotors();
-    m_timer.stop();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    //todo: check if bottom arm reaches the position 
-    //time out, finished
-    return m_timer.hasElapsed(TIMEOUT_S);
+    //keep running motor
+    return false;
   }
 }
 
