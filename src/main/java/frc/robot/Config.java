@@ -141,10 +141,10 @@ public final class Config {
   public static int ANALOG_SELECTOR_PORT = robotSpecific(3, -1, -1, 0);
 
   public static final class PhotonConfig{
-    public static final double CAMERA_HEIGHT = 0.29;
-    public static final Rotation2d CAMERA_PITCH = Rotation2d.fromDegrees(26);
+    public static final double CAMERA_HEIGHT = 0.215;
+    public static final Rotation2d CAMERA_PITCH = Rotation2d.fromDegrees(33);
     //x is forwards, y is sideways with +y being left, rotation probobly if + left too
-    public static final Pose2d cameraOffset = new Pose2d(new Translation2d(-0.2,0.28-0.03), Rotation2d.fromDegrees(0));
+    public static final Pose2d cameraOffset = new Pose2d(new Translation2d(-0.1,0), Rotation2d.fromDegrees(0));
   
     //networkTableName
     public static final String apriltagCameraName = "FrontApriltagOV9281";
