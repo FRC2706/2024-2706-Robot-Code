@@ -103,7 +103,6 @@ public class NewRobotContainer extends RobotContainer {
     driver.x().whileTrue(new RotateToAngle(driver, Rotation2d.fromDegrees(90)));
     driver.a().whileTrue(new RotateToAngle(driver, Rotation2d.fromDegrees(180)));
     driver.b().whileTrue(new RotateToAngle(driver, Rotation2d.fromDegrees(270)));
-
     driver.start().whileTrue(new RotateAngleToVisionSupplier(driver, "photonvision/" + PhotonConfig.apriltagCameraName));    
 
     // Vision scoring commands with no intake, shooter, arm
@@ -118,47 +117,17 @@ public class NewRobotContainer extends RobotContainer {
     // Complete vision scoring commands with all subsystems
     if (Config.disableStateBasedProgramming) {
       // Score in amp with vision using simple intake/shooter
-      driver.leftBumper().whileTrue(CombinedCommands.visionScoreTeleopSimple(
-        driver, 
-        25, 
-        2, 
-        ArmSetPoints.AMP.angleDeg,
-        5,  
-        PhotonPositions.AMP_BLUE,
-        PhotonPositions.AMP_RED
-      ));
+      driver.leftBumper().whileTrue(CombinedCommands.simpleAmpScoreWithVision(driver));
 
       // Score in speaker with vision using simple intake/shooter
-      driver.rightBumper().whileTrue(CombinedCommands.visionScoreTeleopSimple(
-        driver, 
-        25, 
-        2, 
-        ArmSetPoints.KITBOT_SHOT_SPEAKER.angleDeg,
-        9, 
-        PhotonPositions.MIDDLE_SPEAKER_BLUE,
-        PhotonPositions.MIDDLE_SPEAKER_RED
-      ));
+      driver.rightBumper().whileTrue(CombinedCommands.simpleSpeakerScoreWithVision(driver, ArmSetPoints.SPEAKER_KICKBOT_SHOT, PhotonPositions.RIGHT_SPEAKER_BLUE, PhotonPositions.RIGHT_SPEAKER_RED));
 
     } else {
       // Score in amp with vision using stateful intake/shooter
-      driver.leftBumper().whileTrue(CombinedCommands.visionScoreTeleopStateful(
-        driver, 
-        25, 
-        4, 
-        ArmSetPoints.AMP.angleDeg,
-        PhotonPositions.AMP_BLUE,
-        PhotonPositions.AMP_RED
-      ));
+      driver.leftBumper().whileTrue(CombinedCommands.statefulAmpScoreWithVision(driver));
 
       // Score in speaker with vision using stateful intake/shooter
-      driver.leftBumper().whileTrue(CombinedCommands.visionScoreTeleopStateful(
-        driver, 
-        25, 
-        4, 
-        ArmSetPoints.KITBOT_SHOT_SPEAKER.angleDeg,
-        PhotonPositions.RIGHT_SPEAKER_BLUE,
-        PhotonPositions.LEFT_SPEAKER_RED
-      ));
+      driver.leftBumper().whileTrue(CombinedCommands.statefulSpeakerScoreWithVision(driver, ArmSetPoints.SPEAKER_KICKBOT_SHOT, PhotonPositions.RIGHT_SPEAKER_BLUE, PhotonPositions.RIGHT_SPEAKER_RED));
     }
 
     /**
@@ -169,7 +138,7 @@ public class NewRobotContainer extends RobotContainer {
     operator.y().onTrue(new SetArm(()->ArmSetPoints.AMP.angleDeg)); // Amp
     operator.b().onTrue(new SetArm(()->ArmSetPoints.IDLE.angleDeg)); // Idle
     operator.a().onTrue(new SetArm(()->ArmSetPoints.INTAKE.angleDeg)); // Pickup
-    XBoxControllerUtil.leftPOV(operator).debounce(0.1).onTrue(new SetArm(()->ArmSetPoints.KITBOT_SHOT_SPEAKER.angleDeg)); // Kickbot Shot
+    XBoxControllerUtil.leftPOV(operator).debounce(0.1).onTrue(new SetArm(()->ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg)); // Kickbot Shot
 
     // Climber
     operator.rightTrigger(0.25).whileTrue(new ClimberRPM(()->  driver.getRightTriggerAxis()));

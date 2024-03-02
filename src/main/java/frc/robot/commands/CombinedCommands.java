@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.lib2706.SelectByAllianceCommand;
 import frc.robot.Config.Swerve;
+import frc.robot.Config.ArmSetPoints;
 import frc.robot.Config.PhotonConfig.PhotonPositions;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PhotonSubsystem;
@@ -34,7 +35,7 @@ public class CombinedCommands {
         return Commands.deadline(
             Commands.sequence(
                 new IntakeControl(false).withTimeout(0.3), 
-                new WaitCommand(0.5),
+                new WaitCommand(1),
                 new IntakeControl(true).withTimeout(2)),
             new Shooter_Voltage(()->8)
         );
@@ -112,7 +113,7 @@ public class CombinedCommands {
             Commands.parallel(
                 new SetArm(()->armAngleDeg),
                 new IntakeControl(false), // Reverse note until not touching shooter
-                new WaitCommand(0.7), // Require a minimum duration for shooter to spinup
+                new WaitCommand(1), // Require a minimum duration for shooter to spinup
                 Commands.sequence(
                     new SelectByAllianceCommand(
                         PhotonSubsystem.getInstance().getAprilTagCommand(bluePosition, driverJoystick), 
@@ -204,5 +205,74 @@ public class CombinedCommands {
             rumble.schedule(); // Rumble the joystick to notify the driver
             idleSwerve.cancel(); // Ensure the teleop command is not blocked
         });
+    }
+
+    /**
+     * Score in amp with vision using simple intake/shooter
+     * @param driver joystick
+     */
+    public static Command simpleAmpScoreWithVision(CommandXboxController driver) {
+        return CombinedCommands.visionScoreTeleopSimple(
+            driver, 
+            25, 
+            2, 
+            ArmSetPoints.AMP.angleDeg,
+            5,  
+            PhotonPositions.AMP_BLUE,
+            PhotonPositions.AMP_RED
+        );
+    }    
+
+    /**
+     * Score in speaker with vision using simple intake/shooter.
+     * 
+     * @param driver joystick
+     * @param bluePosition PhotonPosition for the blue alliance
+     * @param redPosition PhotonPosition for the red alliance
+     */
+    public static Command simpleSpeakerScoreWithVision(CommandXboxController driver, ArmSetPoints armAngle, PhotonPositions bluePosition, PhotonPositions redPosition) {
+        return CombinedCommands.visionScoreTeleopSimple(
+            driver, 
+            25, 
+            2, 
+            armAngle.angleDeg,
+            9, 
+            bluePosition,
+            redPosition
+        );
+    }
+
+    /**
+     * Score in amp with vision using stateful intake/shooter
+     * 
+     * @param driver joystick
+     */
+    public static Command statefulAmpScoreWithVision(CommandXboxController driver) {
+        return CombinedCommands.visionScoreTeleopStateful(
+            driver, 
+            25, 
+            4, 
+            ArmSetPoints.AMP.angleDeg,
+            PhotonPositions.AMP_BLUE,
+            PhotonPositions.AMP_RED
+        );
+    }
+
+    /**
+     * Score in speaker with vision using stateful intake/shooter
+     * 
+     * @param driver joystick
+     * @param bluePosition PhotonPosition for the blue alliance
+     * @param redPosition PhotonPosition for the red alliance
+     */
+    public static Command statefulSpeakerScoreWithVision(CommandXboxController driver, ArmSetPoints armAngle, PhotonPositions bluePosition, PhotonPositions redPosition) {
+        return CombinedCommands.visionScoreTeleopStateful(
+            driver, 
+            25, 
+            4, 
+            armAngle.angleDeg,
+            bluePosition,
+            redPosition
+        );
     }
 }
