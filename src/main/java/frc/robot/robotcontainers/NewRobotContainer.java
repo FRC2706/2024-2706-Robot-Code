@@ -24,6 +24,7 @@ import frc.robot.Robot;
 import frc.robot.commands.ClimberRPM;
 import frc.robot.commands.CombinedCommands;
 import frc.robot.commands.IntakeControl;
+import frc.robot.commands.MakeIntakeMotorSpin;
 import frc.robot.commands.RotateAngleToVisionSupplier;
 import frc.robot.commands.RotateToAngle;
 import frc.robot.commands.SetArm;
@@ -138,8 +139,8 @@ public class NewRobotContainer extends RobotContainer {
     operator.y().onTrue(new SetArm(()->ArmSetPoints.AMP.angleDeg)); // Amp
     operator.b().onTrue(new SetArm(()->ArmSetPoints.IDLE.angleDeg)); // Idle
     operator.a().onTrue(new SetArm(()->ArmSetPoints.INTAKE.angleDeg)); // Pickup
-    XBoxControllerUtil.leftPOV(operator).debounce(0.1).onTrue(new SetArm(()->ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg)); // Kickbot Shot
-
+    //XBoxControllerUtil.leftPOV(operator).debounce(0.1).onTrue(new SetArm(()->ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg)); // Kickbot Shot
+    operator.x().onTrue(new SetArm(()->ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg));
     // Climber
     operator.rightTrigger(0.25).whileTrue(new ClimberRPM(()->  driver.getRightTriggerAxis()));
 
@@ -149,12 +150,14 @@ public class NewRobotContainer extends RobotContainer {
       shooter.setStateMachineOff();
 
       // Intake note with leftTrigger
-      operator.leftTrigger(0.3).whileTrue(
-        Commands.run(() -> intake.setVoltage(8), intake));
+    //  operator.leftTrigger(0.3).whileTrue(
+        operator.start().whileTrue(
+        //  Commands.run(() -> intake.setVoltage(8), intake));
+          new MakeIntakeMotorSpin(8.0,0));
 
       // Toggle to spin up or spin down the shooter with rightBumper
-      operator.rightBumper().toggleOnTrue(new Shooter_Voltage(()->8));
-
+      //operator.rightBumper().toggleOnTrue(new Shooter_Voltage(()->3));
+      operator.back().whileTrue(new Shooter_Voltage(()->3));
       // Shoot note with leftBumper
       operator.leftBumper().whileTrue(CombinedCommands.simpleShootNote());
 

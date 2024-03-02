@@ -368,12 +368,16 @@ public final class Config {
 
     public static final int CURRENT_LIMIT = 20;
 
-    public static final double MAX_ARM_ANGLE_DEG = 150;
-    public static final double MIN_ARM_ANGLE_DEG = 5;
+    public static final double shiftEncoderRange = 10;
+      //offset unit: degrees
+    public static final double armAbsEncoderOffset = Math.toDegrees(3.20433) + 3.0 - shiftEncoderRange;
+
+    public static final double MAX_ARM_ANGLE_DEG = 180;
+    public static final double MIN_ARM_ANGLE_DEG = -2;
 
     //soft limit constant for bottom arm
-    public static final float arm_forward_limit = (float) Math.toRadians(MAX_ARM_ANGLE_DEG);
-    public static final float arm_reverse_limit = (float) Math.toRadians(MIN_ARM_ANGLE_DEG);
+    public static final float arm_forward_limit = (float) Math.toRadians(MAX_ARM_ANGLE_DEG + shiftEncoderRange);
+    public static final float arm_reverse_limit = (float) Math.toRadians(MIN_ARM_ANGLE_DEG + shiftEncoderRange);
     public static final boolean SOFT_LIMIT_ENABLE = true;
     
     //PID constants
@@ -397,11 +401,9 @@ public final class Config {
     public static final double armPositionConversionFactor = 2 * Math.PI / ARM_ENCODER_GEAR_RATIO;
     //arm velocity unit: radians/sec
     public static final double armVelocityConversionFactor = armPositionConversionFactor / 60.0;
-    //offset unit: degrees
-    public static final double armAbsEncoderOffset = Math.toDegrees(3.20433) + 3.0;
-
-    public static final double MAX_VEL = Math.PI * 0.5;
-    public static final double MAX_ACCEL = Math.PI * 0.5;
+  
+    public static final double MAX_VEL = Math.PI * 1.5;
+    public static final double MAX_ACCEL = Math.PI * 1.5;
 
     public static final double MOMENT_TO_VOLTAGE = 0.000005;    
 }
@@ -409,8 +411,8 @@ public final class Config {
 public static enum ArmSetPoints {
   //@todo: to be calibrated
   IDLE(60),
-  INTAKE(5),
-  SPEAKER_KICKBOT_SHOT(35),
+  INTAKE(0),
+  SPEAKER_KICKBOT_SHOT(15),
   AMP(100);
 
   public final double angleDeg;

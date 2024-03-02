@@ -35,9 +35,9 @@ public class CombinedCommands {
         return Commands.deadline(
             Commands.sequence(
                 new IntakeControl(false).withTimeout(0.3), 
-                new WaitCommand(1),
-                new IntakeControl(true).withTimeout(2)),
-            new Shooter_Voltage(()->8)
+                new WaitCommand(2.2),
+                new IntakeControl(true).withTimeout(1)),
+            new Shooter_Voltage(()->9)
         );
     }
 

@@ -154,6 +154,11 @@ public class PhotonSubsystem extends SubsystemBase {
   private double range(double y) {
     y = Math.toRadians(y);
     y += PhotonConfig.CAMERA_PITCH.getRadians();
+
+    if (id-4 <= 0) {
+      return 0;
+    }
+
     return (Config.PhotonConfig.APRIL_HEIGHTS[id-4]-PhotonConfig.CAMERA_HEIGHT)/Math.tan(y);
   }
 
