@@ -40,6 +40,7 @@ public class SubsystemChecker {
         SubsystemType.VisionNTSubsystem,
         SubsystemType.GripperSubsystem,
         SubsystemType.BlingSubsystem,
+        SubsystemType.ClimberSubsystem,
     };
 
     // RobotID: 1, 2022 robot, RapidReact, Clutch
@@ -60,6 +61,7 @@ public class SubsystemChecker {
         SubsystemType.DiffTalonSubsystem,  // Chassis
         SubsystemType.RelaySubsystem,
         SubsystemType.BlingSubsystem,
+        SubsystemType.ClimberSubsystem,
     };
 
     // RobotID: 3, 2019 Comp Robot, Deep Space, Mergonaut
