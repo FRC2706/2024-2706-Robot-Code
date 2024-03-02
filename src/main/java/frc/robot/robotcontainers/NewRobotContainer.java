@@ -166,10 +166,10 @@ public class NewRobotContainer extends RobotContainer {
      * KingstonV1: https://drive.google.com/file/d/18HyIpIeW08CC6r6u-Z74xBWRv9opHnoZ
      */
     // Arm
-    operator.y().onTrue(new SetArm(ArmSetPoints.AMP.angleDeg)); // Amp
-    operator.b().onTrue(new SetArm(ArmSetPoints.IDLE.angleDeg)); // Idle
-    operator.a().onTrue(new SetArm(ArmSetPoints.INTAKE.angleDeg)); // Pickup
-    XBoxControllerUtil.leftPOV(operator).debounce(0.1).onTrue(new SetArm(ArmSetPoints.KITBOT_SHOT_SPEAKER.angleDeg)); // Kickbot Shot
+    operator.y().onTrue(new SetArm(()->ArmSetPoints.AMP.angleDeg)); // Amp
+    operator.b().onTrue(new SetArm(()->ArmSetPoints.IDLE.angleDeg)); // Idle
+    operator.a().onTrue(new SetArm(()->ArmSetPoints.INTAKE.angleDeg)); // Pickup
+    XBoxControllerUtil.leftPOV(operator).debounce(0.1).onTrue(new SetArm(()->ArmSetPoints.KITBOT_SHOT_SPEAKER.angleDeg)); // Kickbot Shot
 
     // Climber
     operator.rightTrigger(0.25).whileTrue(new ClimberRPM(()->  driver.getRightTriggerAxis()));

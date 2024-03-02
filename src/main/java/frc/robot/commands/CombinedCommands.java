@@ -110,7 +110,7 @@ public class CombinedCommands {
         // Prepare the robot to score
         Command driveToPositionAndPrepare = Commands.deadline(
             Commands.parallel(
-                new SetArm(armAngleDeg),
+                new SetArm(()->armAngleDeg),
                 new IntakeControl(false), // Reverse note until not touching shooter
                 new WaitCommand(0.7), // Require a minimum duration for shooter to spinup
                 Commands.sequence(
@@ -128,7 +128,7 @@ public class CombinedCommands {
             Commands.runOnce(() -> SwerveSubsystem.getInstance().stopMotors()),
             new Shooter_Voltage(() -> shooterVoltage),
             new IntakeControl(true),
-            new SetArm(armAngleDeg) // Continue to hold arm in the correct position
+            new SetArm(()->armAngleDeg) // Continue to hold arm in the correct position
         ).withTimeout(scoringTimeoutSeconds);
 
         // Rumble command
@@ -172,7 +172,7 @@ public class CombinedCommands {
 
         // Prepare the robot to score
         Command driveToPositionAndPrepare = Commands.parallel(
-            new SetArm(armAngleDeg),
+            new SetArm(()->armAngleDeg),
             new WaitCommand(0.1).andThen(ShooterSubsystem.getInstance().speedUpForSpeakerCommand()),
             Commands.sequence(
                 new SelectByAllianceCommand(
@@ -186,7 +186,7 @@ public class CombinedCommands {
         Command scoreNote = Commands.parallel(
             Commands.runOnce(() -> SwerveSubsystem.getInstance().stopMotors()),
             IntakeSubsystem.getInstance().shootNoteCommand(),
-            new SetArm(armAngleDeg) // Continue to hold arm in the correct position
+            new SetArm(()->armAngleDeg) // Continue to hold arm in the correct position
         ).withTimeout(scoringTimeoutSeconds);
 
         // Rumble command

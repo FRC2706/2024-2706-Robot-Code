@@ -26,7 +26,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 
 public class AutoRoutines extends SubsystemBase {
     
-    PathPlannerPath speakerPath = PathPlannerPath.fromPathFile("Speaker Path");
+    //PathPlannerPath speakerPath = PathPlannerPath.fromPathFile("Speaker Path");
     PathPlannerAuto twoNoteAuto = new PathPlannerAuto("twoNoteSpeaker");
     PathPlannerAuto threeNoteAuto = new PathPlannerAuto("threeNoteSpeaker");
     PathPlannerAuto fourNoteAuto = new PathPlannerAuto("4NoteCenter");
@@ -112,10 +112,11 @@ public class AutoRoutines extends SubsystemBase {
             default: 
                 return null;
             case 1:
-                return Commands.sequence(
+                return null;
+                /*Commands.sequence(
                     SwerveSubsystem.getInstance().setOdometryCommand(speakerPath.getPreviewStartingHolonomicPose()),
                     AutoBuilder.followPath(speakerPath)
-                );
+                );*/
             case 2:
                 return twoNoteAuto;
             case 3:
