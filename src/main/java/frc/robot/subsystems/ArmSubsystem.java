@@ -161,8 +161,10 @@ public class ArmSubsystem extends SubsystemBase {
         m_ProfiledPIDController.calculate(getPosition(), clampedAngle);
         double targetPos = m_ProfiledPIDController.getSetpoint().position;
 
-        m_pidControllerArm.setReference((targetPos), ControlType.kPosition, 0, calculateFF(clampedAngle));
-    m_targetAngle.accept(Math.toDegrees(targetPos));
+        //m_pidControllerArm.setReference((targetPos), ControlType.kPosition, 0, calculateFF(clampedAngle));
+        m_pidControllerArm.setReference((targetPos), ControlType.kPosition, 0, 0);
+
+     m_targetAngle.accept(Math.toDegrees(targetPos));
   }
 
   public void resetProfiledPIDController() {
