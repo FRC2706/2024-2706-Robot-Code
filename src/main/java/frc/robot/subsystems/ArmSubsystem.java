@@ -13,6 +13,8 @@ import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
@@ -50,12 +52,16 @@ public class ArmSubsystem extends SubsystemBase {
   // for arm ff
   private DoubleEntry m_armMomentToVoltage;
 
-    //spark absolute encoder
-    private SparkAbsoluteEncoder m_absEncoder;  
-    //embedded relative encoder
-    private SparkPIDController m_pidControllerArm;  
+  //spark absolute encoder
+  private SparkAbsoluteEncoder m_absEncoder;  
+  //embedded relative encoder
+  private SparkPIDController m_pidControllerArm;    
 
-  ProfiledPIDFFController m_profiledFFController = new ProfiledPIDFFController();
+  private final TrapezoidProfile.Constraints m_constraints = 
+    new TrapezoidProfile.Constraints(Config.ArmConfig.MAX_VEL, Config.ArmConfig.MAX_ACCEL);
+  private final ProfiledPIDController m_ProfiledPIDController = 
+    new ProfiledPIDController(1.6,0.002,40, m_constraints, 0.02);
+
 
   public static ArmSubsystem getInstance() {
     if (instance == null) {
@@ -152,9 +158,15 @@ public class ArmSubsystem extends SubsystemBase {
     double clampedAngle = MathUtil.clamp(angle, Math.toRadians(Config.ArmConfig.MIN_ARM_ANGLE_DEG),
         Math.toRadians(Config.ArmConfig.MAX_ARM_ANGLE_DEG));
 
-    double targetPos = m_profiledFFController.getNextProfiledPIDPos(getPosition(), clampedAngle);
-    m_pidControllerArm.setReference((targetPos), ControlType.kPosition, 0, calculateFF(clampedAngle));
+        m_ProfiledPIDController.calculate(getPosition(), clampedAngle);
+        double targetPos = m_ProfiledPIDController.getSetpoint().position;
+
+        m_pidControllerArm.setReference((targetPos), ControlType.kPosition, 0, calculateFF(clampedAngle));
     m_targetAngle.accept(Math.toDegrees(targetPos));
+  }
+
+  public void resetProfiledPIDController() {
+     m_ProfiledPIDController.reset(m_absEncoder.getPosition(), m_absEncoder.getVelocity());
   }
 
 
