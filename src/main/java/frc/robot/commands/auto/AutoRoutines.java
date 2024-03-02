@@ -14,6 +14,9 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.IntakeControl;
+import frc.robot.commands.MakeIntakeMotorSpin;
+import frc.robot.commands.Shooter_tuner;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class AutoRoutines extends SubsystemBase {
@@ -51,6 +54,17 @@ public class AutoRoutines extends SubsystemBase {
             new WaitCommand(1), // Move arm to intake setpoint
             new WaitCommand(1) // Intake game piece
         ));
+
+        NamedCommands.registerCommand("simpleShooter", Commands.deadline(
+            Commands.sequence(
+              new IntakeControl(false).withTimeout(0.3), 
+              new WaitCommand(0.5),
+              new IntakeControl(true).withTimeout(2)),
+            new Shooter_tuner(()->5)
+          ));
+
+        NamedCommands.registerCommand("simpleIntake", (
+            new MakeIntakeMotorSpin(7.0,0)));
     }
 
     
