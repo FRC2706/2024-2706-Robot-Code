@@ -51,10 +51,6 @@ public final class Config {
     public static final int CANDLE = robotSpecific(25,-1,15,15);
     public static final int CLIMBER = robotSpecific(18, 4, 5 ,-1);
 
-
-    //to be deleted
-    public static final int CTRE_PCM_CAN_ID = 1;
-    
     //swerve CAN IDs
     public static final int SWERVE_FL_DRIVE = 4; 
     public static final int SWERVE_FL_STEERING = 5; 
@@ -140,7 +136,7 @@ public final class Config {
 
 
   public static final boolean swerveTuning = true; //tune swerve? Turn this to false for competition
-  public static final boolean disableStateBasedProgramming = true; // True to disable state based programming and use only simple commands
+  public static final boolean disableStateBasedProgramming = false; // True to disable state based programming and use only simple commands
 
   public static int ANALOG_SELECTOR_PORT = robotSpecific(3, -1, -1, 0);
 
@@ -201,7 +197,7 @@ public final class Config {
   }
 
   public static final class Climber_CANID {
-     public static int CLIMBER = robotSpecific(-01, 4, 5, -1);  
+     public static int CLIMBER = CANID.CLIMBER;
   }
 
   public static final class Swerve {
@@ -358,6 +354,9 @@ public final class Config {
 
   public static final class Intake {
     public static final int INTAKE = CANID.INTAKE;
+    public static final byte frontSensor = 0;//its the same but lighter, so dtw 
+    public static final byte centerSensor = 2;//its the same but lighter, so dtw 
+    public static final byte backSensor = 1;//its the same but lighter, so dtw 
   }
 
 
@@ -368,8 +367,6 @@ public final class Config {
     public static final boolean INVERT_ENCODER = false;
 
     public static final int CURRENT_LIMIT = 20;
-
-
 
     public static final double MAX_ARM_ANGLE_DEG = 150;
     public static final double MIN_ARM_ANGLE_DEG = 5;
@@ -401,7 +398,7 @@ public final class Config {
     //arm velocity unit: radians/sec
     public static final double armVelocityConversionFactor = armPositionConversionFactor / 60.0;
     //offset unit: degrees
-    public static final double armAbsEncoderOffset = Math.toDegrees(3.20433);
+    public static final double armAbsEncoderOffset = Math.toDegrees(3.20433) + 3.0;
 
     public static final double MAX_VEL = Math.PI * 0.5;
     public static final double MAX_ACCEL = Math.PI * 0.5;
@@ -413,7 +410,7 @@ public static enum ArmSetPoints {
   //@todo: to be calibrated
   IDLE(60),
   INTAKE(5),
-  KITBOT_SHOT_SPEAKER(35),
+  SPEAKER_KICKBOT_SHOT(35),
   AMP(100);
 
   public final double angleDeg;
@@ -471,7 +468,6 @@ public static enum ArmSetPoints {
   public static Double DRIVER_JOYSTICK_DEADBAND = 0.15;
 
   public static final boolean tuningMode = true;
-  
   public static final class ShooterConstants{
     public static final byte MOTOR_ID = CANID.SHOOTER;
     public static final double kP = 0.0,

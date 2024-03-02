@@ -30,25 +30,25 @@ import frc.robot.subsystems.IntakeStatesMachine.IntakeStates;
 /** Add your docs here. */
 public class IntakeSubsystem extends SubsystemBase{
     private CANSparkMax m_intake;
-    private boolean stateFulControl = false;
+    private boolean stateFulControl = true;
     private IntakeStatesMachine intakeStates = new IntakeStatesMachine();
 
-    private DigitalInput sensor7;//Back
-    private DigitalInput sensor8;//Center
-    private DigitalInput sensor9;//Front
+    private DigitalInput frontSensor;//  -> 0 
+    private DigitalInput centerSensor;// -> 1
+    private DigitalInput backSensor;//   -> 2
 
-    private Debouncer sensor7Debouncer;
-    private Debouncer sensor8Debouncer;
-    private Debouncer sensor9Debouncer;
+    private Debouncer frontSensorDebouncer;
+    private Debouncer centerSensorDebouncer;
+    private Debouncer backSensorDebouncer;
 
-    private BooleanPublisher sensor7Pub;
-    private BooleanPublisher sensor8Pub;
-    private BooleanPublisher sensor9Pub;
+    private BooleanPublisher frontSensorPub;
+    private BooleanPublisher centerSensorPub;
+    private BooleanPublisher backSensorPub;
     private StringPublisher statesPub;
 
-    private boolean sensor7Result;
-    private boolean sensor8Result;
-    private boolean sensor9Result;
+    private boolean frontSensorResult;
+    private boolean centerSensorResult;
+    private boolean backSensorResult;
 
     private static IntakeSubsystem instance;
     public static IntakeSubsystem getInstance() {
@@ -66,31 +66,30 @@ public class IntakeSubsystem extends SubsystemBase{
         m_intake.setIdleMode(IdleMode.kBrake);
         m_intake.enableVoltageCompensation(10);
 
-        sensor7 = new DigitalInput(7);
-        sensor8 = new DigitalInput(8);
-        sensor9 = new DigitalInput(9);
+        frontSensor = new DigitalInput(Config.Intake.frontSensor);
+        centerSensor = new DigitalInput(Config.Intake.centerSensor);
+        backSensor = new DigitalInput(Config.Intake.backSensor);
 
-        sensor7Debouncer = new Debouncer(0.1, Debouncer.DebounceType.kBoth);
-        sensor8Debouncer = new Debouncer(0.1, Debouncer.DebounceType.kBoth);
-        sensor9Debouncer = new Debouncer(0.1, Debouncer.DebounceType.kBoth);
+        frontSensorDebouncer = new Debouncer(0.1, Debouncer.DebounceType.kBoth);
+        centerSensorDebouncer = new Debouncer(0.1, Debouncer.DebounceType.kBoth);
+        backSensorDebouncer = new Debouncer(0.1, Debouncer.DebounceType.kBoth);
 
         NetworkTable intakeTable = NetworkTableInstance.getDefault().getTable("Intake");
         statesPub = intakeTable.getStringTopic("Intake's Current State").publish(PubSubOption.periodic(0.02));
-        sensor7Pub = intakeTable.getBooleanTopic("sensor 7 result").publish(PubSubOption.periodic(0.02));
-        sensor8Pub = intakeTable.getBooleanTopic("sensor 8 result").publish(PubSubOption.periodic(0.02));
-        sensor9Pub = intakeTable.getBooleanTopic("sensor 9 result").publish(PubSubOption.periodic(0.02));
+        frontSensorPub = intakeTable.getBooleanTopic("front sensor result").publish(PubSubOption.periodic(0.02));
+        centerSensorPub = intakeTable.getBooleanTopic("center sensor result").publish(PubSubOption.periodic(0.02));
+        backSensorPub = intakeTable.getBooleanTopic("back sensor result").publish(PubSubOption.periodic(0.02));
+    }
+    public boolean isFrontSensorActive(){
+        return frontSensorResult;
     }
 
-    public boolean isSensor7True() {
-        return sensor7Result;
+    public boolean isCenterSensorActive(){
+        return centerSensorResult;
     }
-
-    public boolean isSensor8True() {
-        return sensor8Result;
-    }
-
-    public boolean isSensor9True() {
-        return sensor9Result;
+    
+    public boolean isBackSensorActive(){
+        return backSensorResult;
     }
 
     public void setVoltage(double voltage){
@@ -186,21 +185,21 @@ public class IntakeSubsystem extends SubsystemBase{
 
     @Override
     public void periodic() {
-        sensor7Result = sensor7Debouncer.calculate(!sensor7.get());
-        sensor8Result = sensor8Debouncer.calculate(!sensor8.get());
-        sensor9Result = sensor9Debouncer.calculate(!sensor9.get());
+        frontSensorResult = frontSensorDebouncer.calculate(!frontSensor.get());
+        centerSensorResult = centerSensorDebouncer.calculate(!centerSensor.get());
+        backSensorResult = backSensorDebouncer.calculate(!backSensor.get());
 
         if(stateFulControl){
             intakeStates.updateSensors(
-                ()->{return sensor7Result;}, //Back sensor
-                ()->{return sensor9Result;}, //Front sensor
-                ()->{return sensor8Result;});//Center sensor (Could be removable)
+                ()->{return backSensorResult;}, 
+                ()->{return frontSensorResult;}, 
+                ()->{return centerSensorResult;});
             intakeStates.updateStates();
         }
 
-        sensor7Pub.accept(sensor7Result);
-        sensor8Pub.accept(sensor8Result);
-        sensor9Pub.accept(sensor9Result);
+        frontSensorPub.accept(frontSensorResult);
+        centerSensorPub.accept(centerSensorResult);
+        backSensorPub.accept(backSensorResult);
         statesPub.accept(stateFulControl?getCurrentState().toString(): "No State Machine");
     }
 }
