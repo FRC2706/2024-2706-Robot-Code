@@ -156,8 +156,8 @@ public class NewRobotContainer extends RobotContainer {
         25, 
         4, 
         ArmSetPoints.KITBOT_SHOT_SPEAKER.angleDeg,
-        PhotonPositions.MIDDLE_SPEAKER_BLUE,
-        PhotonPositions.MIDDLE_SPEAKER_RED
+        PhotonPositions.RIGHT_SPEAKER_BLUE,
+        PhotonPositions.LEFT_SPEAKER_RED
       ));
     }
 

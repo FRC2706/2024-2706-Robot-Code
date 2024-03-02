@@ -142,7 +142,7 @@ public final class Config {
   public static final boolean swerveTuning = true; //tune swerve? Turn this to false for competition
   public static final boolean disableStateBasedProgramming = true; // True to disable state based programming and use only simple commands
 
-  public static int ANALOG_SELECTOR_PORT = robotSpecific(0, -1, -1, 0);
+  public static int ANALOG_SELECTOR_PORT = robotSpecific(3, -1, -1, 0);
 
   public static final class PhotonConfig{
     public static final double CAMERA_HEIGHT = 0.29;
