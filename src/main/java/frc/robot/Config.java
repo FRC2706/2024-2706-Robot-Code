@@ -263,7 +263,7 @@ public final class Config {
     /* Swerve Profiling Values Changed */
     public static enum TeleopSpeeds {
       SLOW(0.5, 0.5 * Math.PI),
-      MAX(3.0, 4.0 * Math.PI);
+      MAX(3.0, 2.5 * Math.PI);
 
       public final double translationalSpeed;
       public final double angularSpeed;

@@ -70,7 +70,7 @@ public class ShooterSubsystem extends SubsystemBase {
         m_encoder.setAverageDepth(1);//check if 2 would work better
 
         //Voltage compensation
-        m_motor.enableVoltageCompensation(12); //adjust on final robot
+        m_motor.enableVoltageCompensation(9); //adjust on final robot
         m_motor.setSmartCurrentLimit(40);  
         setBrake(false);
 

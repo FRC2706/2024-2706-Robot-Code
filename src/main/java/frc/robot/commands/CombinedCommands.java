@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.lib2706.SelectByAllianceCommand;
 import frc.robot.Config.Swerve;
@@ -31,13 +32,23 @@ public class CombinedCommands {
      * Spin up the shooter while doing the following,
      * backing up note, waiting a bit, then feeding the note.
      */
-    public static Command simpleShootNote() {
+    public static Command simpleShootNoteSpeaker() {
+        return Commands.deadline(
+            Commands.sequence(
+                new IntakeControl(false).withTimeout(0.15), 
+                new WaitUntilCommand(() -> ShooterSubsystem.getInstance().getVelocityRPM() > 2500),
+                new IntakeControl(true).withTimeout(1)),
+            new Shooter_Voltage(()->9)
+        );
+    }
+
+    public static Command simpleShootNoteAmp() {
         return Commands.deadline(
             Commands.sequence(
                 new IntakeControl(false).withTimeout(0.3), 
-                new WaitCommand(2.2),
-                new IntakeControl(true).withTimeout(1)),
-            new Shooter_Voltage(()->9)
+                new WaitCommand(0.5),
+                new IntakeControl(true).withTimeout(0.6)),
+            new Shooter_Voltage(()->6)
         );
     }
 

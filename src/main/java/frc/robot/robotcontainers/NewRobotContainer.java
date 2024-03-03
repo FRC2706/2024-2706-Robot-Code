@@ -118,10 +118,10 @@ public class NewRobotContainer extends RobotContainer {
     // Complete vision scoring commands with all subsystems
     if (Config.disableStateBasedProgramming) {
       // Score in amp with vision using simple intake/shooter
-      driver.leftBumper().whileTrue(CombinedCommands.simpleAmpScoreWithVision(driver));
+      // driver.leftTrigger().whileTrue(CombinedCommands.simpleAmpScoreWithVision(driver));
 
       // Score in speaker with vision using simple intake/shooter
-      driver.rightBumper().whileTrue(CombinedCommands.simpleSpeakerScoreWithVision(driver, ArmSetPoints.SPEAKER_KICKBOT_SHOT, PhotonPositions.RIGHT_SPEAKER_BLUE, PhotonPositions.RIGHT_SPEAKER_RED));
+      // driver.rightTrigger().whileTrue(CombinedCommands.simpleSpeakerScoreWithVision(driver, ArmSetPoints.SPEAKER_KICKBOT_SHOT, PhotonPositions.RIGHT_SPEAKER_BLUE, PhotonPositions.RIGHT_SPEAKER_RED));
 
     } else {
       // Score in amp with vision using stateful intake/shooter
@@ -150,16 +150,18 @@ public class NewRobotContainer extends RobotContainer {
       shooter.setStateMachineOff();
 
       // Intake note with leftTrigger
-    //  operator.leftTrigger(0.3).whileTrue(
-        operator.start().whileTrue(
+    
+      //operator.leftTrigger(0.3).whileTrue(
+      operator.leftBumper().whileTrue(
         //  Commands.run(() -> intake.setVoltage(8), intake));
           new MakeIntakeMotorSpin(8.0,0));
 
       // Toggle to spin up or spin down the shooter with rightBumper
-      //operator.rightBumper().toggleOnTrue(new Shooter_Voltage(()->3));
-      operator.back().whileTrue(new Shooter_Voltage(()->3));
+      operator.leftTrigger(0.3).toggleOnTrue(new Shooter_Voltage(()->3));
+
+      operator.rightTrigger(0.3).whileTrue(CombinedCommands.simpleShootNoteAmp());
       // Shoot note with leftBumper
-      operator.leftBumper().whileTrue(CombinedCommands.simpleShootNote());
+      operator.rightBumper().whileTrue(CombinedCommands.simpleShootNoteSpeaker());
 
       // Eject the note from the front with leftPOV
       XBoxControllerUtil.leftPOV(operator).debounce(0.1).whileTrue(
