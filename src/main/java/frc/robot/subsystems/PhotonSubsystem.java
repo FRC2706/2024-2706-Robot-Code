@@ -208,6 +208,10 @@ public class PhotonSubsystem extends SubsystemBase {
       }
       if (id == -1){
         target = biggestTarget(allTargets);
+
+        if (target == null) {
+          return;
+        }
         id = target.getFiducialId();
       } else{
         for (PhotonTrackedTarget t:allTargets){

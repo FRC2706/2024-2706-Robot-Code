@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 1.3456210118527112,
-        "y": 5.5981970488114
+        "x": 1.15,
+        "y": 5.58
       },
       "prevControl": {
-        "x": 2.337838772369656,
-        "y": 5.566863856374023
+        "x": 2.1422177605169446,
+        "y": 5.548666807562623
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "SpeakerShotCenterClose"
+      "linkedName": "4NoteCenter-IntoSpeaker"
     }
   ],
   "rotationTargets": [],

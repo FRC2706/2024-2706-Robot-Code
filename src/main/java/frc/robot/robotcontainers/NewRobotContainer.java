@@ -70,10 +70,6 @@ public class NewRobotContainer extends RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public NewRobotContainer() {
-    // Setup auto
-    m_autoRoutines = new AutoRoutines();
-    m_autoSelector = new AutoSelector();
-
     /*  Setup default commands */
     s_Swerve.setDefaultCommand(new TeleopSwerve(driver));
     if (!Config.disableStateBasedProgramming) {
@@ -84,6 +80,10 @@ public class NewRobotContainer extends RobotContainer {
     }
 
     configureButtonBindings();
+
+     // Setup auto
+    m_autoRoutines = new AutoRoutines();
+    m_autoSelector = new AutoSelector();
   }
 
   /**
@@ -167,7 +167,7 @@ public class NewRobotContainer extends RobotContainer {
       //NOTE: right Trigger has been assigned to climber
       operator.rightTrigger(0.3).whileTrue(CombinedCommands.simpleShootNoteAmp());
       // Shoot note with leftBumper
-      operator.rightBumper().whileTrue(CombinedCommands.simpleShootNoteSpeaker());
+      operator.rightBumper().whileTrue(CombinedCommands.simpleShootNoteSpeaker(1));
 
       // Eject the note from the front with leftPOV
       XBoxControllerUtil.leftPOV(operator).debounce(0.1).whileTrue(

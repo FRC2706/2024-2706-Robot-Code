@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.4527271446400407,
-        "y": 4.438868928628442
+        "x": 2.4213939522026635,
+        "y": 4.271758568962431
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.170728412703646,
-        "y": 5.10731036729249
+        "x": 2.1393952202662687,
+        "y": 4.940200007626479
       },
       "isLocked": false,
       "linkedName": "4NoteCenter-SecondNotePickup"
     },
     {
       "anchor": {
-        "x": 1.3456210118527112,
-        "y": 5.5981970488114
+        "x": 1.15,
+        "y": 5.58
       },
       "prevControl": {
-        "x": 2.0871732328706396,
-        "y": 5.608641446290526
+        "x": 2.183995350433449,
+        "y": 5.569555602520874
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "SpeakerShotCenterClose"
+      "linkedName": "4NoteCenter-IntoSpeaker"
     }
   ],
   "rotationTargets": [

@@ -32,12 +32,12 @@ public class CombinedCommands {
      * Spin up the shooter while doing the following,
      * backing up note, waiting a bit, then feeding the note.
      */
-    public static Command simpleShootNoteSpeaker() {
+    public static Command simpleShootNoteSpeaker(double intakeTimeout) {
         return Commands.deadline(
             Commands.sequence(
                 new IntakeControl(false).withTimeout(0.15), 
                 new WaitUntilCommand(() -> ShooterSubsystem.getInstance().getVelocityRPM() > 3000),
-                new IntakeControl(true).withTimeout(1)),
+                new IntakeControl(true).withTimeout(intakeTimeout)),
             new Shooter_PID_Tuner(()->3400)
         );
     }

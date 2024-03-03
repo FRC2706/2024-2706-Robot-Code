@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7710059022013775,
-      "y": 6.721118276359775
+      "x": 1.3456210118527112,
+      "y": 5.5981970488114
     },
-    "rotation": 61.14433878028353
+    "rotation": -0.8567471214216578
   },
   "command": {
     "type": "sequential",
@@ -28,7 +28,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 1.0
+                        "waitTime": 0.25
                       }
                     },
                     {
@@ -69,7 +69,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "P1-LeftSpeakerToLeftNote"
+                  "pathName": "P1-4NoteCenter"
                 }
               },
               {
@@ -88,19 +88,13 @@
           }
         },
         {
-          "type": "deadline",
+          "type": "sequential",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "P2-LeftNoteToLeftSpeaker"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ArmKitbotShot"
+                  "pathName": "P2-4NoteCenter"
                 }
               }
             ]
@@ -126,9 +120,117 @@
           }
         },
         {
-          "type": "path",
+          "type": "deadline",
           "data": {
-            "pathName": "P3-LeftSpeakerToLeftField"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "P3-4NoteCenter"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "simpleIntake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ArmPickup"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "P4-4NoteCenter"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "simpleShooter"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ArmKitbotShot"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "P5-4NoteCenter"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "simpleIntake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ArmPickup"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "P6-4NoteCenter"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "simpleShooter"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ArmKitbotShot"
+                }
+              }
+            ]
           }
         }
       ]
