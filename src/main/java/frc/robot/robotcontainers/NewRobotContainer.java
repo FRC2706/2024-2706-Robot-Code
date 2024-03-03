@@ -107,29 +107,29 @@ public class NewRobotContainer extends RobotContainer {
     driver.start().whileTrue(new RotateAngleToVisionSupplier(driver, "photonvision/" + PhotonConfig.apriltagCameraName));    
 
     // Vision scoring commands with no intake, shooter, arm
-    // driver.leftBumper().whileTrue(new SelectByAllianceCommand( // Implement command group that also controls the arm, intake, shooter
-    //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.AMP_BLUE, driver), 
-    //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.AMP_RED, driver)));
+     driver.leftTrigger().whileTrue(new SelectByAllianceCommand( // Implement command group that also controls the arm, intake, shooter
+      PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.AMP_BLUE, driver), 
+      PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.AMP_RED, driver)));
 
-    // driver.rightBumper().whileTrue(new SelectByAllianceCommand( // Implement command group that also controls the arm, intake, shooter
-    //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.MIDDLE_SPEAKER_BLUE, driver), 
-    //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.MIDDLE_SPEAKER_RED, driver)));
+    driver.rightTrigger().whileTrue(new SelectByAllianceCommand( // Implement command group that also controls the arm, intake, shooter
+      PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.MIDDLE_SPEAKER_BLUE, driver), 
+      PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.MIDDLE_SPEAKER_RED, driver)));
 
     // Complete vision scoring commands with all subsystems
-    if (Config.disableStateBasedProgramming) {
-      // Score in amp with vision using simple intake/shooter
-      driver.leftBumper().whileTrue(CombinedCommands.simpleAmpScoreWithVision(driver));
+    // if (Config.disableStateBasedProgramming) {
+    //   // Score in amp with vision using simple intake/shooter
+    //   driver.leftBumper().whileTrue(CombinedCommands.simpleAmpScoreWithVision(driver));
 
-      // Score in speaker with vision using simple intake/shooter
-      driver.rightBumper().whileTrue(CombinedCommands.simpleSpeakerScoreWithVision(driver, ArmSetPoints.SPEAKER_KICKBOT_SHOT, PhotonPositions.RIGHT_SPEAKER_BLUE, PhotonPositions.RIGHT_SPEAKER_RED));
+    //   // Score in speaker with vision using simple intake/shooter
+    //   driver.rightBumper().whileTrue(CombinedCommands.simpleSpeakerScoreWithVision(driver, ArmSetPoints.SPEAKER_KICKBOT_SHOT, PhotonPositions.RIGHT_SPEAKER_BLUE, PhotonPositions.RIGHT_SPEAKER_RED));
 
-    } else {
-      // Score in amp with vision using stateful intake/shooter
-      driver.leftBumper().whileTrue(CombinedCommands.statefulAmpScoreWithVision(driver));
+    // } else {
+    //   // Score in amp with vision using stateful intake/shooter
+    //   driver.leftBumper().whileTrue(CombinedCommands.statefulAmpScoreWithVision(driver));
 
-      // Score in speaker with vision using stateful intake/shooter
-      driver.leftBumper().whileTrue(CombinedCommands.statefulSpeakerScoreWithVision(driver, ArmSetPoints.SPEAKER_KICKBOT_SHOT, PhotonPositions.RIGHT_SPEAKER_BLUE, PhotonPositions.RIGHT_SPEAKER_RED));
-    }
+    //   // Score in speaker with vision using stateful intake/shooter
+    //   driver.leftBumper().whileTrue(CombinedCommands.statefulSpeakerScoreWithVision(driver, ArmSetPoints.SPEAKER_KICKBOT_SHOT, PhotonPositions.RIGHT_SPEAKER_BLUE, PhotonPositions.RIGHT_SPEAKER_RED));
+    // }
 
     /**
      * Operator Controls
