@@ -153,7 +153,7 @@ public final class Config {
     public static final int maxNumSamples = 10;
 
     // these are the heights for the apriltags 4, 5, 6, 7
-    public static final double[] APRIL_HEIGHTS = {1.32,1.22,1.22,1.32};
+    public static final double[] APRIL_HEIGHTS = {1.32,1.32,1.22,1.22,1.32,1.32};
     public static final double POS_TOLERANCE = 0.01; // meters
     public static final double ANGLE_TOLERANCE = Math.toRadians(1.0);
     public static final double WAYPOINT_POS_TOLERANCE = 0.2; // meters
@@ -170,7 +170,7 @@ public final class Config {
       TEST(4, new Translation2d(-2,0), new Translation2d(-1,0), Rotation2d.fromDegrees(0)),
 
       LEFT_SPEAKER_RED(4, new Translation2d(-1.71,-2.3), Rotation2d.fromDegrees(30)),
-      RIGHT_SPEAKER_BLUE(7, new Translation2d(1.71,-2.3), Rotation2d.fromDegrees(150)),
+      RIGHT_SPEAKER_BLUE(8, new Translation2d(1.2,-1.6), Rotation2d.fromDegrees(-60)),
       AMP_RED(5, new Translation2d(0,-0.70), new Translation2d(0,-0.5), Rotation2d.fromDegrees(90)),
       AMP_BLUE(6, new Translation2d(0,-0.30), new Translation2d(0,0.05),  Rotation2d.fromDegrees(90));
   

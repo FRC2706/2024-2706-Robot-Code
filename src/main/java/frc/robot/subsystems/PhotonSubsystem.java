@@ -131,11 +131,11 @@ public class PhotonSubsystem extends SubsystemBase {
     Command moveToTargetCommands;
     if (spacePositions.hasWaypoint) {
       moveToTargetCommands = Commands.sequence(
-        new PhotonMoveToTarget(spacePositions.waypoint,true),
-        new PhotonMoveToTarget(spacePositions.destination, false)
+        new PhotonMoveToTarget(spacePositions.waypoint, spacePositions.direction,true),
+        new PhotonMoveToTarget(spacePositions.destination, spacePositions.direction, false)
       );
     } else {
-      moveToTargetCommands = new PhotonMoveToTarget(spacePositions.destination, false);
+      moveToTargetCommands = new PhotonMoveToTarget(spacePositions.destination, spacePositions.direction, false);
     }
 
     return Commands.sequence(
@@ -162,9 +162,9 @@ public class PhotonSubsystem extends SubsystemBase {
     y = Math.toRadians(y);
     y += PhotonConfig.CAMERA_PITCH.getRadians();
 
-    if (id-4 < 0) {
+    if (id-3 < 0) {
       return 0;
-    }else if(id-4>= Config.PhotonConfig.APRIL_HEIGHTS.length){
+    }else if(id-3>= Config.PhotonConfig.APRIL_HEIGHTS.length){
       return 0;
     }
 
