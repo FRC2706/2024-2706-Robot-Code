@@ -161,7 +161,7 @@ public final class Config {
     public static final double VEL_TOLERANCE = 0.1*4;
     public static enum PhotonPositions {
       
-      LEFT_SPEAKER_RED(4, new Translation2d(-1,-1), new Translation2d(-0.6,-0.7), Rotation2d.fromDegrees(60)),
+      
       RIGHT_SPEAKER_RED(4, new Translation2d(-0.937,0.937), new Translation2d(-0.637,0.637), Rotation2d.fromDegrees(-60)),
       MIDDLE_SPEAKER_RED(4, new Translation2d(-1.3,0), new Translation2d(-0.95,0), Rotation2d.fromDegrees(0)),
       FAR_SPEAKER_RED(4, new Translation2d(-2.4,0), new Translation2d(-2.2,0), Rotation2d.fromDegrees(0)),
@@ -169,6 +169,7 @@ public final class Config {
       MIDDLE_SPEAKER_BLUE(7, new Translation2d(1.20,0), new Translation2d(0.90,0), Rotation2d.fromDegrees(180)),
       TEST(4, new Translation2d(-2,0), new Translation2d(-1,0), Rotation2d.fromDegrees(0)),
 
+      LEFT_SPEAKER_RED(4, new Translation2d(-1.71,-2.3), Rotation2d.fromDegrees(30)),
       RIGHT_SPEAKER_BLUE(7, new Translation2d(1.71,-2.3), Rotation2d.fromDegrees(150)),
       AMP_RED(5, new Translation2d(0,-0.70), new Translation2d(0,-0.5), Rotation2d.fromDegrees(90)),
       AMP_BLUE(6, new Translation2d(0,-30), new Translation2d(0,0),  Rotation2d.fromDegrees(90));
