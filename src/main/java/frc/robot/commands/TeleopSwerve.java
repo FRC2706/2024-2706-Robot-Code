@@ -4,6 +4,7 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -31,6 +32,9 @@ public class TeleopSwerve extends Command {
   private double translationVal;
   private double strafeVal;
   private double rotationVal;
+
+  private Rotation2d prevHeading = new Rotation2d(0);
+  // private boolean controllingRotation = false;
 
   public TeleopSwerve(
       CommandXboxController driver) {
@@ -69,6 +73,13 @@ public class TeleopSwerve extends Command {
   protected double calculateRotationVal() {
     rotationVal = MathUtil.applyDeadband(-driver.getRawAxis(rotationAxis), Config.Swerve.stickDeadband)
         * speed.angularSpeed;
+    if (rotationVal == 0.0 && Math.toDegrees(s_Swerve.getRobotRelativeSpeeds().omegaRadiansPerSecond) < 10) {
+      // return(SwerveSubsystem.getInstance().calculateRotation(s_Swerve.getHeading()));
+      return(SwerveSubsystem.getInstance().calculateRotation(prevHeading));
+    }
+    else {
+      prevHeading = s_Swerve.getHeading();
+    }
     return rotationLimiter.calculate(rotationVal);
   }
 
@@ -82,6 +93,9 @@ public class TeleopSwerve extends Command {
             calculateRotationVal()),
             isFieldRelative,
         true);
-  }
 
+    // if (rotationVal != 0.0 || Math.toDegrees(s_Swerve.getRobotRelativeSpeeds().omegaRadiansPerSecond) < 10) {
+    //   prevHeading = s_Swerve.getHeading();
+    // }
+  }
 }
