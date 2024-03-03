@@ -31,7 +31,7 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 0.1,
-      "rotationDegrees": 140.0,
+      "rotationDegrees": -40.0,
       "rotateFast": true
     }
   ],
@@ -45,13 +45,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0,
+    "rotation": -0.8127312709152444,
     "rotateFast": true
   },
   "reversed": false,
   "folder": "4NoteCenter",
   "previewStartingState": {
-    "rotation": 140.0,
+    "rotation": -35.76006599556084,
     "velocity": 0
   },
   "useDefaultConstraints": true
