@@ -24,6 +24,8 @@ public class TeleopSwerve extends Command {
 
   private static TeleopSpeeds speed = TeleopSpeeds.MAX;
   private static boolean isFieldRelative = true;
+  private boolean keepConstantHeading = false;
+  private boolean getLastValue = false;
 
   private SlewRateLimiter translationLimiter = new SlewRateLimiter(4.5);
   private SlewRateLimiter strafeLimiter = new SlewRateLimiter(4.5);
@@ -60,8 +62,8 @@ public class TeleopSwerve extends Command {
   protected double calculateTranslationVal() {
     translationVal = MathUtil.applyDeadband(-driver.getRawAxis(translationAxis), Config.Swerve.stickDeadband)
         * speed.translationalSpeed;
-    translationVal = Math.copySign(translationVal * translationVal, translationVal);
-    return translationLimiter.calculate(translationVal);
+
+        return translationLimiter.calculate(translationVal);
   }
 
   protected double calculateStrafeVal() {
@@ -72,15 +74,25 @@ public class TeleopSwerve extends Command {
 
   protected double calculateRotationVal() {
     rotationVal = MathUtil.applyDeadband(-driver.getRawAxis(rotationAxis), Config.Swerve.stickDeadband)
-        * speed.angularSpeed;
-    if (rotationVal == 0.0 && Math.toDegrees(s_Swerve.getRobotRelativeSpeeds().omegaRadiansPerSecond) < 10) {
-      // return(SwerveSubsystem.getInstance().calculateRotation(s_Swerve.getHeading()));
-      return(SwerveSubsystem.getInstance().calculateRotation(prevHeading));
+      * speed.angularSpeed;
+    
+    if(rotationVal != 0.0){
+      getLastValue = false;
+      return rotationLimiter.calculate(rotationVal);
+    }else {
+      if(!getLastValue){
+        prevHeading = s_Swerve.getHeading();
+        getLastValue = true;
+      }
+      if(getLastValue){
+        rotationLimiter.calculate(rotationVal);
+        return SwerveSubsystem.getInstance().calculateRotation(prevHeading);
+      }else{
+        return rotationLimiter.calculate(rotationVal);
+      }
+
     }
-    else {
-      prevHeading = s_Swerve.getHeading();
-    }
-    return rotationLimiter.calculate(rotationVal);
+      //return(SwerveSubsystem.getInstance().calculateRotation(prevHeading));
   }
 
   @Override
