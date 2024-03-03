@@ -56,6 +56,7 @@ public class TeleopSwerve extends Command {
   protected double calculateTranslationVal() {
     translationVal = MathUtil.applyDeadband(-driver.getRawAxis(translationAxis), Config.Swerve.stickDeadband)
         * speed.translationalSpeed;
+    translationVal = Math.copySign(translationVal * translationVal, translationVal);
     return translationLimiter.calculate(translationVal);
   }
 
