@@ -51,6 +51,8 @@ public class ClimberSubsystem extends SubsystemBase {
 
       //Set maximum current
       m_climber.setSmartCurrentLimit(60);
+      
+      ErrorTrackingSubsystem.getInstance().register(m_climber);
     }
  }
 
