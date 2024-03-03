@@ -99,8 +99,9 @@ public class NewRobotContainer extends RobotContainer {
     driver.back().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d(0)));
     driver.leftBumper().onTrue(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.SLOW)))
                        .onFalse(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.MAX)));
-    // driver.rightBumper().onTrue(Commands.runOnce(() -> TeleopSwerve.setCameraOriented())) // setCameraOriented is not yet implemeneted
-    //                    .onFalse(Commands.runOnce(() -> TeleopSwerve.setFieldOriented())); // setFieldOriented is not yet implemeneted
+
+    driver.rightBumper().onTrue(Commands.runOnce(() -> TeleopSwerve.setFieldRelative(false)))
+                       .onFalse(Commands.runOnce(() -> TeleopSwerve.setFieldRelative(true)));
 
     // Commands that take control of the rotation stick
     driver.y().whileTrue(new RotateToAngle(driver, Rotation2d.fromDegrees(0)));
@@ -110,7 +111,7 @@ public class NewRobotContainer extends RobotContainer {
     driver.start().whileTrue(new RotateAngleToVisionSupplier(driver, "photonvision/" + PhotonConfig.apriltagCameraName));    
 
     // Vision scoring commands with no intake, shooter, arm
-     driver.leftTrigger().whileTrue(new SelectByAllianceCommand( // Implement command group that also controls the arm, intake, shooter
+    driver.leftTrigger().whileTrue(new SelectByAllianceCommand( // Implement command group that also controls the arm, intake, shooter
       PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.AMP_BLUE, driver), 
       PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.AMP_RED, driver)));
 
