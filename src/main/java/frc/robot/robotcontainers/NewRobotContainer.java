@@ -148,8 +148,12 @@ public class NewRobotContainer extends RobotContainer {
     // Climber
     operator.leftTrigger(0.25).whileTrue(new ClimberRPM(()->  operator.getLeftTriggerAxis()));
 
-    //temp for tuning 
-    operator.start().whileTrue( new SetArm(armAngleDeg));
+    // Eject the note from the front with leftPOV
+    operator.start()
+      .whileTrue(Commands.run(() -> intake.setVoltage(-12), intake))
+      .onFalse(Commands.runOnce(() -> intake.stop()));
+  
+    
     operator.back().whileTrue(new Shooter_PID_Tuner(shooterTargetRPM));
     // Simple shooter and intake
     if (Config.disableStateBasedProgramming) {
@@ -167,9 +171,6 @@ public class NewRobotContainer extends RobotContainer {
       // Shoot note with leftBumper
       operator.rightBumper().whileTrue(CombinedCommands.simpleShootNoteSpeaker(1));
 
-      // Eject the note from the front with leftPOV
-      XBoxControllerUtil.leftPOV(operator).debounce(0.1).whileTrue(
-        Commands.run(() -> intake.setVoltage(-6), intake));
 
     // State based shooter and intake
     } else {
@@ -206,7 +207,9 @@ public class NewRobotContainer extends RobotContainer {
 
     // testJoystick.x() //Drives the note into the shooter
     //   .whileTrue(Commands.runOnce(()-> intake.setMode(shooter.isReadyToShoot() ? IntakeModes.SHOOT : IntakeModes.STOP_INTAKE)))
-    //   .whileFalse(Commands.runOnce(()->intake.setMode(IntakeModes.STOP_INTAKE)));    
+    //   .whileFalse(Commands.runOnce(()->intake.setMode(IntakeModes.STOP_INTAKE)));   
+    
+    // operator.start().whileTrue( new SetArm(armAngleDeg));
   }
 
   /**
