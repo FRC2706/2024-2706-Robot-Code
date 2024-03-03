@@ -158,7 +158,7 @@ public class SwerveSubsystem extends SubsystemBase {
     Config.Swerve.swerveKinematics.toSwerveModuleStates(
       // ChassisSpeeds.discretize(
         fieldRelative ? 
-            ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getHeading()) :
+            ChassisSpeeds.fromFieldRelativeSpeeds(speeds, rotateForAlliance(getHeading())) :
             speeds
             // , 0.02)
     );
