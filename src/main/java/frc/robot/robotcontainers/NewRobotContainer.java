@@ -99,8 +99,9 @@ public class NewRobotContainer extends RobotContainer {
     driver.back().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d(0)));
     driver.leftBumper().onTrue(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.SLOW)))
                        .onFalse(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.MAX)));
-    // driver.rightBumper().onTrue(Commands.runOnce(() -> TeleopSwerve.setCameraOriented())) // setCameraOriented is not yet implemeneted
-    //                    .onFalse(Commands.runOnce(() -> TeleopSwerve.setFieldOriented())); // setFieldOriented is not yet implemeneted
+
+    driver.rightBumper().onTrue(Commands.runOnce(() -> TeleopSwerve.setFieldRelative(false)))
+                       .onFalse(Commands.runOnce(() -> TeleopSwerve.setFieldRelative(true)));
 
     // Commands that take control of the rotation stick
     driver.y().whileTrue(new RotateToAngle(driver, Rotation2d.fromDegrees(0)));
@@ -110,7 +111,7 @@ public class NewRobotContainer extends RobotContainer {
     driver.start().whileTrue(new RotateAngleToVisionSupplier(driver, "photonvision/" + PhotonConfig.apriltagCameraName));    
 
     // Vision scoring commands with no intake, shooter, arm
-     driver.leftTrigger().whileTrue(new SelectByAllianceCommand( // Implement command group that also controls the arm, intake, shooter
+    driver.leftTrigger().whileTrue(new SelectByAllianceCommand( // Implement command group that also controls the arm, intake, shooter
       PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.AMP_BLUE, driver), 
       PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.AMP_RED, driver)));
 
@@ -145,7 +146,7 @@ public class NewRobotContainer extends RobotContainer {
     //XBoxControllerUtil.leftPOV(operator).debounce(0.1).onTrue(new SetArm(()->ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg)); // Kickbot Shot
     operator.x().onTrue(new SetArm(()->ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg));
     // Climber
-    operator.rightTrigger(0.25).whileTrue(new ClimberRPM(()->  driver.getRightTriggerAxis()));
+    operator.leftTrigger(0.25).whileTrue(new ClimberRPM(()->  operator.getLeftTriggerAxis()));
 
     //temp for tuning 
     operator.start().whileTrue( new SetArm(armAngleDeg));
@@ -160,9 +161,6 @@ public class NewRobotContainer extends RobotContainer {
       //operator.leftTrigger(0.3).whileTrue(
       operator.leftBumper().whileTrue(
           new MakeIntakeMotorSpin(8.0,0));
-
-      // Toggle to spin up or spin down the shooter with rightBumper
-      operator.leftTrigger(0.3).toggleOnTrue(new Shooter_Voltage(()->3));
 
       //NOTE: right Trigger has been assigned to climber
       operator.rightTrigger(0.3).whileTrue(CombinedCommands.simpleShootNoteAmp());
