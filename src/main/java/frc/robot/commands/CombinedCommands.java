@@ -1,17 +1,16 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.CAN;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.lib2706.SelectByAllianceCommand;
-import frc.robot.Config.Swerve;
 import frc.robot.Config.ArmSetPoints;
 import frc.robot.Config.PhotonConfig.PhotonPositions;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -52,20 +51,7 @@ public class CombinedCommands {
         );
     }
 
-    /**
-     * Use state-based coding to shoot the note.
-     */
-    public static Command statefulShootNote() {
-        return Commands.sequence( //Shoots the Note automatically 
-            Commands.runOnce(()->{}),
-            ShooterSubsystem.getInstance().speedUpForSpeakerCommand(),
-            Commands.runOnce(()->{}),
-            IntakeSubsystem.getInstance().shootNoteCommand(),
-            Commands.runOnce(()->ShooterSubsystem.getInstance().setMode(ShooterModes.STOP_SHOOTER))          
-      );
-    }   
-
-    /**
+  /**
      * Runs the given command. If the given command ends before the timeout, the command will end as normal.
      * If the timeout happens before the command ends, this command will forceful cancel itself and any 
      * future command groups it's apart of.
@@ -111,36 +97,38 @@ public class CombinedCommands {
             CommandXboxController driverJoystick, 
             double preparingTimeoutSeconds, 
             double scoringTimeoutSeconds, 
+            double shooterSpeed,
             double armAngleDeg, 
-            double shooterVoltage, 
             PhotonPositions bluePosition, 
             PhotonPositions redPosition) {
 
         // Swerve requirement command
         Command idleSwerve = Commands.idle(SwerveSubsystem.getInstance()).withName("IdlingSwerveSimple");
 
+        // Wait for vision data to be available
+        Command waitForVisionData = new ProxyCommand(new SelectByAllianceCommand(
+            PhotonSubsystem.getInstance().getWaitForDataCommand(bluePosition.id), 
+            PhotonSubsystem.getInstance().getWaitForDataCommand(redPosition.id)));
+            
         // Prepare the robot to score
-        Command driveToPositionAndPrepare = Commands.deadline(
-            Commands.parallel(
-                new SetArm(()->armAngleDeg),
-                new IntakeControl(false), // Reverse note until not touching shooter
-                new WaitCommand(1), // Require a minimum duration for shooter to spinup
-                Commands.sequence(
-                    new SelectByAllianceCommand(
-                        PhotonSubsystem.getInstance().getAprilTagCommand(bluePosition, driverJoystick), 
-                        PhotonSubsystem.getInstance().getAprilTagCommand(redPosition, driverJoystick)),
-                    new ScheduleCommand(idleSwerve) // Hog the swerve subsystem to prevent the teleop command from running
-                ) 
-            ),
-            new Shooter_Voltage(() -> shooterVoltage) // Shooter ends when the the commands above
+        Command driveToPositionAndPrepare = Commands.parallel(
+            new SetArm(()->armAngleDeg),
+            new IntakeControl(false), // Reverse note until not touching shooter
+            new Shooter_PID_Tuner(() -> shooterSpeed+300).until(() -> ShooterSubsystem.getInstance().getVelocityRPM() > shooterSpeed),
+            Commands.sequence(
+                new SelectByAllianceCommand(
+                    PhotonSubsystem.getInstance().getAprilTagCommand(bluePosition, driverJoystick), 
+                    PhotonSubsystem.getInstance().getAprilTagCommand(redPosition, driverJoystick)),
+                new ScheduleCommand(idleSwerve) // Maintain control of the SwerveSubsystem
+            ) 
         );
 
         // Score the note
         Command scoreNote = Commands.parallel(
             Commands.runOnce(() -> SwerveSubsystem.getInstance().stopMotors()),
-            new Shooter_Voltage(() -> shooterVoltage),
-            new IntakeControl(true),
-            new SetArm(()->armAngleDeg) // Continue to hold arm in the correct position
+            new Shooter_PID_Tuner(() -> shooterSpeed), // Continue to hold shooter voltage
+            new SetArm(()->armAngleDeg), // Continue to hold arm in the correct position
+            new IntakeControl(true)
         ).withTimeout(scoringTimeoutSeconds);
 
         // Rumble command
@@ -148,6 +136,7 @@ public class CombinedCommands {
 
         // Sequence preparing then scoring
         return Commands.sequence( 
+            waitForVisionData,
             forcefulTimeoutCommand(
                 preparingTimeoutSeconds,
                 driveToPositionAndPrepare
@@ -155,7 +144,7 @@ public class CombinedCommands {
             scoreNote
         ).finallyDo(() -> {
             rumble.schedule(); // Rumble the joystick to notify the driver
-            idleSwerve.cancel(); // Ensure the teleop command is not blocked
+            idleSwerve.cancel(); // Release control of swerve
         });
     }
 
@@ -241,13 +230,13 @@ public class CombinedCommands {
      * @param bluePosition PhotonPosition for the blue alliance
      * @param redPosition PhotonPosition for the red alliance
      */
-    public static Command simpleSpeakerScoreWithVision(CommandXboxController driver, ArmSetPoints armAngle, PhotonPositions bluePosition, PhotonPositions redPosition) {
+    public static Command sideSpeakerVisionShot(CommandXboxController driver, PhotonPositions bluePosition, PhotonPositions redPosition) {
         return CombinedCommands.visionScoreTeleopSimple(
             driver, 
             25, 
             2, 
-            armAngle.angleDeg,
-            9, 
+            3500,
+            40,
             bluePosition,
             redPosition
         );

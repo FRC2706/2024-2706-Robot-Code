@@ -110,13 +110,15 @@ public class NewRobotContainer extends RobotContainer {
     driver.start().whileTrue(new RotateAngleToVisionSupplier(driver, "photonvision/" + PhotonConfig.apriltagCameraName));    
 
     // Vision scoring commands with no intake, shooter, arm
-    driver.leftTrigger().whileTrue(new SelectByAllianceCommand( // Implement command group that also controls the arm, intake, shooter
-      PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.AMP_BLUE, driver), 
-      PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.AMP_RED, driver)));
+    // driver.leftTrigger().whileTrue(new SelectByAllianceCommand( // Implement command group that also controls the arm, intake, shooter
+    //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.AMP_BLUE, driver), 
+    //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.AMP_RED, driver)));
 
     driver.rightTrigger().whileTrue(new SelectByAllianceCommand( // Implement command group that also controls the arm, intake, shooter
       PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.RIGHT_SPEAKER_BLUE, driver), 
       PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.LEFT_SPEAKER_RED, driver)));
+
+    driver.leftTrigger().whileTrue(CombinedCommands.sideSpeakerVisionShot(driver, PhotonPositions.RIGHT_SPEAKER_BLUE, PhotonPositions.LEFT_SPEAKER_RED));
 
     // Complete vision scoring commands with all subsystems
     // if (Config.disableStateBasedProgramming) {
@@ -185,7 +187,7 @@ public class NewRobotContainer extends RobotContainer {
       operator.rightBumper().onTrue(shooter.toggleSpinUpCommand(ShooterModes.SHOOT_SPEAKER));  
           
       // Shoot note with leftBumper
-      operator.leftBumper().onTrue(CombinedCommands.statefulShootNote());
+      // operator.leftBumper().onTrue(CombinedCommands.statefulShootNote());
 
       // Eject the note from the front with leftPOV
       XBoxControllerUtil.leftPOV(operator).debounce(0.1)
