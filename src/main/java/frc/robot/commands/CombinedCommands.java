@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -108,6 +109,11 @@ public class CombinedCommands {
         // Swerve requirement command
         Command idleSwerve = Commands.idle(SwerveSubsystem.getInstance()).withName("IdlingSwerveSimple");
 
+        // Wait for vision data to be available
+        Command waitForVisionData = new ProxyCommand(new SelectByAllianceCommand(
+            PhotonSubsystem.getInstance().getWaitForDataCommand(bluePosition.id), 
+            PhotonSubsystem.getInstance().getWaitForDataCommand(redPosition.id)));
+            
         // Prepare the robot to score
         Command driveToPositionAndPrepare = Commands.deadline(
             Commands.parallel(
@@ -118,7 +124,7 @@ public class CombinedCommands {
                     new SelectByAllianceCommand(
                         PhotonSubsystem.getInstance().getAprilTagCommand(bluePosition, driverJoystick), 
                         PhotonSubsystem.getInstance().getAprilTagCommand(redPosition, driverJoystick)),
-                    new ScheduleCommand(idleSwerve) // Hog the swerve subsystem to prevent the teleop command from running
+                    new ScheduleCommand(idleSwerve) // Maintain control of the SwerveSubsystem
                 ) 
             ),
             new Shooter_Voltage(() -> shooterVoltage) // Shooter ends when the the commands above
@@ -127,9 +133,9 @@ public class CombinedCommands {
         // Score the note
         Command scoreNote = Commands.parallel(
             Commands.runOnce(() -> SwerveSubsystem.getInstance().stopMotors()),
-            new Shooter_Voltage(() -> shooterVoltage),
-            new IntakeControl(true),
-            new SetArm(()->armAngleDeg) // Continue to hold arm in the correct position
+            new Shooter_Voltage(() -> shooterVoltage), // Continue to hold shooter voltage
+            new SetArm(()->armAngleDeg), // Continue to hold arm in the correct position
+            new IntakeControl(true)
         ).withTimeout(scoringTimeoutSeconds);
 
         // Rumble command
@@ -137,6 +143,7 @@ public class CombinedCommands {
 
         // Sequence preparing then scoring
         return Commands.sequence( 
+            waitForVisionData,
             forcefulTimeoutCommand(
                 preparingTimeoutSeconds,
                 driveToPositionAndPrepare
@@ -144,7 +151,7 @@ public class CombinedCommands {
             scoreNote
         ).finallyDo(() -> {
             rumble.schedule(); // Rumble the joystick to notify the driver
-            idleSwerve.cancel(); // Ensure the teleop command is not blocked
+            idleSwerve.cancel(); // Release control of swerve
         });
     }
 
@@ -171,6 +178,11 @@ public class CombinedCommands {
         // Swerve requirement command
         Command idleSwerve = Commands.idle(SwerveSubsystem.getInstance()).withName("IdlingSwerveStateful");
 
+        // Wait for vision data to be available
+        Command waitForVisionData = new ProxyCommand(new SelectByAllianceCommand(
+            PhotonSubsystem.getInstance().getWaitForDataCommand(bluePosition.id), 
+            PhotonSubsystem.getInstance().getWaitForDataCommand(redPosition.id)));
+
         // Prepare the robot to score
         Command driveToPositionAndPrepare = Commands.parallel(
             new SetArm(()->armAngleDeg),
@@ -195,15 +207,16 @@ public class CombinedCommands {
 
         // Sequence preparing then scoring
         return Commands.sequence( 
+            waitForVisionData,
             forcefulTimeoutCommand(
                 preparingTimeoutSeconds,
                 driveToPositionAndPrepare
             ),
-            scoreNote,
-            Commands.runOnce(() -> ShooterSubsystem.getInstance().setMode(ShooterModes.STOP_SHOOTER)) 
+            scoreNote 
         ).finallyDo(() -> {
             rumble.schedule(); // Rumble the joystick to notify the driver
             idleSwerve.cancel(); // Ensure the teleop command is not blocked
+            ShooterSubsystem.getInstance().setMode(ShooterModes.STOP_SHOOTER);
         });
     }
 

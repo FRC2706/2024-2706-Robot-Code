@@ -131,8 +131,8 @@ public class PhotonSubsystem extends SubsystemBase {
       moveToTargetCommands = new PhotonMoveToTarget(spacePositions.destination, spacePositions.direction, false);
     }
 
-    return Commands.sequence(
-      new ProxyCommand(getWaitForDataCommand(spacePositions.id)), // Proxy this command to prevent PhotonSubsystem requirement conflicting with PhotonMoveToTarget's requirements
+    return Commands.parallel(
+      // new ProxyCommand(getWaitForDataCommand(spacePositions.id)), // Proxy this command to prevent PhotonSubsystem requirement conflicting with PhotonMoveToTarget's requirements
       new ScheduleCommand(new RumbleJoystick(driverStick, RumbleType.kBothRumble, 0.5, 0.2, true)),
       new ProxyCommand(moveToTargetCommands) // Proxy this command to prevent SwerveSubsystem requirement conflicting with WaitForDataCommand's requirements
     );
