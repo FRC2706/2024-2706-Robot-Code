@@ -172,7 +172,7 @@ public final class Config {
       LEFT_SPEAKER_RED(4, new Translation2d(-1.71,-2.3), Rotation2d.fromDegrees(30)),
       RIGHT_SPEAKER_BLUE(7, new Translation2d(1.71,-2.3), Rotation2d.fromDegrees(150)),
       AMP_RED(5, new Translation2d(0,-0.70), new Translation2d(0,-0.5), Rotation2d.fromDegrees(90)),
-      AMP_BLUE(6, new Translation2d(0,-0.30), new Translation2d(0,0),  Rotation2d.fromDegrees(90));
+      AMP_BLUE(6, new Translation2d(0,-0.30), new Translation2d(0,0.05),  Rotation2d.fromDegrees(90));
   
       public final int id;
       public final boolean hasWaypoint;

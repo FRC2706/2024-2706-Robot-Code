@@ -18,9 +18,12 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.IntegerEntry;
+import edu.wpi.first.networktables.IntegerSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
@@ -43,6 +46,7 @@ public class PhotonSubsystem extends SubsystemBase {
   private static PhotonSubsystem instance;
   private DoubleArrayPublisher pubSetPoint;
   private DoublePublisher pubRange, pubYaw;
+  private IntegerEntry subOverrideTagID;
   private PhotonCamera camera1;
   private Translation2d targetPos;
   private Rotation2d targetRotation;
@@ -69,6 +73,9 @@ public class PhotonSubsystem extends SubsystemBase {
     pubSetPoint = NetworkTableInstance.getDefault().getTable(PhotonConfig.networkTableName).getDoubleArrayTopic("PhotonAprilPoint").publish(PubSubOption.periodic(0.02));
     pubRange = NetworkTableInstance.getDefault().getTable(PhotonConfig.networkTableName).getDoubleTopic("Range").publish(PubSubOption.periodic(0.02));
     pubYaw = NetworkTableInstance.getDefault().getTable(PhotonConfig.networkTableName).getDoubleTopic("Yaw").publish(PubSubOption.periodic(0.02));
+    subOverrideTagID = NetworkTableInstance.getDefault().getTable(PhotonConfig.networkTableName).getIntegerTopic("OVERIDEID").getEntry(-1);
+    subOverrideTagID.setDefault(-1);
+    SmartDashboard.putData("command reset id",Commands.runOnce(()->reset((int)subOverrideTagID.get())));
     reset(-1);
   }
 
