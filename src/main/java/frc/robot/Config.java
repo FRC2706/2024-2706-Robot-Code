@@ -412,7 +412,7 @@ public static enum ArmSetPoints {
   //@todo: to be calibrated
   IDLE(60),
   INTAKE(0),
-  SPEAKER_KICKBOT_SHOT(15),
+  SPEAKER_KICKBOT_SHOT(13),
   AMP(100);
 
   public final double angleDeg;
@@ -472,10 +472,10 @@ public static enum ArmSetPoints {
   public static final boolean tuningMode = true;
   public static final class ShooterConstants{
     public static final byte MOTOR_ID = CANID.SHOOTER;
-    public static final double kP = 0.0,
+    public static final double kP = 0.0002,
                                kI = 0.0,
                                kD = 0.0,
-                               kFF = 0.0,
+                               kFF = 0.00025,
                                kMaxOutput = 1.0,
                                kMinOutput = -1.0,
                                maxRPM = 5700.0;

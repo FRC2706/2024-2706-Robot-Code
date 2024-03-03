@@ -155,7 +155,7 @@ public class PhotonSubsystem extends SubsystemBase {
     y = Math.toRadians(y);
     y += PhotonConfig.CAMERA_PITCH.getRadians();
 
-    if (id-4 <= 0) {
+    if (id-4 <= 0 || id-4 >= PhotonConfig.APRIL_HEIGHTS.length) {
       return 0;
     }
 

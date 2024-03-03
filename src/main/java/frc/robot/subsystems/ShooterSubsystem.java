@@ -62,7 +62,7 @@ public class ShooterSubsystem extends SubsystemBase {
         m_motor.restoreFactoryDefaults();
 
         m_motor.setCANTimeout(500);//Units in miliseconds
-        m_motor.setIdleMode(IdleMode.kCoast);
+        m_motor.setIdleMode(IdleMode.kBrake);
         m_motor.setInverted(false);
 
         m_pidController = m_motor.getPIDController();
@@ -71,8 +71,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
         //Voltage compensation
         m_motor.enableVoltageCompensation(9); //adjust on final robot
-        m_motor.setSmartCurrentLimit(40);  
-        setBrake(false);
+        m_motor.setSmartCurrentLimit(65);  
+        setBrake(true);
 
         m_pidController.setOutputRange(Config.ShooterConstants.kMinOutput, Config.ShooterConstants.kMaxOutput);
         setPIDGains(kP.get(), kI.get(), kD.get());

@@ -79,6 +79,8 @@ public class NewRobotContainer extends RobotContainer {
     if (!Config.disableStateBasedProgramming) {
       intake.setDefaultCommand(intake.defaultIntakeCommand());
       shooter.setDefaultCommand(shooter.defaultShooterCommand(()-> intake.isNoteIn()));
+    } else {
+      // shooter.setDefaultCommand(new Shooter_PID_Tuner(() -> 0));
     }
 
     configureButtonBindings();
