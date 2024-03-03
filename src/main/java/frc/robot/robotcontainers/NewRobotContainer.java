@@ -28,6 +28,7 @@ import frc.robot.commands.MakeIntakeMotorSpin;
 import frc.robot.commands.RotateAngleToVisionSupplier;
 import frc.robot.commands.RotateToAngle;
 import frc.robot.commands.SetArm;
+import frc.robot.commands.Shooter_PID_Tuner;
 import frc.robot.commands.Shooter_Voltage;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.auto.AutoRoutines;
@@ -64,7 +65,7 @@ public class NewRobotContainer extends RobotContainer {
 
   private TunableNumber shooterTargetRPM = new TunableNumber("Shooter/Target RPM", 0);
   private TunableNumber shooterDesiredVoltage = new TunableNumber("Shooter/desired Voltage", 0);
-
+  private TunableNumber armAngleDeg = new TunableNumber("Arm/ArmTuning/setAngleDeg", 5.0);
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -144,6 +145,9 @@ public class NewRobotContainer extends RobotContainer {
     // Climber
     operator.rightTrigger(0.25).whileTrue(new ClimberRPM(()->  driver.getRightTriggerAxis()));
 
+    //temp for tuning 
+    operator.start().whileTrue( new SetArm(armAngleDeg));
+    operator.back().whileTrue(new Shooter_PID_Tuner(shooterTargetRPM));
     // Simple shooter and intake
     if (Config.disableStateBasedProgramming) {
       intake.setStateMachineOff();
@@ -153,12 +157,12 @@ public class NewRobotContainer extends RobotContainer {
     
       //operator.leftTrigger(0.3).whileTrue(
       operator.leftBumper().whileTrue(
-        //  Commands.run(() -> intake.setVoltage(8), intake));
           new MakeIntakeMotorSpin(8.0,0));
 
       // Toggle to spin up or spin down the shooter with rightBumper
       operator.leftTrigger(0.3).toggleOnTrue(new Shooter_Voltage(()->3));
 
+      //NOTE: right Trigger has been assigned to climber
       operator.rightTrigger(0.3).whileTrue(CombinedCommands.simpleShootNoteAmp());
       // Shoot note with leftBumper
       operator.rightBumper().whileTrue(CombinedCommands.simpleShootNoteSpeaker());
