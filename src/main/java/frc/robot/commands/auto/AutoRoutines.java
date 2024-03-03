@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.lib.lib2706.SelectByAllianceCommand;
 import frc.robot.Config.PhotonConfig.PhotonPositions;
+import frc.robot.commands.CombinedCommands;
 import frc.robot.commands.IntakeControl;
 import frc.robot.commands.MakeIntakeMotorSpin;
 import frc.robot.commands.PhotonMoveToTarget;
@@ -71,13 +72,15 @@ public class AutoRoutines extends SubsystemBase {
             Commands.runOnce(()->ShooterSubsystem.getInstance().setMode(ShooterModes.STOP_SHOOTER))          
         ));
 
-        NamedCommands.registerCommand("simpleShooter", Commands.deadline(
-              Commands.sequence(
-                new IntakeControl(false).withTimeout(0.3), 
-                new WaitCommand(0.5),
-                new IntakeControl(true).withTimeout(2)),
-              new Shooter_Voltage(()->5)
-            ));
+        NamedCommands.registerCommand("simpleShooter", CombinedCommands.simpleShootNoteSpeaker());
+        
+        // Commands.deadline(
+        //       Commands.sequence(
+        //         new IntakeControl(false).withTimeout(0.3), 
+        //         new WaitCommand(0.5),
+        //         new IntakeControl(true).withTimeout(2)),
+        //       new Shooter_Voltage(()->5)
+        //     ));
 
         // NamedCommands.registerCommand("turnOffIntake", (
         //     Commands.runOnce(()-> IntakeSubsystem.getInstance().setMode(IntakeStatesVoltage.Modes.STOP))));
