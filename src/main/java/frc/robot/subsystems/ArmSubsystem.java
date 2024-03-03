@@ -25,6 +25,7 @@ import frc.lib.lib2706.ProfiledPIDFFController;
 import frc.lib.lib2706.SubsystemChecker;
 import frc.lib.lib2706.SubsystemChecker.SubsystemType;
 import frc.robot.Config;
+import frc.robot.Config.ArmConfig;
 
 public class ArmSubsystem extends SubsystemBase {
   private static ArmSubsystem instance = null; // static object that contains all movement controls
@@ -81,9 +82,9 @@ public class ArmSubsystem extends SubsystemBase {
                                                                                             // no motion
 
     configureSpark("Arm set soft limits forward",
-        () -> (m_arm.setSoftLimit(SoftLimitDirection.kForward, Config.ArmConfig.arm_forward_limit)));
+        () -> (m_arm.setSoftLimit(SoftLimitDirection.kForward, (float) (Config.ArmConfig.arm_forward_limit))));
     configureSpark("Arm sets soft limits reverse",
-        () -> (m_arm.setSoftLimit(SoftLimitDirection.kReverse, Config.ArmConfig.arm_reverse_limit)));
+        () -> (m_arm.setSoftLimit(SoftLimitDirection.kReverse, (float) (Config.ArmConfig.arm_reverse_limit))));
     configureSpark("Arm enables soft limits forward",
         () -> (m_arm.enableSoftLimit(SoftLimitDirection.kForward, Config.ArmConfig.SOFT_LIMIT_ENABLE)));
     configureSpark("Arm enable soft limit reverse",
@@ -149,7 +150,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    m_armPosPub.accept(Math.toDegrees(m_absEncoder.getPosition()));
+    m_armPosPub.accept(Math.toDegrees(getPosition()));
     m_armVelPub.accept(Math.toDegrees(m_absEncoder.getVelocity()));
   }
 
@@ -158,24 +159,24 @@ public class ArmSubsystem extends SubsystemBase {
     double clampedAngle = MathUtil.clamp(angle, Math.toRadians(Config.ArmConfig.MIN_ARM_ANGLE_DEG),
         Math.toRadians(Config.ArmConfig.MAX_ARM_ANGLE_DEG));
 
-        m_ProfiledPIDController.calculate(getPosition(), clampedAngle);
-        double targetPos = m_ProfiledPIDController.getSetpoint().position;
+    m_ProfiledPIDController.calculate(getPosition(), clampedAngle);
+    double targetPos = m_ProfiledPIDController.getSetpoint().position;
 
-        //m_pidControllerArm.setReference((targetPos), ControlType.kPosition, 0, calculateFF(clampedAngle));
-        m_pidControllerArm.setReference((targetPos), ControlType.kPosition, 0, 0);
+    //m_pidControllerArm.setReference((targetPos), ControlType.kPosition, 0, calculateFF(clampedAngle));
+    m_pidControllerArm.setReference(targetPos + Math.toRadians(ArmConfig.shiftEncoderRange), ControlType.kPosition, 0, 0);
 
      m_targetAngle.accept(Math.toDegrees(targetPos));
   }
 
   public void resetProfiledPIDController() {
-     m_ProfiledPIDController.reset(m_absEncoder.getPosition(), m_absEncoder.getVelocity());
+     m_ProfiledPIDController.reset(getPosition(), m_absEncoder.getVelocity());
   }
 
 
   
     //return radius
     public double getPosition() {
-      return m_absEncoder.getPosition();
+      return m_absEncoder.getPosition() - Math.toRadians(ArmConfig.shiftEncoderRange);
     }
   
     public void stopMotors() {
@@ -200,7 +201,7 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void testFeedForward(double additionalVoltage) {
-      double voltage = additionalVoltage + calculateFF(m_absEncoder.getPosition());
+      double voltage = additionalVoltage + calculateFF(getPosition());
       m_pidControllerArm.setReference(voltage, ControlType.kVoltage);
       m_armFFTestingVolts.accept(voltage);
     }

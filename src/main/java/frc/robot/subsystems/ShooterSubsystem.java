@@ -70,7 +70,7 @@ public class ShooterSubsystem extends SubsystemBase {
         m_encoder.setAverageDepth(1);//check if 2 would work better
 
         //Voltage compensation
-        m_motor.enableVoltageCompensation(12); //adjust on final robot
+        m_motor.enableVoltageCompensation(9); //adjust on final robot
         m_motor.setSmartCurrentLimit(40);  
         setBrake(false);
 
@@ -165,6 +165,23 @@ public class ShooterSubsystem extends SubsystemBase {
                 Commands.waitUntil(()->isReadyToShoot()), 
                 Commands.runOnce(()->setMode(SHOOT_SPEAKER))
             );
+    }
+
+    /**
+     * Command that will set the the given mode if shooter is stopped,
+     * or stop the shooter if it's currently doing an action.
+     * 
+     * @param mode Mode to toggle.
+     * @return Command to attach to a button as onTrue.
+     */
+    public Command toggleSpinUpCommand(ShooterModes mode) {
+        return Commands.runOnce(() -> {
+            if (shooterStates.getDesiredMode() != ShooterModes.STOP_SHOOTER) {
+                shooterStates.setMode(ShooterModes.STOP_SHOOTER);
+            } else {
+                shooterStates.setMode(mode);
+            }
+        });
     }
     
     @Override

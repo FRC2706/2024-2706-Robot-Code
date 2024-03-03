@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import org.json.simple.parser.ContainerFactory;
+
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -15,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.lib3512.config.CTREConfigs;
 import frc.robot.robotcontainers.BeetleContainer;
 import frc.robot.robotcontainers.ClutchContainer;
+import frc.robot.robotcontainers.ContainerForTest;
 import frc.robot.robotcontainers.CosmobotContainer;
 import frc.robot.robotcontainers.NewRobotContainer;
 import frc.robot.robotcontainers.PoseidonContainer;
@@ -53,6 +56,7 @@ public class Robot extends TimedRobot {
 
     switch (Config.getRobotId()) {
       case 0:
+        //m_robotContainer = new ContainerForTest(); break; //competition
         m_robotContainer = new NewRobotContainer(); break; //competition
         
       case 1:
@@ -64,7 +68,6 @@ public class Robot extends TimedRobot {
       case 3:
         m_robotContainer = new NewRobotContainer(); break; //poseidon
         
-
       default:
         m_robotContainer = new NewRobotContainer();
         DriverStation.reportError(

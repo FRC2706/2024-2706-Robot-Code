@@ -4,12 +4,11 @@
 
 package frc.robot.commands;
 import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ClimberSubsystem;
 
-public class ClimberRPM extends CommandBase {
+public class ClimberRPM extends Command {
 
   private ClimberSubsystem climber;
   private DoubleSupplier m_getPercentOutput;

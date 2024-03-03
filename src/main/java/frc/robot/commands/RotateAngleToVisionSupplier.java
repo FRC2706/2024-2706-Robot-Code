@@ -5,30 +5,43 @@
 package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
+
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.BooleanSubscriber;
 import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class RotateAngleToVisionSupplier extends TeleopSwerve {
-  ProfiledPIDController pid = new ProfiledPIDController(2.3, 0, 0.8, 
-                                        new TrapezoidProfile.Constraints(4 * Math.PI, 8 * Math.PI)); //pid to be tested
   DoubleSupplier m_supplier;
-  double setpoint;
+  double m_setpoint;
+  
   /** Creates a new RotateAngleToVisionSupplier. */
-  public RotateAngleToVisionSupplier(SwerveSubsystem s_Swerve, CommandXboxController driver, DoubleSupplier supplier) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    super(s_Swerve, driver);
+  public RotateAngleToVisionSupplier(CommandXboxController driver, DoubleSupplier supplier) {
+    super(driver);
 
-    this.m_supplier = supplier;
-
-    pid.setTolerance(0.1);
-    pid.enableContinuousInput(-Math.PI, Math.PI);
+    m_supplier = supplier;
   }
 
-  public RotateAngleToVisionSupplier(SwerveSubsystem s_Swerve, CommandXboxController driver, DoubleSubscriber subscriber){
-    this(s_Swerve, driver, ()-> subscriber.getAsDouble()); 
+  public RotateAngleToVisionSupplier(CommandXboxController driver, String photonvisionCameraName){
+    super(driver);
+
+    DoubleSubscriber yawSub = NetworkTableInstance.getDefault()
+        .getDoubleTopic(photonvisionCameraName + "/targetYaw")
+        .subscribe(0, PubSubOption.periodic(0.02));
+
+    BooleanSubscriber hasData = NetworkTableInstance.getDefault()
+        .getBooleanTopic(photonvisionCameraName + "/hasTarget")
+        .subscribe(false, PubSubOption.periodic(0.02));
+
+    m_supplier = () -> {
+      if (!hasData.get(false)) {
+        return 0;
+      }
+      return Math.toRadians(-1 * yawSub.get(0));
+    };
   }
 
 
@@ -37,15 +50,14 @@ public class RotateAngleToVisionSupplier extends TeleopSwerve {
   public void initialize() {
     super.initialize();
 
-    setpoint = SwerveSubsystem.getInstance().getHeading().getRadians();
+    SwerveSubsystem.getInstance().resetDriveToPose();
+    m_setpoint = SwerveSubsystem.getInstance().getHeading().getRadians();
   }
 
   @Override
-  public double calculateRotationVal() {
-    double value = m_supplier.getAsDouble();
-    if (value != -99 && Math.abs(value) < 30) {
-      setpoint = SwerveSubsystem.getInstance().getHeading().getRadians() + Math.toRadians(value*-1);
-    }
-    return(pid.calculate(SwerveSubsystem.getInstance().getHeading().getRadians(), setpoint));
+  protected double calculateRotationVal() {
+    m_setpoint = SwerveSubsystem.getInstance().getHeading().getRadians() + m_supplier.getAsDouble();
+
+    return SwerveSubsystem.getInstance().calculateRotation(new Rotation2d(m_setpoint));
   }
 }
