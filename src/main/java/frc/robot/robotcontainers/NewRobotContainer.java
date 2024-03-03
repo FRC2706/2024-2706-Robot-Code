@@ -146,7 +146,7 @@ public class NewRobotContainer extends RobotContainer {
     //XBoxControllerUtil.leftPOV(operator).debounce(0.1).onTrue(new SetArm(()->ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg)); // Kickbot Shot
     operator.x().onTrue(new SetArm(()->ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg));
     // Climber
-    operator.rightTrigger(0.25).whileTrue(new ClimberRPM(()->  driver.getRightTriggerAxis()));
+    operator.leftTrigger(0.25).whileTrue(new ClimberRPM(()->  operator.getLeftTriggerAxis()));
 
     //temp for tuning 
     operator.start().whileTrue( new SetArm(armAngleDeg));
@@ -161,9 +161,6 @@ public class NewRobotContainer extends RobotContainer {
       //operator.leftTrigger(0.3).whileTrue(
       operator.leftBumper().whileTrue(
           new MakeIntakeMotorSpin(8.0,0));
-
-      // Toggle to spin up or spin down the shooter with rightBumper
-      operator.leftTrigger(0.3).toggleOnTrue(new Shooter_Voltage(()->3));
 
       //NOTE: right Trigger has been assigned to climber
       operator.rightTrigger(0.3).whileTrue(CombinedCommands.simpleShootNoteAmp());
