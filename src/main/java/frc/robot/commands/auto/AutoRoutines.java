@@ -31,6 +31,7 @@ public class AutoRoutines extends SubsystemBase {
     PathPlannerAuto twoNoteAuto = new PathPlannerAuto("twoNoteSpeaker");
     PathPlannerAuto threeNoteAuto = new PathPlannerAuto("threeNoteSpeaker");
     PathPlannerAuto fourNoteAuto = new PathPlannerAuto("4NoteCenter");
+    PathPlannerAuto twoNoteLeftAuto = new PathPlannerAuto("2NoteLeft");
 
     public AutoRoutines() {
         registerCommandsToPathplanner();
@@ -126,6 +127,8 @@ public class AutoRoutines extends SubsystemBase {
                 return threeNoteAuto;
             case 4:
                 return fourNoteAuto;
+            case 5:
+                return twoNoteLeftAuto;
         }
     }
 }
