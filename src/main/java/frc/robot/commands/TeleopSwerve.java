@@ -73,26 +73,35 @@ public class TeleopSwerve extends Command {
 
   protected double calculateRotationVal() {
     rotationVal = MathUtil.applyDeadband(-driver.getRawAxis(rotationAxis), Config.Swerve.stickDeadband)
-      * speed.angularSpeed;
-    
-    if(rotationVal != 0.0){
-      getLastValue = false;
-      return rotationLimiter.calculate(rotationVal);
-    }else {
-      if(!getLastValue){
-        prevHeading = s_Swerve.getHeading();
-        getLastValue = true;
-      }
-      if(getLastValue){
-        rotationLimiter.calculate(rotationVal);
-        return SwerveSubsystem.getInstance().calculateRotation(prevHeading);
-      }else{
-        return rotationLimiter.calculate(rotationVal);
-      }
-
-    }
-      //return(SwerveSubsystem.getInstance().calculateRotation(prevHeading));
+        * speed.angularSpeed;
+    return rotationLimiter.calculate(rotationVal);
   }
+
+  // protected double calculateRotationVal() {
+  //   rotationVal = MathUtil.applyDeadband(-driver.getRawAxis(rotationAxis), Config.Swerve.stickDeadband)
+  //     * speed.angularSpeed;
+
+  
+  //   if(rotationVal != 0.0){
+  //     getLastValue = false;
+  //     return rotationVal = rotationLimiter.calculate(rotationVal);
+  //     // return rotationLimiter.calculate(rotationVal);
+  //   }else {
+  //     rotationVal = rotationLimiter.calculate(rotationVal);
+
+  //     if(!getLastValue){
+  //       prevHeading = s_Swerve.getHeading();
+  //       getLastValue = true;
+  //     }
+  //     if(getLastValue){
+  //       return SwerveSubsystem.getInstance().calculateRotation(prevHeading);
+  //     }else{
+  //       return (rotationVal);
+  //     }
+
+  //   }
+  //     //return(SwerveSubsystem.getInstance().calculateRotation(prevHeading));
+  // }
 
   @Override
   public void execute() {
