@@ -115,8 +115,8 @@ public class NewRobotContainer extends RobotContainer {
       PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.AMP_RED, driver)));
 
     driver.rightTrigger().whileTrue(new SelectByAllianceCommand( // Implement command group that also controls the arm, intake, shooter
-      PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.MIDDLE_SPEAKER_BLUE, driver), 
-      PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.RIGHT_SPEAKER_RED, driver)));
+      PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.RIGHT_SPEAKER_BLUE, driver), 
+      PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.LEFT_SPEAKER_RED, driver)));
 
     // Complete vision scoring commands with all subsystems
     // if (Config.disableStateBasedProgramming) {
