@@ -47,12 +47,29 @@ public final class Config {
   private static int robotId = -1;
 
   public static class CANID {
-    public static int PIGEON = robotSpecific(30, -1, 27, 30);
+    public static int PIGEON = robotSpecific(16, -1, 27, 30);
+    public static final int CANDLE = robotSpecific(25,-1,15,15);
+    public static final int CLIMBER = robotSpecific(18, 4, 5 ,-1);
 
-    public static final int ARM_SPARK_CAN_ID = robotSpecific(5,-1,0,5);
+    //swerve CAN IDs
+    public static final int SWERVE_FL_DRIVE = 4; 
+    public static final int SWERVE_FL_STEERING = 5; 
+    public static final int SWERVE_FR_DRIVE = 6; 
+    public static final int SWERVE_FR_STEERING = 7; 
+    public static final int SWERVE_RL_DRIVE = 8; 
+    public static final int SWERVE_RL_STEERING = 9; 
+    public static final int SWERVE_RR_DRIVE = 10; 
+    public static final int SWERVE_RR_STEERING = 11; 
+    public static final int SWERVE_FL_CANCODER = 12; 
+    public static final int SWERVE_FR_CANCODER = 13; 
+    public static final int SWERVE_RL_CANCODER = 14;
+    public static final int SWERVE_RR_CANCODER = 15;
     
-    //PCM Can ID 
-    public static final int CTRE_PCM_CAN_ID = 1;
+    //mechanism CAN IDs
+    public static final int ARM = 19; 
+    public static final int INTAKE = 21; 
+    public static final int SHOOTER = 22;
+    
   }
 
   public static final int CANTIMEOUT_MS = 100;
@@ -118,17 +135,19 @@ public final class Config {
   /** ADD CONSTANTS BELOW THIS LINE */
 
 
-  public static final Boolean swerveTuning = true; //tune swerve? Turn this to false for competition
+  public static final boolean swerveTuning = true; //tune swerve? Turn this to false for competition
+  public static final boolean disableStateBasedProgramming = true; // True to disable state based programming and use only simple commands
 
-  public static int ANALOG_SELECTOR_PORT = robotSpecific(0, -1, -1, 0);
+  public static int ANALOG_SELECTOR_PORT = robotSpecific(3, -1, -1, 0);
 
   public static final class PhotonConfig{
-    public static final double CAMERA_HEIGHT = 0.29;
-    public static final Rotation2d CAMERA_PITCH = Rotation2d.fromDegrees(26);
+    public static final double CAMERA_HEIGHT = 0.215;
+    public static final Rotation2d CAMERA_PITCH = Rotation2d.fromDegrees(33);
     //x is forwards, y is sideways with +y being left, rotation probobly if + left too
-    public static final Pose2d cameraOffset = new Pose2d(new Translation2d(-0.2,0.28-0.03), Rotation2d.fromDegrees(0));
+    public static final Pose2d cameraOffset = new Pose2d(new Translation2d(-0.1,0), Rotation2d.fromDegrees(0));
   
     //networkTableName
+    public static final String apriltagCameraName = "FrontApriltagOV9281";
     public static final String networkTableName = "PhotonCamera";
     //data max
     public static final int maxNumSamples = 10;
@@ -178,13 +197,13 @@ public final class Config {
   }
 
   public static final class Climber_CANID {
-     public static int CLIMBER = robotSpecific(-01, 4, 5, -1);  
+     public static int CLIMBER = CANID.CLIMBER;
   }
 
   public static final class Swerve {
     public static final double stickDeadband = 0.1;
 
-    public static final int pigeonID = 30;
+    public static final int pigeonID = CANID.PIGEON;
     public static final boolean invertGyro = false; // Always ensure Gyro is CCW+ CW-
 
     /* Drivetrain Constants Changed */
@@ -244,7 +263,7 @@ public final class Config {
     /* Swerve Profiling Values Changed */
     public static enum TeleopSpeeds {
       SLOW(0.5, 0.5 * Math.PI),
-      MAX(3.0, 4.0 * Math.PI);
+      MAX(3.0, 2.5 * Math.PI);
 
       public final double translationalSpeed;
       public final double angularSpeed;
@@ -272,9 +291,9 @@ public final class Config {
     /* Module Specific Constants */
     /* Front Left Module - Module 0 Changed*/
     public static final class Mod0 {
-      public static final int driveMotorID = 24;
-      public static final int angleMotorID = 23;
-      public static final int canCoderID = 9;
+      public static final int driveMotorID = CANID.SWERVE_FL_DRIVE;
+      public static final int angleMotorID = CANID.SWERVE_FL_STEERING;
+      public static final int canCoderID = CANID.SWERVE_FL_CANCODER;
       public static final Rotation2d angleOffset = Rotation2d.fromDegrees(270.73);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, angleOffset);
@@ -282,9 +301,9 @@ public final class Config {
 
     /* Front Right Module - Module 1 Changed*/
     public static final class Mod1 {
-      public static final int driveMotorID = 21;
-      public static final int angleMotorID = 25;
-      public static final int canCoderID = 6;
+      public static final int driveMotorID = CANID.SWERVE_FR_DRIVE;
+      public static final int angleMotorID = CANID.SWERVE_FR_STEERING;
+      public static final int canCoderID = CANID.SWERVE_FR_CANCODER;
       public static final Rotation2d angleOffset = Rotation2d.fromDegrees(159.3);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, angleOffset);
@@ -292,9 +311,9 @@ public final class Config {
 
     /* Back Left Module - Module 2 Changed*/
     public static final class Mod2 {
-      public static final int driveMotorID = 20;
-      public static final int angleMotorID = 26;
-      public static final int canCoderID = 8;
+      public static final int driveMotorID = CANID.SWERVE_RL_DRIVE;
+      public static final int angleMotorID = CANID.SWERVE_RL_STEERING;
+      public static final int canCoderID = CANID.SWERVE_RL_CANCODER;
       public static final Rotation2d angleOffset = Rotation2d.fromDegrees(194.9);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, angleOffset);
@@ -302,9 +321,9 @@ public final class Config {
 
     /* Back Right Module - Module 3 Changed*/
     public static final class Mod3 {
-      public static final int driveMotorID = 27;
-      public static final int angleMotorID = 22;
-      public static final int canCoderID = 7;
+      public static final int driveMotorID = CANID.SWERVE_RR_DRIVE;
+      public static final int angleMotorID = CANID.SWERVE_RR_STEERING;
+      public static final int canCoderID = CANID.SWERVE_RR_CANCODER;
       public static final Rotation2d angleOffset = Rotation2d.fromDegrees(8.5);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, angleOffset);
@@ -334,25 +353,31 @@ public final class Config {
   }
 
   public static final class Intake {
-    public static final int INTAKE = 31;
+    public static final int INTAKE = CANID.INTAKE;
+    public static final byte frontSensor = 0;//its the same but lighter, so dtw 
+    public static final byte centerSensor = 2;//its the same but lighter, so dtw 
+    public static final byte backSensor = 1;//its the same but lighter, so dtw 
   }
 
 
   public class ArmConfig {
+    public static final int ARM_SPARK_CAN_ID = CANID.ARM;
     public static final boolean SET_INVERTED = true;
     public static final boolean setInvered = true;
     public static final boolean INVERT_ENCODER = false;
 
     public static final int CURRENT_LIMIT = 20;
 
+    public static final double shiftEncoderRange = 10;
+      //offset unit: degrees
+    public static final double armAbsEncoderOffset = Math.toDegrees(3.20433) + 3.0 - shiftEncoderRange;
 
-
-    public static final double MAX_ARM_ANGLE_DEG = 150;
-    public static final double MIN_ARM_ANGLE_DEG = 5;
+    public static final double MAX_ARM_ANGLE_DEG = 180;
+    public static final double MIN_ARM_ANGLE_DEG = -2;
 
     //soft limit constant for bottom arm
-    public static final float arm_forward_limit = (float) Math.toRadians(MAX_ARM_ANGLE_DEG);
-    public static final float arm_reverse_limit = (float) Math.toRadians(MIN_ARM_ANGLE_DEG);
+    public static final float arm_forward_limit = (float) Math.toRadians(MAX_ARM_ANGLE_DEG + shiftEncoderRange);
+    public static final float arm_reverse_limit = (float) Math.toRadians(MIN_ARM_ANGLE_DEG + shiftEncoderRange);
     public static final boolean SOFT_LIMIT_ENABLE = true;
     
     //PID constants
@@ -376,11 +401,9 @@ public final class Config {
     public static final double armPositionConversionFactor = 2 * Math.PI / ARM_ENCODER_GEAR_RATIO;
     //arm velocity unit: radians/sec
     public static final double armVelocityConversionFactor = armPositionConversionFactor / 60.0;
-    //offset unit: degrees
-    public static final double armAbsEncoderOffset = Math.toDegrees(3.20433);
-
-    public static final double MAX_VEL = Math.PI * 0.5;
-    public static final double MAX_ACCEL = Math.PI * 0.5;
+  
+    public static final double MAX_VEL = Math.PI * 1.5;
+    public static final double MAX_ACCEL = Math.PI * 1.5;
 
     public static final double MOMENT_TO_VOLTAGE = 0.000005;    
 }
@@ -388,8 +411,8 @@ public final class Config {
 public static enum ArmSetPoints {
   //@todo: to be calibrated
   IDLE(60),
-  INTAKE(5),
-  SPEAKER(35),
+  INTAKE(0),
+  SPEAKER_KICKBOT_SHOT(15),
   AMP(100);
 
   public final double angleDeg;
@@ -444,12 +467,11 @@ public static enum ArmSetPoints {
   }
   public static final int CAN_TIMEOUT_SHORT = 10;
   public static final int CAN_TIMEOUT_LONG = 100;
-  public static Double DRIVER_JOYSTICK_DEADBAND = 0.1; // TODO: Investigate if this can be better tuned
+  public static Double DRIVER_JOYSTICK_DEADBAND = 0.15;
 
   public static final boolean tuningMode = true;
-  
   public static final class ShooterConstants{
-    public static final byte MOTOR_ID = 32;
+    public static final byte MOTOR_ID = CANID.SHOOTER;
     public static final double kP = 0.0,
                                kI = 0.0,
                                kD = 0.0,

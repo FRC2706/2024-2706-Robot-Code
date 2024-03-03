@@ -39,7 +39,7 @@ public class IntakeControl extends Command {
     if (direction == true) 
       intakeSubsystem.setVoltage(4.0);
     else 
-      intakeSubsystem.setVoltage(-3.0);
+      intakeSubsystem.setVoltage(-2.0);
   }
 
   // Called once the command ends or is interrupted.
@@ -55,6 +55,6 @@ public class IntakeControl extends Command {
       // return intakeSubsystem.isSensor7True() == false;
       return false;
     else
-      return intakeSubsystem.isSensor7True() == false;
+      return intakeSubsystem.isBackSensorActive() == false;
   }
 }

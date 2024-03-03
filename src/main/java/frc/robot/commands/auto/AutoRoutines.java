@@ -18,27 +18,24 @@ import frc.robot.commands.MakeIntakeMotorSpin;
 import frc.robot.commands.PhotonMoveToTarget;
 import frc.robot.commands.Shooter_Voltage;
 import frc.robot.subsystems.IntakeStatesMachine.IntakeModes;
-import frc.robot.subsystems.ShooterStateMachine.ShooterModes;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PhotonSubsystem;
+import frc.robot.subsystems.ShooterStateMachine.ShooterModes;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
-
-//TODO: The autos are beginning a sec after the robot is enabled, we have to 
-//load all of the paths and initializate everything right after we turn on the robot
 public class AutoRoutines extends SubsystemBase {
     
-    PathPlannerPath SpeakerPath = PathPlannerPath.fromPathFile("Speaker Path");
+    // PathPlannerPath speakerPath = PathPlannerPath.fromPathFile("Speaker Path");
     PathPlannerAuto twoNoteAuto = new PathPlannerAuto("twoNoteSpeaker");
     PathPlannerAuto threeNoteAuto = new PathPlannerAuto("threeNoteSpeaker");
     PathPlannerAuto fourNoteAuto = new PathPlannerAuto("4NoteCenter");
 
     public AutoRoutines() {
-        
+        registerCommandsToPathplanner();
     }
 
-    public static void registerCommandsToPathplanner() {
+    public void registerCommandsToPathplanner() {
         // Intake and Arm Commands
         NamedCommands.registerCommand("IntakeAndArm", new ParallelCommandGroup(
             new WaitCommand(1), // Move arm to intake setpoint
@@ -54,11 +51,6 @@ public class AutoRoutines extends SubsystemBase {
             new WaitCommand(1), // Exit starting zone
             new WaitCommand(1), // Intake note
             new WaitCommand(1) // Score in amp
-        ));
-
-        NamedCommands.registerCommand("IntakeAndArm", new ParallelCommandGroup(
-            new WaitCommand(1), // Move arm to intake setpoint
-            new WaitCommand(1) // Intake game piece
         ));
 
         NamedCommands.registerCommand("MakeIntakeMotorSpin", new SequentialCommandGroup(
@@ -120,15 +112,16 @@ public class AutoRoutines extends SubsystemBase {
             default: 
                 return null;
             case 1:
-                return Commands.sequence(
-                    SwerveSubsystem.getInstance().setOdometryCommand(SpeakerPath.getPreviewStartingHolonomicPose()),
-                    AutoBuilder.followPath(SpeakerPath)
-                );
+                return null;
+                // return Commands.sequence(
+                //     SwerveSubsystem.getInstance().setOdometryCommand(speakerPath.getPreviewStartingHolonomicPose()),
+                //     AutoBuilder.followPath(speakerPath)
+                // );
             case 2:
                 return twoNoteAuto;
             case 3:
                 return threeNoteAuto;
-            case 12:
+            case 4:
                 return fourNoteAuto;
         }
     }

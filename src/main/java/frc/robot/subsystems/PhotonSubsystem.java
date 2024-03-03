@@ -64,7 +64,7 @@ public class PhotonSubsystem extends SubsystemBase {
   /** Creates a new photonAprilTag. */
   private PhotonSubsystem() {
     //name of camera, change if using multiple cameras
-    camera1 = new PhotonCamera("FrontApriltagOV9281");
+    camera1 = new PhotonCamera(PhotonConfig.apriltagCameraName);
     //networktable publishers
     pubSetPoint = NetworkTableInstance.getDefault().getTable(PhotonConfig.networkTableName).getDoubleArrayTopic("PhotonAprilPoint").publish(PubSubOption.periodic(0.02));
     pubRange = NetworkTableInstance.getDefault().getTable(PhotonConfig.networkTableName).getDoubleTopic("Range").publish(PubSubOption.periodic(0.02));
@@ -121,31 +121,21 @@ public class PhotonSubsystem extends SubsystemBase {
  * the command to run
  */
   public Command getAprilTagCommand(PhotonPositions spacePositions, CommandXboxController driverStick){
-    Command swerveRequirementCommand = Commands.run(() -> {}, SwerveSubsystem.getInstance())
-            .withName("AprilTagCommandSwerveRequirement");
-    if (spacePositions.hasWaypoint){
-      return Commands.sequence(
-        getWaitForDataCommand(spacePositions.id),
-        new ScheduleCommand(new RumbleJoystick(driverStick, RumbleType.kBothRumble, 0.8, 0.2, false)),
-        Commands.runOnce(() -> swerveRequirementCommand.schedule()), // Add delayed requirement to SwerveSubsystem
-        new ProxyCommand(Commands.sequence( // Proxy these commands to prevent SwerveSubsystem requirement conflicting with swerveRequirementCommand
-          new PhotonMoveToTarget(spacePositions.waypoint,true),
-          new PhotonMoveToTarget(spacePositions.destination, spacePositions.direction, false)
-        ))
-      ).finallyDo(() -> swerveRequirementCommand.cancel()); // Ensure requirement to SwerveSubsystem ends with this command ending
+    Command moveToTargetCommands;
+    if (spacePositions.hasWaypoint) {
+      moveToTargetCommands = Commands.sequence(
+        new PhotonMoveToTarget(spacePositions.waypoint,true),
+        new PhotonMoveToTarget(spacePositions.destination, spacePositions.direction, false)
+      );
+    } else {
+      moveToTargetCommands = new PhotonMoveToTarget(spacePositions.destination, spacePositions.direction, false);
     }
-    else
-    {
-      return Commands.sequence(
-        getWaitForDataCommand(spacePositions.id),
-        new ScheduleCommand(new RumbleJoystick(driverStick, RumbleType.kBothRumble, 0.8, 0.2, false)),
-        Commands.runOnce(() -> swerveRequirementCommand.schedule()), // Add delayed requirement to SwerveSubsystem
-        new ProxyCommand( // Proxy this command to prevent SwerveSubsystem requirement conflicting with swerveRequirementCommand
-          new PhotonMoveToTarget(spacePositions.destination, spacePositions.direction, false)
-        )
-      ).finallyDo(() -> swerveRequirementCommand.cancel()); // Ensure requirement to SwerveSubsystem ends with this command ending
-    }
-    
+
+    return Commands.sequence(
+      new ProxyCommand(getWaitForDataCommand(spacePositions.id)), // Proxy this command to prevent PhotonSubsystem requirement conflicting with PhotonMoveToTarget's requirements
+      new ScheduleCommand(new RumbleJoystick(driverStick, RumbleType.kBothRumble, 0.5, 0.2, true)),
+      new ProxyCommand(moveToTargetCommands) // Proxy this command to prevent SwerveSubsystem requirement conflicting with WaitForDataCommand's requirements
+    );
   }
 
   public Translation2d getTargetPos(){
@@ -164,6 +154,11 @@ public class PhotonSubsystem extends SubsystemBase {
   private double range(double y) {
     y = Math.toRadians(y);
     y += PhotonConfig.CAMERA_PITCH.getRadians();
+
+    if (id-4 <= 0) {
+      return 0;
+    }
+
     return (Config.PhotonConfig.APRIL_HEIGHTS[id-4]-PhotonConfig.CAMERA_HEIGHT)/Math.tan(y);
   }
 

@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import org.json.simple.parser.ContainerFactory;
+
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -15,10 +17,12 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.lib3512.config.CTREConfigs;
 import frc.robot.robotcontainers.BeetleContainer;
 import frc.robot.robotcontainers.ClutchContainer;
+import frc.robot.robotcontainers.ContainerForTest;
 import frc.robot.robotcontainers.CosmobotContainer;
 import frc.robot.robotcontainers.NewRobotContainer;
 import frc.robot.robotcontainers.PoseidonContainer;
 import frc.robot.robotcontainers.RobotContainer;
+import frc.robot.subsystems.ArmSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -45,12 +49,14 @@ public class Robot extends TimedRobot {
     createRobotContainer();
   }
 
+
   private void createRobotContainer() {
     // Instantiate the RobotContainer based on the Robot ID.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
 
     switch (Config.getRobotId()) {
       case 0:
+        //m_robotContainer = new ContainerForTest(); break; //competition
         m_robotContainer = new NewRobotContainer(); break; //competition
         
       case 1:
@@ -62,7 +68,6 @@ public class Robot extends TimedRobot {
       case 3:
         m_robotContainer = new NewRobotContainer(); break; //poseidon
         
-
       default:
         m_robotContainer = new NewRobotContainer();
         DriverStation.reportError(
@@ -107,6 +112,8 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
+    ArmSubsystem.getInstance().resetProfiledPIDController();
+    
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
@@ -126,6 +133,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    ArmSubsystem.getInstance().resetProfiledPIDController();
   }
 
   /** This function is called periodically during operator control. */

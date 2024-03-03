@@ -218,9 +218,22 @@ public class SwerveSubsystem extends SubsystemBase {
         : Rotation2d.fromDegrees(gyro.getYaw());
   }
   
-  public Command setHeadingCommand(Rotation2d rotation2d) {
-    return Commands.runOnce(() -> resetOdometry(new Pose2d(getPose().getTranslation(), rotation2d)));
+  /**
+   * Returns a command to set the given angle as the heading.
+   * Rotates the angle by 180 degrees if on the red alliance.
+   * 
+   * @param angle to set for the blue alliance
+   * @return Command to reset the heading
+   */
+  public Command setHeadingCommand(Rotation2d angle) {
+    return Commands.runOnce(
+      () -> resetOdometry(
+        new Pose2d(
+          getPose().getTranslation(), 
+          rotateForAlliance(angle)))
+    );
   }
+
   public Command setOdometryCommand(Pose2d pose) {
     return Commands.runOnce(() -> resetOdometry(pose));
   }
@@ -258,8 +271,14 @@ public class SwerveSubsystem extends SubsystemBase {
     pidControlRotation.reset(getPose().getRotation().getRadians(), speeds.omegaRadiansPerSecond);
   }
 
-  public double calculateRotation(double currentRotation, double desiredRotation) {
-    return(pidControlRotation.calculate(currentRotation, desiredRotation));
+  /**
+   * Calculate the pid value for rotating the chassis to the desired angle
+   * 
+   * @param desiredAngle Desired angle for the chassis
+   * @return The pid value to pass to rotation in the drive method
+   */
+  public double calculateRotation(Rotation2d desiredAngle) {
+    return pidControlRotation.calculate(SwerveSubsystem.getInstance().getHeading().getRadians(), desiredAngle.getRadians());
   }
 
   public void driveToPose(Pose2d pose) {
@@ -273,10 +292,6 @@ public class SwerveSubsystem extends SubsystemBase {
     desiredY = pose.getY();
     desiredRotation = pose.getRotation().getRadians();
 
-    double x = pidControlX.calculate(currentX, desiredX);
-    double y = pidControlY.calculate(currentY, desiredY);
-    double rot = calculateRotation(currentRotation, desiredRotation);
-    
     double xSpeed = 0;
     double ySpeed = 0;
     double rotSpeed = 0;
@@ -419,13 +434,32 @@ public class SwerveSubsystem extends SubsystemBase {
     }
   }
 
-  public static Rotation2d rotateForAlliance(Rotation2d rot){
-     var alliance = DriverStation.getAlliance();
-            if (alliance.isPresent() && alliance.get()==DriverStation.Alliance.Blue) {
-                return rot;
-            }
-            return rot.rotateBy(new Rotation2d(Math.PI));
+  public void stopMotors() {
+    for (SwerveModule mod : mSwerveMods) {
+      mod.stopMotors();
+    }
   }
 
-  
+  /**
+   * Rotates the given angle by 180 if the red alliance or 0 if blue and returns it.
+   * Aka defaults to assuming we are on the blue alliance.
+   * 
+   * @param angle to rotate.
+   * @return The angle rotated for the alliance.
+   */
+  public static Rotation2d rotateForAlliance(Rotation2d angle){
+    var alliance = DriverStation.getAlliance();
+
+    // Default to blue alliance
+    if (alliance.isEmpty()) {
+      DriverStation.reportWarning("Unable to detect alliance color.", false);
+      return angle;
+    }
+
+    if (alliance.get() == DriverStation.Alliance.Blue) {
+      return angle;
+    } else {
+      return angle.rotateBy(new Rotation2d(Math.PI));
+    }
+  }
 }

@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Config;
-import frc.robot.subsystems.DiffNeoSubsystem;
 import frc.robot.subsystems.DiffTalonSubsystem;
 
 public class ArcadeDrive extends CommandBase {
@@ -33,7 +32,7 @@ public class ArcadeDrive extends CommandBase {
         m_steering = joystickSteering;
 
         if (Config.DIFF.ISNEOS) {
-            addRequirements(DiffNeoSubsystem.getInstance());
+            //addRequirements(DiffNeoSubsystem.getInstance());
         } else {
             addRequirements(DiffTalonSubsystem.getInstance());
         }
@@ -61,7 +60,7 @@ public class ArcadeDrive extends CommandBase {
     @Override
     public void initialize() {
         if (Config.DIFF.ISNEOS) {
-            DiffNeoSubsystem.getInstance().setIdleMode(Config.DIFF.TELEOP_IDLEMODE);
+            //DiffNeoSubsystem.getInstance().setIdleMode(Config.DIFF.TELEOP_IDLEMODE);
         } else {
             DiffTalonSubsystem.getInstance().setNeutralMode(Config.DIFF.TELEOP_NEUTRALMODE);
         }
@@ -71,7 +70,7 @@ public class ArcadeDrive extends CommandBase {
     @Override
     public void execute() {
         if (Config.DIFF.ISNEOS) {
-            DiffNeoSubsystem.getInstance().arcadeDrive(m_forward.get(), m_steering.get());
+            //DiffNeoSubsystem.getInstance().arcadeDrive(m_forward.get(), m_steering.get());
         } else {
             DiffTalonSubsystem.getInstance().arcadeDrive(m_forward.get(), m_steering.get());
         }
