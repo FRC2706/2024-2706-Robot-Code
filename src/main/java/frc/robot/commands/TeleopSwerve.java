@@ -27,8 +27,8 @@ public class TeleopSwerve extends Command {
   private boolean keepConstantHeading = false;
   private boolean getLastValue = false;
 
-  private SlewRateLimiter translationLimiter = new SlewRateLimiter(4.5);
-  private SlewRateLimiter strafeLimiter = new SlewRateLimiter(4.5);
+  private SlewRateLimiter translationLimiter = new SlewRateLimiter(6);
+  private SlewRateLimiter strafeLimiter = new SlewRateLimiter(6);
   private SlewRateLimiter rotationLimiter = new SlewRateLimiter(8 * Math.PI);
 
   private double translationVal;

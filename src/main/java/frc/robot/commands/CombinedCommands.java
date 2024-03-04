@@ -103,7 +103,7 @@ public class CombinedCommands {
             PhotonPositions redPosition) {
 
         // Swerve requirement command
-        Command idleSwerve = Commands.idle(SwerveSubsystem.getInstance()).withName("IdlingSwerveSimple");
+        Command idleSwerve = new ProxyCommand(Commands.idle(SwerveSubsystem.getInstance())).withName("IdlingSwerveSimple");
 
         // Wait for vision data to be available
         Command waitForVisionData = new ProxyCommand(new SelectByAllianceCommand(
@@ -111,24 +111,27 @@ public class CombinedCommands {
             PhotonSubsystem.getInstance().getWaitForDataCommand(redPosition.id)));
             
         // Prepare the robot to score
-        Command driveToPositionAndPrepare = Commands.parallel(
+        Command driveToPositionAndPrepare = Commands.deadline(
+            Commands.parallel(
+                new IntakeControl(false), // Reverse note until not touching shooter
+                new WaitUntilCommand(() -> ShooterSubsystem.getInstance().getVelocityRPM() > shooterSpeed),
+                Commands.sequence(
+                    new SelectByAllianceCommand(
+                        PhotonSubsystem.getInstance().getAprilTagCommand(bluePosition, driverJoystick), 
+                        PhotonSubsystem.getInstance().getAprilTagCommand(redPosition, driverJoystick))
+                    // new ScheduleCommand(idleSwerve) // Maintain control of the SwerveSubsystem
+                ) 
+            ),
             new SetArm(()->armAngleDeg),
-            new IntakeControl(false), // Reverse note until not touching shooter
-            new Shooter_PID_Tuner(() -> shooterSpeed+300).until(() -> ShooterSubsystem.getInstance().getVelocityRPM() > shooterSpeed),
-            Commands.sequence(
-                new SelectByAllianceCommand(
-                    PhotonSubsystem.getInstance().getAprilTagCommand(bluePosition, driverJoystick), 
-                    PhotonSubsystem.getInstance().getAprilTagCommand(redPosition, driverJoystick)),
-                new ScheduleCommand(idleSwerve) // Maintain control of the SwerveSubsystem
-            ) 
+            new Shooter_PID_Tuner(() -> shooterSpeed+700)
         );
 
         // Score the note
         Command scoreNote = Commands.parallel(
             Commands.runOnce(() -> SwerveSubsystem.getInstance().stopMotors()),
-            new Shooter_PID_Tuner(() -> shooterSpeed), // Continue to hold shooter voltage
+            new Shooter_PID_Tuner(() -> shooterSpeed+300), // Continue to hold shooter voltage
             new SetArm(()->armAngleDeg), // Continue to hold arm in the correct position
-            new IntakeControl(true)
+            new MakeIntakeMotorSpin(9.0, 0)
         ).withTimeout(scoringTimeoutSeconds);
 
         // Rumble command
@@ -234,9 +237,9 @@ public class CombinedCommands {
         return CombinedCommands.visionScoreTeleopSimple(
             driver, 
             25, 
-            2, 
-            3500,
-            40,
+            1, 
+            2800,
+            29,
             bluePosition,
             redPosition
         );

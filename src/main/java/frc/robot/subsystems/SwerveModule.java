@@ -147,6 +147,7 @@ public class SwerveModule {
     angleMotor.setInverted(Config.Swerve.angleInvert);
     configureSpark("Angle idle mode", () -> angleMotor.setIdleMode(Config.Swerve.angleNeutralMode));
     configureSpark("Angle position conversion factor", () -> integratedAngleEncoder.setPositionConversionFactor(Config.Swerve.angleConversionFactor));
+    configureSpark("Angle velocity conversion factor", () -> integratedAngleEncoder.setVelocityConversionFactor(Config.Swerve.angleVelocityConversionFactor));
     configureSpark("Angle set P", () -> angleController.setP(Config.Swerve.angleKP));
     configureSpark("Angle set I", () -> angleController.setI(Config.Swerve.angleKI));
     configureSpark("Angle set D", () -> angleController.setD(Config.Swerve.angleKD));
@@ -255,6 +256,10 @@ public class SwerveModule {
 
   public SwerveModulePosition getPosition() {
     return new SwerveModulePosition(driveEncoder.getPosition(), getAngle());
+  }
+
+  public double getSteeringVelocity() {
+    return integratedAngleEncoder.getVelocity();  
   }
 
   public void setFeedforward(SimpleMotorFeedforward newFeedforward) {

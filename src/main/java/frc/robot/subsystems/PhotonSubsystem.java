@@ -19,9 +19,10 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.IntegerEntry;
-import edu.wpi.first.networktables.IntegerSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -162,13 +163,15 @@ public class PhotonSubsystem extends SubsystemBase {
     y = Math.toRadians(y);
     y += PhotonConfig.CAMERA_PITCH.getRadians();
 
-    if (id-3 < 0) {
+    int id_array = id - 3;
+
+    if (id_array < 0) {
       return 0;
-    }else if(id-3>= Config.PhotonConfig.APRIL_HEIGHTS.length){
+    }else if(id_array>= Config.PhotonConfig.APRIL_HEIGHTS.length){
       return 0;
     }
 
-    return (Config.PhotonConfig.APRIL_HEIGHTS[id-4]-PhotonConfig.CAMERA_HEIGHT)/Math.tan(y);
+    return (Config.PhotonConfig.APRIL_HEIGHTS[id_array]-PhotonConfig.CAMERA_HEIGHT)/Math.tan(y);
   }
 
   private PhotonTrackedTarget biggestTarget(List<PhotonTrackedTarget> targets) {
