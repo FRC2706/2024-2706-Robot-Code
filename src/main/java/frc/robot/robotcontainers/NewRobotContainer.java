@@ -118,9 +118,9 @@ public class NewRobotContainer extends RobotContainer {
     //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.AMP_BLUE, driver), 
     //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.AMP_RED, driver)));
 
-    driver.rightTrigger().whileTrue(new SelectByAllianceCommand( // Implement command group that also controls the arm, intake, shooter
-      PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.RIGHT_SPEAKER_BLUE, driver), 
-      PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.LEFT_SPEAKER_RED, driver)));
+    // driver.rightTrigger().whileTrue(new SelectByAllianceCommand( // Implement command group that also controls the arm, intake, shooter
+    //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.RIGHT_SPEAKER_BLUE, driver), 
+    //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.LEFT_SPEAKER_RED, driver)));
 
     driver.leftTrigger().whileTrue(CombinedCommands.sideSpeakerVisionShot(driver, PhotonPositions.RIGHT_SPEAKER_BLUE, PhotonPositions.LEFT_SPEAKER_RED));
 

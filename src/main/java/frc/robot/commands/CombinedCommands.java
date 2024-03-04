@@ -98,6 +98,7 @@ public class CombinedCommands {
             double preparingTimeoutSeconds, 
             double scoringTimeoutSeconds, 
             double shooterSpeed,
+            double shooterTriggerSpeed,
             double armAngleDeg, 
             PhotonPositions bluePosition, 
             PhotonPositions redPosition) {
@@ -114,7 +115,7 @@ public class CombinedCommands {
         Command driveToPositionAndPrepare = Commands.deadline(
             Commands.parallel(
                 new IntakeControl(false), // Reverse note until not touching shooter
-                new WaitUntilCommand(() -> ShooterSubsystem.getInstance().getVelocityRPM() > shooterSpeed),
+                new WaitUntilCommand(() -> ShooterSubsystem.getInstance().getVelocityRPM() > shooterTriggerSpeed),
                 Commands.sequence(
                     new SelectByAllianceCommand(
                         PhotonSubsystem.getInstance().getAprilTagCommand(bluePosition, driverJoystick), 
@@ -123,7 +124,7 @@ public class CombinedCommands {
                 ) 
             ),
             new SetArm(()->armAngleDeg),
-            new Shooter_PID_Tuner(() -> shooterSpeed+700)
+            new Shooter_PID_Tuner(() -> shooterSpeed)
         );
 
         // Score the note
@@ -219,8 +220,8 @@ public class CombinedCommands {
             driver, 
             25, 
             2, 
+            2000, 2500,
             ArmSetPoints.AMP.angleDeg,
-            5,  
             PhotonPositions.AMP_BLUE,
             PhotonPositions.AMP_RED
         );
@@ -234,12 +235,23 @@ public class CombinedCommands {
      * @param redPosition PhotonPosition for the red alliance
      */
     public static Command sideSpeakerVisionShot(CommandXboxController driver, PhotonPositions bluePosition, PhotonPositions redPosition) {
+        // BELOW VALUES WORKING AT KINGSTON BUT SHOOTER DEEMED TOO LOUD. CHANGE BACK TO THIS ONCE SOLVED MECHANICALLY.
+        // double armAngle = 29;
+        // double shooterSpeed = 4200;
+        // double shooterTriggerSpeed = 3500;
+
+
+        // BELOW VALUES SHOULD BE SAFE FOR NOISE, BUT LIKELY WILL MISS OR BE LESS CONSISTENT
+        double armAngle = 26;
+        double shooterSpeed = 3400;
+        double shooterTriggerSpeed = 3000;
+
         return CombinedCommands.visionScoreTeleopSimple(
             driver, 
             25, 
             1, 
-            2800,
-            29,
+            shooterSpeed, shooterTriggerSpeed,
+            armAngle,
             bluePosition,
             redPosition
         );

@@ -8,6 +8,7 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -323,9 +324,11 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public boolean isAtPose(double tol, double angleTol) {
+    System.out.printf("errX: %.1f, errY: %.1f, errRot: %.1f", currentX - desiredX, currentY - desiredY,currentRotation - desiredRotation );
+
     return recievedPidInstruction 
         && Math.abs(currentX - desiredX) < tol && Math.abs(currentY - desiredY) < tol
-        && Math.abs(currentRotation - desiredRotation) < angleTol;
+        && Math.abs(MathUtil.angleModulus(currentRotation - desiredRotation)) < angleTol;
   }
 
   /**
