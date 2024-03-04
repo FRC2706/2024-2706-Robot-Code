@@ -324,8 +324,6 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public boolean isAtPose(double tol, double angleTol) {
-    System.out.printf("errX: %.1f, errY: %.1f, errRot: %.1f", currentX - desiredX, currentY - desiredY,currentRotation - desiredRotation );
-
     return recievedPidInstruction 
         && Math.abs(currentX - desiredX) < tol && Math.abs(currentY - desiredY) < tol
         && Math.abs(MathUtil.angleModulus(currentRotation - desiredRotation)) < angleTol;
