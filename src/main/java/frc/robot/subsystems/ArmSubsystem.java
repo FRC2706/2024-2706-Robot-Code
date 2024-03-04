@@ -136,6 +136,7 @@ public class ArmSubsystem extends SubsystemBase {
     updatePIDSettings();
     configureSpark("Arm set CANTimeout", () -> m_arm.setCANTimeout(0));
 
+    ErrorTrackingSubsystem.getInstance().register(m_arm);
   }
 
   public void updatePIDSettings() {

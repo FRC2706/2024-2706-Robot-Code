@@ -20,7 +20,6 @@ import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
-import frc.lib.lib2706.UpdateSimpleFeedforward;
 import frc.lib.lib3512.config.SwerveModuleConstants;
 import frc.lib.lib3512.util.CANCoderUtil;
 import frc.lib.lib3512.util.CANCoderUtil.CCUsage;
@@ -103,6 +102,10 @@ public class SwerveModule {
 
     resetToAbsolute();
     burnFlash();
+
+    ErrorTrackingSubsystem.getInstance().register(angleMotor);
+    ErrorTrackingSubsystem.getInstance().register(driveMotor);
+
   }
 
   public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
