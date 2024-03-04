@@ -214,7 +214,8 @@ public class NewRobotContainer extends RobotContainer {
     //   .whileTrue(Commands.runOnce(()-> intake.setMode(shooter.isReadyToShoot() ? IntakeModes.SHOOT : IntakeModes.STOP_INTAKE)))
     //   .whileFalse(Commands.runOnce(()->intake.setMode(IntakeModes.STOP_INTAKE)));   
     
-    // operator.start().whileTrue( new SetArm(armAngleDeg));
+    // testJoystick.start().whileTrue( new SetArm(armAngleDeg));
+    // testJoystick.back().whileTrue(new Shooter_PID_Tuner(shooterTargetRPM));
   }
 
   /**

@@ -79,6 +79,8 @@ public class IntakeSubsystem extends SubsystemBase{
         frontSensorPub = intakeTable.getBooleanTopic("front sensor result").publish(PubSubOption.periodic(0.02));
         centerSensorPub = intakeTable.getBooleanTopic("center sensor result").publish(PubSubOption.periodic(0.02));
         backSensorPub = intakeTable.getBooleanTopic("back sensor result").publish(PubSubOption.periodic(0.02));
+
+        ErrorTrackingSubsystem.getInstance().register(m_intake);
     }
     public boolean isFrontSensorActive(){
         return frontSensorResult;

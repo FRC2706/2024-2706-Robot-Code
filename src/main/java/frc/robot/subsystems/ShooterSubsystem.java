@@ -82,6 +82,8 @@ public class ShooterSubsystem extends SubsystemBase {
         velocityPub = shooterTable.getDoubleTopic("Shooter Velocity RPM").publish(PubSubOption.periodic(0.02));
         shooterReadyPub = shooterTable.getBooleanTopic("Shooter is Ready to shoot").publish(PubSubOption.periodic(0.02));
         statePub = shooterTable.getStringTopic("Shooter state").publish(PubSubOption.periodic(0.02));
+
+        ErrorTrackingSubsystem.getInstance().register(m_motor);
     }
 
     public double getVelocityRPM() {
