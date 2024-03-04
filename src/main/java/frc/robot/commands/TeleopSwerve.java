@@ -22,6 +22,7 @@ public class TeleopSwerve extends Command {
   private final int rotationAxis = XboxController.Axis.kRightX.value;
 
   private static TeleopSpeeds speed = TeleopSpeeds.MAX;
+  private static boolean isFieldRelative = true;
 
   private SlewRateLimiter translationLimiter = new SlewRateLimiter(4.5);
   private SlewRateLimiter strafeLimiter = new SlewRateLimiter(4.5);
@@ -40,6 +41,9 @@ public class TeleopSwerve extends Command {
 
   public static void setSpeeds(TeleopSpeeds newSpeed) {
     speed = newSpeed;
+  }
+  public static void setFieldRelative(boolean newIsFieldRelative) {
+    isFieldRelative = newIsFieldRelative;
   }
 
   @Override
@@ -75,7 +79,7 @@ public class TeleopSwerve extends Command {
             calculateTranslationVal(),
             calculateStrafeVal(),
             calculateRotationVal()),
-        true,
+            isFieldRelative,
         true);
   }
 

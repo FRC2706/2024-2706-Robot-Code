@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.264727990015778,
-        "y": 6.16219451268419
+        "x": 2.212506002620149,
+        "y": 6.099528127809436
       },
       "isLocked": false,
       "linkedName": "4NoteCenter-FirstNotePickup"
     },
     {
       "anchor": {
-        "x": 1.3456210118527112,
-        "y": 5.5981970488114
+        "x": 1.15,
+        "y": 5.58
       },
       "prevControl": {
-        "x": 2.337838772369656,
-        "y": 5.566863856374023
+        "x": 2.1422177605169446,
+        "y": 5.548666807562623
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "SpeakerShotCenterClose"
+      "linkedName": "4NoteCenter-IntoSpeaker"
     }
   ],
   "rotationTargets": [],
@@ -39,13 +39,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0,
+    "rotation": 0.3669548513908546,
     "rotateFast": true
   },
   "reversed": false,
   "folder": "4NoteCenter",
   "previewStartingState": {
-    "rotation": -140.0,
+    "rotation": 46.2477115886367,
     "velocity": 0
   },
   "useDefaultConstraints": true
