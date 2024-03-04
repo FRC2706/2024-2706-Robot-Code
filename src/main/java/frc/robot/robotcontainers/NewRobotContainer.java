@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.lib2706.SelectByAllianceCommand;
 import frc.lib.lib2706.TunableNumber;
 import frc.lib.lib2706.XBoxControllerUtil;
@@ -19,7 +20,8 @@ import frc.robot.Config.PhotonConfig;
 import frc.robot.Config.PhotonConfig.PhotonPositions;
 import frc.robot.Config.Swerve.TeleopSpeeds;
 import frc.robot.Robot;
-import frc.robot.commands.BlingWhenNoteIn;
+import frc.robot.commands.BlingCommand;
+import frc.robot.commands.BlingCommand.BlingColour;
 import frc.robot.commands.ClimberRPM;
 import frc.robot.commands.CombinedCommands;
 import frc.robot.commands.MakeIntakeMotorSpin;
@@ -30,7 +32,6 @@ import frc.robot.commands.Shooter_PID_Tuner;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.auto.AutoRoutines;
 import frc.robot.commands.auto.AutoSelector;
-import frc.robot.subsystems.BlingSubsystem;
 import frc.robot.subsystems.IntakeStatesMachine.IntakeModes;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PhotonSubsystem;
@@ -70,7 +71,6 @@ public class NewRobotContainer extends RobotContainer {
   public NewRobotContainer() {
     /*  Setup default commands */
     s_Swerve.setDefaultCommand(new TeleopSwerve(driver));
-    BlingSubsystem.getINSTANCE().setDefaultCommand(new BlingWhenNoteIn());
     if (!Config.disableStateBasedProgramming) {
       intake.setDefaultCommand(intake.defaultIntakeCommand());
       shooter.setDefaultCommand(shooter.defaultShooterCommand(()-> intake.isNoteIn()));
@@ -90,6 +90,10 @@ public class NewRobotContainer extends RobotContainer {
    * created via the {@link CommandXboxController} or other ways.
    */
   private void configureButtonBindings() { 
+    // Set bling to purple when note is in
+    new Trigger(() -> intake.isBackSensorActive()).onTrue(new BlingCommand(BlingColour.PURPLE))
+                                                  .onFalse(new BlingCommand(BlingColour.DISABLED));
+
     /**
      * Driver Controls
      * KingstonV1: https://drive.google.com/file/d/1gDgxnz-agWGoYmTTRfViVPwR7O2H80mh

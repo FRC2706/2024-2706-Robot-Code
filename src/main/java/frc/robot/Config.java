@@ -353,7 +353,7 @@ public final class Config {
         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
   }
   public static final class BlingConstants {
-    public static int CANDLE = 15;
+    public static int CANDLE = CANID.CANDLE;
   }
 
   public static final class Intake {
