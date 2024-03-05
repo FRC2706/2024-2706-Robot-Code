@@ -283,8 +283,10 @@ public class SwerveModule {
   }
 
   public boolean isModuleSynced(){
+    // Calculate the angle error between the NEO encoder and cancoder
     double angleError = getAngle().getDegrees() - (getCanCoder().getDegrees() - angleOffset.getDegrees());
 
+    // Wrap the angle to (-180, 180], get the absolute value, then check if the error is less than the tolerance
     if (Math.abs(MathUtil.inputModulus(angleError, -180, 180)) < Config.Swerve.synchTolerance) {
       return true;
     }
