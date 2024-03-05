@@ -11,6 +11,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -282,7 +283,9 @@ public class SwerveModule {
   }
 
   public boolean isModuleSynced(){
-    if (Math.abs(getAngle().getDegrees() - (getCanCoder().getDegrees() - angleOffset.getDegrees())) < Config.Swerve.synchTolerance) {
+    double angleError = getAngle().getDegrees() - (getCanCoder().getDegrees() - angleOffset.getDegrees());
+
+    if (Math.abs(MathUtil.inputModulus(angleError, -180, 180)) < Config.Swerve.synchTolerance) {
       return true;
     }
     else{
