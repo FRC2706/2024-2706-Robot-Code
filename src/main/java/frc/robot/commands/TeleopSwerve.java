@@ -4,6 +4,7 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,14 +24,19 @@ public class TeleopSwerve extends Command {
 
   private static TeleopSpeeds speed = TeleopSpeeds.MAX;
   private static boolean isFieldRelative = true;
+  private boolean keepConstantHeading = false;
+  private boolean getLastValue = false;
 
-  private SlewRateLimiter translationLimiter = new SlewRateLimiter(4.5);
-  private SlewRateLimiter strafeLimiter = new SlewRateLimiter(4.5);
+  private SlewRateLimiter translationLimiter = new SlewRateLimiter(6);
+  private SlewRateLimiter strafeLimiter = new SlewRateLimiter(6);
   private SlewRateLimiter rotationLimiter = new SlewRateLimiter(8 * Math.PI);
 
   private double translationVal;
   private double strafeVal;
   private double rotationVal;
+
+  private Rotation2d prevHeading = new Rotation2d(0);
+  // private boolean controllingRotation = false;
 
   public TeleopSwerve(
       CommandXboxController driver) {
@@ -71,6 +77,32 @@ public class TeleopSwerve extends Command {
     return rotationLimiter.calculate(rotationVal);
   }
 
+  // protected double calculateRotationVal() {
+  //   rotationVal = MathUtil.applyDeadband(-driver.getRawAxis(rotationAxis), Config.Swerve.stickDeadband)
+  //     * speed.angularSpeed;
+
+  
+  //   if(rotationVal != 0.0){
+  //     getLastValue = false;
+  //     return rotationVal = rotationLimiter.calculate(rotationVal);
+  //     // return rotationLimiter.calculate(rotationVal);
+  //   }else {
+  //     rotationVal = rotationLimiter.calculate(rotationVal);
+
+  //     if(!getLastValue){
+  //       prevHeading = s_Swerve.getHeading();
+  //       getLastValue = true;
+  //     }
+  //     if(getLastValue){
+  //       return SwerveSubsystem.getInstance().calculateRotation(prevHeading);
+  //     }else{
+  //       return (rotationVal);
+  //     }
+
+  //   }
+  //     //return(SwerveSubsystem.getInstance().calculateRotation(prevHeading));
+  // }
+
   @Override
   public void execute() {
 
@@ -81,6 +113,9 @@ public class TeleopSwerve extends Command {
             calculateRotationVal()),
             isFieldRelative,
         true);
-  }
 
+    // if (rotationVal != 0.0 || Math.toDegrees(s_Swerve.getRobotRelativeSpeeds().omegaRadiansPerSecond) < 10) {
+    //   prevHeading = s_Swerve.getHeading();
+    // }
+  }
 }
