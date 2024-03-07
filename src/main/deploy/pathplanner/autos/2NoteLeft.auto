@@ -28,7 +28,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 1.0
+                        "waitTime": 0.4
                       }
                     },
                     {
@@ -126,9 +126,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "sequential",
           "data": {
-            "pathName": "P3-LeftSpeakerToLeftField"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "P3-LeftSpeakerToLeftField"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ArmPickup"
           }
         }
       ]
