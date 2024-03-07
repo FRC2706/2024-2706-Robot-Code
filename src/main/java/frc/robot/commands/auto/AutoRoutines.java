@@ -5,6 +5,8 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -20,9 +22,9 @@ import frc.robot.commands.IntakeControl;
 import frc.robot.commands.MakeIntakeMotorSpin;
 import frc.robot.commands.PhotonMoveToTarget;
 import frc.robot.commands.SetArm;
-import frc.robot.commands.Shooter_Voltage;
 import frc.robot.subsystems.IntakeStatesMachine.IntakeModes;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.IntakeStatesMachine.IntakeModes;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.ShooterStateMachine.ShooterModes;
@@ -33,39 +35,29 @@ public class AutoRoutines extends SubsystemBase {
     
     // PathPlannerPath speakerPath = PathPlannerPath.fromPathFile("Speaker Path");
    
-    PathPlannerAuto twoNoteAuto,
-                    threeNoteAuto,
-                    fourNoteAuto,
-                    twoNoteLeftAuto;
+    PathPlannerAuto fourNoteAuto,
+                    // twoNoteAuto,
+                    // threeNoteAuto,
+                    twoNoteLeftAuto,
+                    twoNoteCenter,
+                    threeNoteCenterSourceSideNote,
+                    threeNoteCenterAmpSideNote;
     
 
     public AutoRoutines() {
         registerCommandsToPathplanner();
 
-        twoNoteAuto = new PathPlannerAuto("twoNoteSpeaker");
-        threeNoteAuto = new PathPlannerAuto("threeNoteSpeaker");
+        // twoNoteAuto = new PathPlannerAuto("twoNoteSpeaker");
+        // threeNoteAuto = new PathPlannerAuto("threeNoteSpeaker");
         fourNoteAuto = new PathPlannerAuto("4NoteCenterSimple");
         twoNoteLeftAuto = new PathPlannerAuto("2NoteLeft");
+
+        twoNoteCenter = new PathPlannerAuto("2NoteCenter");
+        threeNoteCenterSourceSideNote = new PathPlannerAuto("3NoteCenterSourceSideNote");
+        threeNoteCenterAmpSideNote = new PathPlannerAuto("3NoteCenterAmpSideNote");
     }
 
     public void registerCommandsToPathplanner() {
-        // Intake and Arm Commands
-        NamedCommands.registerCommand("IntakeAndArm", new ParallelCommandGroup(
-            new WaitCommand(1), // Move arm to intake setpoint
-            new WaitCommand(1) // Intake game piece
-        ));
-
-        NamedCommands.registerCommand("OutakeRing", new ParallelCommandGroup(
-            new WaitCommand(1), // Move arm to speaker 
-            new WaitCommand(1) // Outake game piece
-        ));
-
-        NamedCommands.registerCommand("StartingZoneAmp", new ParallelCommandGroup(
-            new WaitCommand(1), // Exit starting zone
-            new WaitCommand(1), // Intake note
-            new WaitCommand(1) // Score in amp
-        ));
-
         NamedCommands.registerCommand("MakeIntakeMotorSpin", new SequentialCommandGroup(
             new MakeIntakeMotorSpin(3.0,2), // Move arm to intake setpoint
             new WaitCommand(1)
@@ -133,19 +125,21 @@ public class AutoRoutines extends SubsystemBase {
             default: 
                 return null;
             case 1:
-                return null;
-                // return Commands.sequence(
-                //     SwerveSubsystem.getInstance().setOdometryCommand(speakerPath.getPreviewStartingHolonomicPose()),
-                //     AutoBuilder.followPath(speakerPath)
-                // );
-            case 2:
-                return twoNoteAuto;
-            case 3:
-                return threeNoteAuto;
-            case 4:
-                return fourNoteAuto;
-            case 5:
                 return twoNoteLeftAuto;
+            case 2:
+                return fourNoteAuto;
+            case 3:
+                return threeNoteCenterAmpSideNote;
+            case 4:
+                return threeNoteCenterSourceSideNote;
+            case 5:
+                return twoNoteCenter;
+            case 6:
+            case 7:
+                return Commands.sequence(
+                    SwerveSubsystem.getInstance().setOdometryCommand(new Pose2d(0, 0, Rotation2d.fromDegrees(0))),
+                    SwerveSubsystem.getInstance().getDriveToPoseCommand(new Pose2d(2.5, 0, Rotation2d.fromDegrees(0)))
+                );
         }
     }
 }
