@@ -148,18 +148,16 @@ public class NewRobotContainer extends RobotContainer {
     operator.y().onTrue(new SetArm(()->ArmSetPoints.AMP.angleDeg)); // Amp
     operator.b().onTrue(new SetArm(()->ArmSetPoints.IDLE.angleDeg)); // Idle
     operator.a().onTrue(new SetArm(()->ArmSetPoints.INTAKE.angleDeg)); // Pickup
-    //XBoxControllerUtil.leftPOV(operator).debounce(0.1).onTrue(new SetArm(()->ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg)); // Kickbot Shot
     operator.x().onTrue(new SetArm(()->ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg));
     // Climber
     operator.leftTrigger(0.25).whileTrue(new ClimberRPM(()->  operator.getLeftTriggerAxis()));
 
-    // Eject the note from the front with leftPOV
+    // Eject the note from the front with start
     operator.start()
       .whileTrue(Commands.run(() -> intake.setVoltage(-12), intake))
       .onFalse(Commands.runOnce(() -> intake.stop()));
   
     
-    operator.back().whileTrue(new Shooter_PID_Tuner(shooterTargetRPM));
     // Simple shooter and intake
     if (Config.disableStateBasedProgramming) {
       intake.setStateMachineOff();
@@ -172,7 +170,7 @@ public class NewRobotContainer extends RobotContainer {
           new MakeIntakeMotorSpin(8.0,0));
 
       //NOTE: right Trigger has been assigned to climber
-      operator.rightTrigger(0.3).whileTrue(CombinedCommands.simpleShootNoteAmp());
+      // operator.rightTrigger(0.3).whileTrue(CombinedCommands.simpleShootNoteAmp());
       // Shoot note with leftBumper
       operator.rightBumper().whileTrue(CombinedCommands.simpleShootNoteSpeaker(1));
 
@@ -215,7 +213,7 @@ public class NewRobotContainer extends RobotContainer {
     //   .whileFalse(Commands.runOnce(()->intake.setMode(IntakeModes.STOP_INTAKE)));   
     
     // testJoystick.start().whileTrue( new SetArm(armAngleDeg));
-    // testJoystick.back().whileTrue(new Shooter_PID_Tuner(shooterTargetRPM));
+    // testJoystick.back().whileTrue(new Shooter_PID_Tuner(shooterTargetRPM)); 
   }
 
   /**
