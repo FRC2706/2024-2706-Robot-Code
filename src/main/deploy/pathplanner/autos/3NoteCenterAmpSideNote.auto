@@ -177,9 +177,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "sequential",
           "data": {
-            "pathName": "P1-4NoteCenter"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "P1-4NoteCenter"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ArmPickup"
+                }
+              }
+            ]
           }
         }
       ]
