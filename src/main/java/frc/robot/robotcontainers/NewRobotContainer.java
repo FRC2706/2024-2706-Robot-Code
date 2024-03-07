@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.lib.lib2706.SelectByAllianceCommand;
 import frc.lib.lib2706.TunableNumber;
 import frc.lib.lib2706.XBoxControllerUtil;
 import frc.robot.Config;
@@ -32,9 +31,9 @@ import frc.robot.commands.Shooter_PID_Tuner;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.auto.AutoRoutines;
 import frc.robot.commands.auto.AutoSelector;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeStatesMachine.IntakeModes;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.ShooterStateMachine.ShooterModes;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -151,7 +150,9 @@ public class NewRobotContainer extends RobotContainer {
     //XBoxControllerUtil.leftPOV(operator).debounce(0.1).onTrue(new SetArm(()->ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg)); // Kickbot Shot
     operator.x().onTrue(new SetArm(()->ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg));
     // Climber
-    operator.leftTrigger(0.25).whileTrue(new ClimberRPM(()->  operator.getLeftTriggerAxis()));
+    operator.leftTrigger(0.25)
+            .and(new Trigger(() -> ArmSubsystem.getInstance().getPosition() < Math.toRadians(55)))
+            .whileTrue(new ClimberRPM(()->  operator.getLeftTriggerAxis()));
 
     // Eject the note from the front with leftPOV
     operator.start()
