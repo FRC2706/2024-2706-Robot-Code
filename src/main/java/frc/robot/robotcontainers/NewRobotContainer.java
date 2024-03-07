@@ -170,7 +170,7 @@ public class NewRobotContainer extends RobotContainer {
           new MakeIntakeMotorSpin(8.0,0));
 
       //NOTE: right Trigger has been assigned to climber
-      // operator.rightTrigger(0.3).whileTrue(CombinedCommands.simpleShootNoteAmp());
+      operator.rightTrigger(0.3).whileTrue(CombinedCommands.simpleShootNoteAmp());
       // Shoot note with leftBumper
       operator.rightBumper().whileTrue(CombinedCommands.simpleShootNoteSpeaker(1));
 
