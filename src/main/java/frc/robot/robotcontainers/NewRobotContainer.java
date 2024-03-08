@@ -6,6 +6,7 @@
 package frc.robot.robotcontainers;
 
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -150,7 +151,7 @@ public class NewRobotContainer extends RobotContainer {
     operator.a().onTrue(new SetArm(()->ArmSetPoints.INTAKE.angleDeg)); // Pickup
     operator.x().onTrue(new SetArm(()->ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg));
     // Climber
-    operator.leftTrigger(0.25).whileTrue(new ClimberRPM(()->  operator.getLeftTriggerAxis()));
+    operator.leftTrigger(0.35).whileTrue(new ClimberRPM(()-> MathUtil.applyDeadband(operator.getLeftTriggerAxis(), 0.35) * 0.5));
 
     // Eject the note from the front with start
     operator.start()
