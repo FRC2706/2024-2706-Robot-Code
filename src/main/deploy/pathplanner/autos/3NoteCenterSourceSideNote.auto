@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7189571631051666,
-      "y": 6.673969989161352
+      "x": 1.3456210118527112,
+      "y": 5.5981970488114
     },
-    "rotation": 61.14433878028353
+    "rotation": 0.0
   },
   "command": {
     "type": "sequential",
@@ -28,7 +28,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 0.4
+                        "waitTime": 0.25
                       }
                     },
                     {
@@ -69,7 +69,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "P1-LeftSpeakerToLeftNote"
+                  "pathName": "P1-4NoteCenter"
                 }
               },
               {
@@ -88,19 +88,13 @@
           }
         },
         {
-          "type": "deadline",
+          "type": "sequential",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "P2-LeftNoteToLeftSpeaker"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ArmKitbotShot"
+                  "pathName": "P2-4NoteCenter"
                 }
               }
             ]
@@ -126,22 +120,79 @@
           }
         },
         {
-          "type": "sequential",
+          "type": "deadline",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "P3-LeftSpeakerToLeftField"
+                  "pathName": "P5-4NoteCenter"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "simpleIntake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ArmPickup"
                 }
               }
             ]
           }
         },
         {
-          "type": "named",
+          "type": "sequential",
           "data": {
-            "name": "ArmPickup"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "P6-4NoteCenter"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "simpleShooter"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ArmKitbotShot"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "P1-4NoteCenter"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ArmPickup"
+                }
+              }
+            ]
           }
         }
       ]

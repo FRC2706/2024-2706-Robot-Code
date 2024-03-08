@@ -28,13 +28,7 @@
       "linkedName": "4NoteCenter-IntoSpeaker"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.1,
-      "rotationDegrees": -40.0,
-      "rotateFast": true
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
