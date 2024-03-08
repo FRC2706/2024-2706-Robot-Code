@@ -34,8 +34,8 @@ public class CANCoderUtil {
       cancoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 100);
       cancoder.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, 10);
     } else if (usage == CCUsage.kMinimal) {
-      cancoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 100);
-      cancoder.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, 100);
+      cancoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 50);
+      cancoder.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, 50);
     }
   }
 }

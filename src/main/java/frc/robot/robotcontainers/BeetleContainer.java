@@ -10,6 +10,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Robot;
+import frc.robot.commands.ArcadeDrive;
+import frc.robot.commands.BlingCommand;
+import frc.robot.commands.BlingCommand.BlingColour;
+import frc.robot.commands.ClimberRPM;
+import frc.robot.subsystems.DiffTalonSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -22,10 +27,10 @@ public class BeetleContainer extends RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public BeetleContainer() {
     // Configure the button bindings
-    configureButtonBindings();
+        configureButtonBindings();
   }
 
-  /**
+  /**    
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
@@ -33,8 +38,17 @@ public class BeetleContainer extends RobotContainer {
    */
   private void configureButtonBindings() {
     CommandXboxController driver = new CommandXboxController(0);
-    CommandXboxController operator = new CommandXboxController(1);
+    CommandXboxController operator = new CommandXboxController(1); 
+
+    driver.a().onTrue(new BlingCommand(BlingColour.HONEYDEW));
+
+    DiffTalonSubsystem.getInstance().setDefaultCommand(
+        new ArcadeDrive(driver, XboxController.Axis.kLeftY.value, XboxController.Axis.kRightX.value));
+  
+    // ()-> is double supplier, this makes the code repeat and continue updating every time so the speed is not a single value
+    driver.rightTrigger().whileTrue(new ClimberRPM(()->  driver.getRightTriggerAxis()));
   }
+
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -45,4 +59,5 @@ public class BeetleContainer extends RobotContainer {
   public Command getAutonomousCommand() {
     return new InstantCommand(); 
   }
+
 }

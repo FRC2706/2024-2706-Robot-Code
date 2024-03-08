@@ -1,0 +1,52 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 0.6667351757095377,
+        "y": 4.365758146274563
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.2725102294988313,
+        "y": 4.303091761399808
+      },
+      "isLocked": false,
+      "linkedName": "SpeakerShotRightClose"
+    },
+    {
+      "anchor": {
+        "x": 2.3796163622861606,
+        "y": 4.12553700425467
+      },
+      "prevControl": {
+        "x": 1.8872124857800565,
+        "y": 4.212361093088135
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "2NoteRight-RightPickup"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 2.7,
+    "maxAcceleration": 3.3,
+    "maxAngularVelocity": 320.0,
+    "maxAngularAcceleration": 400.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "2NoteRight",
+  "previewStartingState": {
+    "rotation": -59.534455080540134,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

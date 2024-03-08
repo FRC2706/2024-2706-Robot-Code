@@ -13,6 +13,8 @@ import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
@@ -23,6 +25,7 @@ import frc.lib.lib2706.ProfiledPIDFFController;
 import frc.lib.lib2706.SubsystemChecker;
 import frc.lib.lib2706.SubsystemChecker.SubsystemType;
 import frc.robot.Config;
+import frc.robot.Config.ArmConfig;
 
 public class ArmSubsystem extends SubsystemBase {
   private static ArmSubsystem instance = null; // static object that contains all movement controls
@@ -50,13 +53,16 @@ public class ArmSubsystem extends SubsystemBase {
   // for arm ff
   private DoubleEntry m_armMomentToVoltage;
 
-  // spark absolute encoder
-  private SparkAbsoluteEncoder m_absEncoder;
-  // embedded relative encoder
-  // private RelativeEncoder m_Encoder;
-  private SparkPIDController m_pidControllerArm;
+  //spark absolute encoder
+  private SparkAbsoluteEncoder m_absEncoder;  
+  //embedded relative encoder
+  private SparkPIDController m_pidControllerArm;    
 
-  ProfiledPIDFFController m_profiledFFController = new ProfiledPIDFFController();
+  private final TrapezoidProfile.Constraints m_constraints = 
+    new TrapezoidProfile.Constraints(Config.ArmConfig.MAX_VEL, Config.ArmConfig.MAX_ACCEL);
+  private final ProfiledPIDController m_ProfiledPIDController = 
+    new ProfiledPIDController(1.6,0.002,40, m_constraints, 0.02);
+
 
   public static ArmSubsystem getInstance() {
     if (instance == null) {
@@ -67,7 +73,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   private ArmSubsystem() {
-    m_arm = new CANSparkMax(Config.CANID.ARM_SPARK_CAN_ID, motorType); // creates SparkMax motor controller
+    m_arm = new CANSparkMax(Config.ArmConfig.ARM_SPARK_CAN_ID, motorType); // creates SparkMax motor controller
     configureSpark("Arm restore factory defaults", () -> (m_arm.restoreFactoryDefaults()));
     configureSpark("arm set CANTimeout", () -> m_arm.setCANTimeout(Config.CANTIMEOUT_MS));
     configureSpark("Arm set current limits", () -> m_arm.setSmartCurrentLimit(Config.ArmConfig.CURRENT_LIMIT));
@@ -76,9 +82,9 @@ public class ArmSubsystem extends SubsystemBase {
                                                                                             // no motion
 
     configureSpark("Arm set soft limits forward",
-        () -> (m_arm.setSoftLimit(SoftLimitDirection.kForward, Config.ArmConfig.arm_forward_limit)));
+        () -> (m_arm.setSoftLimit(SoftLimitDirection.kForward, (float) (Config.ArmConfig.arm_forward_limit))));
     configureSpark("Arm sets soft limits reverse",
-        () -> (m_arm.setSoftLimit(SoftLimitDirection.kReverse, Config.ArmConfig.arm_reverse_limit)));
+        () -> (m_arm.setSoftLimit(SoftLimitDirection.kReverse, (float) (Config.ArmConfig.arm_reverse_limit))));
     configureSpark("Arm enables soft limits forward",
         () -> (m_arm.enableSoftLimit(SoftLimitDirection.kForward, Config.ArmConfig.SOFT_LIMIT_ENABLE)));
     configureSpark("Arm enable soft limit reverse",
@@ -123,11 +129,14 @@ public class ArmSubsystem extends SubsystemBase {
     NetworkTable ArmDataTable = NetworkTableInstance.getDefault().getTable(m_dataTable);
 
     m_armPosPub = ArmDataTable.getDoubleTopic("MeasuredAngleDeg").publish(PubSubOption.periodic(0.02));
+    m_armVelPub = ArmDataTable.getDoubleTopic("MeasuredVelocity").publish(PubSubOption.periodic(0.02));
+    m_armFFTestingVolts= ArmDataTable.getDoubleTopic("FFTestingVolts").publish(PubSubOption.periodic(0.02));
     m_targetAngle = ArmDataTable.getDoubleTopic("TargetAngleDeg").publish(PubSubOption.periodic(0.02));
 
     updatePIDSettings();
     configureSpark("Arm set CANTimeout", () -> m_arm.setCANTimeout(0));
 
+    ErrorTrackingSubsystem.getInstance().register(m_arm);
   }
 
   public void updatePIDSettings() {
@@ -142,39 +151,60 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    m_armPosPub.accept(Math.toDegrees(m_absEncoder.getPosition()));
+    m_armPosPub.accept(Math.toDegrees(getPosition()));
     m_armVelPub.accept(Math.toDegrees(m_absEncoder.getVelocity()));
   }
 
-  // input angle_bottom in radians(
+    // input angle_bottom in radians(
   public void setJointAngle(double angle) {
     double clampedAngle = MathUtil.clamp(angle, Math.toRadians(Config.ArmConfig.MIN_ARM_ANGLE_DEG),
         Math.toRadians(Config.ArmConfig.MAX_ARM_ANGLE_DEG));
 
-    double targetPos = m_profiledFFController.getNextProfiledPIDPos(getPosition(), clampedAngle);
-    m_pidControllerArm.setReference((targetPos), ControlType.kPosition, 0, calculateFF(clampedAngle));
-    m_targetAngle.accept(Math.toDegrees(targetPos));
+    m_ProfiledPIDController.calculate(getPosition(), clampedAngle);
+    double targetPos = m_ProfiledPIDController.getSetpoint().position;
+
+    //m_pidControllerArm.setReference((targetPos), ControlType.kPosition, 0, calculateFF(clampedAngle));
+    m_pidControllerArm.setReference(targetPos + Math.toRadians(ArmConfig.shiftEncoderRange), ControlType.kPosition, 0, 0);
+
+     m_targetAngle.accept(Math.toDegrees(targetPos));
   }
 
-  // return radius
-  public double getPosition() {
-    return m_absEncoder.getPosition();
+  public void resetProfiledPIDController() {
+     m_ProfiledPIDController.reset(getPosition(), m_absEncoder.getVelocity());
   }
 
-  public void stopMotors() {
-    m_arm.stopMotor();
-  }
 
-  public void burnFlash() {
-    configureSpark("Arm burn flash", () -> (m_arm.burnFlash()));
-  }
+  
+    //return radius
+    public double getPosition() {
+      return m_absEncoder.getPosition() - Math.toRadians(ArmConfig.shiftEncoderRange);
+    }
+  
+    public void stopMotors() {
+      m_arm.stopMotor();
+    }
+    public void burnFlash() {
+      configureSpark("arm burn flash", () -> (m_arm.burnFlash()));
+    }
+    private double calculateFF(double encoder1Rad) {
+      //double ArmMoment = Config.ArmConfig.ARM_FORCE * (Config.ArmConfig.LENGTH_ARM_TO_COG*Math.cos(encoder1Rad));
+      //return (ArmMoment) * m_armMomentToVoltage.get();
 
-  private double calculateFF(double encoder1Rad) {
-    double ArmMoment = Config.ArmConfig.ARM_FORCE * (Config.ArmConfig.LENGTH_ARM_TO_COG * Math.cos(encoder1Rad));
-    return (ArmMoment) * m_armMomentToVoltage.get();
-  }
+      double toTunedConst = m_armMomentToVoltage.get();
+      return toTunedConst*Math.cos(encoder1Rad);
+    }
 
-  public void isAtSetpoint() {
+    public void isAtSetpoint() {
+    }
 
-  }
+    public void setArmIdleMode(IdleMode mode) {
+      m_arm.setIdleMode(mode);
+    }
+
+    public void testFeedForward(double additionalVoltage) {
+      double voltage = additionalVoltage + calculateFF(getPosition());
+      m_pidControllerArm.setReference(voltage, ControlType.kVoltage);
+      m_armFFTestingVolts.accept(voltage);
+    }
+
 }
