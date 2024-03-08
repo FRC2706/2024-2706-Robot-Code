@@ -7,8 +7,10 @@ import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -136,9 +138,16 @@ public class AutoRoutines extends SubsystemBase {
                 return twoNoteCenter;
             case 6:
             case 7:
+                var alliance = DriverStation.getAlliance();
+
+                // Default to blue alliance
+                if (alliance.isEmpty()) {
+                DriverStation.reportWarning("Unable to detect alliance color.", false);
+                    return new InstantCommand();
+                }
                 return Commands.sequence(
-                    SwerveSubsystem.getInstance().setOdometryCommand(new Pose2d(0, 0, Rotation2d.fromDegrees(0))),
-                    SwerveSubsystem.getInstance().getDriveToPoseCommand(new Pose2d(2.5, 0, Rotation2d.fromDegrees(0)))
+                    SwerveSubsystem.getInstance().setOdometryCommand(new Pose2d(0, 0, SwerveSubsystem.rotateForAlliance(Rotation2d.fromDegrees(0)))),
+                    SwerveSubsystem.getInstance().getDriveToPoseCommand(new Pose2d((alliance.get() == DriverStation.Alliance.Blue)? 2.5 : -2.5, 0, SwerveSubsystem.rotateForAlliance(Rotation2d.fromDegrees(0))))
                 );
         }
     }
