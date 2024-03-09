@@ -36,9 +36,6 @@ public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer;
   public static CTREConfigs ctreConfigs = new CTREConfigs();
 
-  private int moduleSynchronizationCounter = 0;
-  private int tempSynchCounter = 0;
-
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -109,18 +106,7 @@ public class Robot extends TimedRobot {
   public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {
-    if (!SwerveSubsystem.getInstance().isChassisMoving(0.01) && !SwerveSubsystem.getInstance().areModulesRotating(10)) {
-      if (++moduleSynchronizationCounter > 6 && SwerveSubsystem.getInstance().isSwerveNotSynched()) {
-        SwerveSubsystem.getInstance().synchSwerve();
-        System.out.println("Resynced" + ++tempSynchCounter);
-        moduleSynchronizationCounter = 0;
-      }
-    }
-    else {
-      moduleSynchronizationCounter = 0;
-    }
-  }
+  public void disabledPeriodic() {}
 
   /** This autonomous runs the autonomous command selected by your {@link PoseidonContainer} class. */
   @Override
