@@ -23,6 +23,7 @@ import frc.robot.robotcontainers.NewRobotContainer;
 import frc.robot.robotcontainers.PoseidonContainer;
 import frc.robot.robotcontainers.RobotContainer;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -34,6 +35,9 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private RobotContainer m_robotContainer;
   public static CTREConfigs ctreConfigs = new CTREConfigs();
+
+  private int moduleSynchronizationCounter = 0;
+  private int tempSynchCounter = 0;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -105,7 +109,18 @@ public class Robot extends TimedRobot {
   public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    if (!SwerveSubsystem.getInstance().isChassisMoving(0.01) && !SwerveSubsystem.getInstance().areModulesRotating(10)) {
+      if (++moduleSynchronizationCounter > 6 && SwerveSubsystem.getInstance().isSwerveNotSynched()) {
+        SwerveSubsystem.getInstance().synchSwerve();
+        System.out.println("Resynced" + ++tempSynchCounter);
+        moduleSynchronizationCounter = 0;
+      }
+    }
+    else {
+      moduleSynchronizationCounter = 0;
+    }
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link PoseidonContainer} class. */
   @Override
