@@ -151,7 +151,7 @@ public class NewRobotContainer extends RobotContainer {
     operator.a().onTrue(new SetArm(()->ArmSetPoints.INTAKE.angleDeg)); // Pickup
     operator.x().onTrue(new SetArm(()->ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg));
     // Climber
-    operator.leftTrigger(0.35).whileTrue(new ClimberRPM(()-> MathUtil.applyDeadband(operator.getLeftTriggerAxis(), 0.35) * 0.5));
+    operator.leftTrigger(0.35).and(operator.back()).whileTrue(new ClimberRPM(()-> MathUtil.applyDeadband(operator.getLeftTriggerAxis(), 0.35) * 0.5));
 
     // Eject the note from the front with start
     operator.start()
@@ -168,7 +168,7 @@ public class NewRobotContainer extends RobotContainer {
     
       //operator.leftTrigger(0.3).whileTrue(
       operator.leftBumper().whileTrue(
-          new MakeIntakeMotorSpin(8.0,0));
+          new MakeIntakeMotorSpin(9.0,0));
 
       //NOTE: right Trigger has been assigned to climber
       operator.rightTrigger(0.3).whileTrue(CombinedCommands.simpleShootNoteAmp());
