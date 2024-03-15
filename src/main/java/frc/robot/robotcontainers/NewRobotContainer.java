@@ -8,6 +8,7 @@ package frc.robot.robotcontainers;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -28,6 +29,7 @@ import frc.robot.commands.CombinedCommands;
 import frc.robot.commands.MakeIntakeMotorSpin;
 import frc.robot.commands.RotateAngleToVisionSupplier;
 import frc.robot.commands.RotateToAngle;
+import frc.robot.commands.RumbleJoystick;
 import frc.robot.commands.SetArm;
 import frc.robot.commands.Shooter_PID_Tuner;
 import frc.robot.commands.TeleopSwerve;
@@ -94,6 +96,11 @@ public class NewRobotContainer extends RobotContainer {
     // Set bling to purple when note is in
     new Trigger(() -> intake.isBackSensorActive()).onTrue(new BlingCommand(BlingColour.PURPLE))
                                                   .onFalse(new BlingCommand(BlingColour.DISABLED));
+
+    new Trigger(() -> intake.isBackSensorLongActive()).onTrue(Commands.parallel(
+            new RumbleJoystick(driver, RumbleType.kBothRumble, 0.5, 0.4, false),
+            new RumbleJoystick(operator, RumbleType.kBothRumble, 0.5, 0.4, false))
+    );          
 
     /**
      * Driver Controls

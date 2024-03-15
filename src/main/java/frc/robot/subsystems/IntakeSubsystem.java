@@ -40,15 +40,18 @@ public class IntakeSubsystem extends SubsystemBase{
     private Debouncer frontSensorDebouncer;
     private Debouncer centerSensorDebouncer;
     private Debouncer backSensorDebouncer;
+    private Debouncer backSensorLongDebouncer;
 
     private BooleanPublisher frontSensorPub;
     private BooleanPublisher centerSensorPub;
     private BooleanPublisher backSensorPub;
+    private BooleanPublisher backSensorLongPub;
     private StringPublisher statesPub;
 
     private boolean frontSensorResult;
     private boolean centerSensorResult;
     private boolean backSensorResult;
+    private boolean backSensorLongResult;
 
     private static IntakeSubsystem instance;
     public static IntakeSubsystem getInstance() {
@@ -73,12 +76,14 @@ public class IntakeSubsystem extends SubsystemBase{
         frontSensorDebouncer = new Debouncer(0.1, Debouncer.DebounceType.kBoth);
         centerSensorDebouncer = new Debouncer(0.1, Debouncer.DebounceType.kBoth);
         backSensorDebouncer = new Debouncer(0.1, Debouncer.DebounceType.kBoth);
+        backSensorLongDebouncer = new Debouncer(0.3, Debouncer.DebounceType.kBoth);
 
         NetworkTable intakeTable = NetworkTableInstance.getDefault().getTable("Intake");
         statesPub = intakeTable.getStringTopic("Intake's Current State").publish(PubSubOption.periodic(0.02));
         frontSensorPub = intakeTable.getBooleanTopic("front sensor result").publish(PubSubOption.periodic(0.02));
         centerSensorPub = intakeTable.getBooleanTopic("center sensor result").publish(PubSubOption.periodic(0.02));
         backSensorPub = intakeTable.getBooleanTopic("back sensor result").publish(PubSubOption.periodic(0.02));
+        backSensorLongPub = intakeTable.getBooleanTopic("back sensor result").publish(PubSubOption.periodic(0.02));
 
         ErrorTrackingSubsystem.getInstance().register(m_intake);
     }
@@ -92,6 +97,10 @@ public class IntakeSubsystem extends SubsystemBase{
     
     public boolean isBackSensorActive(){
         return backSensorResult;
+    }
+
+    public boolean isBackSensorLongActive(){
+        return backSensorLongResult;
     }
 
     public void setVoltage(double voltage){
@@ -190,6 +199,7 @@ public class IntakeSubsystem extends SubsystemBase{
         frontSensorResult = frontSensorDebouncer.calculate(!frontSensor.get());
         centerSensorResult = centerSensorDebouncer.calculate(!centerSensor.get());
         backSensorResult = backSensorDebouncer.calculate(!backSensor.get());
+        backSensorLongResult = backSensorLongDebouncer.calculate(!backSensor.get());
 
         if(stateFulControl){
             intakeStates.updateSensors(
@@ -202,6 +212,7 @@ public class IntakeSubsystem extends SubsystemBase{
         frontSensorPub.accept(frontSensorResult);
         centerSensorPub.accept(centerSensorResult);
         backSensorPub.accept(backSensorResult);
+        backSensorLongPub.accept(backSensorLongResult);
         statesPub.accept(stateFulControl?getCurrentState().toString(): "No State Machine");
     }
 }
