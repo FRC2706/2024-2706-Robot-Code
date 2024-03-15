@@ -34,20 +34,20 @@ public class CombinedCommands {
      * backing up note, waiting a bit, then feeding the note.
      */
     public static Command simpleShootNoteSpeaker(double intakeTimeout) {
-        return(simpleShootNoteSpeaker(intakeTimeout, () -> 3000));
+        return(simpleShootNoteSpeaker(intakeTimeout, () -> 3000, 400));
     }
 
     /**
      * Spin up the shooter while doing the following,
      * backing up note, waiting a bit, then feeding the note.
      */
-    public static Command simpleShootNoteSpeaker(double intakeTimeout, DoubleSupplier RPM) {
+    public static Command simpleShootNoteSpeaker(double intakeTimeout, DoubleSupplier RPM, double threshold) {
         return Commands.deadline(
             Commands.sequence(
                 new IntakeControl(false).withTimeout(0.15), 
                 new WaitUntilCommand(() -> ShooterSubsystem.getInstance().getVelocityRPM() > RPM.getAsDouble()),
                 new IntakeControl(true).withTimeout(intakeTimeout)),
-            new Shooter_PID_Tuner(()->(RPM.getAsDouble() + 400))
+            new Shooter_PID_Tuner(()->(RPM.getAsDouble() + threshold))
         );
     }
 

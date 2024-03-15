@@ -181,7 +181,7 @@ public class NewRobotContainer extends RobotContainer {
       //NOTE: right Trigger has been assigned to climber
       operator.rightTrigger(0.3).whileTrue(CombinedCommands.simpleShootNoteAmp());
       // Shoot note with leftBumper
-      operator.rightBumper().whileTrue(CombinedCommands.simpleShootNoteSpeaker(1, () -> 3000));
+      operator.rightBumper().whileTrue(CombinedCommands.simpleShootNoteSpeaker(1));
 
     // State based shooter and intake
     } else {
@@ -211,7 +211,7 @@ public class NewRobotContainer extends RobotContainer {
      */
     // Let testJoystick control swerve. Note disables driver joystick swerve. Never commit this line.
     s_Swerve.setDefaultCommand(new TeleopSwerve(testJoystick));
-
+    testJoystick.back().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d()));
     // testJoystick.b().onTrue(SwerveSubsystem.getInstance().setOdometryCommand(new Pose2d(3,3,new Rotation2d(0))));
     // testJoystick.a().whileTrue(PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.FAR_SPEAKER_RED, driver))
     //           .onFalse(Commands.runOnce(()->{},SwerveSubsystem.getInstance()));
@@ -223,10 +223,11 @@ public class NewRobotContainer extends RobotContainer {
     testJoystick.leftBumper().whileTrue(
           new MakeIntakeMotorSpin(9.0,0));
     
-    testJoystick.start().whileTrue( new SetArm(armAngleDeg));
+    testJoystick.start().onTrue( new SetArm(armAngleDeg));
     // testJoystick.back().whileTrue(new Shooter_PID_Tuner(shooterTargetRPM));
-    testJoystick.rightBumper().whileTrue(CombinedCommands.simpleShootNoteSpeaker(1, () -> shooterTargetRPM.getAsDouble())); 
+    testJoystick.rightBumper().whileTrue(CombinedCommands.simpleShootNoteSpeaker(1, () -> shooterTargetRPM.getAsDouble(), 50)); 
 
+    testJoystick.rightTrigger().whileTrue(new Shooter_PID_Tuner(()->shooterTargetRPM.getAsDouble()));
   }
 
   /**
