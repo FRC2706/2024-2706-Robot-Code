@@ -167,8 +167,9 @@ public class NewRobotContainer extends RobotContainer {
       // Intake note with leftTrigger
     
       //operator.leftTrigger(0.3).whileTrue(
-      operator.leftBumper().whileTrue(
-          new MakeIntakeMotorSpin(9.0,0));
+      operator.leftBumper()
+      .whileTrue(CombinedCommands.armIntake())
+      .whileFalse(new SetArm(()->ArmSetPoints.NO_INTAKE.angleDeg));
 
       //NOTE: right Trigger has been assigned to climber
       operator.rightTrigger(0.3).whileTrue(CombinedCommands.simpleShootNoteAmp());
