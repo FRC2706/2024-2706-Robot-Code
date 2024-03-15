@@ -153,6 +153,7 @@ public class ArmSubsystem extends SubsystemBase {
   public void periodic() {
     m_armPosPub.accept(Math.toDegrees(getPosition()));
     m_armVelPub.accept(Math.toDegrees(m_absEncoder.getVelocity()));
+    //updatePIDSettings();
   }
 
     // input angle_bottom in radians(

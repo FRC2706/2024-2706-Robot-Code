@@ -417,6 +417,7 @@ public static enum ArmSetPoints {
   IDLE(60),
   INTAKE(-2.5),
   SPEAKER_KICKBOT_SHOT(13),
+  NO_INTAKE(5.0),
   AMP(100);
 
   public final double angleDeg;
