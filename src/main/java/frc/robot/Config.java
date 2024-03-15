@@ -144,16 +144,17 @@ public final class Config {
     public static final double CAMERA_HEIGHT = 0.215;
     public static final Rotation2d CAMERA_PITCH = Rotation2d.fromDegrees(33);
     //x is forwards, y is sideways with +y being left, rotation probobly if + left too
-    public static final Pose2d cameraOffset = new Pose2d(new Translation2d(-0.1,0), Rotation2d.fromDegrees(0));
-  
+    public static final Pose2d cameraOffset = new Pose2d(new Translation2d(-0.1,0), Rotation2d.fromDegrees(180));
+    // public static final Pose2d cameraOffsetRed = new Pose2d(new Translation2d(-0.1, 0), Rotation2d.fromDegrees(0));
+
     //networkTableName
     public static final String apriltagCameraName = "FrontApriltagOV9281";
     public static final String networkTableName = "PhotonCamera";
     //data max
     public static final int maxNumSamples = 10;
 
-    // these are the heights for the apriltags 4, 5, 6, 7
-    public static final double[] APRIL_HEIGHTS = {1.32,1.22,1.22,1.32};
+    // these are the heights for the apriltags 3, 4, 5, 6, 7, 8
+    public static final double[] APRIL_HEIGHTS = {1.32,1.32,1.22,1.22,1.32,1.32};
     public static final double POS_TOLERANCE = 0.01; // meters
     public static final double ANGLE_TOLERANCE = Math.toRadians(1.0);
     public static final double WAYPOINT_POS_TOLERANCE = 0.2; // meters
@@ -161,16 +162,18 @@ public final class Config {
     public static final double VEL_TOLERANCE = 0.1*4;
     public static enum PhotonPositions {
       
-      LEFT_SPEAKER_RED(4, new Translation2d(-1,-1), new Translation2d(-0.6,-0.7), Rotation2d.fromDegrees(60)),
+      
       RIGHT_SPEAKER_RED(4, new Translation2d(-0.937,0.937), new Translation2d(-0.637,0.637), Rotation2d.fromDegrees(-60)),
       MIDDLE_SPEAKER_RED(4, new Translation2d(-1.3,0), new Translation2d(-0.95,0), Rotation2d.fromDegrees(0)),
       FAR_SPEAKER_RED(4, new Translation2d(-2.4,0), new Translation2d(-2.2,0), Rotation2d.fromDegrees(0)),
-      AMP_RED(5, new Translation2d(0,-0.70), new Translation2d(0,-0.5), Rotation2d.fromDegrees(90)),
-      AMP_BLUE(6, new Translation2d(0,-30), new Translation2d(0,0),  Rotation2d.fromDegrees(90)),
       LEFT_SPEAKER_BLUE(7, new Translation2d(0.937,0.937), new Translation2d(0.637,0.637), Rotation2d.fromDegrees(-120)),
-      RIGHT_SPEAKER_BLUE(7, new Translation2d(0.937,-0.937), new Translation2d(0.637,-0.637), Rotation2d.fromDegrees(120)),
       MIDDLE_SPEAKER_BLUE(7, new Translation2d(1.20,0), new Translation2d(0.90,0), Rotation2d.fromDegrees(180)),
-      TEST(4, new Translation2d(-2,0), new Translation2d(-1,0), Rotation2d.fromDegrees(0));
+      TEST(4, new Translation2d(-2,0), new Translation2d(-1,0), Rotation2d.fromDegrees(0)),
+
+      LEFT_SPEAKER_RED(3, new Translation2d(-1.2,-1.2), Rotation2d.fromDegrees(180+56)),
+      RIGHT_SPEAKER_BLUE(8, new Translation2d(1.2,-1.2), Rotation2d.fromDegrees(-56)),
+      AMP_RED(5, new Translation2d(0,-0.70), new Translation2d(0,-0.5), Rotation2d.fromDegrees(90)),
+      AMP_BLUE(6, new Translation2d(0,-0.30), new Translation2d(0,0.05),  Rotation2d.fromDegrees(90));
   
       public final int id;
       public final boolean hasWaypoint;
@@ -255,6 +258,7 @@ public final class Config {
     public static final double driveConversionPositionFactor = (wheelDiameter * Math.PI) / driveGearRatio;
     public static final double driveConversionVelocityFactor = driveConversionPositionFactor / 60.0;
     public static final double angleConversionFactor = 2 * Math.PI / angleGearRatio;
+    public static final double angleVelocityConversionFactor = angleConversionFactor / 60.0;
 
     /* Swerve ProfiledPidController values */
     public static final double translationAllowableError = 0.01;
@@ -349,7 +353,7 @@ public final class Config {
         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
   }
   public static final class BlingConstants {
-    public static int CANDLE = 15;
+    public static int CANDLE = CANID.CANDLE;
   }
 
   public static final class Intake {
@@ -411,8 +415,8 @@ public final class Config {
 public static enum ArmSetPoints {
   //@todo: to be calibrated
   IDLE(60),
-  INTAKE(0),
-  SPEAKER_KICKBOT_SHOT(15),
+  INTAKE(-2.5),
+  SPEAKER_KICKBOT_SHOT(13),
   AMP(100);
 
   public final double angleDeg;
@@ -472,10 +476,10 @@ public static enum ArmSetPoints {
   public static final boolean tuningMode = true;
   public static final class ShooterConstants{
     public static final byte MOTOR_ID = CANID.SHOOTER;
-    public static final double kP = 0.0,
+    public static final double kP = 0.0002,
                                kI = 0.0,
                                kD = 0.0,
-                               kFF = 0.0,
+                               kFF = 0.00025,
                                kMaxOutput = 1.0,
                                kMinOutput = -1.0,
                                maxRPM = 5700.0;

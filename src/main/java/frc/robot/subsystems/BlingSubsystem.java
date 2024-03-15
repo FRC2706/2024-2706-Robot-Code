@@ -59,6 +59,10 @@ public class BlingSubsystem extends SubsystemBase {
     candle.clearAnimation(0);
   }
 
+  public void setOrange() {
+    candle.setLEDs(245, 141, 66);
+  }
+
   public void setPurple() {
     candle.setLEDs(138, 43, 226);
   }

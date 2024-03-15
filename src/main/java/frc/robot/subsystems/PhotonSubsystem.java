@@ -18,9 +18,13 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.IntegerEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
@@ -43,6 +47,7 @@ public class PhotonSubsystem extends SubsystemBase {
   private static PhotonSubsystem instance;
   private DoubleArrayPublisher pubSetPoint;
   private DoublePublisher pubRange, pubYaw;
+  private IntegerEntry subOverrideTagID;
   private PhotonCamera camera1;
   private Translation2d targetPos;
   private Rotation2d targetRotation;
@@ -69,6 +74,9 @@ public class PhotonSubsystem extends SubsystemBase {
     pubSetPoint = NetworkTableInstance.getDefault().getTable(PhotonConfig.networkTableName).getDoubleArrayTopic("PhotonAprilPoint").publish(PubSubOption.periodic(0.02));
     pubRange = NetworkTableInstance.getDefault().getTable(PhotonConfig.networkTableName).getDoubleTopic("Range").publish(PubSubOption.periodic(0.02));
     pubYaw = NetworkTableInstance.getDefault().getTable(PhotonConfig.networkTableName).getDoubleTopic("Yaw").publish(PubSubOption.periodic(0.02));
+    subOverrideTagID = NetworkTableInstance.getDefault().getTable(PhotonConfig.networkTableName).getIntegerTopic("OVERIDEID").getEntry(-1);
+    subOverrideTagID.setDefault(-1);
+    SmartDashboard.putData("command reset id",Commands.runOnce(()->reset((int)subOverrideTagID.get())));
     reset(-1);
   }
 
@@ -124,7 +132,7 @@ public class PhotonSubsystem extends SubsystemBase {
     Command moveToTargetCommands;
     if (spacePositions.hasWaypoint) {
       moveToTargetCommands = Commands.sequence(
-        new PhotonMoveToTarget(spacePositions.waypoint,true),
+        new PhotonMoveToTarget(spacePositions.waypoint, spacePositions.direction,true),
         new PhotonMoveToTarget(spacePositions.destination, spacePositions.direction, false)
       );
     } else {
@@ -132,7 +140,7 @@ public class PhotonSubsystem extends SubsystemBase {
     }
 
     return Commands.sequence(
-      new ProxyCommand(getWaitForDataCommand(spacePositions.id)), // Proxy this command to prevent PhotonSubsystem requirement conflicting with PhotonMoveToTarget's requirements
+      // new ProxyCommand(getWaitForDataCommand(spacePositions.id)), // Proxy this command to prevent PhotonSubsystem requirement conflicting with PhotonMoveToTarget's requirements
       new ScheduleCommand(new RumbleJoystick(driverStick, RumbleType.kBothRumble, 0.5, 0.2, true)),
       new ProxyCommand(moveToTargetCommands) // Proxy this command to prevent SwerveSubsystem requirement conflicting with WaitForDataCommand's requirements
     );
@@ -155,11 +163,15 @@ public class PhotonSubsystem extends SubsystemBase {
     y = Math.toRadians(y);
     y += PhotonConfig.CAMERA_PITCH.getRadians();
 
-    if (id-4 <= 0) {
+    int id_array = id - 3;
+
+    if (id_array < 0) {
+      return 0;
+    }else if(id_array>= Config.PhotonConfig.APRIL_HEIGHTS.length){
       return 0;
     }
 
-    return (Config.PhotonConfig.APRIL_HEIGHTS[id-4]-PhotonConfig.CAMERA_HEIGHT)/Math.tan(y);
+    return (Config.PhotonConfig.APRIL_HEIGHTS[id_array]-PhotonConfig.CAMERA_HEIGHT)/Math.tan(y);
   }
 
   private PhotonTrackedTarget biggestTarget(List<PhotonTrackedTarget> targets) {
@@ -208,6 +220,10 @@ public class PhotonSubsystem extends SubsystemBase {
       }
       if (id == -1){
         target = biggestTarget(allTargets);
+
+        if (target == null) {
+          return;
+        }
         id = target.getFiducialId();
       } else{
         for (PhotonTrackedTarget t:allTargets){

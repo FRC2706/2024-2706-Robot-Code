@@ -5,18 +5,27 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.lib.lib2706.SelectByAllianceCommand;
+import frc.robot.Config;
+import frc.robot.Config.ArmConfig;
 import frc.robot.Config.PhotonConfig.PhotonPositions;
+import frc.robot.commands.CombinedCommands;
 import frc.robot.commands.IntakeControl;
 import frc.robot.commands.MakeIntakeMotorSpin;
 import frc.robot.commands.PhotonMoveToTarget;
-import frc.robot.commands.Shooter_Voltage;
+import frc.robot.commands.SetArm;
+import frc.robot.subsystems.IntakeStatesMachine.IntakeModes;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeStatesMachine.IntakeModes;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PhotonSubsystem;
@@ -27,32 +36,30 @@ import frc.robot.subsystems.SwerveSubsystem;
 public class AutoRoutines extends SubsystemBase {
     
     // PathPlannerPath speakerPath = PathPlannerPath.fromPathFile("Speaker Path");
-    PathPlannerAuto twoNoteAuto = new PathPlannerAuto("twoNoteSpeaker");
-    PathPlannerAuto threeNoteAuto = new PathPlannerAuto("threeNoteSpeaker");
-    PathPlannerAuto fourNoteAuto = new PathPlannerAuto("4NoteCenter");
+   
+    PathPlannerAuto fourNoteAuto,
+                    // twoNoteAuto,
+                    // threeNoteAuto,
+                    twoNoteLeftAuto,
+                    twoNoteCenter,
+                    threeNoteCenterSourceSideNote,
+                    threeNoteCenterAmpSideNote;
+    
 
     public AutoRoutines() {
         registerCommandsToPathplanner();
+
+        // twoNoteAuto = new PathPlannerAuto("twoNoteSpeaker");
+        // threeNoteAuto = new PathPlannerAuto("threeNoteSpeaker");
+        fourNoteAuto = new PathPlannerAuto("4NoteCenterSimple");
+        twoNoteLeftAuto = new PathPlannerAuto("2NoteLeft");
+
+        twoNoteCenter = new PathPlannerAuto("2NoteCenter");
+        threeNoteCenterSourceSideNote = new PathPlannerAuto("3NoteCenterSourceSideNote");
+        threeNoteCenterAmpSideNote = new PathPlannerAuto("3NoteCenterAmpSideNote");
     }
 
     public void registerCommandsToPathplanner() {
-        // Intake and Arm Commands
-        NamedCommands.registerCommand("IntakeAndArm", new ParallelCommandGroup(
-            new WaitCommand(1), // Move arm to intake setpoint
-            new WaitCommand(1) // Intake game piece
-        ));
-
-        NamedCommands.registerCommand("OutakeRing", new ParallelCommandGroup(
-            new WaitCommand(1), // Move arm to speaker 
-            new WaitCommand(1) // Outake game piece
-        ));
-
-        NamedCommands.registerCommand("StartingZoneAmp", new ParallelCommandGroup(
-            new WaitCommand(1), // Exit starting zone
-            new WaitCommand(1), // Intake note
-            new WaitCommand(1) // Score in amp
-        ));
-
         NamedCommands.registerCommand("MakeIntakeMotorSpin", new SequentialCommandGroup(
             new MakeIntakeMotorSpin(3.0,2), // Move arm to intake setpoint
             new WaitCommand(1)
@@ -71,13 +78,15 @@ public class AutoRoutines extends SubsystemBase {
             Commands.runOnce(()->ShooterSubsystem.getInstance().setMode(ShooterModes.STOP_SHOOTER))          
         ));
 
-        NamedCommands.registerCommand("simpleShooter", Commands.deadline(
-              Commands.sequence(
-                new IntakeControl(false).withTimeout(0.3), 
-                new WaitCommand(0.5),
-                new IntakeControl(true).withTimeout(2)),
-              new Shooter_Voltage(()->5)
-            ));
+        NamedCommands.registerCommand("simpleShooter", CombinedCommands.simpleShootNoteSpeaker(0.4));
+        
+        // Commands.deadline(
+        //       Commands.sequence(
+        //         new IntakeControl(false).withTimeout(0.3), 
+        //         new WaitCommand(0.5),
+        //         new IntakeControl(true).withTimeout(2)),
+        //       new Shooter_Voltage(()->5)
+        //     ));
 
         // NamedCommands.registerCommand("turnOffIntake", (
         //     Commands.runOnce(()-> IntakeSubsystem.getInstance().setMode(IntakeStatesVoltage.Modes.STOP))));
@@ -90,6 +99,8 @@ public class AutoRoutines extends SubsystemBase {
 
         // NamedCommands.registerCommand("alignToSpeaker", (
         //     PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.FAR_SPEAKER_RED)));
+
+
 
         NamedCommands.registerCommand("ResetToSpeakerTag",
             new SelectByAllianceCommand(
@@ -104,6 +115,10 @@ public class AutoRoutines extends SubsystemBase {
                 new PhotonMoveToTarget(PhotonPositions.MIDDLE_SPEAKER_RED.destination, false)
             )
         );
+
+        NamedCommands.registerCommand("ArmStartConfig", new SetArm(() -> 90).until(() -> ArmSubsystem.getInstance().getPosition() > Math.toRadians(82)));
+        NamedCommands.registerCommand("ArmPickup", new SetArm(() -> Config.ArmSetPoints.INTAKE.angleDeg));
+        NamedCommands.registerCommand("ArmKitbotShot", new SetArm(() -> Config.ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg));
     }
 
     public Command getAutonomousCommand(int selectAuto) {
@@ -112,17 +127,28 @@ public class AutoRoutines extends SubsystemBase {
             default: 
                 return null;
             case 1:
-                return null;
-                // return Commands.sequence(
-                //     SwerveSubsystem.getInstance().setOdometryCommand(speakerPath.getPreviewStartingHolonomicPose()),
-                //     AutoBuilder.followPath(speakerPath)
-                // );
+                return twoNoteLeftAuto;
             case 2:
-                return twoNoteAuto;
-            case 3:
-                return threeNoteAuto;
-            case 4:
                 return fourNoteAuto;
+            case 3:
+                return threeNoteCenterAmpSideNote;
+            case 4:
+                return threeNoteCenterSourceSideNote;
+            case 5:
+                return twoNoteCenter;
+            case 6:
+            case 7:
+                var alliance = DriverStation.getAlliance();
+
+                // Default to blue alliance
+                if (alliance.isEmpty()) {
+                DriverStation.reportWarning("Unable to detect alliance color.", false);
+                    return new InstantCommand();
+                }
+                return Commands.sequence(
+                    SwerveSubsystem.getInstance().setOdometryCommand(new Pose2d(0, 0, SwerveSubsystem.rotateForAlliance(Rotation2d.fromDegrees(0)))),
+                    SwerveSubsystem.getInstance().getDriveToPoseCommand(new Pose2d((alliance.get() == DriverStation.Alliance.Blue)? 2.5 : -2.5, 0, SwerveSubsystem.rotateForAlliance(Rotation2d.fromDegrees(0))))
+                );
         }
     }
 }

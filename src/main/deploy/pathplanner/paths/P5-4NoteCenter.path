@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 2.4527271446400407,
-        "y": 4.438868928628442
+        "x": 2.4213939522026635,
+        "y": 4.271758568962431
       },
       "prevControl": {
-        "x": 1.8051745009342446,
-        "y": 5.149087957208992
+        "x": 1.7216193211012383,
+        "y": 5.044643982417736
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,7 +31,7 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 0.15,
-      "rotationDegrees": 180.0,
+      "rotationDegrees": 0.0,
       "rotateFast": true
     }
   ],
@@ -45,13 +45,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 140.0,
+    "rotation": -25.513870427534226,
     "rotateFast": true
   },
   "reversed": false,
   "folder": "4NoteCenter",
   "previewStartingState": {
-    "rotation": 180.0,
+    "rotation": 0.7563359928258359,
     "velocity": 0
   },
   "useDefaultConstraints": true

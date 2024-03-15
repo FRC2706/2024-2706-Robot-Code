@@ -50,7 +50,9 @@ public class ClimberSubsystem extends SubsystemBase {
       m_climber.setInverted(false);
 
       //Set maximum current
-      m_climber.setSmartCurrentLimit(60);
+      m_climber.setSmartCurrentLimit(40);
+      
+      ErrorTrackingSubsystem.getInstance().register(m_climber);
     }
  }
 

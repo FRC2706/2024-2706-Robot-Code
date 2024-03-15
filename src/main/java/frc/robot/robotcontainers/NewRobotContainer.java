@@ -6,12 +6,12 @@
 package frc.robot.robotcontainers;
 
 
-import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.lib2706.SelectByAllianceCommand;
 import frc.lib.lib2706.TunableNumber;
 import frc.lib.lib2706.XBoxControllerUtil;
@@ -21,14 +21,15 @@ import frc.robot.Config.PhotonConfig;
 import frc.robot.Config.PhotonConfig.PhotonPositions;
 import frc.robot.Config.Swerve.TeleopSpeeds;
 import frc.robot.Robot;
+import frc.robot.commands.BlingCommand;
+import frc.robot.commands.BlingCommand.BlingColour;
 import frc.robot.commands.ClimberRPM;
 import frc.robot.commands.CombinedCommands;
-import frc.robot.commands.IntakeControl;
 import frc.robot.commands.MakeIntakeMotorSpin;
 import frc.robot.commands.RotateAngleToVisionSupplier;
 import frc.robot.commands.RotateToAngle;
 import frc.robot.commands.SetArm;
-import frc.robot.commands.Shooter_Voltage;
+import frc.robot.commands.Shooter_PID_Tuner;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.auto.AutoRoutines;
 import frc.robot.commands.auto.AutoSelector;
@@ -64,23 +65,25 @@ public class NewRobotContainer extends RobotContainer {
 
   private TunableNumber shooterTargetRPM = new TunableNumber("Shooter/Target RPM", 0);
   private TunableNumber shooterDesiredVoltage = new TunableNumber("Shooter/desired Voltage", 0);
-
+  private TunableNumber armAngleDeg = new TunableNumber("Arm/ArmTuning/setAngleDeg", 5.0);
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public NewRobotContainer() {
-    // Setup auto
-    m_autoRoutines = new AutoRoutines();
-    m_autoSelector = new AutoSelector();
-
     /*  Setup default commands */
     s_Swerve.setDefaultCommand(new TeleopSwerve(driver));
     if (!Config.disableStateBasedProgramming) {
       intake.setDefaultCommand(intake.defaultIntakeCommand());
       shooter.setDefaultCommand(shooter.defaultShooterCommand(()-> intake.isNoteIn()));
+    } else {
+      // shooter.setDefaultCommand(new Shooter_PID_Tuner(() -> 0));
     }
 
     configureButtonBindings();
+
+     // Setup auto
+    m_autoRoutines = new AutoRoutines();
+    m_autoSelector = new AutoSelector();
   }
 
   /**
@@ -88,6 +91,10 @@ public class NewRobotContainer extends RobotContainer {
    * created via the {@link CommandXboxController} or other ways.
    */
   private void configureButtonBindings() { 
+    // Set bling to purple when note is in
+    new Trigger(() -> intake.isBackSensorActive()).onTrue(new BlingCommand(BlingColour.PURPLE))
+                                                  .onFalse(new BlingCommand(BlingColour.DISABLED));
+
     /**
      * Driver Controls
      * KingstonV1: https://drive.google.com/file/d/1gDgxnz-agWGoYmTTRfViVPwR7O2H80mh
@@ -96,8 +103,9 @@ public class NewRobotContainer extends RobotContainer {
     driver.back().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d(0)));
     driver.leftBumper().onTrue(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.SLOW)))
                        .onFalse(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.MAX)));
-    // driver.rightBumper().onTrue(Commands.runOnce(() -> TeleopSwerve.setCameraOriented())) // setCameraOriented is not yet implemeneted
-    //                    .onFalse(Commands.runOnce(() -> TeleopSwerve.setFieldOriented())); // setFieldOriented is not yet implemeneted
+
+    driver.rightBumper().onTrue(Commands.runOnce(() -> TeleopSwerve.setFieldRelative(false)))
+                       .onFalse(Commands.runOnce(() -> TeleopSwerve.setFieldRelative(true)));
 
     // Commands that take control of the rotation stick
     driver.y().whileTrue(new RotateToAngle(driver, Rotation2d.fromDegrees(0)));
@@ -107,29 +115,31 @@ public class NewRobotContainer extends RobotContainer {
     driver.start().whileTrue(new RotateAngleToVisionSupplier(driver, "photonvision/" + PhotonConfig.apriltagCameraName));    
 
     // Vision scoring commands with no intake, shooter, arm
-    // driver.leftBumper().whileTrue(new SelectByAllianceCommand( // Implement command group that also controls the arm, intake, shooter
+    // driver.leftTrigger().whileTrue(new SelectByAllianceCommand( // Implement command group that also controls the arm, intake, shooter
     //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.AMP_BLUE, driver), 
     //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.AMP_RED, driver)));
 
-    // driver.rightBumper().whileTrue(new SelectByAllianceCommand( // Implement command group that also controls the arm, intake, shooter
-    //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.MIDDLE_SPEAKER_BLUE, driver), 
-    //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.MIDDLE_SPEAKER_RED, driver)));
+    // driver.rightTrigger().whileTrue(new SelectByAllianceCommand( // Implement command group that also controls the arm, intake, shooter
+    //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.RIGHT_SPEAKER_BLUE, driver), 
+    //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.LEFT_SPEAKER_RED, driver)));
+
+    driver.leftTrigger().whileTrue(CombinedCommands.sideSpeakerVisionShot(driver, PhotonPositions.RIGHT_SPEAKER_BLUE, PhotonPositions.LEFT_SPEAKER_RED));
 
     // Complete vision scoring commands with all subsystems
-    if (Config.disableStateBasedProgramming) {
-      // Score in amp with vision using simple intake/shooter
-      // driver.leftTrigger().whileTrue(CombinedCommands.simpleAmpScoreWithVision(driver));
+    // if (Config.disableStateBasedProgramming) {
+    //   // Score in amp with vision using simple intake/shooter
+    //   driver.leftBumper().whileTrue(CombinedCommands.simpleAmpScoreWithVision(driver));
 
-      // Score in speaker with vision using simple intake/shooter
-      // driver.rightTrigger().whileTrue(CombinedCommands.simpleSpeakerScoreWithVision(driver, ArmSetPoints.SPEAKER_KICKBOT_SHOT, PhotonPositions.RIGHT_SPEAKER_BLUE, PhotonPositions.RIGHT_SPEAKER_RED));
+    //   // Score in speaker with vision using simple intake/shooter
+    //   driver.rightBumper().whileTrue(CombinedCommands.simpleSpeakerScoreWithVision(driver, ArmSetPoints.SPEAKER_KICKBOT_SHOT, PhotonPositions.RIGHT_SPEAKER_BLUE, PhotonPositions.RIGHT_SPEAKER_RED));
 
-    } else {
-      // Score in amp with vision using stateful intake/shooter
-      driver.leftBumper().whileTrue(CombinedCommands.statefulAmpScoreWithVision(driver));
+    // } else {
+    //   // Score in amp with vision using stateful intake/shooter
+    //   driver.leftBumper().whileTrue(CombinedCommands.statefulAmpScoreWithVision(driver));
 
-      // Score in speaker with vision using stateful intake/shooter
-      driver.leftBumper().whileTrue(CombinedCommands.statefulSpeakerScoreWithVision(driver, ArmSetPoints.SPEAKER_KICKBOT_SHOT, PhotonPositions.RIGHT_SPEAKER_BLUE, PhotonPositions.RIGHT_SPEAKER_RED));
-    }
+    //   // Score in speaker with vision using stateful intake/shooter
+    //   driver.leftBumper().whileTrue(CombinedCommands.statefulSpeakerScoreWithVision(driver, ArmSetPoints.SPEAKER_KICKBOT_SHOT, PhotonPositions.RIGHT_SPEAKER_BLUE, PhotonPositions.RIGHT_SPEAKER_RED));
+    // }
 
     /**
      * Operator Controls
@@ -139,11 +149,16 @@ public class NewRobotContainer extends RobotContainer {
     operator.y().onTrue(new SetArm(()->ArmSetPoints.AMP.angleDeg)); // Amp
     operator.b().onTrue(new SetArm(()->ArmSetPoints.IDLE.angleDeg)); // Idle
     operator.a().onTrue(new SetArm(()->ArmSetPoints.INTAKE.angleDeg)); // Pickup
-    //XBoxControllerUtil.leftPOV(operator).debounce(0.1).onTrue(new SetArm(()->ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg)); // Kickbot Shot
     operator.x().onTrue(new SetArm(()->ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg));
     // Climber
     operator.rightTrigger(0.10).whileTrue(new ClimberRPM(()->  driver.getRightTriggerAxis()));
 
+    // Eject the note from the front with start
+    operator.start()
+      .whileTrue(Commands.run(() -> intake.setVoltage(-12), intake))
+      .onFalse(Commands.runOnce(() -> intake.stop()));
+  
+    
     // Simple shooter and intake
     if (Config.disableStateBasedProgramming) {
       intake.setStateMachineOff();
@@ -153,19 +168,13 @@ public class NewRobotContainer extends RobotContainer {
     
       //operator.leftTrigger(0.3).whileTrue(
       operator.leftBumper().whileTrue(
-        //  Commands.run(() -> intake.setVoltage(8), intake));
-          new MakeIntakeMotorSpin(8.0,0));
+          new MakeIntakeMotorSpin(9.0,0));
 
-      // Toggle to spin up or spin down the shooter with rightBumper
-      operator.leftTrigger(0.3).toggleOnTrue(new Shooter_Voltage(()->3));
-
+      //NOTE: right Trigger has been assigned to climber
       operator.rightTrigger(0.3).whileTrue(CombinedCommands.simpleShootNoteAmp());
       // Shoot note with leftBumper
-      operator.rightBumper().whileTrue(CombinedCommands.simpleShootNoteSpeaker());
+      operator.rightBumper().whileTrue(CombinedCommands.simpleShootNoteSpeaker(1));
 
-      // Eject the note from the front with leftPOV
-      XBoxControllerUtil.leftPOV(operator).debounce(0.1).whileTrue(
-        Commands.run(() -> intake.setVoltage(-6), intake));
 
     // State based shooter and intake
     } else {
@@ -181,7 +190,7 @@ public class NewRobotContainer extends RobotContainer {
       operator.rightBumper().onTrue(shooter.toggleSpinUpCommand(ShooterModes.SHOOT_SPEAKER));  
           
       // Shoot note with leftBumper
-      operator.leftBumper().onTrue(CombinedCommands.statefulShootNote());
+      // operator.leftBumper().onTrue(CombinedCommands.statefulShootNote());
 
       // Eject the note from the front with leftPOV
       XBoxControllerUtil.leftPOV(operator).debounce(0.1)
@@ -202,7 +211,10 @@ public class NewRobotContainer extends RobotContainer {
 
     // testJoystick.x() //Drives the note into the shooter
     //   .whileTrue(Commands.runOnce(()-> intake.setMode(shooter.isReadyToShoot() ? IntakeModes.SHOOT : IntakeModes.STOP_INTAKE)))
-    //   .whileFalse(Commands.runOnce(()->intake.setMode(IntakeModes.STOP_INTAKE)));    
+    //   .whileFalse(Commands.runOnce(()->intake.setMode(IntakeModes.STOP_INTAKE)));   
+    
+    // testJoystick.start().whileTrue( new SetArm(armAngleDeg));
+    // testJoystick.back().whileTrue(new Shooter_PID_Tuner(shooterTargetRPM)); 
   }
 
   /**

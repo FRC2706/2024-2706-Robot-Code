@@ -8,6 +8,7 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -136,10 +137,10 @@ public class SwerveSubsystem extends SubsystemBase {
     field = new Field2d();
     SmartDashboard.putData("Field", field);
 
-    pidControlX = new ProfiledPIDController(4.5, 0.5, 0.2,
-            new TrapezoidProfile.Constraints(2.5, 2.5));
-    pidControlY = new ProfiledPIDController(4.5, 0.5, 0.2,
-            new TrapezoidProfile.Constraints(2.5, 2.5));
+    pidControlX = new ProfiledPIDController(7, 0.5, 0.2,
+            new TrapezoidProfile.Constraints(2.5, 3.5));
+    pidControlY = new ProfiledPIDController(7, 0.5, 0.2,
+            new TrapezoidProfile.Constraints(2.5, 3.5));
     pidControlRotation = new ProfiledPIDController(5.0, 0.5, 0.3,
             new TrapezoidProfile.Constraints(8 * Math.PI, 8 * Math.PI));
             pidControlRotation.enableContinuousInput(-Math.PI, Math.PI);
@@ -152,13 +153,14 @@ public class SwerveSubsystem extends SubsystemBase {
     updateFeedforward = new UpdateSimpleFeedforward((ff) -> updateModuleFeedforward(ff), swerveTable, Config.Swerve.driveKS, Config.Swerve.driveKV, Config.Swerve.driveKA);
   }
 
-  public void drive(
-      ChassisSpeeds speeds, boolean fieldRelative, boolean isOpenLoop) {
+  public void drive(ChassisSpeeds speeds, boolean fieldRelative, boolean isOpenLoop, boolean flipForAlliance) {
+    Rotation2d heading = flipForAlliance ? rotateForAlliance(getHeading()) : getHeading();
+
     SwerveModuleState[] swerveModuleStates =
     Config.Swerve.swerveKinematics.toSwerveModuleStates(
       // ChassisSpeeds.discretize(
         fieldRelative ? 
-            ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getHeading()) :
+            ChassisSpeeds.fromFieldRelativeSpeeds(speeds, heading) :
             speeds
             // , 0.02)
     );
@@ -168,6 +170,11 @@ public class SwerveSubsystem extends SubsystemBase {
       mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
     }
   }
+
+  public void drive(
+      ChassisSpeeds speeds, boolean fieldRelative, boolean isOpenLoop) {
+        drive(speeds, fieldRelative, isOpenLoop, true);
+      }
 
   /* Used by SwerveControllerCommand in Auto */
   public void setModuleStates(SwerveModuleState[] desiredStates, boolean isOpenLoop) {
@@ -313,13 +320,13 @@ public class SwerveSubsystem extends SubsystemBase {
     pubDesiredRot.accept(Math.toDegrees(pidControlRotation.getSetpoint().position));
 
     recievedPidInstruction = true;
-    drive(new ChassisSpeeds(xSpeed, ySpeed, rotSpeed), true, true);
+    drive(new ChassisSpeeds(xSpeed, ySpeed, rotSpeed), true, true, false);
   }
 
   public boolean isAtPose(double tol, double angleTol) {
     return recievedPidInstruction 
         && Math.abs(currentX - desiredX) < tol && Math.abs(currentY - desiredY) < tol
-        && Math.abs(currentRotation - desiredRotation) < angleTol;
+        && Math.abs(MathUtil.angleModulus(currentRotation - desiredRotation)) < angleTol;
   }
 
   /**
@@ -348,7 +355,7 @@ public class SwerveSubsystem extends SubsystemBase {
     // If the robot isn't moving synchronize the encoders every 100ms (Inspired by democrat's SDS
     // lib)
     // To ensure that everytime we initialize it works.
-    if (!isChassisMoving(0.01)) {
+    if (!isChassisMoving(0.01) && !areModulesRotating(2)) {
       if (++moduleSynchronizationCounter > 6 && isSwerveNotSynched()) {
         synchSwerve();
         System.out.println("Resynced" + ++tempSynchCounter);
@@ -418,6 +425,15 @@ public class SwerveSubsystem extends SubsystemBase {
     {
       return true;
     }
+  }
+
+  public boolean areModulesRotating(double angleTolerance) {
+    double angularVelocitySum = 0;
+    for (SwerveModule module : mSwerveMods) {
+      angularVelocitySum += module.getSteeringVelocity();
+    }
+
+    return angularVelocitySum > Math.toRadians(angleTolerance);
   }
 
   public boolean isSwerveNotSynched() {
