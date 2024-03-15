@@ -8,6 +8,7 @@ package frc.robot.robotcontainers;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -97,9 +98,9 @@ public class NewRobotContainer extends RobotContainer {
     new Trigger(() -> intake.isBackSensorActive()).onTrue(new BlingCommand(BlingColour.PURPLE))
                                                   .onFalse(new BlingCommand(BlingColour.DISABLED));
 
-    new Trigger(() -> intake.isBackSensorLongActive()).onTrue(Commands.parallel(
-            new RumbleJoystick(driver, RumbleType.kBothRumble, 0.5, 0.4, false),
-            new RumbleJoystick(operator, RumbleType.kBothRumble, 0.5, 0.4, false))
+    new Trigger(() -> intake.isBackSensorLongActive() && DriverStation.isTeleopEnabled()).onTrue(Commands.parallel(
+            new RumbleJoystick(driver, RumbleType.kBothRumble, 0.75, 0.4, false),
+            new RumbleJoystick(operator, RumbleType.kBothRumble, 0.75, 0.4, false))
     );          
 
     /**
@@ -180,8 +181,7 @@ public class NewRobotContainer extends RobotContainer {
       //NOTE: right Trigger has been assigned to climber
       operator.rightTrigger(0.3).whileTrue(CombinedCommands.simpleShootNoteAmp());
       // Shoot note with leftBumper
-      operator.rightBumper().whileTrue(CombinedCommands.simpleShootNoteSpeaker(1));
-
+      operator.rightBumper().whileTrue(CombinedCommands.simpleShootNoteSpeaker(1, () -> 3000));
 
     // State based shooter and intake
     } else {
@@ -210,7 +210,7 @@ public class NewRobotContainer extends RobotContainer {
      * Testing button bindings
      */
     // Let testJoystick control swerve. Note disables driver joystick swerve. Never commit this line.
-    // s_Swerve.setDefaultCommand(new TeleopSwerve(testJoystick));
+    s_Swerve.setDefaultCommand(new TeleopSwerve(testJoystick));
 
     // testJoystick.b().onTrue(SwerveSubsystem.getInstance().setOdometryCommand(new Pose2d(3,3,new Rotation2d(0))));
     // testJoystick.a().whileTrue(PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.FAR_SPEAKER_RED, driver))
@@ -218,10 +218,15 @@ public class NewRobotContainer extends RobotContainer {
 
     // testJoystick.x() //Drives the note into the shooter
     //   .whileTrue(Commands.runOnce(()-> intake.setMode(shooter.isReadyToShoot() ? IntakeModes.SHOOT : IntakeModes.STOP_INTAKE)))
-    //   .whileFalse(Commands.runOnce(()->intake.setMode(IntakeModes.STOP_INTAKE)));   
+    //   .whileFalse(Commands.runOnce(()->intake.setMode(IntakeModes.STOP_INTAKE)));  
     
-    // testJoystick.start().whileTrue( new SetArm(armAngleDeg));
-    // testJoystick.back().whileTrue(new Shooter_PID_Tuner(shooterTargetRPM)); 
+    testJoystick.leftBumper().whileTrue(
+          new MakeIntakeMotorSpin(9.0,0));
+    
+    testJoystick.start().whileTrue( new SetArm(armAngleDeg));
+    // testJoystick.back().whileTrue(new Shooter_PID_Tuner(shooterTargetRPM));
+    testJoystick.rightBumper().whileTrue(CombinedCommands.simpleShootNoteSpeaker(1, () -> shooterTargetRPM.getAsDouble())); 
+
   }
 
   /**

@@ -110,7 +110,7 @@ public class ContainerForTest extends RobotContainer {
       .whileTrue(new Shooter_Voltage(()->shooterDesiredVoltage.get()));
 
     operator.leftBumper()// Shoot note with leftBumper
-      .onTrue(CombinedCommands.simpleShootNoteSpeaker(1));
+      .onTrue(CombinedCommands.simpleShootNoteSpeaker(1, () -> 3000.0));
 
     // Eject the note from the front with leftPOV
     XBoxControllerUtil.leftPOV(operator).debounce(0.1)

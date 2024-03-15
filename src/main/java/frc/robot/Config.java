@@ -480,6 +480,10 @@ public static enum ArmSetPoints {
                                kI = 0.0,
                                kD = 0.0,
                                kFF = 0.00025,
+                               kP1 = 0.0,
+                               kI1 = 0.0,
+                               kD1 = 0.0,
+                               kFF1 = 0.0,
                                kMaxOutput = 1.0,
                                kMinOutput = -1.0,
                                maxRPM = 5700.0;
