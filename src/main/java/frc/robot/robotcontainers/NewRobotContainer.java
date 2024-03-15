@@ -142,7 +142,7 @@ public class NewRobotContainer extends RobotContainer {
     //XBoxControllerUtil.leftPOV(operator).debounce(0.1).onTrue(new SetArm(()->ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg)); // Kickbot Shot
     operator.x().onTrue(new SetArm(()->ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg));
     // Climber
-    operator.rightTrigger(0.25).whileTrue(new ClimberRPM(()->  driver.getRightTriggerAxis()));
+    operator.rightTrigger(0.10).whileTrue(new ClimberRPM(()->  driver.getRightTriggerAxis()));
 
     // Simple shooter and intake
     if (Config.disableStateBasedProgramming) {
