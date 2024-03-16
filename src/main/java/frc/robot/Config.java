@@ -151,7 +151,7 @@ public final class Config {
     public static final String apriltagCameraName = "FrontApriltagOV9281";
     public static final String networkTableName = "PhotonCamera";
     //data max
-    public static final int maxNumSamples = 10;
+    public static final int maxNumSamples = 15;
 
     // these are the heights for the apriltags 3, 4, 5, 6, 7, 8
     public static final double[] APRIL_HEIGHTS = {1.32,1.32,1.22,1.22,1.32,1.32};
