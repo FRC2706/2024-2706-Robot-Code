@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -32,12 +34,20 @@ public class CombinedCommands {
      * backing up note, waiting a bit, then feeding the note.
      */
     public static Command simpleShootNoteSpeaker(double intakeTimeout) {
+        return(simpleShootNoteSpeaker(intakeTimeout, () -> 3000, 400));
+    }
+
+    /**
+     * Spin up the shooter while doing the following,
+     * backing up note, waiting a bit, then feeding the note.
+     */
+    public static Command simpleShootNoteSpeaker(double intakeTimeout, DoubleSupplier RPM, double threshold) {
         return Commands.deadline(
             Commands.sequence(
                 new IntakeControl(false).withTimeout(0.15), 
-                new WaitUntilCommand(() -> ShooterSubsystem.getInstance().getVelocityRPM() > 3000),
+                new WaitUntilCommand(() -> ShooterSubsystem.getInstance().getVelocityRPM() > RPM.getAsDouble()),
                 new IntakeControl(true).withTimeout(intakeTimeout)),
-            new Shooter_PID_Tuner(()->3400)
+            new Shooter_PID_Tuner(()->(RPM.getAsDouble() + threshold))
         );
     }
 
@@ -77,6 +87,14 @@ public class CombinedCommands {
         return Commands.race(
             new WaitCommand(timeoutSeconds).andThen(new ScheduleCommand(requirementCommand)),
             command
+        );
+    }
+
+     // Intake and Arm Intake Position
+    public static Command armIntake() {
+        return Commands.parallel(
+        new MakeIntakeMotorSpin(9.0,0),
+        new SetArm(()->ArmSetPoints.INTAKE.angleDeg) // Continue to hold arm in the correct position
         );
     }
 
@@ -211,6 +229,8 @@ public class CombinedCommands {
         });
     }
 
+
+
     /**
      * Score in amp with vision using simple intake/shooter
      * @param driver joystick
@@ -234,7 +254,7 @@ public class CombinedCommands {
      * @param bluePosition PhotonPosition for the blue alliance
      * @param redPosition PhotonPosition for the red alliance
      */
-    public static Command sideSpeakerVisionShot(CommandXboxController driver, PhotonPositions bluePosition, PhotonPositions redPosition) {
+    public static Command centerSpeakerVisionShot(CommandXboxController driver, PhotonPositions bluePosition, PhotonPositions redPosition) {
         // BELOW VALUES WORKING AT KINGSTON BUT SHOOTER DEEMED TOO LOUD. CHANGE BACK TO THIS ONCE SOLVED MECHANICALLY.
         // double armAngle = 29;
         // double shooterSpeed = 4200;
@@ -242,9 +262,9 @@ public class CombinedCommands {
 
 
         // BELOW VALUES SHOULD BE SAFE FOR NOISE, BUT LIKELY WILL MISS OR BE LESS CONSISTENT
-        double armAngle = 26;
-        double shooterSpeed = 3400;
-        double shooterTriggerSpeed = 3000;
+        double armAngle = 33;
+        double shooterSpeed = 3750;
+        double shooterTriggerSpeed = 3700;
 
         return CombinedCommands.visionScoreTeleopSimple(
             driver, 
