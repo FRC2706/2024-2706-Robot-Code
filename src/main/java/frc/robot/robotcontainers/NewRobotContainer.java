@@ -177,7 +177,9 @@ public class NewRobotContainer extends RobotContainer {
       //operator.leftTrigger(0.3).whileTrue(
       operator.leftBumper()
       .whileTrue(CombinedCommands.armIntake())
-      .onFalse(new SetArm(()->ArmSetPoints.NO_INTAKE.angleDeg));
+      .onFalse(new SetArm(()->ArmSetPoints.NO_INTAKE.angleDeg))
+      .onFalse(new MakeIntakeMotorSpin(9.0,0).withTimeout(1).until(() -> intake.isBackSensorActive()));
+
 
       //NOTE: right Trigger has been assigned to climber
       operator.rightTrigger(0.3).whileTrue(CombinedCommands.simpleShootNoteAmp());
