@@ -229,7 +229,7 @@ public final class Config {
     public static final double driveGearRatio = (8.14 / 1.0);
     public static final double angleGearRatio = (12.8 / 1.0);
 
-    public static final double synchTolerance = 3;
+    public static final double synchTolerance = 1;
     
     public static final SwerveDriveKinematics swerveKinematics =
         new SwerveDriveKinematics(
