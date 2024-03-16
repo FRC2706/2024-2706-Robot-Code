@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.620416103391449,
-        "y": 1.6340779600990476
+        "x": 8.649596066964646,
+        "y": 1.5465380693794555
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.620416103391449,
-        "y": 2.6340779600990483
+        "x": 8.649596066964646,
+        "y": 2.1465380693794556
       },
       "isLocked": false,
       "linkedName": "2NoteSourceSideFarNote"
     },
     {
       "anchor": {
-        "x": 8.620416103391449,
-        "y": 2.4122103220509756
+        "x": 8.610689448867051,
+        "y": 2.9763562844661227
       },
       "prevControl": {
-        "x": 8.620416103391449,
-        "y": 1.4122103220509756
+        "x": 8.610689448867051,
+        "y": 2.5763562844661227
       },
       "nextControl": null,
       "isLocked": false,
@@ -39,13 +39,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 135.0,
+    "rotation": 110.0,
     "rotateFast": true
   },
   "reversed": false,
   "folder": "2NoteSourceSideFar",
   "previewStartingState": {
-    "rotation": 136.7899106082461,
+    "rotation": 117.75854060105999,
     "velocity": 0
   },
   "useDefaultConstraints": true

@@ -129,15 +129,15 @@ public class PhotonSubsystem extends SubsystemBase {
  * @return
  * the command to run
  */
-  public Command getAprilTagCommand(PhotonPositions spacePositions, CommandXboxController driverStick){
+  public Command getAprilTagCommand(PhotonPositions spacePositions, CommandXboxController driverStick, boolean neverEnd){
     Command moveToTargetCommands;
     if (spacePositions.hasWaypoint) {
       moveToTargetCommands = Commands.sequence(
-        new PhotonMoveToTarget(spacePositions.waypoint, spacePositions.direction,true),
-        new PhotonMoveToTarget(spacePositions.destination, spacePositions.direction, false)
+        new PhotonMoveToTarget(spacePositions.waypoint, spacePositions.direction,true, false),
+        new PhotonMoveToTarget(spacePositions.destination, spacePositions.direction, false, neverEnd)
       );
     } else {
-      moveToTargetCommands = new PhotonMoveToTarget(spacePositions.destination, spacePositions.direction, false);
+      moveToTargetCommands = new PhotonMoveToTarget(spacePositions.destination, spacePositions.direction, false, neverEnd);
     }
 
     return Commands.sequence(

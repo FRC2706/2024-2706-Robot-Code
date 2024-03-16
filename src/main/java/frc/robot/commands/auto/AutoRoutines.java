@@ -115,8 +115,8 @@ public class AutoRoutines extends SubsystemBase {
 
         NamedCommands.registerCommand("MoveToCenterSpeaker",
             new SelectByAllianceCommand(
-                new PhotonMoveToTarget(PhotonPositions.MIDDLE_SPEAKER_BLUE.destination, false), 
-                new PhotonMoveToTarget(PhotonPositions.MIDDLE_SPEAKER_RED.destination, false)
+                new PhotonMoveToTarget(PhotonPositions.MIDDLE_SPEAKER_BLUE.destination, false, false), 
+                new PhotonMoveToTarget(PhotonPositions.MIDDLE_SPEAKER_RED.destination, false, false)
             )
         );
 
@@ -139,7 +139,7 @@ public class AutoRoutines extends SubsystemBase {
             case 4:
                 return twoNoteSourceSide;
             case 5:
-                return twoNoteCenter;
+                return new PathPlannerAuto("tuneAutoX");
             case 6:
             case 7:
                 var alliance = DriverStation.getAlliance();

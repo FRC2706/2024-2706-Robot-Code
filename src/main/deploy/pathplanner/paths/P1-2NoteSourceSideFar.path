@@ -8,36 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0549242994220585,
-        "y": 1.1574718884034905
+        "x": 1.9868377177512648,
+        "y": 1.2936450517450786
       },
       "isLocked": false,
       "linkedName": "SpeakerShotSourceSideClose"
     },
     {
       "anchor": {
-        "x": 6.052579308950088,
-        "y": 1.4006382515134692
+        "x": 8.649596066964646,
+        "y": 1.5465380693794555
       },
       "prevControl": {
-        "x": 4.806245540097124,
-        "y": 1.247713862697155
-      },
-      "nextControl": {
-        "x": 7.63802399642714,
-        "y": 1.5951713420014506
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 8.620416103391449,
-        "y": 1.6340779600990476
-      },
-      "prevControl": {
-        "x": 7.394857633317163,
-        "y": 1.5076314512818585
+        "x": 7.4629442149879575,
+        "y": 1.3714582879402712
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,7 +30,7 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1.9,
+      "waypointRelativePos": 0.85,
       "rotationDegrees": 180.0,
       "rotateFast": true
     }
@@ -61,7 +45,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 135.0,
+    "rotation": 110.0,
     "rotateFast": true
   },
   "reversed": false,
