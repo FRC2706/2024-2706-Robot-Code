@@ -150,6 +150,7 @@ public final class Config {
     //networkTableName
     public static final String apriltagCameraName = "FrontApriltagOV9281";
     public static final String networkTableName = "PhotonCamera";
+    public static final String frontCameraName = "HD_USB_CAMERA";
     //data max
     public static final int maxNumSamples = 10;
 
