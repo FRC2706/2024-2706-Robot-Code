@@ -152,7 +152,7 @@ public class CombinedCommands {
             Commands.parallel(
                 new IntakeControl(false), // Reverse note until not touching shooter
                 new WaitUntilCommand(() -> ShooterSubsystem.getInstance().getVelocityRPM() > shooterTriggerSpeed),
-                new WaitUntilCommand(() -> Math.abs(Math.toDegrees(ArmSubsystem.getInstance().getPosition()) - armAngleDeg) < 2.5),
+                new WaitUntilCommand(() -> Math.abs(Math.toDegrees(ArmSubsystem.getInstance().getPosition()) - armAngleDeg) < 1),
                 new WaitUntilCommand(() -> SwerveSubsystem.getInstance().isAtPose(PhotonConfig.POS_TOLERANCE, PhotonConfig.ANGLE_TOLERANCE) 
                                         && !SwerveSubsystem.getInstance().isChassisMoving(PhotonConfig.VEL_TOLERANCE))
             ),
@@ -284,7 +284,7 @@ public class CombinedCommands {
           return PhotonSubsystem.getInstance().getTargetPos().getY() - SwerveSubsystem.getInstance().getPose().getY() < 0.5;
         };
         
-        double armAngle = 31;
+        double armAngle = 32;
         double shooterSpeed = 3750;
         double shooterTriggerSpeed = 3700;
 
