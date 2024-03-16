@@ -1,0 +1,74 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 0.7515525931525792,
+        "y": 4.415901154077189
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.0549242994220585,
+        "y": 1.1574718884034905
+      },
+      "isLocked": false,
+      "linkedName": "SpeakerShotSourceSideClose"
+    },
+    {
+      "anchor": {
+        "x": 6.052579308950088,
+        "y": 1.4006382515134692
+      },
+      "prevControl": {
+        "x": 4.806245540097124,
+        "y": 1.247713862697155
+      },
+      "nextControl": {
+        "x": 7.63802399642714,
+        "y": 1.5951713420014506
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 8.620416103391449,
+        "y": 1.6340779600990476
+      },
+      "prevControl": {
+        "x": 7.394857633317163,
+        "y": 1.5076314512818585
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "2NoteSourceSideFarNote"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.9,
+      "rotationDegrees": 180.0,
+      "rotateFast": true
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 2.7,
+    "maxAcceleration": 3.3,
+    "maxAngularVelocity": 320.0,
+    "maxAngularAcceleration": 400.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 135.0,
+    "rotateFast": true
+  },
+  "reversed": false,
+  "folder": "2NoteSourceSideFar",
+  "previewStartingState": {
+    "rotation": -59.23728046576108,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

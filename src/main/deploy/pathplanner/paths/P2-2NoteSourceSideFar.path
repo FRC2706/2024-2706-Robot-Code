@@ -3,38 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.3796163622861606,
-        "y": 4.12553700425467
+        "x": 8.620416103391449,
+        "y": 1.6340779600990476
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.8872124857800565,
-        "y": 4.212361093088135
+        "x": 8.620416103391449,
+        "y": 2.6340779600990483
       },
       "isLocked": false,
-      "linkedName": "2NoteRight-RightPickup"
+      "linkedName": "2NoteSourceSideFarNote"
     },
     {
       "anchor": {
-        "x": 0.6667351757095377,
-        "y": 4.365758146274563
+        "x": 8.620416103391449,
+        "y": 2.4122103220509756
       },
       "prevControl": {
-        "x": 1.1993994471449507,
-        "y": 4.292647363920682
+        "x": 8.620416103391449,
+        "y": 1.4122103220509756
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "SpeakerShotRightClose"
+      "linkedName": "P2-2NoteSourceSideFarEnd"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1,
-      "rotationDegrees": 0,
-      "rotateFast": false
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -45,13 +39,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -58.60973189581223,
-    "rotateFast": false
+    "rotation": 135.0,
+    "rotateFast": true
   },
   "reversed": false,
-  "folder": null,
+  "folder": "2NoteSourceSideFar",
   "previewStartingState": {
-    "rotation": 0,
+    "rotation": 136.7899106082461,
     "velocity": 0
   },
   "useDefaultConstraints": true
