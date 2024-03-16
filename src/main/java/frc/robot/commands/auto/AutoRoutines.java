@@ -43,7 +43,9 @@ public class AutoRoutines extends SubsystemBase {
                     twoNoteLeftAuto,
                     twoNoteCenter,
                     threeNoteCenterSourceSideNote,
-                    threeNoteCenterAmpSideNote;
+                    threeNoteCenterAmpSideNote,
+                    oneNoteSourceSide,
+                    twoNoteSourceSide;
     
 
     public AutoRoutines() {
@@ -57,6 +59,8 @@ public class AutoRoutines extends SubsystemBase {
         twoNoteCenter = new PathPlannerAuto("2NoteCenter");
         threeNoteCenterSourceSideNote = new PathPlannerAuto("3NoteCenterSourceSideNote");
         threeNoteCenterAmpSideNote = new PathPlannerAuto("3NoteCenterAmpSideNote");
+        oneNoteSourceSide = new PathPlannerAuto("1NoteSourceSide");
+        twoNoteSourceSide = new PathPlannerAuto("2NoteSourceSideFar");
     }
 
     public void registerCommandsToPathplanner() {
@@ -131,9 +135,9 @@ public class AutoRoutines extends SubsystemBase {
             case 2:
                 return fourNoteAuto;
             case 3:
-                return threeNoteCenterAmpSideNote;
+                return oneNoteSourceSide;
             case 4:
-                return threeNoteCenterSourceSideNote;
+                return twoNoteSourceSide;
             case 5:
                 return twoNoteCenter;
             case 6:
