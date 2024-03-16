@@ -115,8 +115,8 @@ public class AutoRoutines extends SubsystemBase {
 
         NamedCommands.registerCommand("MoveToCenterSpeaker",
             new SelectByAllianceCommand(
-                new PhotonMoveToTarget(PhotonPositions.MIDDLE_SPEAKER_BLUE.destination, false), 
-                new PhotonMoveToTarget(PhotonPositions.MIDDLE_SPEAKER_RED.destination, false)
+                new PhotonMoveToTarget(PhotonPositions.MIDDLE_SPEAKER_BLUE.destination, false, false), 
+                new PhotonMoveToTarget(PhotonPositions.MIDDLE_SPEAKER_RED.destination, false, false)
             )
         );
 

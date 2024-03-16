@@ -86,7 +86,23 @@ public class IntakeSubsystem extends SubsystemBase{
         backSensorLongPub = intakeTable.getBooleanTopic("back sensor result").publish(PubSubOption.periodic(0.02));
 
         ErrorTrackingSubsystem.getInstance().register(m_intake);
+
+        // Must be the last thing in the constructor
+        burnFlash();
     }
+
+    /**
+     * Save the configurations from flash to EEPROM.
+     */
+    private void burnFlash() {
+        try {
+        Thread.sleep(200);
+        } 
+        catch (Exception e) {}
+
+        m_intake.burnFlash();
+    }
+
     public boolean isFrontSensorActive(){
         return frontSensorResult;
     }
