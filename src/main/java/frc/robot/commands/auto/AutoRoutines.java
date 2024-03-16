@@ -139,7 +139,7 @@ public class AutoRoutines extends SubsystemBase {
             case 4:
                 return twoNoteSourceSide;
             case 5:
-                return twoNoteCenter;
+                return new PathPlannerAuto("tuneAutoX");
             case 6:
             case 7:
                 var alliance = DriverStation.getAlliance();
