@@ -388,11 +388,11 @@ public final class Config {
     public static final boolean SOFT_LIMIT_ENABLE = true;
     
     //PID constants
-    public static final double arm_kP = robotSpecific(2.865, 0.0, 0.0, 1.4);
-    public static final double arm_kI = robotSpecific(0.00286, 0.0, 0.0, 0.0003);
-    public static final double arm_kD = robotSpecific(0.0, 0.0, 0.0, 0.9);
-    public static final double arm_kIz = robotSpecific(Math.toRadians(5), 0.0, 0.0, 0.3);
-    public static final double arm_kFF = 0;
+    public static final double arm_kP = robotSpecific(2.700000, 0.0, 0.0, 1.4);
+    public static final double arm_kI = robotSpecific(0.0, 0.0, 0.0, 0.0003);
+    public static final double arm_kD = robotSpecific(0.800000, 0.0, 0.0, 0.9);
+    public static final double arm_kIz = robotSpecific(0.02, 0.0, 0.0, 0.3);
+    public static final double arm_kFF = 0.013;
     public static final double min_output = -1;
     public static final double max_output = 1;
 
@@ -421,6 +421,7 @@ public static enum ArmSetPoints {
   INTAKE(-2.5),
   SPEAKER_KICKBOT_SHOT(13),
   NO_INTAKE(5.0),
+  SPEAKER_VISION_SHOT(33),
   AMP(100);
 
   public final double angleDeg;
@@ -484,6 +485,10 @@ public static enum ArmSetPoints {
                                kI = 0.0,
                                kD = 0.0,
                                kFF = 0.00025,
+                               kP1 = 0.001,
+                               kI1 = 0.0,
+                               kD1 = 0.0,
+                               kFF1 = 0.00025,
                                kMaxOutput = 1.0,
                                kMinOutput = -1.0,
                                maxRPM = 5700.0;
