@@ -56,6 +56,7 @@ public class PhotonSubsystem extends SubsystemBase {
   private LinearFilter filterY = LinearFilter.movingAverage(PhotonConfig.maxNumSamples);
   private int numSamples;
   private int id;
+  private double recentTimeStamp = 0;
 
   
 
@@ -202,6 +203,10 @@ public class PhotonSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     var result = camera1.getLatestResult();
+    if (result.getTimestampSeconds() == recentTimeStamp){
+      return;
+    }
+    recentTimeStamp = result.getTimestampSeconds();
     if (result.hasTargets()){
       //get the swerve pose at the time that the result was gotten
       Optional<Pose2d> optPose= SwerveSubsystem.getInstance().getPoseAtTimestamp(result.getTimestampSeconds());
