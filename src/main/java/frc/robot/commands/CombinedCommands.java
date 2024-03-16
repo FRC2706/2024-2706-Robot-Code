@@ -14,12 +14,15 @@ import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.lib2706.SelectByAllianceCommand;
 import frc.robot.Config.ArmSetPoints;
 import frc.robot.Config.PhotonConfig;
 import frc.robot.Config.PhotonConfig.PhotonPositions;
+import frc.robot.commands.BlingCommand.BlingColour;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.BlingSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.ShooterStateMachine.ShooterModes;
@@ -133,6 +136,11 @@ public class CombinedCommands {
         // Use a timer to not rumble if the it's only been 0.5 seconds
         Timer timer = new Timer();
 
+        // Bling Commands
+        Command bling = new BlingCommand(BlingColour.BLUESTROBE);
+        Command idleBling = Commands.idle(BlingSubsystem.getINSTANCE()).withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
+        Command turnOffBling = new BlingCommand(BlingColour.DISABLED);
+
         // Wait for vision data to be available
         Command waitForVisionData = new ProxyCommand(new SelectByAllianceCommand(
             PhotonSubsystem.getInstance().getWaitForDataCommand(bluePosition.id), 
@@ -147,6 +155,7 @@ public class CombinedCommands {
                 new WaitUntilCommand(() -> SwerveSubsystem.getInstance().isAtPose(PhotonConfig.POS_TOLERANCE, PhotonConfig.ANGLE_TOLERANCE) 
                                         && !SwerveSubsystem.getInstance().isChassisMoving(PhotonConfig.VEL_TOLERANCE))
             ),
+            bling.andThen(idleBling),
             new SelectByAllianceCommand(
                 PhotonSubsystem.getInstance().getAprilTagCommand(bluePosition, driverJoystick, true), 
                 PhotonSubsystem.getInstance().getAprilTagCommand(redPosition, driverJoystick, true)),
@@ -159,6 +168,7 @@ public class CombinedCommands {
         // Score the note
         Command scoreNote = Commands.parallel(
             Commands.runOnce(() -> SwerveSubsystem.getInstance().stopMotors()),
+            idleBling,
             new ScheduleCommand(idleSwerve),
             new Shooter_PID_Tuner(() -> shooterSpeed), // Continue to hold shooter voltage
             new SetArm(()->armAngleDeg), // Continue to hold arm in the correct position
@@ -178,6 +188,8 @@ public class CombinedCommands {
             scoreNote
         ).finallyDo(() -> {
             idleSwerve.cancel(); // Release control of swerve
+            idleBling.cancel(); // Release control of bling
+            turnOffBling.schedule(); // Turn off bling
             if (timer.hasElapsed(0.5))
                 rumble.schedule(); // Rumble the joystick to notify the driver
         });
