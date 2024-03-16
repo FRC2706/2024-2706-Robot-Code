@@ -95,7 +95,7 @@ public class NewRobotContainer extends RobotContainer {
    */
   private void configureButtonBindings() { 
     // Set bling to purple when note is in
-    new Trigger(() -> intake.isBackSensorActive()).onTrue(new BlingCommand(BlingColour.PURPLE))
+    new Trigger(() -> intake.isBackSensorActive()).onTrue(new BlingCommand(BlingColour.PURPLESTROBE))
                                                   .onFalse(new BlingCommand(BlingColour.DISABLED));
 
     new Trigger(() -> intake.isBackSensorLongActive() && DriverStation.isTeleopEnabled()).onTrue(Commands.parallel(

@@ -388,8 +388,8 @@ public final class Config {
     public static final double arm_kP = robotSpecific(2.700000, 0.0, 0.0, 1.4);
     public static final double arm_kI = robotSpecific(0.0, 0.0, 0.0, 0.0003);
     public static final double arm_kD = robotSpecific(0.800000, 0.0, 0.0, 0.9);
-    public static final double arm_kIz = robotSpecific(Math.toRadians(5), 0.0, 0.0, 0.3);
-    public static final double arm_kFF = 0;
+    public static final double arm_kIz = robotSpecific(0.02, 0.0, 0.0, 0.3);
+    public static final double arm_kFF = 0.013;
     public static final double min_output = -1;
     public static final double max_output = 1;
 
@@ -418,6 +418,7 @@ public static enum ArmSetPoints {
   INTAKE(-2.5),
   SPEAKER_KICKBOT_SHOT(13),
   NO_INTAKE(5.0),
+  SPEAKER_VISION_SHOT(33),
   AMP(100);
 
   public final double angleDeg;
