@@ -47,6 +47,11 @@ public class TeleopSwerve extends Command {
 
   public static void setSpeeds(TeleopSpeeds newSpeed) {
     speed = newSpeed;
+
+    // Change acceleration limit and reset
+    translationLimiter = new SlewRateLimiter(newSpeed.translationAccelLimit);
+    strafeLimiter = new SlewRateLimiter(newSpeed.translationAccelLimit);
+    rotationLimiter = new SlewRateLimiter(newSpeed.angularAccelLimit);
     resetAccelerationLimiters();
   }
   public static void setFieldRelative(boolean newIsFieldRelative) {
@@ -54,9 +59,12 @@ public class TeleopSwerve extends Command {
   }
 
   public static void resetAccelerationLimiters() {
-    translationLimiter.reset(MathUtil.clamp(SwerveSubsystem.getInstance().getFieldRelativeSpeeds().vxMetersPerSecond, -speed.translationalSpeed, speed.translationalSpeed));
-    strafeLimiter.reset(MathUtil.clamp(SwerveSubsystem.getInstance().getFieldRelativeSpeeds().vyMetersPerSecond, -speed.translationalSpeed, speed.translationalSpeed));
-    rotationLimiter.reset(MathUtil.clamp(SwerveSubsystem.getInstance().getFieldRelativeSpeeds().omegaRadiansPerSecond, -speed.angularSpeed, speed.angularSpeed));
+    // translationLimiter.reset(MathUtil.clamp(SwerveSubsystem.getInstance().getFieldRelativeSpeeds().vxMetersPerSecond, -speed.translationalSpeed, speed.translationalSpeed));
+    // strafeLimiter.reset(MathUtil.clamp(SwerveSubsystem.getInstance().getFieldRelativeSpeeds().vyMetersPerSecond, -speed.translationalSpeed, speed.translationalSpeed));
+    // rotationLimiter.reset(MathUtil.clamp(SwerveSubsystem.getInstance().getFieldRelativeSpeeds().omegaRadiansPerSecond, -speed.angularSpeed, speed.angularSpeed));
+    translationLimiter.reset(SwerveSubsystem.getInstance().getFieldRelativeSpeeds().vxMetersPerSecond);
+    strafeLimiter.reset(SwerveSubsystem.getInstance().getFieldRelativeSpeeds().vyMetersPerSecond);
+    rotationLimiter.reset(SwerveSubsystem.getInstance().getFieldRelativeSpeeds().omegaRadiansPerSecond);
   }
 
   @Override
