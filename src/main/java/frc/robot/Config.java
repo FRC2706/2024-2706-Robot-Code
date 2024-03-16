@@ -150,6 +150,7 @@ public final class Config {
     //networkTableName
     public static final String apriltagCameraName = "FrontApriltagOV9281";
     public static final String networkTableName = "PhotonCamera";
+    public static final String frontCameraName = "HD_USB_CAMERA";
     //data max
     public static final int maxNumSamples = 10;
 
@@ -228,7 +229,7 @@ public final class Config {
     public static final double driveGearRatio = (8.14 / 1.0);
     public static final double angleGearRatio = (12.8 / 1.0);
 
-    public static final double synchTolerance = 3;
+    public static final double synchTolerance = 1;
     
     public static final SwerveDriveKinematics swerveKinematics =
         new SwerveDriveKinematics(
@@ -273,15 +274,19 @@ public final class Config {
 
     /* Swerve Profiling Values Changed */
     public static enum TeleopSpeeds {
-      SLOW(0.5, 0.5 * Math.PI),
-      MAX(3.0, 2.5 * Math.PI);
+      SLOW(0.5, 0.5 * Math.PI, 16, 12 * Math.PI),
+      MAX(3.0, 2.5 * Math.PI, 6, 8 * Math.PI);
 
       public final double translationalSpeed;
       public final double angularSpeed;
+      public final double translationAccelLimit;
+      public final double angularAccelLimit;
 
-      TeleopSpeeds(double translationalSpeed, double angularSpeed) {
+      TeleopSpeeds(double translationalSpeed, double angularSpeed, double translationAccelLimit, double angAccelLimit) {
         this.translationalSpeed = translationalSpeed;
         this.angularSpeed = angularSpeed;
+        this.translationAccelLimit = translationAccelLimit;
+        this.angularAccelLimit = angAccelLimit;
       }
     }
 

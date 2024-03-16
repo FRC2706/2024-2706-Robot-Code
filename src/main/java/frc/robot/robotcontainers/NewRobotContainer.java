@@ -66,6 +66,9 @@ public class NewRobotContainer extends RobotContainer {
   private AutoRoutines m_autoRoutines;
   private AutoSelector m_autoSelector;
 
+  /* Default Command */
+  private Command m_swerveDefaultCommand;
+
   private TunableNumber shooterTargetRPM = new TunableNumber("Shooter/Target RPM", 0);
   private TunableNumber shooterDesiredVoltage = new TunableNumber("Shooter/desired Voltage", 0);
   private TunableNumber armAngleDeg = new TunableNumber("Arm/ArmTuning/setAngleDeg", 5.0);
@@ -74,7 +77,8 @@ public class NewRobotContainer extends RobotContainer {
    */
   public NewRobotContainer() {
     /*  Setup default commands */
-    s_Swerve.setDefaultCommand(new TeleopSwerve(driver));
+    m_swerveDefaultCommand = new TeleopSwerve(driver);
+    s_Swerve.setDefaultCommand(m_swerveDefaultCommand);
     if (!Config.disableStateBasedProgramming) {
       intake.setDefaultCommand(intake.defaultIntakeCommand());
       shooter.setDefaultCommand(shooter.defaultShooterCommand(()-> intake.isNoteIn()));
@@ -115,13 +119,15 @@ public class NewRobotContainer extends RobotContainer {
     driver.rightBumper().onTrue(Commands.runOnce(() -> TeleopSwerve.setFieldRelative(false)))
                        .onFalse(Commands.runOnce(() -> TeleopSwerve.setFieldRelative(true)));
 
+    driver.start().onTrue(Commands.runOnce(() -> SwerveSubsystem.getInstance().synchSwerve()));
+
     // Commands that take control of the rotation stick
     driver.y().whileTrue(new RotateToAngle(driver, Rotation2d.fromDegrees(0)));
     driver.x().whileTrue(new RotateToAngle(driver, Rotation2d.fromDegrees(90)));
     driver.a().whileTrue(new RotateToAngle(driver, Rotation2d.fromDegrees(180)));
-    driver.b().whileTrue(new RotateToAngle(driver, Rotation2d.fromDegrees(270)));
-    driver.start().whileTrue(new RotateAngleToVisionSupplier(driver, "photonvision/" + PhotonConfig.apriltagCameraName));    
-
+    driver.b().whileTrue(new RotateToAngle(driver, Rotation2d.fromDegrees(270)));   
+    driver.rightTrigger().whileTrue(new RotateAngleToVisionSupplier(driver, "photonvision/" + PhotonConfig.frontCameraName));
+    
     // Vision scoring commands with no intake, shooter, arm
     // driver.leftTrigger().whileTrue(new SelectByAllianceCommand( // Implement command group that also controls the arm, intake, shooter
     //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.AMP_BLUE, driver), 
@@ -186,7 +192,8 @@ public class NewRobotContainer extends RobotContainer {
       //NOTE: right Trigger has been assigned to climber
       operator.rightTrigger(0.3).whileTrue(CombinedCommands.simpleShootNoteAmp());
       // Shoot note with leftBumper
-      operator.rightBumper().whileTrue(CombinedCommands.simpleShootNoteSpeaker(1));
+      operator.rightBumper().whileTrue(CombinedCommands.simpleShootNoteSpeaker(1))
+                            .onTrue(new SetArm(()->ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg));
 
     // State based shooter and intake
     } else {

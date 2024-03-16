@@ -355,7 +355,7 @@ public class SwerveSubsystem extends SubsystemBase {
     // If the robot isn't moving synchronize the encoders every 100ms (Inspired by democrat's SDS
     // lib)
     // To ensure that everytime we initialize it works.
-    if (!isChassisMoving(0.01) && !areModulesRotating(2)) {
+    if (DriverStation.isDisabled() && !isChassisMoving(0.01) && !areModulesRotating(2)) {
       if (++moduleSynchronizationCounter > 6 && isSwerveNotSynched()) {
         synchSwerve();
         System.out.println("Resynced" + ++tempSynchCounter);

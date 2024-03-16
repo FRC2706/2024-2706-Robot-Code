@@ -101,9 +101,11 @@ public class CombinedCommands {
 
      // Intake and Arm Intake Position
     public static Command armIntake() {
+         
         return Commands.parallel(
-        new MakeIntakeMotorSpin(9.0,0),
-        new SetArm(()->ArmSetPoints.INTAKE.angleDeg) // Continue to hold arm in the correct position
+            new MakeIntakeMotorSpin(9.0,0),
+            new SetArm(()->ArmSetPoints.INTAKE.angleDeg), // Continue to hold arm in the correct position
+            PhotonSubsystem.getInstance().saveImagesIntakeCameraCommand()
         );
     }
 
