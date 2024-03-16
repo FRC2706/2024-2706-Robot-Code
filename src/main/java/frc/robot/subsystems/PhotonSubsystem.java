@@ -56,6 +56,7 @@ public class PhotonSubsystem extends SubsystemBase {
   private LinearFilter filterY = LinearFilter.movingAverage(PhotonConfig.maxNumSamples);
   private int numSamples;
   private int id;
+  private double recentTimeStamp = 0;
 
   
 
@@ -128,15 +129,15 @@ public class PhotonSubsystem extends SubsystemBase {
  * @return
  * the command to run
  */
-  public Command getAprilTagCommand(PhotonPositions spacePositions, CommandXboxController driverStick){
+  public Command getAprilTagCommand(PhotonPositions spacePositions, CommandXboxController driverStick, boolean neverEnd){
     Command moveToTargetCommands;
     if (spacePositions.hasWaypoint) {
       moveToTargetCommands = Commands.sequence(
-        new PhotonMoveToTarget(spacePositions.waypoint, spacePositions.direction,true),
-        new PhotonMoveToTarget(spacePositions.destination, spacePositions.direction, false)
+        new PhotonMoveToTarget(spacePositions.waypoint, spacePositions.direction,true, false),
+        new PhotonMoveToTarget(spacePositions.destination, spacePositions.direction, false, neverEnd)
       );
     } else {
-      moveToTargetCommands = new PhotonMoveToTarget(spacePositions.destination, spacePositions.direction, false);
+      moveToTargetCommands = new PhotonMoveToTarget(spacePositions.destination, spacePositions.direction, false, neverEnd);
     }
 
     return Commands.sequence(
@@ -202,6 +203,10 @@ public class PhotonSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     var result = camera1.getLatestResult();
+    if (result.getTimestampSeconds() == recentTimeStamp){
+      return;
+    }
+    recentTimeStamp = result.getTimestampSeconds();
     if (result.hasTargets()){
       //get the swerve pose at the time that the result was gotten
       Optional<Pose2d> optPose= SwerveSubsystem.getInstance().getPoseAtTimestamp(result.getTimestampSeconds());

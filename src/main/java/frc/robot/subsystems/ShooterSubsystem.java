@@ -38,10 +38,15 @@ public class ShooterSubsystem extends SubsystemBase {
     private boolean stateFulControl = false;
 
 
-    private TunableNumber kP = new TunableNumber("Shooter/kP", Config.ShooterConstants.kP);
-    private TunableNumber kI = new TunableNumber("Shooter/kI", Config.ShooterConstants.kI);
-    private TunableNumber kD = new TunableNumber("Shooter/kD", Config.ShooterConstants.kD);
-    private TunableNumber kFF = new TunableNumber("Shooter/kFF", Config.ShooterConstants.kFF);
+    private TunableNumber kP = new TunableNumber("Shooter/PID0/kP", Config.ShooterConstants.kP);
+    private TunableNumber kI = new TunableNumber("Shooter/PID0/kI", Config.ShooterConstants.kI);
+    private TunableNumber kD = new TunableNumber("Shooter/PID0/kD", Config.ShooterConstants.kD);
+    private TunableNumber kFF = new TunableNumber("Shooter/PID0/kFF", Config.ShooterConstants.kFF);
+
+    private TunableNumber kP1 = new TunableNumber("Shooter/PID1/kP", Config.ShooterConstants.kP1);
+    private TunableNumber kI1 = new TunableNumber("Shooter/PID1/kI", Config.ShooterConstants.kI1);
+    private TunableNumber kD1 = new TunableNumber("Shooter/PID1/kD", Config.ShooterConstants.kD1);
+    private TunableNumber kFF1 = new TunableNumber("Shooter/PID1/kFF", Config.ShooterConstants.kFF1);
     private TunableNumber shooterTreshHold = new TunableNumber("Shooter/tresh hold", 100);
     
     private DoublePublisher velocityPub;
@@ -75,8 +80,11 @@ public class ShooterSubsystem extends SubsystemBase {
         setBrake(true);
 
         m_pidController.setOutputRange(Config.ShooterConstants.kMinOutput, Config.ShooterConstants.kMaxOutput);
-        setPIDGains(kP.get(), kI.get(), kD.get());
-        setFFGains(kFF.get());
+        setPIDGains(kP.get(), kI.get(), kD.get(), 0);
+        setFFGains(kFF.get(), 0);
+
+        setPIDGains(kP1.get(), kI1.get(), kD1.get(), 1);
+        setFFGains(kFF1.get(), 1);
 
         NetworkTable shooterTable = NetworkTableInstance.getDefault().getTable("Shooter");
         velocityPub = shooterTable.getDoubleTopic("Shooter Velocity RPM").publish(PubSubOption.periodic(0.02));
@@ -91,7 +99,13 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void setRPM(double setPoint) {
-        m_pidController.setReference(setPoint, ControlType.kVelocity);
+        int slotID = 0;
+
+        if (setPoint > 3500) {
+            slotID = 1;
+        }
+
+        m_pidController.setReference(setPoint, ControlType.kVelocity, slotID);
     }
 
     public void setVoltage(double setVolt) {
@@ -124,14 +138,14 @@ public class ShooterSubsystem extends SubsystemBase {
         return shooterStates.getCurrentState();
     }
 
-    private void setPIDGains(double kP, double kI, double kD){
-        m_pidController.setP(kP);
-        m_pidController.setI(kI);
-        m_pidController.setD(kD);
+    private void setPIDGains(double kP, double kI, double kD, int slotID){
+        m_pidController.setP(kP, slotID);
+        m_pidController.setI(kI, slotID);
+        m_pidController.setD(kD, slotID);
     }   
 
-    private void setFFGains(double kFF){
-        m_pidController.setFF(kFF);
+    private void setFFGains(double kFF, int slotID){
+        m_pidController.setFF(kFF, slotID);
     }   
 
     public boolean isReadyToShoot(){
@@ -188,8 +202,11 @@ public class ShooterSubsystem extends SubsystemBase {
     
     @Override
     public void periodic() {
-        TunableNumber.ifChanged(hashCode(), ()->setPIDGains(kP.get(), kI.get(), kD.get()), kP, kI, kD);
-        TunableNumber.ifChanged(hashCode(), ()->setFFGains(kFF.get()), kFF);
+        TunableNumber.ifChanged(hashCode(), ()->setPIDGains(kP.get(), kI.get(), kD.get(), 0), kP, kI, kD);
+        TunableNumber.ifChanged(hashCode(), ()->setFFGains(kFF.get(), 0), kFF);
+
+        TunableNumber.ifChanged(hashCode(), ()->setPIDGains(kP1.get(), kI1.get(), kD1.get(), 1), kP1, kI1, kD1);
+        TunableNumber.ifChanged(hashCode(), ()->setFFGains(kFF1.get(), 1), kFF1);
 
         //Check if this method would work like this
         if(stateFulControl == true) {
