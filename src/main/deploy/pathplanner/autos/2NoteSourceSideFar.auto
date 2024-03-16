@@ -67,9 +67,41 @@
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "deadline",
                 "data": {
-                  "pathName": "P1-2NoteSourceSideFar"
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "P1-2NoteSourceSideFar"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "ArmKitbotShot"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "deadline",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.25
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "ArmPickup"
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -111,6 +143,12 @@
                 }
               },
               {
+                "type": "named",
+                "data": {
+                  "name": "ArmKitbotShot"
+                }
+              },
+              {
                 "type": "deadline",
                 "data": {
                   "commands": [
@@ -118,12 +156,6 @@
                       "type": "wait",
                       "data": {
                         "waitTime": 2.0
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "ArmKitbotShot"
                       }
                     },
                     {

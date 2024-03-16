@@ -112,7 +112,7 @@ public class NewRobotContainer extends RobotContainer {
     driver.x().whileTrue(new RotateToAngle(driver, Rotation2d.fromDegrees(90)));
     driver.a().whileTrue(new RotateToAngle(driver, Rotation2d.fromDegrees(180)));
     driver.b().whileTrue(new RotateToAngle(driver, Rotation2d.fromDegrees(270)));
-    driver.start().whileTrue(new RotateAngleToVisionSupplier(driver, "photonvision/" + PhotonConfig.apriltagCameraName));    
+    driver.rightTrigger().whileTrue(new RotateAngleToVisionSupplier(driver, "photonvision/" + PhotonConfig.apriltagCameraName));    
 
     // Vision scoring commands with no intake, shooter, arm
     // driver.leftTrigger().whileTrue(new SelectByAllianceCommand( // Implement command group that also controls the arm, intake, shooter
