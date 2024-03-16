@@ -234,7 +234,7 @@ public class CombinedCommands {
      * @param bluePosition PhotonPosition for the blue alliance
      * @param redPosition PhotonPosition for the red alliance
      */
-    public static Command sideSpeakerVisionShot(CommandXboxController driver, PhotonPositions bluePosition, PhotonPositions redPosition) {
+    public static Command centerSpeakerVisionShot(CommandXboxController driver, PhotonPositions bluePosition, PhotonPositions redPosition) {
         // BELOW VALUES WORKING AT KINGSTON BUT SHOOTER DEEMED TOO LOUD. CHANGE BACK TO THIS ONCE SOLVED MECHANICALLY.
         // double armAngle = 29;
         // double shooterSpeed = 4200;
@@ -242,9 +242,9 @@ public class CombinedCommands {
 
 
         // BELOW VALUES SHOULD BE SAFE FOR NOISE, BUT LIKELY WILL MISS OR BE LESS CONSISTENT
-        double armAngle = 26;
-        double shooterSpeed = 3400;
-        double shooterTriggerSpeed = 3000;
+        double armAngle = 33;
+        double shooterSpeed = 3750;
+        double shooterTriggerSpeed = 3700;
 
         return CombinedCommands.visionScoreTeleopSimple(
             driver, 

@@ -123,7 +123,7 @@ public class NewRobotContainer extends RobotContainer {
     //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.RIGHT_SPEAKER_BLUE, driver), 
     //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.LEFT_SPEAKER_RED, driver)));
 
-    driver.leftTrigger().whileTrue(CombinedCommands.sideSpeakerVisionShot(driver, PhotonPositions.RIGHT_SPEAKER_BLUE, PhotonPositions.LEFT_SPEAKER_RED));
+    driver.leftTrigger().whileTrue(CombinedCommands.centerSpeakerVisionShot(driver, PhotonPositions.FAR_SPEAKER_BLUE, PhotonPositions.FAR_SPEAKER_RED));
 
     // Complete vision scoring commands with all subsystems
     // if (Config.disableStateBasedProgramming) {

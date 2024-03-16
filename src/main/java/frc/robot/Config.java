@@ -165,16 +165,19 @@ public final class Config {
       
       RIGHT_SPEAKER_RED(4, new Translation2d(-0.937,0.937), new Translation2d(-0.637,0.637), Rotation2d.fromDegrees(-60)),
       MIDDLE_SPEAKER_RED(4, new Translation2d(-1.3,0), new Translation2d(-0.95,0), Rotation2d.fromDegrees(0)),
-      FAR_SPEAKER_RED(4, new Translation2d(-2.4,0), new Translation2d(-2.2,0), Rotation2d.fromDegrees(0)),
       LEFT_SPEAKER_BLUE(7, new Translation2d(0.937,0.937), new Translation2d(0.637,0.637), Rotation2d.fromDegrees(-120)),
       MIDDLE_SPEAKER_BLUE(7, new Translation2d(1.20,0), new Translation2d(0.90,0), Rotation2d.fromDegrees(180)),
       TEST(4, new Translation2d(-2,0), new Translation2d(-1,0), Rotation2d.fromDegrees(0)),
-
       LEFT_SPEAKER_RED(3, new Translation2d(-1.2,-1.2), Rotation2d.fromDegrees(180+56)),
       RIGHT_SPEAKER_BLUE(8, new Translation2d(1.2,-1.2), Rotation2d.fromDegrees(-56)),
       AMP_RED(5, new Translation2d(0,-0.70), new Translation2d(0,-0.5), Rotation2d.fromDegrees(90)),
-      AMP_BLUE(6, new Translation2d(0,-0.30), new Translation2d(0,0.05),  Rotation2d.fromDegrees(90));
-  
+      AMP_BLUE(6, new Translation2d(0,-0.30), new Translation2d(0,0.05),  Rotation2d.fromDegrees(90)),
+
+      FAR_SPEAKER_RED(4, new Translation2d(-2,0), new Translation2d(-2.2,0), Rotation2d.fromDegrees(0)),
+      FAR_SPEAKER_BLUE(7, new Translation2d(2.5,0), new Translation2d(2.3,0), Rotation2d.fromDegrees(0)),
+      FAR_SPEAKER_RED_SIDE_TAG(3, new Translation2d(-2.5,0), new Translation2d(-2.1,0.58), Rotation2d.fromDegrees(0)),
+      FAR_SPEAKER_BLUE_SIDE_TAG(8, new Translation2d(2.4,0), new Translation2d(2.1,-0.58 ), Rotation2d.fromDegrees(0));
+
       public final int id;
       public final boolean hasWaypoint;
       public final Translation2d waypoint;
