@@ -47,6 +47,7 @@ public class TeleopSwerve extends Command {
 
   public static void setSpeeds(TeleopSpeeds newSpeed) {
     speed = newSpeed;
+    resetAccelerationLimiters();
   }
   public static void setFieldRelative(boolean newIsFieldRelative) {
     isFieldRelative = newIsFieldRelative;
