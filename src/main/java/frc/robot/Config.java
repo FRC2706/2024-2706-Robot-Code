@@ -151,7 +151,7 @@ public final class Config {
     public static final String apriltagCameraName = "FrontApriltagOV9281";
     public static final String networkTableName = "PhotonCamera";
     //data max
-    public static final int maxNumSamples = 15;
+    public static final int maxNumSamples = 10;
 
     // these are the heights for the apriltags 3, 4, 5, 6, 7, 8
     public static final double[] APRIL_HEIGHTS = {1.32,1.32,1.22,1.22,1.32,1.32};
@@ -173,11 +173,15 @@ public final class Config {
       AMP_RED(5, new Translation2d(0,-0.70), new Translation2d(0,-0.5), Rotation2d.fromDegrees(90)),
       AMP_BLUE(6, new Translation2d(0,-0.30), new Translation2d(0,0.05),  Rotation2d.fromDegrees(90)),
 
-      FAR_SPEAKER_RED(4, new Translation2d(-2,0), new Translation2d(-2.2,0), Rotation2d.fromDegrees(180)),
-      FAR_SPEAKER_BLUE(7, new Translation2d(2.5,0), new Translation2d(2.3,0), Rotation2d.fromDegrees(0)),
+      FAR_SPEAKER_RED(4, new Translation2d(-2.1,0), Rotation2d.fromDegrees(180)),
+      FAR_SPEAKER_BLUE(7, new Translation2d(2.1, 0), Rotation2d.fromDegrees(0)),
       FAR_SPEAKER_RED_SIDE_TAG(3, new Translation2d(-2.5,0), new Translation2d(-2.1,0.58), Rotation2d.fromDegrees(0)),
       FAR_SPEAKER_BLUE_SIDE_TAG(8, new Translation2d(2.4,0), new Translation2d(2.1,-0.58 ), Rotation2d.fromDegrees(0));
 
+      // 2.2 , 33 deg
+      // FAR_SPEAKER_BLUE at new Translation2d(2.35,-0.65), arm angle of 35.8 and shooter speed at 3750
+
+    
       public final int id;
       public final boolean hasWaypoint;
       public final Translation2d waypoint;

@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -138,7 +139,7 @@ public class CombinedCommands {
 
         // Bling Commands
         Command bling = new BlingCommand(BlingColour.BLUESTROBE);
-        Command idleBling = Commands.idle(BlingSubsystem.getINSTANCE()).withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
+        Command idleBling = Commands.idle(BlingSubsystem.getINSTANCE());
         Command turnOffBling = new BlingCommand(BlingColour.DISABLED);
 
         // Wait for vision data to be available
@@ -155,11 +156,10 @@ public class CombinedCommands {
                 new WaitUntilCommand(() -> SwerveSubsystem.getInstance().isAtPose(PhotonConfig.POS_TOLERANCE, PhotonConfig.ANGLE_TOLERANCE) 
                                         && !SwerveSubsystem.getInstance().isChassisMoving(PhotonConfig.VEL_TOLERANCE))
             ),
-            bling.andThen(idleBling),
             new SelectByAllianceCommand(
                 PhotonSubsystem.getInstance().getAprilTagCommand(bluePosition, driverJoystick, true), 
                 PhotonSubsystem.getInstance().getAprilTagCommand(redPosition, driverJoystick, true)),
-            new ScheduleCommand(idleSwerve), // Maintain control of the SwerveSubsystem
+            // new ScheduleCommand(idleSwerve), // Maintain control of the SwerveSubsystem
             new WaitUntilCommand(keepArmLoweredUntil).andThen(new SetArm(()->armAngleDeg)),
             new WaitCommand(0.1).andThen(new Shooter_PID_Tuner(() -> shooterSpeed)),
             Commands.runOnce(() -> timer.restart())
@@ -168,8 +168,7 @@ public class CombinedCommands {
         // Score the note
         Command scoreNote = Commands.parallel(
             Commands.runOnce(() -> SwerveSubsystem.getInstance().stopMotors()),
-            idleBling,
-            new ScheduleCommand(idleSwerve),
+            // new ScheduleCommand(idleSwerve),
             new Shooter_PID_Tuner(() -> shooterSpeed), // Continue to hold shooter voltage
             new SetArm(()->armAngleDeg), // Continue to hold arm in the correct position
             new MakeIntakeMotorSpin(9.0, 0)
@@ -285,7 +284,7 @@ public class CombinedCommands {
           return PhotonSubsystem.getInstance().getTargetPos().getY() - SwerveSubsystem.getInstance().getPose().getY() < 0.5;
         };
         
-        double armAngle = 33;
+        double armAngle = 31;
         double shooterSpeed = 3750;
         double shooterTriggerSpeed = 3700;
 

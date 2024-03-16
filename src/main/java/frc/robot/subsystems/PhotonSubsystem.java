@@ -133,7 +133,7 @@ public class PhotonSubsystem extends SubsystemBase {
     Command moveToTargetCommands;
     if (spacePositions.hasWaypoint) {
       moveToTargetCommands = Commands.sequence(
-        new PhotonMoveToTarget(spacePositions.waypoint, spacePositions.direction,true, neverEnd),
+        new PhotonMoveToTarget(spacePositions.waypoint, spacePositions.direction,true, false),
         new PhotonMoveToTarget(spacePositions.destination, spacePositions.direction, false, neverEnd)
       );
     } else {
