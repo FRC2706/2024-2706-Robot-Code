@@ -131,7 +131,9 @@ public class NewRobotContainer extends RobotContainer {
     //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.RIGHT_SPEAKER_BLUE, driver), 
     //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.LEFT_SPEAKER_RED, driver)));
 
-    driver.leftTrigger().whileTrue(CombinedCommands.centerSpeakerVisionShot(driver, PhotonPositions.FAR_SPEAKER_BLUE, PhotonPositions.FAR_SPEAKER_RED));
+    driver.leftTrigger().whileTrue(CombinedCommands.centerSpeakerVisionShot(driver, PhotonPositions.FAR_SPEAKER_BLUE, PhotonPositions.FAR_SPEAKER_RED))
+            .onTrue(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.SLOW)))
+            .onFalse(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.MAX)));
 
     // Complete vision scoring commands with all subsystems
     // if (Config.disableStateBasedProgramming) {
@@ -177,7 +179,9 @@ public class NewRobotContainer extends RobotContainer {
       //operator.leftTrigger(0.3).whileTrue(
       operator.leftBumper()
       .whileTrue(CombinedCommands.armIntake())
-      .onFalse(new SetArm(()->ArmSetPoints.NO_INTAKE.angleDeg));
+      .onFalse(new SetArm(()->ArmSetPoints.NO_INTAKE.angleDeg))
+      .onFalse(new MakeIntakeMotorSpin(9.0,0).withTimeout(1).until(() -> intake.isBackSensorActive()));
+
 
       //NOTE: right Trigger has been assigned to climber
       operator.rightTrigger(0.3).whileTrue(CombinedCommands.simpleShootNoteAmp());

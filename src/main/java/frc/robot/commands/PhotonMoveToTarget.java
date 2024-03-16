@@ -20,6 +20,7 @@ public class PhotonMoveToTarget extends Command {
   boolean centerTarget;
   Rotation2d desiredHeading;
   boolean isWaypoint;
+  boolean shouldNeverEnd;
 
 /**
  * Command for moving to the target currently selected in the PhotonSubsystem. Without a desired heading, the robot turns so that the camera faces the target.
@@ -28,12 +29,13 @@ public class PhotonMoveToTarget extends Command {
  * @param _isWaypoint
  * whether or not to use the larger tolerences meant for stop-and-go waypoints
  */
-  public PhotonMoveToTarget(Translation2d _targetOffset, boolean _isWaypoint) {
+  public PhotonMoveToTarget(Translation2d _targetOffset, boolean _isWaypoint, boolean neverEnd) {
     addRequirements(SwerveSubsystem.getInstance());
     addRequirements(PhotonSubsystem.getInstance());
     targetOffset = _targetOffset;
     centerTarget=true;
     isWaypoint=_isWaypoint;
+    shouldNeverEnd = neverEnd;
   }
 
 /**
@@ -45,13 +47,14 @@ public class PhotonMoveToTarget extends Command {
  * @param _isWaypoint
  * whether or not to use the larger tolerences meant for stop-and-go waypoints
  */
-  public PhotonMoveToTarget(Translation2d _targetOffset, Rotation2d _desiredHeading, boolean _isWaypoint) {
+  public PhotonMoveToTarget(Translation2d _targetOffset, Rotation2d _desiredHeading, boolean _isWaypoint, boolean neverEnd) {
     addRequirements(SwerveSubsystem.getInstance());
     addRequirements(PhotonSubsystem.getInstance());
     targetOffset = _targetOffset;
     desiredHeading = _desiredHeading;
     centerTarget=false;
     isWaypoint=_isWaypoint;
+    shouldNeverEnd = neverEnd;
   }
 
 
@@ -84,6 +87,10 @@ public class PhotonMoveToTarget extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    if (shouldNeverEnd) {
+      return false;
+    }
+    
     if (isWaypoint){
       return SwerveSubsystem.getInstance().isAtPose(PhotonConfig.WAYPOINT_POS_TOLERANCE, PhotonConfig.WAYPOINT_ANGLE_TOLERANCE);
     } else {
