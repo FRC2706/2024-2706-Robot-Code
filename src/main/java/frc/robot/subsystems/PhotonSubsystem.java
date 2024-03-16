@@ -19,11 +19,11 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.IntegerEntry;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -56,6 +56,9 @@ public class PhotonSubsystem extends SubsystemBase {
   private LinearFilter filterY = LinearFilter.movingAverage(PhotonConfig.maxNumSamples);
   private int numSamples;
   private int id;
+  private double recentTimeStamp = 0;
+
+  private IntegerEntry intakeCameraInputSaveImgEntry;
 
   
 
@@ -78,6 +81,11 @@ public class PhotonSubsystem extends SubsystemBase {
     subOverrideTagID.setDefault(-1);
     SmartDashboard.putData("command reset id",Commands.runOnce(()->reset((int)subOverrideTagID.get())));
     reset(-1);
+
+
+    // Intake camera snapping photons
+    NetworkTable intakeTable = NetworkTableInstance.getDefault().getTable(PhotonConfig.frontCameraName);
+    intakeCameraInputSaveImgEntry = intakeTable.getIntegerTopic("inputSaveImgCmd").getEntry(0);
   }
 
   public void reset(int desiredId) {
@@ -128,15 +136,15 @@ public class PhotonSubsystem extends SubsystemBase {
  * @return
  * the command to run
  */
-  public Command getAprilTagCommand(PhotonPositions spacePositions, CommandXboxController driverStick){
+  public Command getAprilTagCommand(PhotonPositions spacePositions, CommandXboxController driverStick, boolean neverEnd){
     Command moveToTargetCommands;
     if (spacePositions.hasWaypoint) {
       moveToTargetCommands = Commands.sequence(
-        new PhotonMoveToTarget(spacePositions.waypoint, spacePositions.direction,true),
-        new PhotonMoveToTarget(spacePositions.destination, spacePositions.direction, false)
+        new PhotonMoveToTarget(spacePositions.waypoint, spacePositions.direction,true, false),
+        new PhotonMoveToTarget(spacePositions.destination, spacePositions.direction, false, neverEnd)
       );
     } else {
-      moveToTargetCommands = new PhotonMoveToTarget(spacePositions.destination, spacePositions.direction, false);
+      moveToTargetCommands = new PhotonMoveToTarget(spacePositions.destination, spacePositions.direction, false, neverEnd);
     }
 
     return Commands.sequence(
@@ -202,6 +210,10 @@ public class PhotonSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     var result = camera1.getLatestResult();
+    if (result.getTimestampSeconds() == recentTimeStamp){
+      return;
+    }
+    recentTimeStamp = result.getTimestampSeconds();
     if (result.hasTargets()){
       //get the swerve pose at the time that the result was gotten
       Optional<Pose2d> optPose= SwerveSubsystem.getInstance().getPoseAtTimestamp(result.getTimestampSeconds());
@@ -259,5 +271,16 @@ public class PhotonSubsystem extends SubsystemBase {
       pubRange.accept(range);
       pubYaw.accept(yaw.getDegrees());
     }
+  }
+
+  public Command saveImagesIntakeCameraCommand() {
+    Timer timer = new Timer();
+    timer.start();
+    return Commands.run(() -> {
+      if (timer.hasElapsed(0.4)) {
+        timer.restart();
+        intakeCameraInputSaveImgEntry.set(intakeCameraInputSaveImgEntry.get() + 1);
+      }
+    });
   }
 }
