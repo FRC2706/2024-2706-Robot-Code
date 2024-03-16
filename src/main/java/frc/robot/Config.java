@@ -385,9 +385,9 @@ public final class Config {
     public static final boolean SOFT_LIMIT_ENABLE = true;
     
     //PID constants
-    public static final double arm_kP = robotSpecific(2.865, 0.0, 0.0, 1.4);
-    public static final double arm_kI = robotSpecific(0.00286, 0.0, 0.0, 0.0003);
-    public static final double arm_kD = robotSpecific(0.0, 0.0, 0.0, 0.9);
+    public static final double arm_kP = robotSpecific(2.700000, 0.0, 0.0, 1.4);
+    public static final double arm_kI = robotSpecific(0.0, 0.0, 0.0, 0.0003);
+    public static final double arm_kD = robotSpecific(0.800000, 0.0, 0.0, 0.9);
     public static final double arm_kIz = robotSpecific(Math.toRadians(5), 0.0, 0.0, 0.3);
     public static final double arm_kFF = 0;
     public static final double min_output = -1;
