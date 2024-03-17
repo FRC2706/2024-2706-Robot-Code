@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.lib2706.SelectByAllianceCommand;
 import frc.robot.Config.ArmSetPoints;
 import frc.robot.Config.PhotonConfig.PhotonPositions;
+import frc.robot.commands.BlingCommand.BlingColour;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.ShooterStateMachine.ShooterModes;
@@ -300,4 +301,14 @@ public class CombinedCommands {
             redPosition
         );
     }
+     /*Bling command to indicate that a note is loaded in intake*/
+    public static Command strobeToSolidBlingCommand() {
+        return
+            Commands.sequence(
+                new BlingCommand(BlingColour.PURPLESTROBE),
+                new WaitCommand(5),
+                new BlingCommand(BlingColour.PURPLE))
+        ;
+    }
+    
 }
