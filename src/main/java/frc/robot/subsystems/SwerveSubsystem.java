@@ -329,6 +329,12 @@ public class SwerveSubsystem extends SubsystemBase {
         && Math.abs(MathUtil.angleModulus(currentRotation - desiredRotation)) < angleTol;
   }
 
+  public boolean isAtRotationTarget(double angleTolDeg, double angleVelTolDeg) {
+    return recievedPidInstruction 
+        && Math.abs(MathUtil.angleModulus(currentRotation - desiredRotation)) < Math.toRadians(angleTolDeg)
+        && Math.abs(getRobotRelativeSpeeds().omegaRadiansPerSecond) < Math.toRadians(angleVelTolDeg);
+  }
+
   /**
    * Get a pose at the given timestamp. 
    * Returns an empty Optional if the buffer is empty or doesn't go back far enough.
