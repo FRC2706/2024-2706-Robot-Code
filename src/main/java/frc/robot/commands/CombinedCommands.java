@@ -249,11 +249,11 @@ public class CombinedCommands {
             
         // Intake and shooter sequence
         // Spin the intake forwards to center the note, when the chassis is not rotating for a bit, log the centered note in the intake rollers
-        Debouncer notRotatingDebouncer = new Debouncer(0.2);
+        Debouncer notRotatingDebouncer = new Debouncer(0.3);
         Command intakeShooterSequence = Commands.sequence(
-            new MakeIntakeMotorSpin(5.0, 0).until(() -> notRotatingDebouncer.calculate(
+            new MakeIntakeMotorSpin(8.0, 0).until(() -> notRotatingDebouncer.calculate(
                 // SwerveSubsystem.getInstance().isAtRotationTarget(30, 5))),
-                Math.abs(SwerveSubsystem.getInstance().getRobotRelativeSpeeds().omegaRadiansPerSecond) < Math.toRadians(5))),
+                Math.abs(SwerveSubsystem.getInstance().getRobotRelativeSpeeds().omegaRadiansPerSecond) < Math.toRadians(3))),
             Commands.parallel(
                 print("VisionScore-SpinningUpShooter"),
                 new IntakeControl(false), // Reverse note until not touching shooter
@@ -262,9 +262,10 @@ public class CombinedCommands {
         );
 
         // Prepare the robot to score
+        Debouncer shooterDebounce = new Debouncer(0.2);
         Command driveToPositionAndPrepare = Commands.deadline(
             Commands.parallel(
-                new WaitUntilCommand(() -> ShooterSubsystem.getInstance().getVelocityRPM() > shooterTriggerSpeed).andThen(print("VisionScore-ShooterReady")),
+                new WaitUntilCommand(() -> shooterDebounce.calculate(ShooterSubsystem.getInstance().getVelocityRPM() > shooterTriggerSpeed)).andThen(print("VisionScore-ShooterReady")),
                 new WaitUntilCommand(() -> Math.abs(Math.toDegrees(ArmSubsystem.getInstance().getPosition()) - armAngleDeg) < 0.5).andThen(print("VisionScore-ArmReady")),
                 new WaitUntilCommand(() -> SwerveSubsystem.getInstance().isAtPose(PhotonConfig.POS_TOLERANCE, PhotonConfig.ANGLE_TOLERANCE) 
                                         && !SwerveSubsystem.getInstance().isChassisMoving(PhotonConfig.VEL_TOLERANCE)).andThen(print("VisionScore-SwerveReady"))

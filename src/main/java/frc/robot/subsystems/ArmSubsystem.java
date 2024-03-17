@@ -147,10 +147,6 @@ public class ArmSubsystem extends SubsystemBase {
     configureSpark("Arm set Output Range",
         () -> m_pidControllerArm.setOutputRange(Config.ArmConfig.min_output, Config.ArmConfig.max_output));
 
-    try {
-      Thread.sleep(200);
-    } catch (Exception e) {}
-
     configureSpark("Arm set far FF", () -> m_pidControllerArm.setFF(ArmConfig.arm_far_kFF, 1));
     configureSpark("Arm set far P", () -> m_pidControllerArm.setP(ArmConfig.arm_far_kP, 1));
     configureSpark("Arm set far I", () -> m_pidControllerArm.setI(ArmConfig.arm_far_kI, 1));
@@ -162,7 +158,7 @@ public class ArmSubsystem extends SubsystemBase {
   public void periodic() {
     m_armPosPub.accept(Math.toDegrees(getPosition()));
     m_armVelPub.accept(Math.toDegrees(m_absEncoder.getVelocity()));
-    updatePIDSettings();
+    // updatePIDSettings();
   }
 
     // input angle_bottom in radians(
