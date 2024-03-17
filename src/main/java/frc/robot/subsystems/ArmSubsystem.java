@@ -21,7 +21,6 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.lib.lib2706.ProfiledPIDFFController;
 import frc.lib.lib2706.SubsystemChecker;
 import frc.lib.lib2706.SubsystemChecker.SubsystemType;
 import frc.robot.Config;
@@ -140,19 +139,23 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void updatePIDSettings() {
-    configureSpark("Arm set FF", () -> (m_pidControllerArm.setFF(m_armFFSubs.get(), 0)));
-    configureSpark("Arm set P", () -> (m_pidControllerArm.setP(m_armPSubs.get(), 0)));
-    configureSpark("Arm set I", () -> (m_pidControllerArm.setI(m_armISubs.get(), 0)));
-    configureSpark("Arm set D", () -> (m_pidControllerArm.setD(m_armDSubs.get(), 0)));
-    configureSpark("Arm set Iz", () -> (m_pidControllerArm.setIZone(m_armIzSubs.get(), 0)));
+    configureSpark("Arm set FF", () -> m_pidControllerArm.setFF(m_armFFSubs.get(), 0));
+    configureSpark("Arm set P", () -> m_pidControllerArm.setP(m_armPSubs.get(), 0));
+    configureSpark("Arm set I", () -> m_pidControllerArm.setI(m_armISubs.get(), 0));
+    configureSpark("Arm set D", () -> m_pidControllerArm.setD(m_armDSubs.get(), 0));
+    configureSpark("Arm set Iz", () -> m_pidControllerArm.setIZone(m_armIzSubs.get(), 0));
     configureSpark("Arm set Output Range",
-        () -> (m_pidControllerArm.setOutputRange(Config.ArmConfig.min_output, Config.ArmConfig.max_output)));
+        () -> m_pidControllerArm.setOutputRange(Config.ArmConfig.min_output, Config.ArmConfig.max_output));
 
-    configureSpark("Arm set far FF", () -> (m_pidControllerArm.setFF(ArmConfig.arm_far_kFF, 1)));
-    configureSpark("Arm set far P", () -> (m_pidControllerArm.setP(ArmConfig.arm_far_kP, 1)));
-    configureSpark("Arm set far I", () -> (m_pidControllerArm.setI(ArmConfig.arm_far_kI, 1)));
-    configureSpark("Arm set far D", () -> (m_pidControllerArm.setD(ArmConfig.arm_far_kD, 1)));
-    configureSpark("Arm set far Iz", () -> (m_pidControllerArm.setIZone(ArmConfig.arm_far_iZone, 1)));
+    try {
+      Thread.sleep(200);
+    } catch (Exception e) {}
+
+    configureSpark("Arm set far FF", () -> m_pidControllerArm.setFF(ArmConfig.arm_far_kFF, 1));
+    configureSpark("Arm set far P", () -> m_pidControllerArm.setP(ArmConfig.arm_far_kP, 1));
+    configureSpark("Arm set far I", () -> m_pidControllerArm.setI(ArmConfig.arm_far_kI, 1));
+    configureSpark("Arm set far D", () -> m_pidControllerArm.setD(ArmConfig.arm_far_kD, 1));
+    configureSpark("Arm set far Iz", () -> m_pidControllerArm.setIZone(ArmConfig.arm_far_iZone, 1));
   }
 
   @Override
