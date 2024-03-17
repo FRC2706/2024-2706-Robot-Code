@@ -12,10 +12,12 @@ import frc.robot.subsystems.ArmSubsystem;
 
 public class SetArm extends Command {
   private DoubleSupplier angleDegree;
+  private int pidSlot;
 
   /** Creates a new SetArm. */
-  public SetArm(DoubleSupplier angleDegree) {
+  public SetArm(DoubleSupplier angleDegree, int pidSlot) {
     this.angleDegree = angleDegree;
+    this.pidSlot = pidSlot;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(ArmSubsystem.getInstance());
   }
@@ -28,7 +30,7 @@ public class SetArm extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    ArmSubsystem.getInstance().setJointAngle(Math.toRadians(angleDegree.getAsDouble()));
+    ArmSubsystem.getInstance().setJointAngle(Math.toRadians(angleDegree.getAsDouble()), pidSlot);
   }
 
   // Called once the command ends or is interrupted.

@@ -120,9 +120,9 @@ public class AutoRoutines extends SubsystemBase {
             )
         );
 
-        NamedCommands.registerCommand("ArmStartConfig", new SetArm(() -> 90).until(() -> ArmSubsystem.getInstance().getPosition() > Math.toRadians(82)));
-        NamedCommands.registerCommand("ArmPickup", new SetArm(() -> Config.ArmSetPoints.INTAKE.angleDeg));
-        NamedCommands.registerCommand("ArmKitbotShot", new SetArm(() -> Config.ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg));
+        NamedCommands.registerCommand("ArmStartConfig", new SetArm(() -> 90, 0).until(() -> ArmSubsystem.getInstance().getPosition() > Math.toRadians(82)));
+        NamedCommands.registerCommand("ArmPickup", new SetArm(() -> Config.ArmSetPoints.INTAKE.angleDeg, 0));
+        NamedCommands.registerCommand("ArmKitbotShot", new SetArm(() -> Config.ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg, 0));
     }
 
     public Command getAutonomousCommand(int selectAuto) {

@@ -97,7 +97,7 @@ public class ContainerForTest extends RobotContainer {
     /*-------------------------- Operator Controls --------------------------*/
 
     operator.y()// Arm
-      .whileTrue(new SetArm(()->armDesiredAngle.get()));
+      .whileTrue(new SetArm(()->armDesiredAngle.get(), 0));
     
     operator.rightTrigger(0.25)// Climber
       .whileTrue(new ClimberRPM(()->  driver.getRightTriggerAxis()));

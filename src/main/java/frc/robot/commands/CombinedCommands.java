@@ -105,7 +105,7 @@ public class CombinedCommands {
          
         return Commands.parallel(
             new MakeIntakeMotorSpin(9.0,0),
-            new SetArm(()->ArmSetPoints.INTAKE.angleDeg), // Continue to hold arm in the correct position
+            new SetArm(()->ArmSetPoints.INTAKE.angleDeg, 0), // Continue to hold arm in the correct position
             PhotonSubsystem.getInstance().saveImagesIntakeCameraCommand()
         );
     }
@@ -169,7 +169,7 @@ public class CombinedCommands {
                 PhotonSubsystem.getInstance().getAprilTagCommand(bluePosition, driverJoystick, true), 
                 PhotonSubsystem.getInstance().getAprilTagCommand(redPosition, driverJoystick, true)),
             // new ScheduleCommand(idleSwerve), // Maintain control of the SwerveSubsystem
-            new WaitUntilCommand(keepArmLoweredUntil).andThen(new SetArm(()->armAngleDeg).alongWith(print("VisionScore-LoweringArmNow"))),
+            new WaitUntilCommand(keepArmLoweredUntil).andThen(new SetArm(()->armAngleDeg, 1).alongWith(print("VisionScore-LoweringArmNow"))),
             new WaitCommand(0.1).andThen(new Shooter_PID_Tuner(() -> shooterSpeed)),
             new ScheduleCommand(bling),
             Commands.runOnce(() -> timer.restart())
@@ -181,7 +181,7 @@ public class CombinedCommands {
             Commands.runOnce(() -> SwerveSubsystem.getInstance().stopMotors()),
             // new ScheduleCommand(idleSwerve),
             new Shooter_PID_Tuner(() -> shooterSpeed), // Continue to hold shooter voltage
-            new SetArm(()->armAngleDeg), // Continue to hold arm in the correct position
+            new SetArm(()->armAngleDeg, 1), // Continue to hold arm in the correct position
             new MakeIntakeMotorSpin(9.0, 0)
         ).withTimeout(scoringTimeoutSeconds);
 
@@ -252,7 +252,8 @@ public class CombinedCommands {
         Debouncer notRotatingDebouncer = new Debouncer(0.2);
         Command intakeShooterSequence = Commands.sequence(
             new MakeIntakeMotorSpin(5.0, 0).until(() -> notRotatingDebouncer.calculate(
-                SwerveSubsystem.getInstance().isAtRotationTarget(30, 5))),
+                // SwerveSubsystem.getInstance().isAtRotationTarget(30, 5))),
+                Math.abs(SwerveSubsystem.getInstance().getRobotRelativeSpeeds().omegaRadiansPerSecond) < Math.toRadians(5))),
             Commands.parallel(
                 print("VisionScore-SpinningUpShooter"),
                 new IntakeControl(false), // Reverse note until not touching shooter
@@ -272,7 +273,7 @@ public class CombinedCommands {
             new SelectByAllianceCommand(
                 PhotonSubsystem.getInstance().getAprilTagCommand(bluePosition, driverJoystick, true), 
                 PhotonSubsystem.getInstance().getAprilTagCommand(redPosition, driverJoystick, true)),
-            new WaitUntilCommand(keepArmLoweredUntil).andThen(new SetArm(()->armAngleDeg).alongWith(print("VisionScore-LoweringArmNow"))),
+            new WaitUntilCommand(keepArmLoweredUntil).andThen(new SetArm(()->armAngleDeg, 1).alongWith(print("VisionScore-LoweringArmNow"))),
             // new ScheduleCommand(idleSwerve), // Maintain control of the SwerveSubsystem
             new ScheduleCommand(bling),
             Commands.runOnce(() -> timer.restart())
@@ -284,7 +285,7 @@ public class CombinedCommands {
             Commands.runOnce(() -> SwerveSubsystem.getInstance().stopMotors()),
             // new ScheduleCommand(idleSwerve),
             new Shooter_PID_Tuner(() -> shooterSpeed), // Continue to hold shooter voltage
-            new SetArm(()->armAngleDeg), // Continue to hold arm in the correct position
+            new SetArm(()->armAngleDeg, 1), // Continue to hold arm in the correct position
             new MakeIntakeMotorSpin(9.0, 0)
         ).withTimeout(scoringTimeoutSeconds);
 
@@ -306,6 +307,29 @@ public class CombinedCommands {
             if (timer.hasElapsed(0.5))
                 rumble.schedule(); // Rumble the joystick to notify the driver
         });
+    }
+
+
+    public static Command centerNoteSequence(boolean shouldShootNote, double shooterSpeed) {
+        Command shoot;
+        if (shouldShootNote) {
+            shoot = new WaitCommand(0.1).andThen(new Shooter_PID_Tuner(() -> shooterSpeed));
+        } else {
+            shoot = new InstantCommand();
+        }
+
+        Debouncer notRotatingDebouncer = new Debouncer(0.2);
+        return Commands.sequence(
+                new MakeIntakeMotorSpin(8.0, 0).until(() -> notRotatingDebouncer.calculate(
+                    Math.abs(SwerveSubsystem.getInstance().getRobotRelativeSpeeds().omegaRadiansPerSecond) < Math.toRadians(5))),
+                    // SwerveSubsystem.getInstance().isAtRotationTarget(30, 5))),
+                Commands.parallel(
+                    print("VisionScore-SpinningUpShooter"),
+                    new IntakeControl(false), // Reverse note until not touching shooter
+                    shoot
+                    
+                )
+            );
     }
 
     /**
@@ -333,13 +357,13 @@ public class CombinedCommands {
 
         // Prepare the robot to score
         Command driveToPositionAndPrepare = Commands.parallel(
-            new SetArm(()->armAngleDeg),
+            new SetArm(()->armAngleDeg, 1),
             new WaitCommand(0.1).andThen(ShooterSubsystem.getInstance().speedUpForSpeakerCommand()),
             Commands.sequence(
                 new SelectByAllianceCommand(
                     PhotonSubsystem.getInstance().getAprilTagCommand(bluePosition, driverJoystick, false), 
-                    PhotonSubsystem.getInstance().getAprilTagCommand(redPosition, driverJoystick, false)),
-                new ScheduleCommand(idleSwerve) // Hog the swerve subsystem to prevent the teleop command from running
+                    PhotonSubsystem.getInstance().getAprilTagCommand(redPosition, driverJoystick, false))
+                // new ScheduleCommand(idleSwerve) // Hog the swerve subsystem to prevent the teleop command from running
             ) 
         ); 
 
@@ -347,7 +371,7 @@ public class CombinedCommands {
         Command scoreNote = Commands.parallel(
             Commands.runOnce(() -> SwerveSubsystem.getInstance().stopMotors()),
             IntakeSubsystem.getInstance().shootNoteCommand(),
-            new SetArm(()->armAngleDeg) // Continue to hold arm in the correct position
+            new SetArm(()->armAngleDeg, 1) // Continue to hold arm in the correct position
         ).withTimeout(scoringTimeoutSeconds);
 
         // Rumble command
@@ -394,13 +418,18 @@ public class CombinedCommands {
      * @param redPosition PhotonPosition for the red alliance
      */
     public static Command centerSpeakerVisionShot(CommandXboxController driver, PhotonPositions bluePosition, PhotonPositions redPosition) {
-        BooleanSupplier keepArmLoweredUntil = () -> {
-          return PhotonSubsystem.getInstance().getTargetPos().getY() - SwerveSubsystem.getInstance().getPose().getY() < 0.5;
-        };
-        
-        double armAngle = 32;
         double shooterSpeed = 3750;
-        double shooterTriggerSpeed = 3730;
+        double shooterTriggerSpeed = 3735;
+        
+        // CENTER 2.3m SHOT
+        // double armAngle = 32;
+        // BooleanSupplier keepArmLoweredUntil = () -> {
+        //   return PhotonSubsystem.getInstance().getTargetPos().getY() - SwerveSubsystem.getInstance().getPose().getY() < 0.5;
+        // };
+
+        // Source Side Podium SHOT
+        double armAngle = 37.5;
+        BooleanSupplier keepArmLoweredUntil = () -> true;
 
         return CombinedCommands.visionScoreTeleopSimple2(
             driver, 

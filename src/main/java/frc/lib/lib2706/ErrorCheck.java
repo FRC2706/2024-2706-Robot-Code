@@ -68,10 +68,11 @@ public class ErrorCheck {
             }
         }
 
-        DriverStation.reportError(String.format(
-            "[MergeError] - CANSparkMax failed to configure setting. MergeMessage: %s. Spark error code: %s \nSee stack trace below.", 
-            message,
-            err.toString()), 
+        String msg = "[MergeError] - CANSparkMax failed to configure setting. MergeMessage:" + message;
+        msg += "Spark error code: " + err.toString() + " \nSee stack trace below.";
+        
+        DriverStation.reportError(
+            msg,
             PRINT_STACK_TRACE_CONFIGURE);
             
         return false;

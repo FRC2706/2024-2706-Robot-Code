@@ -126,7 +126,8 @@ public class NewRobotContainer extends RobotContainer {
     driver.x().whileTrue(new RotateToAngle(driver, Rotation2d.fromDegrees(90)));
     driver.a().whileTrue(new RotateToAngle(driver, Rotation2d.fromDegrees(180)));
     driver.b().whileTrue(new RotateToAngle(driver, Rotation2d.fromDegrees(270)));   
-    driver.rightTrigger().whileTrue(new RotateAngleToVisionSupplier(driver, "photonvision/" + PhotonConfig.frontCameraName));
+    // driver.rightTrigger().whileTrue(new RotateAngleToVisionSupplier(driver, "photonvision/" + PhotonConfig.frontCameraName));
+    driver.rightTrigger().onTrue(CombinedCommands.centerNoteSequence(false, 0));
     
     // Vision scoring commands with no intake, shooter, arm
     // driver.leftTrigger().whileTrue(new SelectByAllianceCommand( // Implement command group that also controls the arm, intake, shooter
@@ -137,7 +138,7 @@ public class NewRobotContainer extends RobotContainer {
     //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.RIGHT_SPEAKER_BLUE, driver), 
     //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.LEFT_SPEAKER_RED, driver)));
 
-    driver.leftTrigger().whileTrue(CombinedCommands.centerSpeakerVisionShot(driver, PhotonPositions.FAR_SPEAKER_BLUE, PhotonPositions.FAR_SPEAKER_RED))
+    driver.leftTrigger().whileTrue(CombinedCommands.centerSpeakerVisionShot(driver, PhotonPositions.FAR_SPEAKER_BLUE, PhotonPositions.PODIUM_SOURCESIDE_RED))
             .onTrue(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.SLOW)))
             .onFalse(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.MAX)));
 
@@ -162,10 +163,10 @@ public class NewRobotContainer extends RobotContainer {
      * KingstonV1: https://drive.google.com/file/d/18HyIpIeW08CC6r6u-Z74xBWRv9opHnoZ
      */
     // Arm
-    operator.y().onTrue(new SetArm(()->ArmSetPoints.AMP.angleDeg)); // Amp
-    operator.b().onTrue(new SetArm(()->ArmSetPoints.IDLE.angleDeg)); // Idle
-    operator.a().onTrue(new SetArm(()->ArmSetPoints.NO_INTAKE.angleDeg)); // Pickup
-    operator.x().onTrue(new SetArm(()->ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg));
+    operator.y().onTrue(new SetArm(()->ArmSetPoints.AMP.angleDeg, 0)); // Amp
+    operator.b().onTrue(new SetArm(()->ArmSetPoints.IDLE.angleDeg, 0)); // Idle
+    operator.a().onTrue(new SetArm(()->ArmSetPoints.NO_INTAKE.angleDeg, 0)); // Pickup
+    operator.x().onTrue(new SetArm(()->ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg, 0));
     // Climber
     operator.leftTrigger(0.10).and(operator.back()).whileTrue(new ClimberRPM(()-> MathUtil.applyDeadband(operator.getLeftTriggerAxis(), 0.35) * 0.5));
 
@@ -185,7 +186,7 @@ public class NewRobotContainer extends RobotContainer {
       //operator.leftTrigger(0.3).whileTrue(
       operator.leftBumper()
       .whileTrue(CombinedCommands.armIntake())
-      .onFalse(new SetArm(()->ArmSetPoints.NO_INTAKE.angleDeg))
+      .onFalse(new SetArm(()->ArmSetPoints.NO_INTAKE.angleDeg, 0))
       .onFalse(new MakeIntakeMotorSpin(9.0,0).withTimeout(1).until(() -> intake.isBackSensorActive()));
 
 
@@ -193,7 +194,7 @@ public class NewRobotContainer extends RobotContainer {
       operator.rightTrigger(0.3).whileTrue(CombinedCommands.simpleShootNoteAmp());
       // Shoot note with leftBumper
       operator.rightBumper().whileTrue(CombinedCommands.simpleShootNoteSpeaker(1))
-                            .onTrue(new SetArm(()->ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg));
+                            .onTrue(new SetArm(()->ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg, 0));
 
     // State based shooter and intake
     } else {
@@ -235,7 +236,7 @@ public class NewRobotContainer extends RobotContainer {
     // testJoystick.leftBumper().whileTrue(
     //       new MakeIntakeMotorSpin(9.0,0));
     
-    // testJoystick.start().onTrue( new SetArm(armAngleDeg));
+    // testJoystick.start().onTrue( new SetArm(armAngleDeg, 1));
     // testJoystick.back().whileTrue(new Shooter_PID_Tuner(shooterTargetRPM));
     // testJoystick.rightBumper().whileTrue(CombinedCommands.simpleShootNoteSpeaker(1, () -> shooterTargetRPM.getAsDouble(), 50)); 
 

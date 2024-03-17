@@ -79,7 +79,7 @@ public class ArmSubsystem extends SubsystemBase {
     configureSpark("Arm set current limits", () -> m_arm.setSmartCurrentLimit(Config.ArmConfig.CURRENT_LIMIT));
     m_arm.setInverted(Config.ArmConfig.SET_INVERTED); // sets movement direction
     configureSpark("Arm set brakes when idle", () -> (m_arm.setIdleMode(IdleMode.kBrake))); // sets brakes when there is
-                                                                                            // no motion
+    configureSpark("Arm voltage compesentation", () -> m_arm.enableVoltageCompensation(6));                                                                    // no motion
 
     configureSpark("Arm set soft limits forward",
         () -> (m_arm.setSoftLimit(SoftLimitDirection.kForward, (float) (Config.ArmConfig.arm_forward_limit))));
@@ -140,31 +140,38 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void updatePIDSettings() {
-    configureSpark("Arm set FF", () -> (m_pidControllerArm.setFF(m_armFFSubs.get())));
-    configureSpark("Arm set P", () -> (m_pidControllerArm.setP(m_armPSubs.get())));
-    configureSpark("Arm set I", () -> (m_pidControllerArm.setI(m_armISubs.get())));
-    configureSpark("Arm set D", () -> (m_pidControllerArm.setD(m_armDSubs.get())));
-    configureSpark("Arm set Iz", () -> (m_pidControllerArm.setIZone(m_armIzSubs.get())));
+    configureSpark("Arm set FF", () -> (m_pidControllerArm.setFF(m_armFFSubs.get(), 0)));
+    configureSpark("Arm set P", () -> (m_pidControllerArm.setP(m_armPSubs.get(), 0)));
+    configureSpark("Arm set I", () -> (m_pidControllerArm.setI(m_armISubs.get(), 0)));
+    configureSpark("Arm set D", () -> (m_pidControllerArm.setD(m_armDSubs.get(), 0)));
+    configureSpark("Arm set Iz", () -> (m_pidControllerArm.setIZone(m_armIzSubs.get(), 0)));
     configureSpark("Arm set Output Range",
         () -> (m_pidControllerArm.setOutputRange(Config.ArmConfig.min_output, Config.ArmConfig.max_output)));
+
+    configureSpark("Arm set far FF", () -> (m_pidControllerArm.setFF(ArmConfig.arm_far_kFF, 1)));
+    configureSpark("Arm set far P", () -> (m_pidControllerArm.setP(ArmConfig.arm_far_kP, 1)));
+    configureSpark("Arm set far I", () -> (m_pidControllerArm.setI(ArmConfig.arm_far_kI, 1)));
+    configureSpark("Arm set far D", () -> (m_pidControllerArm.setD(ArmConfig.arm_far_kD, 1)));
+    configureSpark("Arm set far Iz", () -> (m_pidControllerArm.setIZone(ArmConfig.arm_far_iZone, 1)));
   }
 
   @Override
   public void periodic() {
     m_armPosPub.accept(Math.toDegrees(getPosition()));
     m_armVelPub.accept(Math.toDegrees(m_absEncoder.getVelocity()));
+    updatePIDSettings();
   }
 
     // input angle_bottom in radians(
-  public void setJointAngle(double angle) {
+  public void setJointAngle(double angle, int pidSlot) {
     double clampedAngle = MathUtil.clamp(angle, Math.toRadians(Config.ArmConfig.MIN_ARM_ANGLE_DEG),
         Math.toRadians(Config.ArmConfig.MAX_ARM_ANGLE_DEG));
 
     m_ProfiledPIDController.calculate(getPosition(), clampedAngle);
     double targetPos = m_ProfiledPIDController.getSetpoint().position;
 
-    //m_pidControllerArm.setReference((targetPos), ControlType.kPosition, 0, calculateFF(clampedAngle));
-    m_pidControllerArm.setReference(targetPos + Math.toRadians(ArmConfig.shiftEncoderRange), ControlType.kPosition, 0, 0);
+    //m_pidControllerArm.setReference((targetPos), ControlType.kPosition, pidSlot, calculateFF(clampedAngle));
+    m_pidControllerArm.setReference(targetPos + Math.toRadians(ArmConfig.shiftEncoderRange), ControlType.kPosition, pidSlot, 0);
 
      m_targetAngle.accept(Math.toDegrees(targetPos));
   }
