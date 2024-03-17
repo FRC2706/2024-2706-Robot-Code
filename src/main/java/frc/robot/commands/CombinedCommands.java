@@ -429,8 +429,11 @@ public class CombinedCommands {
         // };
 
         // Source Side Podium SHOT
-        double armAngle = 37.5;
+        //double armAngle = 37.5;
         BooleanSupplier keepArmLoweredUntil = () -> true;
+
+        // source side shot for auto
+        double armAngle = 31;
 
         return CombinedCommands.visionScoreTeleopSimple2(
             driver, 
