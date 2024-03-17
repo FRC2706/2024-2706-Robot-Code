@@ -5,8 +5,10 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -15,15 +17,18 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.lib.lib2706.SelectByAllianceCommand;
 import frc.robot.Config;
 import frc.robot.Config.ArmConfig;
+import frc.robot.Config.PhotonConfig;
 import frc.robot.Config.PhotonConfig.PhotonPositions;
 import frc.robot.commands.CombinedCommands;
 import frc.robot.commands.IntakeControl;
 import frc.robot.commands.MakeIntakeMotorSpin;
 import frc.robot.commands.PhotonMoveToTarget;
 import frc.robot.commands.SetArm;
+import frc.robot.commands.Shooter_PID_Tuner;
 import frc.robot.subsystems.IntakeStatesMachine.IntakeModes;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeStatesMachine.IntakeModes;
@@ -123,6 +128,40 @@ public class AutoRoutines extends SubsystemBase {
         NamedCommands.registerCommand("ArmStartConfig", new SetArm(() -> 90, 0).until(() -> ArmSubsystem.getInstance().getPosition() > Math.toRadians(82)));
         NamedCommands.registerCommand("ArmPickup", new SetArm(() -> Config.ArmSetPoints.INTAKE.angleDeg, 0));
         NamedCommands.registerCommand("ArmKitbotShot", new SetArm(() -> Config.ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg, 0));
+
+
+        // 3 note source side auto below
+
+        NamedCommands.registerCommand("VisionScoreSourceSideClose",
+            autoSpeakerScore(
+                8,
+                2,
+                3750,
+                3720,
+                31,
+                PhotonPositions.BLUE,
+                PhotonPositions.RED
+            )
+        );
+
+        NamedCommands.registerCommand("VisionAlignFarNoteSourceSide",
+            new SelectByAllianceCommand(
+                    new PhotonMoveToTarget(PhotonPositions.BLUE.destination, false, false), 
+                    new PhotonMoveToTarget(PhotonPositions.RED.destination, false, false)));
+
+        NamedCommands.registerCommand("VisionAlignFarNoteSecondSourceSide",
+            new SelectByAllianceCommand(
+                    new PhotonMoveToTarget(PhotonPositions.BLUE.destination, false, false), 
+                    new PhotonMoveToTarget(PhotonPositions.RED.destination, false, false)));
+    
+        NamedCommands.registerCommand("MoveNeg0.4mInY",
+            SwerveSubsystem.getInstance().getDriveToPoseCommand(
+                SwerveSubsystem.getInstance().getPose().plus(new Transform2d(0, -0.4, new Rotation2d()))));
+    
+        NamedCommands.registerCommand("SetVisionSideSpeakerTag", 
+            new SelectByAllianceCommand(
+                PhotonSubsystem.getInstance().getResetCommand(7),
+                PhotonSubsystem.getInstance().getResetCommand(3)));
     }
 
     public Command getAutonomousCommand(int selectAuto) {
@@ -154,5 +193,62 @@ public class AutoRoutines extends SubsystemBase {
                     SwerveSubsystem.getInstance().getDriveToPoseCommand(new Pose2d((alliance.get() == DriverStation.Alliance.Blue)? 2.5 : -2.5, 0, SwerveSubsystem.rotateForAlliance(Rotation2d.fromDegrees(0))))
                 );
         }
+    }
+
+
+     public static Command autoSpeakerScore(
+        double preparingTimeoutSeconds,
+        double scoringTimeoutSeconds, 
+        double shooterSpeed,
+        double shooterTriggerSpeed,
+        double armAngleDeg, 
+        PhotonPositions bluePosition, 
+        PhotonPositions redPosition
+    ) {
+        // Intake and shooter sequence
+        // Spin the intake forwards to center the note, when the chassis is not rotating for a bit, log the centered note in the intake rollers
+        Debouncer notRotatingDebouncer = new Debouncer(0.3);
+        Command intakeShooterSequence = Commands.sequence(
+            new MakeIntakeMotorSpin(8.0, 0).until(() -> notRotatingDebouncer.calculate(
+                // SwerveSubsystem.getInstance().isAtRotationTarget(30, 5))),
+                Math.abs(SwerveSubsystem.getInstance().getRobotRelativeSpeeds().omegaRadiansPerSecond) < Math.toRadians(3))),
+            Commands.parallel(
+                new IntakeControl(false), // Reverse note until not touching shooter
+                new WaitCommand(0.1).andThen(new Shooter_PID_Tuner(() -> shooterSpeed))
+            )
+        );
+
+        // Prepare the robot to score
+        Debouncer shooterDebounce = new Debouncer(0.2);
+        Command driveToPositionAndPrepare = Commands.deadline(
+            Commands.parallel(
+                new WaitUntilCommand(() -> shooterDebounce.calculate(ShooterSubsystem.getInstance().getVelocityRPM() > shooterTriggerSpeed)),
+                new WaitUntilCommand(() -> Math.abs(Math.toDegrees(ArmSubsystem.getInstance().getPosition()) - armAngleDeg) < 0.5),
+                new WaitUntilCommand(() -> SwerveSubsystem.getInstance().isAtPose(PhotonConfig.POS_TOLERANCE, PhotonConfig.ANGLE_TOLERANCE) 
+                                        && !SwerveSubsystem.getInstance().isChassisMoving(PhotonConfig.VEL_TOLERANCE))
+            ),
+            intakeShooterSequence,
+            new SelectByAllianceCommand(
+                new PhotonMoveToTarget(bluePosition.destination, bluePosition.direction, false, true),
+                new PhotonMoveToTarget(redPosition.destination, redPosition.direction, false, true)),
+            new SetArm(()->armAngleDeg, 1)
+        );
+
+        // Score the note
+        Command scoreNote = Commands.parallel(
+            Commands.runOnce(() -> SwerveSubsystem.getInstance().stopMotors()),
+            new Shooter_PID_Tuner(() -> shooterSpeed), // Continue to hold shooter voltage
+            new SetArm(()->armAngleDeg, 1), // Continue to hold arm in the correct position
+            new MakeIntakeMotorSpin(9.0, 0)
+        ).withTimeout(scoringTimeoutSeconds);
+
+        // Sequence preparing then scoring
+        return Commands.sequence( 
+            CombinedCommands.forcefulTimeoutCommand(
+                preparingTimeoutSeconds,
+                driveToPositionAndPrepare
+            ),
+            scoreNote
+        );
     }
 }

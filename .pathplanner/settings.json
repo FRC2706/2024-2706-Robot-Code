@@ -5,9 +5,10 @@
   "pathFolders": [
     "1NoteSourceSide",
     "2NoteLeft",
+    "2NoteSourceSideFar",
     "3NoteSourceSideAllFar",
     "4NoteCenter",
-    "2NoteSourceSideFar"
+    "3NoteSourceSideVision"
   ],
   "autoFolders": [
     "StartingFromBottom",
