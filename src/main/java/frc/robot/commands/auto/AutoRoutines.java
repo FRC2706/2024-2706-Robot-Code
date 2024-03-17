@@ -43,7 +43,9 @@ public class AutoRoutines extends SubsystemBase {
                     twoNoteLeftAuto,
                     twoNoteCenter,
                     threeNoteCenterSourceSideNote,
-                    threeNoteCenterAmpSideNote;
+                    threeNoteCenterAmpSideNote,
+                    oneNoteSourceSide,
+                    twoNoteSourceSide;
     
 
     public AutoRoutines() {
@@ -57,6 +59,8 @@ public class AutoRoutines extends SubsystemBase {
         twoNoteCenter = new PathPlannerAuto("2NoteCenter");
         threeNoteCenterSourceSideNote = new PathPlannerAuto("3NoteCenterSourceSideNote");
         threeNoteCenterAmpSideNote = new PathPlannerAuto("3NoteCenterAmpSideNote");
+        oneNoteSourceSide = new PathPlannerAuto("1NoteSourceSide");
+        twoNoteSourceSide = new PathPlannerAuto("2NoteSourceSideFar");
     }
 
     public void registerCommandsToPathplanner() {
@@ -111,8 +115,8 @@ public class AutoRoutines extends SubsystemBase {
 
         NamedCommands.registerCommand("MoveToCenterSpeaker",
             new SelectByAllianceCommand(
-                new PhotonMoveToTarget(PhotonPositions.MIDDLE_SPEAKER_BLUE.destination, false), 
-                new PhotonMoveToTarget(PhotonPositions.MIDDLE_SPEAKER_RED.destination, false)
+                new PhotonMoveToTarget(PhotonPositions.MIDDLE_SPEAKER_BLUE.destination, false, false), 
+                new PhotonMoveToTarget(PhotonPositions.MIDDLE_SPEAKER_RED.destination, false, false)
             )
         );
 
@@ -131,11 +135,11 @@ public class AutoRoutines extends SubsystemBase {
             case 2:
                 return fourNoteAuto;
             case 3:
-                return threeNoteCenterAmpSideNote;
+                return oneNoteSourceSide;
             case 4:
-                return threeNoteCenterSourceSideNote;
+                return twoNoteSourceSide;
             case 5:
-                return twoNoteCenter;
+                return new PathPlannerAuto("tuneAutoX");
             case 6:
             case 7:
                 var alliance = DriverStation.getAlliance();

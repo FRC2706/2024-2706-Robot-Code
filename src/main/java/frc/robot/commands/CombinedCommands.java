@@ -1,19 +1,29 @@
 package frc.robot.commands;
 
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.lib2706.SelectByAllianceCommand;
 import frc.robot.Config.ArmSetPoints;
+import frc.robot.Config.PhotonConfig;
 import frc.robot.Config.PhotonConfig.PhotonPositions;
 import frc.robot.commands.BlingCommand.BlingColour;
+import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.BlingSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.ShooterStateMachine.ShooterModes;
@@ -33,12 +43,20 @@ public class CombinedCommands {
      * backing up note, waiting a bit, then feeding the note.
      */
     public static Command simpleShootNoteSpeaker(double intakeTimeout) {
+        return(simpleShootNoteSpeaker(intakeTimeout, () -> 3000, 400));
+    }
+
+    /**
+     * Spin up the shooter while doing the following,
+     * backing up note, waiting a bit, then feeding the note.
+     */
+    public static Command simpleShootNoteSpeaker(double intakeTimeout, DoubleSupplier RPM, double threshold) {
         return Commands.deadline(
             Commands.sequence(
                 new IntakeControl(false).withTimeout(0.15), 
-                new WaitUntilCommand(() -> ShooterSubsystem.getInstance().getVelocityRPM() > 3000),
+                new WaitUntilCommand(() -> ShooterSubsystem.getInstance().getVelocityRPM() > RPM.getAsDouble()),
                 new IntakeControl(true).withTimeout(intakeTimeout)),
-            new Shooter_PID_Tuner(()->3400)
+            new Shooter_PID_Tuner(()->(RPM.getAsDouble() + threshold))
         );
     }
 
@@ -83,9 +101,11 @@ public class CombinedCommands {
 
      // Intake and Arm Intake Position
     public static Command armIntake() {
+         
         return Commands.parallel(
-        new MakeIntakeMotorSpin(9.0,0),
-        new SetArm(()->ArmSetPoints.INTAKE.angleDeg) // Continue to hold arm in the correct position
+            new MakeIntakeMotorSpin(9.0,0),
+            new SetArm(()->ArmSetPoints.INTAKE.angleDeg), // Continue to hold arm in the correct position
+            PhotonSubsystem.getInstance().saveImagesIntakeCameraCommand()
         );
     }
 
@@ -109,11 +129,20 @@ public class CombinedCommands {
             double shooterSpeed,
             double shooterTriggerSpeed,
             double armAngleDeg, 
+            BooleanSupplier keepArmLoweredUntil,
             PhotonPositions bluePosition, 
             PhotonPositions redPosition) {
 
         // Swerve requirement command
         Command idleSwerve = new ProxyCommand(Commands.idle(SwerveSubsystem.getInstance())).withName("IdlingSwerveSimple");
+        
+        // Use a timer to not rumble if the it's only been 0.5 seconds
+        Timer timer = new Timer();
+
+        // Bling Commands
+        Command bling = new BlingCommand(BlingColour.BLUESTROBE);
+        Command idleBling = Commands.idle(BlingSubsystem.getINSTANCE());
+        Command turnOffBling = new BlingCommand(BlingColour.DISABLED);
 
         // Wait for vision data to be available
         Command waitForVisionData = new ProxyCommand(new SelectByAllianceCommand(
@@ -125,21 +154,24 @@ public class CombinedCommands {
             Commands.parallel(
                 new IntakeControl(false), // Reverse note until not touching shooter
                 new WaitUntilCommand(() -> ShooterSubsystem.getInstance().getVelocityRPM() > shooterTriggerSpeed),
-                Commands.sequence(
-                    new SelectByAllianceCommand(
-                        PhotonSubsystem.getInstance().getAprilTagCommand(bluePosition, driverJoystick), 
-                        PhotonSubsystem.getInstance().getAprilTagCommand(redPosition, driverJoystick))
-                    // new ScheduleCommand(idleSwerve) // Maintain control of the SwerveSubsystem
-                ) 
+                new WaitUntilCommand(() -> Math.abs(Math.toDegrees(ArmSubsystem.getInstance().getPosition()) - armAngleDeg) < 1),
+                new WaitUntilCommand(() -> SwerveSubsystem.getInstance().isAtPose(PhotonConfig.POS_TOLERANCE, PhotonConfig.ANGLE_TOLERANCE) 
+                                        && !SwerveSubsystem.getInstance().isChassisMoving(PhotonConfig.VEL_TOLERANCE))
             ),
-            new SetArm(()->armAngleDeg),
-            new Shooter_PID_Tuner(() -> shooterSpeed)
+            new SelectByAllianceCommand(
+                PhotonSubsystem.getInstance().getAprilTagCommand(bluePosition, driverJoystick, true), 
+                PhotonSubsystem.getInstance().getAprilTagCommand(redPosition, driverJoystick, true)),
+            // new ScheduleCommand(idleSwerve), // Maintain control of the SwerveSubsystem
+            new WaitUntilCommand(keepArmLoweredUntil).andThen(new SetArm(()->armAngleDeg)),
+            new WaitCommand(0.1).andThen(new Shooter_PID_Tuner(() -> shooterSpeed)),
+            Commands.runOnce(() -> timer.restart())
         );
 
         // Score the note
         Command scoreNote = Commands.parallel(
             Commands.runOnce(() -> SwerveSubsystem.getInstance().stopMotors()),
-            new Shooter_PID_Tuner(() -> shooterSpeed+300), // Continue to hold shooter voltage
+            // new ScheduleCommand(idleSwerve),
+            new Shooter_PID_Tuner(() -> shooterSpeed), // Continue to hold shooter voltage
             new SetArm(()->armAngleDeg), // Continue to hold arm in the correct position
             new MakeIntakeMotorSpin(9.0, 0)
         ).withTimeout(scoringTimeoutSeconds);
@@ -156,8 +188,11 @@ public class CombinedCommands {
             ),
             scoreNote
         ).finallyDo(() -> {
-            rumble.schedule(); // Rumble the joystick to notify the driver
             idleSwerve.cancel(); // Release control of swerve
+            idleBling.cancel(); // Release control of bling
+            turnOffBling.schedule(); // Turn off bling
+            if (timer.hasElapsed(0.5))
+                rumble.schedule(); // Rumble the joystick to notify the driver
         });
     }
 
@@ -190,8 +225,8 @@ public class CombinedCommands {
             new WaitCommand(0.1).andThen(ShooterSubsystem.getInstance().speedUpForSpeakerCommand()),
             Commands.sequence(
                 new SelectByAllianceCommand(
-                    PhotonSubsystem.getInstance().getAprilTagCommand(bluePosition, driverJoystick), 
-                    PhotonSubsystem.getInstance().getAprilTagCommand(redPosition, driverJoystick)),
+                    PhotonSubsystem.getInstance().getAprilTagCommand(bluePosition, driverJoystick, false), 
+                    PhotonSubsystem.getInstance().getAprilTagCommand(redPosition, driverJoystick, false)),
                 new ScheduleCommand(idleSwerve) // Hog the swerve subsystem to prevent the teleop command from running
             ) 
         ); 
@@ -233,6 +268,7 @@ public class CombinedCommands {
             2, 
             2000, 2500,
             ArmSetPoints.AMP.angleDeg,
+            () -> true,
             PhotonPositions.AMP_BLUE,
             PhotonPositions.AMP_RED
         );
@@ -245,24 +281,22 @@ public class CombinedCommands {
      * @param bluePosition PhotonPosition for the blue alliance
      * @param redPosition PhotonPosition for the red alliance
      */
-    public static Command sideSpeakerVisionShot(CommandXboxController driver, PhotonPositions bluePosition, PhotonPositions redPosition) {
-        // BELOW VALUES WORKING AT KINGSTON BUT SHOOTER DEEMED TOO LOUD. CHANGE BACK TO THIS ONCE SOLVED MECHANICALLY.
-        // double armAngle = 29;
-        // double shooterSpeed = 4200;
-        // double shooterTriggerSpeed = 3500;
-
-
-        // BELOW VALUES SHOULD BE SAFE FOR NOISE, BUT LIKELY WILL MISS OR BE LESS CONSISTENT
-        double armAngle = 26;
-        double shooterSpeed = 3400;
-        double shooterTriggerSpeed = 3000;
+    public static Command centerSpeakerVisionShot(CommandXboxController driver, PhotonPositions bluePosition, PhotonPositions redPosition) {
+        BooleanSupplier keepArmLoweredUntil = () -> {
+          return PhotonSubsystem.getInstance().getTargetPos().getY() - SwerveSubsystem.getInstance().getPose().getY() < 0.5;
+        };
+        
+        double armAngle = 32;
+        double shooterSpeed = 3750;
+        double shooterTriggerSpeed = 3700;
 
         return CombinedCommands.visionScoreTeleopSimple(
             driver, 
-            25, 
+            8, 
             1, 
             shooterSpeed, shooterTriggerSpeed,
             armAngle,
+            keepArmLoweredUntil,
             bluePosition,
             redPosition
         );

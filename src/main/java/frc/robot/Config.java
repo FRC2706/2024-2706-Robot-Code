@@ -150,6 +150,7 @@ public final class Config {
     //networkTableName
     public static final String apriltagCameraName = "FrontApriltagOV9281";
     public static final String networkTableName = "PhotonCamera";
+    public static final String frontCameraName = "HD_USB_CAMERA";
     //data max
     public static final int maxNumSamples = 10;
 
@@ -165,16 +166,23 @@ public final class Config {
       
       RIGHT_SPEAKER_RED(4, new Translation2d(-0.937,0.937), new Translation2d(-0.637,0.637), Rotation2d.fromDegrees(-60)),
       MIDDLE_SPEAKER_RED(4, new Translation2d(-1.3,0), new Translation2d(-0.95,0), Rotation2d.fromDegrees(0)),
-      FAR_SPEAKER_RED(4, new Translation2d(-2.4,0), new Translation2d(-2.2,0), Rotation2d.fromDegrees(0)),
       LEFT_SPEAKER_BLUE(7, new Translation2d(0.937,0.937), new Translation2d(0.637,0.637), Rotation2d.fromDegrees(-120)),
       MIDDLE_SPEAKER_BLUE(7, new Translation2d(1.20,0), new Translation2d(0.90,0), Rotation2d.fromDegrees(180)),
       TEST(4, new Translation2d(-2,0), new Translation2d(-1,0), Rotation2d.fromDegrees(0)),
-
       LEFT_SPEAKER_RED(3, new Translation2d(-1.2,-1.2), Rotation2d.fromDegrees(180+56)),
       RIGHT_SPEAKER_BLUE(8, new Translation2d(1.2,-1.2), Rotation2d.fromDegrees(-56)),
       AMP_RED(5, new Translation2d(0,-0.70), new Translation2d(0,-0.5), Rotation2d.fromDegrees(90)),
-      AMP_BLUE(6, new Translation2d(0,-0.30), new Translation2d(0,0.05),  Rotation2d.fromDegrees(90));
-  
+      AMP_BLUE(6, new Translation2d(0,-0.30), new Translation2d(0,0.05),  Rotation2d.fromDegrees(90)),
+
+      FAR_SPEAKER_RED(4, new Translation2d(-2.1,0), Rotation2d.fromDegrees(180)),
+      FAR_SPEAKER_BLUE(7, new Translation2d(2.1, 0), Rotation2d.fromDegrees(0)),
+      FAR_SPEAKER_RED_SIDE_TAG(3, new Translation2d(-2.5,0), new Translation2d(-2.1,0.58), Rotation2d.fromDegrees(0)),
+      FAR_SPEAKER_BLUE_SIDE_TAG(8, new Translation2d(2.4,0), new Translation2d(2.1,-0.58 ), Rotation2d.fromDegrees(0));
+
+      // 2.2 , 33 deg
+      // FAR_SPEAKER_BLUE at new Translation2d(2.35,-0.65), arm angle of 35.8 and shooter speed at 3750
+
+    
       public final int id;
       public final boolean hasWaypoint;
       public final Translation2d waypoint;
@@ -221,7 +229,7 @@ public final class Config {
     public static final double driveGearRatio = (8.14 / 1.0);
     public static final double angleGearRatio = (12.8 / 1.0);
 
-    public static final double synchTolerance = 3;
+    public static final double synchTolerance = 1;
     
     public static final SwerveDriveKinematics swerveKinematics =
         new SwerveDriveKinematics(
@@ -266,15 +274,19 @@ public final class Config {
 
     /* Swerve Profiling Values Changed */
     public static enum TeleopSpeeds {
-      SLOW(0.5, 0.5 * Math.PI),
-      MAX(3.0, 2.5 * Math.PI);
+      SLOW(0.5, 0.5 * Math.PI, 16, 12 * Math.PI),
+      MAX(3.0, 2.5 * Math.PI, 6, 8 * Math.PI);
 
       public final double translationalSpeed;
       public final double angularSpeed;
+      public final double translationAccelLimit;
+      public final double angularAccelLimit;
 
-      TeleopSpeeds(double translationalSpeed, double angularSpeed) {
+      TeleopSpeeds(double translationalSpeed, double angularSpeed, double translationAccelLimit, double angAccelLimit) {
         this.translationalSpeed = translationalSpeed;
         this.angularSpeed = angularSpeed;
+        this.translationAccelLimit = translationAccelLimit;
+        this.angularAccelLimit = angAccelLimit;
       }
     }
 
@@ -385,11 +397,11 @@ public final class Config {
     public static final boolean SOFT_LIMIT_ENABLE = true;
     
     //PID constants
-    public static final double arm_kP = robotSpecific(2.865, 0.0, 0.0, 1.4);
-    public static final double arm_kI = robotSpecific(0.00286, 0.0, 0.0, 0.0003);
-    public static final double arm_kD = robotSpecific(0.0, 0.0, 0.0, 0.9);
-    public static final double arm_kIz = robotSpecific(Math.toRadians(5), 0.0, 0.0, 0.3);
-    public static final double arm_kFF = 0;
+    public static final double arm_kP = robotSpecific(2.700000, 0.0, 0.0, 1.4);
+    public static final double arm_kI = robotSpecific(0.0, 0.0, 0.0, 0.0003);
+    public static final double arm_kD = robotSpecific(0.800000, 0.0, 0.0, 0.9);
+    public static final double arm_kIz = robotSpecific(0.02, 0.0, 0.0, 0.3);
+    public static final double arm_kFF = 0.013;
     public static final double min_output = -1;
     public static final double max_output = 1;
 
@@ -418,6 +430,7 @@ public static enum ArmSetPoints {
   INTAKE(-2.5),
   SPEAKER_KICKBOT_SHOT(13),
   NO_INTAKE(5.0),
+  SPEAKER_VISION_SHOT(33),
   AMP(100);
 
   public final double angleDeg;
@@ -481,6 +494,10 @@ public static enum ArmSetPoints {
                                kI = 0.0,
                                kD = 0.0,
                                kFF = 0.00025,
+                               kP1 = 0.001,
+                               kI1 = 0.0,
+                               kD1 = 0.0,
+                               kFF1 = 0.00025,
                                kMaxOutput = 1.0,
                                kMinOutput = -1.0,
                                maxRPM = 5700.0;
