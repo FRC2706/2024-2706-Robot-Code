@@ -129,9 +129,7 @@ public class AutoRoutines extends SubsystemBase {
         NamedCommands.registerCommand("ArmPickup", new SetArm(() -> Config.ArmSetPoints.INTAKE.angleDeg, 0));
         NamedCommands.registerCommand("ArmKitbotShot", new SetArm(() -> Config.ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg, 0));
 
-
-        // 3 note source side auto below
-
+        // Working but behaves weirdly with pathplanner
         NamedCommands.registerCommand("VisionScoreSourceSideClose",
             autoSpeakerScore(
                 8,
@@ -139,25 +137,11 @@ public class AutoRoutines extends SubsystemBase {
                 3750,
                 3720,
                 31,
-                PhotonPositions.BLUE,
-                PhotonPositions.RED
+                PhotonPositions.RIGHT_SPEAKER_BLUE,
+                PhotonPositions.LEFT_SPEAKER_RED
             )
         );
 
-        NamedCommands.registerCommand("VisionAlignFarNoteSourceSide",
-            new SelectByAllianceCommand(
-                    new PhotonMoveToTarget(PhotonPositions.BLUE.destination, false, false), 
-                    new PhotonMoveToTarget(PhotonPositions.RED.destination, false, false)));
-
-        NamedCommands.registerCommand("VisionAlignFarNoteSecondSourceSide",
-            new SelectByAllianceCommand(
-                    new PhotonMoveToTarget(PhotonPositions.BLUE.destination, false, false), 
-                    new PhotonMoveToTarget(PhotonPositions.RED.destination, false, false)));
-    
-        NamedCommands.registerCommand("MoveNeg0.4mInY",
-            SwerveSubsystem.getInstance().getDriveToPoseCommand(
-                SwerveSubsystem.getInstance().getPose().plus(new Transform2d(0, -0.4, new Rotation2d()))));
-    
         NamedCommands.registerCommand("SetVisionSideSpeakerTag", 
             new SelectByAllianceCommand(
                 PhotonSubsystem.getInstance().getResetCommand(7),
