@@ -169,15 +169,23 @@ public final class Config {
       LEFT_SPEAKER_BLUE(7, new Translation2d(0.937,0.937), new Translation2d(0.637,0.637), Rotation2d.fromDegrees(-120)),
       MIDDLE_SPEAKER_BLUE(7, new Translation2d(1.20,0), new Translation2d(0.90,0), Rotation2d.fromDegrees(180)),
       TEST(4, new Translation2d(-2,0), new Translation2d(-1,0), Rotation2d.fromDegrees(0)),
-      LEFT_SPEAKER_RED(3, new Translation2d(-1.2,-1.2), Rotation2d.fromDegrees(180+56)),
-      RIGHT_SPEAKER_BLUE(8, new Translation2d(1.2,-1.2), Rotation2d.fromDegrees(-56)),
       AMP_RED(5, new Translation2d(0,-0.70), new Translation2d(0,-0.5), Rotation2d.fromDegrees(90)),
       AMP_BLUE(6, new Translation2d(0,-0.30), new Translation2d(0,0.05),  Rotation2d.fromDegrees(90)),
 
       FAR_SPEAKER_RED(4, new Translation2d(-2.1,0), Rotation2d.fromDegrees(180)),
       FAR_SPEAKER_BLUE(7, new Translation2d(2.1, 0), Rotation2d.fromDegrees(0)),
       FAR_SPEAKER_RED_SIDE_TAG(3, new Translation2d(-2.5,0), new Translation2d(-2.1,0.58), Rotation2d.fromDegrees(0)),
-      FAR_SPEAKER_BLUE_SIDE_TAG(8, new Translation2d(2.4,0), new Translation2d(2.1,-0.58 ), Rotation2d.fromDegrees(0));
+      FAR_SPEAKER_BLUE_SIDE_TAG(8, new Translation2d(2.4,0), new Translation2d(2.1,-0.58 ), Rotation2d.fromDegrees(0)),
+
+      PODIUM_AMPSIDE_BLUE(7, new Translation2d(2.35, -0.65), Rotation2d.fromDegrees(-20)),
+      PODIUM_AMPSIDE_RED(4, new Translation2d(-2.35, -0.65), Rotation2d.fromDegrees(180+20)),
+
+      PODIUM_SOURCESIDE_BLUE(8, new Translation2d(2.5, -1.1), new Translation2d(2.2, -1.1), Rotation2d.fromDegrees(-38)),
+      PODIUM_SOURCESIDE_RED(3, new Translation2d(-2.5, -1.1), new Translation2d(-2.2, -1.1), Rotation2d.fromDegrees(180+38)),
+
+      RIGHT_SPEAKER_BLUE(8, new Translation2d(1,-1.1), Rotation2d.fromDegrees(-55)),
+      LEFT_SPEAKER_RED(3, new Translation2d(-1,-1.1), Rotation2d.fromDegrees(180+55));
+      
 
       // 2.2 , 33 deg
       // FAR_SPEAKER_BLUE at new Translation2d(2.35,-0.65), arm angle of 35.8 and shooter speed at 3750
@@ -404,6 +412,13 @@ public final class Config {
     public static final double arm_kFF = 0.013;
     public static final double min_output = -1;
     public static final double max_output = 1;
+
+    //PID constants for far shots
+    public static final double arm_far_kP = 6.0;
+    public static final double arm_far_kI = 0;
+    public static final double arm_far_kD = 6.0;
+    public static final double arm_far_kFF = 0.06;
+    public static final double arm_far_iZone = Math.toRadians(1.5);
 
     //ff calculations
     public static final double gravitationalConstant = 389.0886; //inches/s/s which is equal to 9.81 m/s/s
