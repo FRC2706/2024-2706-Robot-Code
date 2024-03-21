@@ -71,8 +71,7 @@ public class ShooterSubsystem extends SubsystemBase {
         m_motor.setInverted(false);
 
         m_pidController = m_motor.getPIDController();
-        m_encoder = m_motor.getEncoder();   
-        m_encoder.setAverageDepth(1);//check if 2 would work better
+        m_encoder = m_motor.getEncoder();
 
         //Voltage compensation
         m_motor.enableVoltageCompensation(9); //adjust on final robot
