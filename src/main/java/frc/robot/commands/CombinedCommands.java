@@ -121,8 +121,9 @@ public class CombinedCommands {
     public static Command centerNoteThenSpinUpShooer(double shooterSpeed) {
         // Intake and shooter sequence
         // Spin the intake forwards to center the note, when the chassis is not rotating for a bit, lodge the centered note in the intake rollers
-        Debouncer notRotatingDebouncer = new Debouncer(0.3);
+        Debouncer notRotatingDebouncer = new Debouncer(0.5);
         return Commands.sequence(
+            Commands.runOnce(() -> notRotatingDebouncer.calculate(false)),
             new MakeIntakeMotorSpin(8.0, 0).until(() -> notRotatingDebouncer.calculate(
                 Math.abs(SwerveSubsystem.getInstance().getRobotRelativeSpeeds().omegaRadiansPerSecond) < Math.toRadians(3))),
             Commands.parallel(
