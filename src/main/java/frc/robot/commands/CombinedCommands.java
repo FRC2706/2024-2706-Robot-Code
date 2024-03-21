@@ -335,4 +335,14 @@ public class CombinedCommands {
             redPosition
         );
     }
+     /*Bling command to indicate that a note is loaded in intake*/
+    public static Command strobeToSolidBlingCommand() {
+        return
+            Commands.sequence(
+                new BlingCommand(BlingColour.PURPLESTROBE),
+                new WaitCommand(5),
+                new BlingCommand(BlingColour.PURPLE))
+        ;
+    }
+    
 }
