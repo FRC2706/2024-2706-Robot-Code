@@ -364,7 +364,7 @@ public class CombinedCommands {
         return
             Commands.sequence(
                 new BlingCommand(BlingColour.PURPLESTROBE),
-                new WaitCommand(5),
+                new WaitCommand(2),
                 new BlingCommand(BlingColour.PURPLE))
         ;
     }
