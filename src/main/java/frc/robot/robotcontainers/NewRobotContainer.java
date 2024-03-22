@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.lib2706.SelectByAllianceCommand;
@@ -127,7 +128,11 @@ public class NewRobotContainer extends RobotContainer {
     driver.x().whileTrue(new RotateToAngle(driver, Rotation2d.fromDegrees(90)));
     driver.a().whileTrue(new RotateToAngle(driver, Rotation2d.fromDegrees(180)));
     driver.b().whileTrue(new RotateToAngle(driver, Rotation2d.fromDegrees(270)));   
-    driver.rightTrigger().whileTrue(new RotateAngleToVisionSupplier(driver, "photonvision/" + PhotonConfig.frontCameraName));
+    driver.rightTrigger().whileTrue(Commands.sequence(
+      new SelectByAllianceCommand(
+          PhotonSubsystem.getInstance().getResetCommand(7), 
+          PhotonSubsystem.getInstance().getResetCommand(4)), 
+      new RotateAngleToVisionSupplier(driver, () -> PhotonSubsystem.getInstance().getTargetRotation().getRadians())));
     
     // Vision scoring commands with no intake, shooter, arm
     // driver.leftTrigger().whileTrue(new SelectByAllianceCommand( // Implement command group that also controls the arm, intake, shooter
