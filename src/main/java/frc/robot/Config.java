@@ -394,7 +394,7 @@ public final class Config {
 
     public static final double shiftEncoderRange = 10;
       //offset unit: degrees
-    public static final double armAbsEncoderOffset = Math.toDegrees(3.20433) - 2.3 - shiftEncoderRange;
+    public static final double armAbsEncoderOffset = Math.toDegrees(3.20433) + 4.0 - shiftEncoderRange;
 
     public static final double MAX_ARM_ANGLE_DEG = 180;
     public static final double MIN_ARM_ANGLE_DEG = -2;
