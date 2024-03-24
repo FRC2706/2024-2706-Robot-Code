@@ -394,7 +394,7 @@ public final class Config {
 
     public static final double shiftEncoderRange = 10;
       //offset unit: degrees
-    public static final double armAbsEncoderOffset = Math.toDegrees(3.20433) + 4.0 - shiftEncoderRange;
+    public static final double armAbsEncoderOffset = Math.toDegrees(3.20433) + 3.0 - shiftEncoderRange;
 
     public static final double MAX_ARM_ANGLE_DEG = 180;
     public static final double MIN_ARM_ANGLE_DEG = -2;
@@ -443,7 +443,7 @@ public static enum ArmSetPoints {
   //@todo: to be calibrated
   IDLE(60),
   INTAKE(-2.5),
-  SPEAKER_KICKBOT_SHOT(13),
+  SPEAKER_KICKBOT_SHOT(13+1.5),
   NO_INTAKE(5.0),
   SPEAKER_VISION_SHOT(33),
   AMP(100);
