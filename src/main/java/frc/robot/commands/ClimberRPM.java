@@ -14,13 +14,11 @@ public class ClimberRPM extends Command {
   private DoubleSupplier m_getPercentOutput;
   /** Creates a new IndexerCargo. */
   public ClimberRPM(DoubleSupplier getPercentOutput) {
-    
+
     climber = ClimberSubsystem.getInstance();
-    
-    // Use addRequirements() here to declare subsystem dependencies.
-    if ( climber != null )
-    {
-      addRequirements(climber);
+
+    if (climber != null){
+      addRequirements(climber);  
     }
 
     m_getPercentOutput = getPercentOutput;
