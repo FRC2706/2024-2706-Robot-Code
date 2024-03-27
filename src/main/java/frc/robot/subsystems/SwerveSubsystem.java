@@ -50,6 +50,7 @@ public class SwerveSubsystem extends SubsystemBase {
   private DoubleArrayPublisher pubCurrentPose = swerveTable.getDoubleArrayTopic("Pose ").publish(PubSubOption.periodic(0.02));
   private UpdateSimpleFeedforward updateFeedforward;
   private DoublePublisher pubGyroRate = swerveTable.getDoubleTopic("Gyro Rate (degps)").publish(PubSubOption.periodic(0.02));
+  private DoublePublisher pubGyroAcc = swerveTable.getDoubleTopic("Gyro Acc (degps^2)").publish(PubSubOption.periodic(0.02));
 
   private NetworkTable visionPidTable = swerveTable.getSubTable("VisionPid");
   private DoublePublisher pubMeasuredSpeedX = visionPidTable.getDoubleTopic("MeasuredSpeedX (mps)").publish(PubSubOption.periodic(0.02));
@@ -225,6 +226,7 @@ public class SwerveSubsystem extends SubsystemBase {
         : Rotation2d.fromDegrees(gyro.getYaw());
   }
   
+  
   /**
    * Returns a command to set the given angle as the heading.
    * Rotates the angle by 180 degrees if on the red alliance.
@@ -374,6 +376,7 @@ public class SwerveSubsystem extends SubsystemBase {
     pubCurrentPose.accept(AdvantageUtil.deconstruct(getPose()));
     
     pubGyroRate.accept(getAngularRate());
+    pubGyroAcc.accept(getAngularAcc());
 
     updateFeedforward.checkForUpdates();
     ChassisSpeeds speeds = getFieldRelativeSpeeds();
@@ -404,6 +407,14 @@ public class SwerveSubsystem extends SubsystemBase {
     gyro.getRawGyro(xyz_dps);
     return xyz_dps[2];
   }
+
+  public double getAngularAcc() {
+    double[] xyz_dpss = new double[3];
+    gyro.getAccelerometerAngles(xyz_dpss);
+    return xyz_dpss[3];
+    //I would say that in z because when we tilt on z is when the encoders will drift, thus the odometry gets innacurate
+  }
+
 
   public ChassisSpeeds getFieldRelativeSpeeds()
   {

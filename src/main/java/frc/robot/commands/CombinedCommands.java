@@ -368,5 +368,9 @@ public class CombinedCommands {
                 new BlingCommand(BlingColour.PURPLE))
         ;
     }
-    
+    /********************** Test for provincials **********************/
+
+    public static Command shootToSpeaker(){
+        return new ProxyCommand(Commands.sequence());
+    }
 }

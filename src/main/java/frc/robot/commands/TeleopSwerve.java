@@ -24,8 +24,7 @@ public class TeleopSwerve extends Command {
 
   private static TeleopSpeeds speed = TeleopSpeeds.MAX;
   private static boolean isFieldRelative = true;
-  private boolean keepConstantHeading = false;
-  private boolean getLastValue = false;
+  private static boolean isJoystickRelative = true;//-----------
 
   private static SlewRateLimiter translationLimiter = new SlewRateLimiter(6);
   private static SlewRateLimiter strafeLimiter = new SlewRateLimiter(6);
@@ -35,11 +34,10 @@ public class TeleopSwerve extends Command {
   private double strafeVal;
   private double rotationVal;
 
-  private Rotation2d prevHeading = new Rotation2d(0);
+  private double prevHeading = 0.0;
   // private boolean controllingRotation = false;
 
-  public TeleopSwerve(
-      CommandXboxController driver) {
+  public TeleopSwerve(CommandXboxController driver) {
     this.s_Swerve = SwerveSubsystem.getInstance();
     addRequirements(s_Swerve);
     this.driver = driver;
@@ -75,7 +73,15 @@ public class TeleopSwerve extends Command {
   protected double calculateTranslationVal() {
     translationVal = MathUtil.applyDeadband(-driver.getRawAxis(translationAxis), Config.Swerve.stickDeadband)
         * speed.translationalSpeed;
-    return translationLimiter.calculate(translationVal);
+
+    if(isJoystickRelative){//The joystick relative drive, in theory should work 
+      if(driver.getRightX() > 0.2 && driver.getRightY() > 0.2){
+        prevHeading = SwerveSubsystem.getInstance().calculateRotation(Rotation2d.fromRadians(Math.atan(driver.getRightY() / driver.getRightX())));
+      }
+      return prevHeading; 
+    }
+    else 
+      return translationLimiter.calculate(translationVal);
   }
 
   protected double calculateStrafeVal() {
@@ -87,6 +93,7 @@ public class TeleopSwerve extends Command {
   protected double calculateRotationVal() {
     rotationVal = MathUtil.applyDeadband(-driver.getRawAxis(rotationAxis), Config.Swerve.stickDeadband)
         * speed.angularSpeed;
+
     return rotationLimiter.calculate(rotationVal);
   }
 

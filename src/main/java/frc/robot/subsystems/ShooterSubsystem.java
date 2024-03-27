@@ -8,6 +8,7 @@ import static frc.robot.subsystems.ShooterStateMachine.ShooterModes.*;
 import static frc.robot.subsystems.ShooterStateMachine.States.*;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -36,6 +37,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private RelativeEncoder m_encoder;
     private boolean closedLoopControl = false;
     private boolean stateFulControl = false;
+    private double distanceToAprilTag = 0.0;
 
 
     private TunableNumber kP = new TunableNumber("Shooter/PID0/kP", Config.ShooterConstants.kP);
@@ -166,9 +168,10 @@ public class ShooterSubsystem extends SubsystemBase {
      * This should be called every run loop cycle, set it as the default command 
      * @return Default Intake Command
      */
-    public Command defaultShooterCommand(BooleanSupplier isThereNote){
+    public Command defaultShooterCommand(BooleanSupplier isThereNote, DoubleSupplier distanceToAprilTag){
         return Commands.sequence(
-            runOnce(()->setMode(STOP_SHOOTER)), run(()->allowAutoMovement(isThereNote.getAsBoolean())));
+            runOnce(()->setMode(STOP_SHOOTER)), 
+            run(()->{allowAutoMovement(isThereNote.getAsBoolean()); this.distanceToAprilTag = distanceToAprilTag.getAsDouble();}));
     }
     /**
      * Sets the mode of the Shooter's state nachine to "SHOOT_SPEAKER"
@@ -207,9 +210,11 @@ public class ShooterSubsystem extends SubsystemBase {
         TunableNumber.ifChanged(hashCode(), ()->setPIDGains(kP1.get(), kI1.get(), kD1.get(), 1), kP1, kI1, kD1);
         TunableNumber.ifChanged(hashCode(), ()->setFFGains(kFF1.get(), 1), kFF1);
 
+
         //Check if this method would work like this
         if(stateFulControl == true) {
             shooterStates.isInRange(()->getVelocityRPM() > shooterStates.getDesiredVelocityRPM() - shooterTreshHold.get());
+            shooterStates.updateDistance(distanceToAprilTag);
             shooterStates.updateState();
         }
         

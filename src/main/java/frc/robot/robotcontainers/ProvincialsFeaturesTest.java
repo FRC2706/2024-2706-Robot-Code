@@ -1,12 +1,8 @@
-  
-  // Copyright (c) FIRST and other WPILib contributors.
+// Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.robotcontainers;
-
-
-import org.opencv.video.KalmanFilter;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -16,7 +12,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.lib.lib2706.SelectByAllianceCommand;
 import frc.lib.lib2706.TunableNumber;
 import frc.lib.lib2706.XBoxControllerUtil;
 import frc.robot.Config;
@@ -34,26 +29,17 @@ import frc.robot.commands.RotateAngleToVisionSupplier;
 import frc.robot.commands.RotateToAngle;
 import frc.robot.commands.RumbleJoystick;
 import frc.robot.commands.SetArm;
-import frc.robot.commands.Shooter_PID_Tuner;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.auto.AutoRoutines;
 import frc.robot.commands.auto.AutoSelector;
 import frc.robot.subsystems.IntakeStatesMachine.IntakeModes;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.ShooterStateMachine.ShooterModes;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
-/**
- * This class is where the bulk of the robot should be declared. Since
- * Command-based is a "declarative" paradigm, very little robot logic
- * should actually be handled in the {@link Robot} periodic methods
- * (other than the scheduler calls). Instead, the structure of the robot
- * (including subsystems, commands, and button mappings) should be declared
- * here.
- */
-public class NewRobotContainer extends RobotContainer {
+/** Add your docs here. */
+public class ProvincialsFeaturesTest extends RobotContainer {
   /* Controllers */
   private final CommandXboxController driver = new CommandXboxController(0);
   private final CommandXboxController operator = new CommandXboxController(1);
@@ -68,29 +54,21 @@ public class NewRobotContainer extends RobotContainer {
   private AutoRoutines m_autoRoutines;
   private AutoSelector m_autoSelector;
 
-  /* Default Command */
-  private Command m_swerveDefaultCommand;
-
   private TunableNumber shooterTargetRPM = new TunableNumber("Shooter/Target RPM", 0);
   private TunableNumber shooterDesiredVoltage = new TunableNumber("Shooter/desired Voltage", 0);
   private TunableNumber armAngleDeg = new TunableNumber("Arm/ArmTuning/setAngleDeg", 5.0);
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
-  public NewRobotContainer() {
+  public ProvincialsFeaturesTest() {
     /*  Setup default commands */
-    m_swerveDefaultCommand = new TeleopSwerve(driver);
-    s_Swerve.setDefaultCommand(m_swerveDefaultCommand);
-    if (!Config.disableStateBasedProgramming) {
-      intake.setDefaultCommand(intake.defaultIntakeCommand());
-      shooter.setDefaultCommand(shooter.defaultShooterCommand(()-> intake.isNoteIn(), ()->0));
-    } else {
-      // shooter.setDefaultCommand(new Shooter_PID_Tuner(() -> 0));
-    }
+    s_Swerve.setDefaultCommand(new TeleopSwerve(driver));
+    intake.setDefaultCommand(intake.defaultIntakeCommand());
+    shooter.setDefaultCommand(shooter.defaultShooterCommand(()-> intake.isNoteIn(), ()->0));
 
     configureButtonBindings();
 
-     // Setup auto
+    // Setup auto
     m_autoRoutines = new AutoRoutines();
     m_autoSelector = new AutoSelector();
   }
@@ -131,34 +109,10 @@ public class NewRobotContainer extends RobotContainer {
     driver.b().whileTrue(new RotateToAngle(driver, Rotation2d.fromDegrees(270)));   
     driver.rightTrigger().whileTrue(new RotateAngleToVisionSupplier(driver, "photonvision/" + PhotonConfig.frontCameraName));
     
-    // Vision scoring commands with no intake, shooter, arm
-    // driver.leftTrigger().whileTrue(new SelectByAllianceCommand( // Implement command group that also controls the arm, intake, shooter
-    //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.AMP_BLUE, driver), 
-    //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.AMP_RED, driver)));
-
-    // driver.rightTrigger().whileTrue(new SelectByAllianceCommand( // Implement command group that also controls the arm, intake, shooter
-    //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.RIGHT_SPEAKER_BLUE, driver), 
-    //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.LEFT_SPEAKER_RED, driver)));
-
     driver.leftTrigger().whileTrue(CombinedCommands.centerSpeakerVisionShot(driver, PhotonPositions.FAR_SPEAKER_BLUE, PhotonPositions.FAR_SPEAKER_RED))
             .onTrue(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.SLOW)))
             .onFalse(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.MAX)));
 
-    // Complete vision scoring commands with all subsystems
-    // if (Config.disableStateBasedProgramming) {
-    //   // Score in amp with vision using simple intake/shooter
-    //   driver.leftBumper().whileTrue(CombinedCommands.simpleAmpScoreWithVision(driver));
-
-    //   // Score in speaker with vision using simple intake/shooter
-    //   driver.rightBumper().whileTrue(CombinedCommands.simpleSpeakerScoreWithVision(driver, ArmSetPoints.SPEAKER_KICKBOT_SHOT, PhotonPositions.RIGHT_SPEAKER_BLUE, PhotonPositions.RIGHT_SPEAKER_RED));
-
-    // } else {
-    //   // Score in amp with vision using stateful intake/shooter
-    //   driver.leftBumper().whileTrue(CombinedCommands.statefulAmpScoreWithVision(driver));
-
-    //   // Score in speaker with vision using stateful intake/shooter
-    //   driver.leftBumper().whileTrue(CombinedCommands.statefulSpeakerScoreWithVision(driver, ArmSetPoints.SPEAKER_KICKBOT_SHOT, PhotonPositions.RIGHT_SPEAKER_BLUE, PhotonPositions.RIGHT_SPEAKER_RED));
-    // }
 
     /**
      * Operator Controls
@@ -184,12 +138,12 @@ public class NewRobotContainer extends RobotContainer {
       shooter.setStateMachineOff();
 
       // Intake note with leftTrigger
-    
+      
       //operator.leftTrigger(0.3).whileTrue(
       operator.leftBumper()
-      .whileTrue(CombinedCommands.armIntake())
-      .onFalse(new SetArm(()->ArmSetPoints.NO_INTAKE.angleDeg))
-      .onFalse(new MakeIntakeMotorSpin(9.0,0).withTimeout(1).until(() -> intake.isBackSensorActive()));
+        .whileTrue(CombinedCommands.armIntake())
+        .onFalse(new SetArm(()->ArmSetPoints.NO_INTAKE.angleDeg))
+        .onFalse(new MakeIntakeMotorSpin(9.0,0).withTimeout(1).until(() -> intake.isBackSensorActive()));
 
 
       //NOTE: right Trigger has been assigned to climber
@@ -219,30 +173,6 @@ public class NewRobotContainer extends RobotContainer {
         .whileTrue(Commands.runOnce(()-> intake.setMode(IntakeModes.RELEASE)))
         .whileFalse(Commands.runOnce(()->intake.setMode(IntakeModes.STOP_INTAKE))); 
     }
-
-
-    /**
-     * Testing button bindings
-     */
-    // Let testJoystick control swerve. Note disables driver joystick swerve. Never commit this line.
-    // s_Swerve.setDefaultCommand(new TeleopSwerve(testJoystick));
-    // testJoystick.back().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d()));
-    // testJoystick.b().onTrue(SwerveSubsystem.getInstance().setOdometryCommand(new Pose2d(3,3,new Rotation2d(0))));
-    // testJoystick.a().whileTrue(PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.FAR_SPEAKER_RED, driver))
-    //           .onFalse(Commands.runOnce(()->{},SwerveSubsystem.getInstance()));
-
-    // testJoystick.x() //Drives the note into the shooter
-    //   .whileTrue(Commands.runOnce(()-> intake.setMode(shooter.isReadyToShoot() ? IntakeModes.SHOOT : IntakeModes.STOP_INTAKE)))
-    //   .whileFalse(Commands.runOnce(()->intake.setMode(IntakeModes.STOP_INTAKE)));  
-    
-    // testJoystick.leftBumper().whileTrue(
-    //       new MakeIntakeMotorSpin(9.0,0));
-    
-    // testJoystick.start().onTrue( new SetArm(armAngleDeg));
-    // testJoystick.back().whileTrue(new Shooter_PID_Tuner(shooterTargetRPM));
-    // testJoystick.rightBumper().whileTrue(CombinedCommands.simpleShootNoteSpeaker(1, () -> shooterTargetRPM.getAsDouble(), 50)); 
-
-    // testJoystick.rightTrigger().whileTrue(new Shooter_PID_Tuner(()->shooterTargetRPM.getAsDouble()));
   }
 
   /**
