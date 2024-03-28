@@ -443,7 +443,7 @@ public static enum ArmSetPoints {
   //@todo: to be calibrated
   IDLE(60),
   INTAKE(-2.5),
-  SPEAKER_KICKBOT_SHOT(13),
+  SPEAKER_KICKBOT_SHOT(13+1.5),
   NO_INTAKE(5.0),
   SPEAKER_VISION_SHOT(33),
   AMP(100);
