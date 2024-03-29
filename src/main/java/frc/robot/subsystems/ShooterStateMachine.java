@@ -20,9 +20,18 @@ import edu.wpi.first.math.interpolation.InverseInterpolator;
 public class ShooterStateMachine {
     private boolean isInRange = false;
     private static double distanceFromSpeaker = 0.0;
+    private static InterpolatingTreeMap<Double, Double> interpolation = new InterpolatingTreeMap<Double, Double>(
+            InverseInterpolator.forDouble(), Interpolator.forDouble());
 
     private ShooterModes desiredMode = STOP_SHOOTER;
     private States currentState = IN_IDLE;
+
+    //Initialize the values of the interpolation as soon as the code is launched
+    static {
+        interpolation.put(0.0, 0.0);// Min value
+        interpolation.put(0.0, 0.0);// Query
+        interpolation.put(0.0, 0.0);// Max value
+    }
 
     /**
      * All possible Modes to control the shooter
@@ -30,6 +39,7 @@ public class ShooterStateMachine {
     public static enum ShooterModes {
         STOP_SHOOTER(0.0, 0.0),
         PRE_HEAT(4.0, 500.0),
+        INTERPOLATED_SHOOT(0.0, interpolation.get(distanceFromSpeaker)),
         SHOOT_AMP(6.0, 800.0),
         SHOOT_SPEAKER(9.0, 1700.0);//MAX 2500 with 9 v
 
@@ -99,11 +109,11 @@ public class ShooterStateMachine {
     }
 
     /**
-     * Method used to get the best speed depending on the distance of the robot from aprilTag
-     * @param h
+     * Method that updates the distance from the speaker to the 
+     * @param d
      */
-    public void updateDistance(double h) {
-        distanceFromSpeaker = h;
+    public void updateDistance(double d) {
+        distanceFromSpeaker = d;
     }
 
     /**
