@@ -2,6 +2,18 @@
   "NetworkTables": {
     "transitory": {
       "SmartDashboard": {
+        "TunableNumbers": {
+          "Arm": {
+            "ArmTuning": {
+              "open": true
+            },
+            "open": true
+          },
+          "Shooter": {
+            "open": true
+          },
+          "open": true
+        },
         "open": true
       },
       "SwerveChassis": {
@@ -15,7 +27,9 @@
     },
     "types": {
       "/FMSInfo": "FMSInfo",
-      "/SmartDashboard/Field": "Field2d"
+      "/Shuffleboard/BasicDebugging/CommandScheduler": "Scheduler",
+      "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/command reset id": "Command"
     }
   },
   "NetworkTables Info": {
