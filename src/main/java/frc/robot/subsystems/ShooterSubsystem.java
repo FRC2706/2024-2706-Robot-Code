@@ -8,6 +8,7 @@ import static frc.robot.subsystems.ShooterStateMachine.ShooterModes.*;
 import static frc.robot.subsystems.ShooterStateMachine.States.*;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -36,7 +37,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private RelativeEncoder m_encoder;
     private boolean closedLoopControl = false;
     private boolean stateFulControl = false;
-
+    private double distanceToSpeaker = 0;
 
     private TunableNumber kP = new TunableNumber("Shooter/PID0/kP", Config.ShooterConstants.kP);
     private TunableNumber kI = new TunableNumber("Shooter/PID0/kI", Config.ShooterConstants.kI);
@@ -120,10 +121,10 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void allowAutoMovement(boolean isThereNote){
-        if(!isThereNote && stateFulControl)setMode(STOP_SHOOTER);//it should set to stop now when there is no note in intake
+        if(!isThereNote)setMode(STOP_SHOOTER);//it should set to stop now when there is no note in intake
 
         if(closedLoopControl){
-            setRPM(shooterStates.getDesiredVelocityRPM());
+            setRPM(shooterStates.getDesiredVelocityRPM() + shooterTreshHold.get());
         }else{
             setVoltage(shooterStates.getDesiredVoltage());
         }
@@ -166,37 +167,46 @@ public class ShooterSubsystem extends SubsystemBase {
      * This should be called every run loop cycle, set it as the default command 
      * @return Default Intake Command
      */
-    public Command defaultShooterCommand(BooleanSupplier isThereNote){
+    public Command defaultShooterCommand(BooleanSupplier isThereNote, DoubleSupplier distanceToSpeaker){
         return Commands.sequence(
-            runOnce(()->setMode(STOP_SHOOTER)), run(()->allowAutoMovement(isThereNote.getAsBoolean())));
+                runOnce(()->setMode(STOP_SHOOTER)), 
+                run(()->{allowAutoMovement(isThereNote.getAsBoolean()); this.distanceToSpeaker = distanceToSpeaker.getAsDouble();})
+            );
     }
     /**
-     * Sets the mode of the Shooter's state nachine to "SHOOT_SPEAKER"
+     * Sets the mode of the Shooter's state nachine to "CLOSE_SHOOT_SPEAKER"
      * This will set the velocity to the 
      * @return
      */
     public Command speedUpForSpeakerCommand(){
         return Commands.deadline(
                 Commands.waitUntil(()->isReadyToShoot()), 
-                Commands.runOnce(()->setMode(SHOOT_SPEAKER))
+                Commands.runOnce(()->setMode(CLOSE_SHOOT_SPEAKER))
             );
     }
 
     /**
-     * Command that will set the the given mode if shooter is stopped,
-     * or stop the shooter if it's currently doing an action.
-     * 
-     * @param mode Mode to toggle.
-     * @return Command to attach to a button as onTrue.
+     * Sets the mode of the Shooter's state nachine to "SHOOT_AMP"
+     * This will set the velocity to the 
+     * @return
      */
-    public Command toggleSpinUpCommand(ShooterModes mode) {
-        return Commands.runOnce(() -> {
-            if (shooterStates.getDesiredMode() != ShooterModes.STOP_SHOOTER) {
-                shooterStates.setMode(ShooterModes.STOP_SHOOTER);
-            } else {
-                shooterStates.setMode(mode);
-            }
-        });
+    public Command speedUpForAMPCommand(){
+        return Commands.deadline(
+                Commands.waitUntil(()->isReadyToShoot()), 
+                Commands.runOnce(()->setMode(SHOOT_AMP))
+            );
+    }
+
+    /**
+     * Sets the mode of the Shooter's state nachine to "SHOOT_AMP"
+     * This will set the velocity to the 
+     * @return
+     */
+    public Command speedUpWithInterpolation(){
+        return Commands.deadline(
+                Commands.waitUntil(()->isReadyToShoot()), 
+                Commands.runOnce(()->setMode(INTERPOLATED_SHOOT))
+            );
     }
     
     @Override
@@ -209,7 +219,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
         //Check if this method would work like this
         if(stateFulControl == true) {
-            shooterStates.isInRange(()->getVelocityRPM() > shooterStates.getDesiredVelocityRPM() - shooterTreshHold.get());
+            shooterStates.isInRange(()->getVelocityRPM() > shooterStates.getDesiredVelocityRPM());
+            shooterStates.updateDistance(distanceToSpeaker);
             shooterStates.updateState();
         }
         

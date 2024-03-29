@@ -27,7 +27,7 @@ public class ShooterStateMachine {
     private States currentState = IN_IDLE;
 
     //Initialize the values of the interpolation as soon as the code is launched
-    static {
+    public ShooterStateMachine() {
         interpolation.put(0.0, 0.0);// Min value
         interpolation.put(0.0, 0.0);// Query
         interpolation.put(0.0, 0.0);// Max value
@@ -41,7 +41,7 @@ public class ShooterStateMachine {
         PRE_HEAT(4.0, 500.0),
         INTERPOLATED_SHOOT(0.0, interpolation.get(distanceFromSpeaker)),
         SHOOT_AMP(6.0, 800.0),
-        SHOOT_SPEAKER(9.0, 1700.0);//MAX 2500 with 9 v
+        CLOSE_SHOOT_SPEAKER(9.0, 3200.0);
 
         double v, RPM;
 
@@ -69,6 +69,7 @@ public class ShooterStateMachine {
         REACHING_SET_POINT,//-
         AMP_LAUNCH_READY,
         SPEAKER_LAUNCH_READY,
+        INTERPOLATED_LAUNCH_READY
     }
 
     /**
@@ -135,17 +136,26 @@ public class ShooterStateMachine {
         switch (desiredMode) {
             case STOP_SHOOTER:
                 currentState = IN_IDLE;
-                break;
+            break;
+            
             case PRE_HEAT:
                 currentState = isInRange ? PRE_HEATED : PRE_HEATING;
-                break;
+            break;
+            
             case SHOOT_AMP:
                 currentState = isInRange ? AMP_LAUNCH_READY: REACHING_SET_POINT;
-                break;
-            case SHOOT_SPEAKER:
+            break;
+            
+            case CLOSE_SHOOT_SPEAKER:
                 currentState = isInRange ? SPEAKER_LAUNCH_READY: REACHING_SET_POINT;
-                break;
+            break;
+            
+            case INTERPOLATED_SHOOT:
+                currentState = isInRange ? INTERPOLATED_LAUNCH_READY: REACHING_SET_POINT;
+            break;
+            
             default:
+                setMode(STOP_SHOOTER);
                 break;
         }
     }

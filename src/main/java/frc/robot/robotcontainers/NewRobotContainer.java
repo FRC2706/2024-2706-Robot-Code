@@ -81,7 +81,7 @@ public class NewRobotContainer extends RobotContainer {
     s_Swerve.setDefaultCommand(m_swerveDefaultCommand);
     if (!Config.disableStateBasedProgramming) {
       intake.setDefaultCommand(intake.defaultIntakeCommand());
-      shooter.setDefaultCommand(shooter.defaultShooterCommand(()-> intake.isNoteIn()));
+      shooter.setDefaultCommand(shooter.defaultShooterCommand(()-> intake.isNoteIn(), ()->0));
     } else {
       // shooter.setDefaultCommand(new Shooter_PID_Tuner(() -> 0));
     }
@@ -207,7 +207,7 @@ public class NewRobotContainer extends RobotContainer {
           .whileFalse(Commands.runOnce(()->intake.setMode(IntakeModes.STOP_INTAKE)));   
 
       // Toggle to spin up or spin down the shooter with rightBumper
-      operator.rightBumper().onTrue(shooter.toggleSpinUpCommand(ShooterModes.SHOOT_SPEAKER));  
+      //operator.rightBumper().onTrue(shooter.toggleSpinUpCommand(ShooterModes.CLOSE_SHOOT_SPEAKER));  
           
       // Shoot note with leftBumper
       // operator.leftBumper().onTrue(CombinedCommands.statefulShootNote());
