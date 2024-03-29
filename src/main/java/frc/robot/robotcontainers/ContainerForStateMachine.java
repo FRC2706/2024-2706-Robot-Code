@@ -47,7 +47,7 @@ import frc.robot.subsystems.SwerveSubsystem;
  * (including subsystems, commands, and button mappings) should be declared
  * here.
  */
-public class ContainerForTest extends RobotContainer {
+public class ContainerForStateMachine extends RobotContainer {
   /* Controllers */
   private final CommandXboxController driver = new CommandXboxController(0);
   private final CommandXboxController operator = new CommandXboxController(1);
@@ -56,6 +56,7 @@ public class ContainerForTest extends RobotContainer {
   /* Create Subsystems in a specific order */
   private final SwerveSubsystem s_Swerve = SwerveSubsystem.getInstance();
   private final IntakeSubsystem intake = IntakeSubsystem.getInstance();
+  private final ShooterSubsystem shooter = ShooterSubsystem.getInstance();
 
   private TunableNumber shooterTargetRPM = new TunableNumber("Shooter/Target RPM", 0);
   private TunableNumber shooterDesiredVoltage = new TunableNumber("Shooter/desired Voltage", 0);
@@ -65,10 +66,12 @@ public class ContainerForTest extends RobotContainer {
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
-  public ContainerForTest() {
+  public ContainerForStateMachine() {
     
     /*  Setup default commands */
     s_Swerve.setDefaultCommand(new TeleopSwerve(driver));
+    intake.setDefaultCommand(intake.defaultIntakeCommand());
+    shooter.setDefaultCommand(shooter.defaultShooterCommand(()-> intake.isNoteIn(), ()->0));
 
     configureButtonBindings();
   }
@@ -97,28 +100,21 @@ public class ContainerForTest extends RobotContainer {
     /*-------------------------- Operator Controls --------------------------*/
 
     operator.y()// Arm
-      .whileTrue(new SetArm(()->armDesiredAngle.get()));
-    
-    operator.rightTrigger(0.25)// Climber
-      .whileTrue(new ClimberRPM(()->  driver.getRightTriggerAxis()));
+      .whileTrue(new SetArm(()->armDesiredAngle.get()))
+      .whileFalse(new SetArm(()->ArmSetPoints.NO_INTAKE.angleDeg));
 
-    operator.a()// Intake note with leftTrigger
-      .whileTrue(Commands.run(() -> intake.setVoltage(intakeDesiredVoltage.get()), intake))
-      .whileFalse(Commands.run(() -> intake.setVoltage(0), intake));
+    operator.x()// Spins up the shooter
+      .whileTrue(Commands.runOnce(()->shooter.setMode(ShooterModes.CLOSE_SHOOT_SPEAKER)));
+      
+    operator.b().whileTrue(new Shooter_PID_Tuner(()-> shooterTargetRPM.get()));
 
-    operator.x()// Toggle to spin up or spin down the shooter with rightBumper
-      .whileTrue(new Shooter_Voltage(()->shooterDesiredVoltage.get()));
+    operator.rightBumper()// Shoot note with leftBumper
+      .whileTrue(new SetArm(()->ArmSetPoints.INTAKE.angleDeg))
+      .whileTrue(Commands.runOnce(()->intake.setMode(IntakeModes.INTAKE)));
 
     operator.leftBumper()// Shoot note with leftBumper
-      .onTrue(CombinedCommands.simpleShootNoteSpeaker(1));
+      .whileTrue(Commands.runOnce(()->intake.setMode(IntakeModes.RELEASE)));
 
-    // Eject the note from the front with leftPOV
-    XBoxControllerUtil.leftPOV(operator).debounce(0.1)
-      .whileTrue(Commands.run(() -> intake.setVoltage(intakeDesiredVoltage.get()), intake))
-      .whileFalse(Commands.run(() -> intake.setVoltage(0), intake));
-    
-    /*-------------------------- More Buttons --------------------------*/
-    testJoystick.a().whileTrue(new Shooter_PID_Tuner(()-> shooterTargetRPM.get()));
   }
 
   /**

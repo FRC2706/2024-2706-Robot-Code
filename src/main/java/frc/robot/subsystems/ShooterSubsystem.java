@@ -224,7 +224,6 @@ public class ShooterSubsystem extends SubsystemBase {
             shooterStates.updateState();
         }
         
-
         velocityPub.accept(getVelocityRPM());
         shooterReadyPub.accept(isReadyToShoot());
         statePub.accept(getCurrentState().toString());
