@@ -99,11 +99,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public void setRPM(double setPoint) {
         int slotID = 0;
-
-        if (setPoint > 3500) {
-            slotID = 1;
-        }
-
         m_pidController.setReference(setPoint, ControlType.kVelocity, slotID);
     }
 
