@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.lib2706.SelectByAllianceCommand;
@@ -137,7 +138,7 @@ public class ContainerForTesting extends RobotContainer {
     // Arm
       operator.y().whileTrue(new SetArm(()->armAngleDeg.get())).whileFalse(new SetArm(()->5.0)); // Amp
       operator.x().whileTrue(
-        new Shooter_PID_Tuner(()->shooterTargetRPM.get()).alongWith(new IntakeControl(false)))
+        new Shooter_PID_Tuner(()->shooterTargetRPM.get()).alongWith(new ScheduleCommand(new IntakeControl(false))))
         .whileFalse(new Shooter_PID_Tuner(()->0));
       operator.rightBumper().onTrue(new MakeIntakeMotorSpin(9.0, 0)).onFalse(new MakeIntakeMotorSpin(0.0, 0));
       operator.leftBumper().onTrue(new MakeIntakeMotorSpin(-7.0, 0)).onFalse(new MakeIntakeMotorSpin(0.0, 0));
