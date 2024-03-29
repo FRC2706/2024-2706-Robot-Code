@@ -36,7 +36,7 @@ import frc.robot.commands.Shooter_PID_Tuner;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.auto.AutoRoutines;
 import frc.robot.commands.auto.AutoSelector;
-import frc.robot.subsystems.IntakeStatesMachine.IntakeModes;
+import frc.robot.subsystems.IntakeStateMachine.IntakeModes;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.ShooterStateMachine.ShooterModes;
