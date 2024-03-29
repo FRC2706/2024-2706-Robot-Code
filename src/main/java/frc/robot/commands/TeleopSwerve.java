@@ -68,19 +68,14 @@ public class TeleopSwerve extends Command {
   @Override
   public void initialize() {
     resetAccelerationLimiters();
+    SwerveSubsystem.getInstance().resetDriveToPose();  
   }
 
   protected double calculateTranslationVal() {
     translationVal = MathUtil.applyDeadband(-driver.getRawAxis(translationAxis), Config.Swerve.stickDeadband)
         * speed.translationalSpeed;
 
-    if(isJoystickRelative){//The joystick relative drive, in theory should work 
-      if(driver.getRightX() > 0.2 && driver.getRightY() > 0.2){
-        prevHeading = SwerveSubsystem.getInstance().calculateRotation(Rotation2d.fromRadians(Math.atan(driver.getRightY() / driver.getRightX())));
-      }
-      return prevHeading; 
-    }
-    else 
+    
       return translationLimiter.calculate(translationVal);
   }
 
@@ -94,6 +89,13 @@ public class TeleopSwerve extends Command {
     rotationVal = MathUtil.applyDeadband(-driver.getRawAxis(rotationAxis), Config.Swerve.stickDeadband)
         * speed.angularSpeed;
 
+    if(isJoystickRelative){//The joystick relative drive, in theory should work 
+      if(driver.getRightX() > 0.2 && driver.getRightY() > 0.2){
+        prevHeading = SwerveSubsystem.getInstance().calculateRotation(Rotation2d.fromRadians(Math.atan2(driver.getRightY(), driver.getRightX())));
+    }
+      return prevHeading; 
+    }
+    else 
     return rotationLimiter.calculate(rotationVal);
   }
 
