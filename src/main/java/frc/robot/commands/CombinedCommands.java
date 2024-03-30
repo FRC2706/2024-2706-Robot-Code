@@ -128,7 +128,7 @@ public class CombinedCommands {
                 Math.abs(SwerveSubsystem.getInstance().getRobotRelativeSpeeds().omegaRadiansPerSecond) < Math.toRadians(3))),
             Commands.parallel(
                 new IntakeControl(false), // Reverse note until not touching shooter
-                new WaitCommand(0.1).andThen(new Shooter_PID_Tuner(() -> shooterSpeed))
+                new WaitCommand(0.2).andThen(new Shooter_PID_Tuner(() -> shooterSpeed))
             )
         );
     }
@@ -171,7 +171,7 @@ public class CombinedCommands {
             PhotonSubsystem.getInstance().getWaitForDataCommand(redPosition.id)).withName("ProxiedWaitForVisionData")),
             new ProxyCommand(Commands.parallel(
                 new IntakeControl(false), // Reverse note until not touching shooter
-                new WaitCommand(0.1).andThen(new Shooter_PID_Tuner(() -> shooterSpeed))
+                new WaitCommand(0.2).andThen(new Shooter_PID_Tuner(() -> shooterSpeed))
             ).withName("ProxiedReverseNoteAndSpinupShooter"))
         );
             
