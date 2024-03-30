@@ -137,9 +137,11 @@ public class NewRobotContainer extends RobotContainer {
     //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.RIGHT_SPEAKER_BLUE, driver), 
     //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.LEFT_SPEAKER_RED, driver)));
 
-    driver.leftTrigger().whileTrue(CombinedCommands.centerSpeakerVisionShot(driver, PhotonPositions.FAR_SPEAKER_BLUE, PhotonPositions.FAR_SPEAKER_RED))
+    driver.leftTrigger().whileTrue(CombinedCommands.centerSpeakerVisionShot(driver, PhotonPositions.PODIUM_SOURCESIDE_BLUE, PhotonPositions.PODIUM_SOURCESIDE_RED))
             .onTrue(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.SLOW)))
             .onFalse(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.MAX)));
+
+    // CENTER AND CLOSEISH SHOT IS PhotonPositions.FAR_SPEAKER_BLUE, PhotonPositions.FAR_SPEAKER_RED
 
     // Complete vision scoring commands with all subsystems
     // if (Config.disableStateBasedProgramming) {

@@ -187,11 +187,11 @@ public final class Config {
       FAR_SPEAKER_RED_SIDE_TAG(3, new Translation2d(-2.5,0), new Translation2d(-2.1,0.58), Rotation2d.fromDegrees(0)),
       FAR_SPEAKER_BLUE_SIDE_TAG(8, new Translation2d(2.4,0), new Translation2d(2.1,-0.58 ), Rotation2d.fromDegrees(0)),
 
-      PODIUM_AMPSIDE_BLUE(7, new Translation2d(2.35, -0.65), Rotation2d.fromDegrees(-20)),
-      PODIUM_AMPSIDE_RED(4, new Translation2d(-2.35, -0.65), Rotation2d.fromDegrees(180+20)),
+      PODIUM_AMPSIDE_BLUE(7, new Translation2d(3.35, -0.65), Rotation2d.fromDegrees(-20)),
+      PODIUM_AMPSIDE_RED(4, new Translation2d(-3.35, -0.65), Rotation2d.fromDegrees(180+20)),
 
       PODIUM_SOURCESIDE_BLUE(8, new Translation2d(2.5, -1.1), new Translation2d(2.2, -1.1), Rotation2d.fromDegrees(-38)),
-      PODIUM_SOURCESIDE_RED(3, new Translation2d(-2.5, -1.1), new Translation2d(-2.2, -1.1), Rotation2d.fromDegrees(180+38)),
+      PODIUM_SOURCESIDE_RED(3, new Translation2d(-3.2, -1.4), Rotation2d.fromDegrees(180+33)),
 
       RIGHT_SPEAKER_BLUE(8, new Translation2d(1,-1.1), Rotation2d.fromDegrees(-55)),
       LEFT_SPEAKER_RED(3, new Translation2d(-1,-1.1), Rotation2d.fromDegrees(180+55));

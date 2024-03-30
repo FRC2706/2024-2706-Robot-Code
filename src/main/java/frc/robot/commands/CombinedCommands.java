@@ -181,7 +181,11 @@ public class CombinedCommands {
         // Control all subsystems commands
         Command controlAllSubsystems = Commands.parallel(
             new WaitUntilCommand(keepArmLoweredUntil).andThen(new SetArm(()->armAngleDeg)),
-            new ProxyCommand(centerNoteThenSpinUpShooer(shooterSpeed).withName("ProxiedCenterNoteThenSpinUpShooter")),
+            // new ProxyCommand(centerNoteThenSpinUpShooer(shooterSpeed).withName("ProxiedCenterNoteThenSpinUpShooter")),
+            new ProxyCommand(Commands.parallel(
+                new IntakeControl(false), // Reverse note until not touching shooter
+                new WaitCommand(0.1).andThen(new Shooter_PID_Tuner(() -> shooterSpeed))
+            ).withName("ProxiedReverseNoteAndSpinupShooter")),
             new SelectByAllianceCommand(
                     PhotonSubsystem.getInstance().getAprilTagCommand(bluePosition, driverJoystick, true), 
                     PhotonSubsystem.getInstance().getAprilTagCommand(redPosition, driverJoystick, true)),
@@ -311,8 +315,36 @@ public class CombinedCommands {
         };
         
         double armAngle = 32;
-        double shooterSpeed = 3750;
-        double shooterTriggerSpeed = 3720;
+        double shooterSpeed = 4000;
+        double shooterTriggerSpeed = 3960;
+
+        return CombinedCommands.visionScoreTeleopSimple(
+            driver, 
+            12, 
+            1,
+            shooterSpeed, shooterTriggerSpeed,
+            armAngle,
+            keepArmLoweredUntil,
+            bluePosition,
+            redPosition
+        );
+    }
+
+    /**
+     * Score in speaker with vision using simple intake/shooter.
+     * 
+     * @param driver joystick
+     * @param bluePosition PhotonPosition for the blue alliance
+     * @param redPosition PhotonPosition for the red alliance
+     */
+    public static Command podiumSourceSideSpeakerVisionShot(CommandXboxController driver, PhotonPositions bluePosition, PhotonPositions redPosition) {
+        BooleanSupplier keepArmLoweredUntil = () -> {
+          return PhotonSubsystem.getInstance().getTargetPos().getY() - SwerveSubsystem.getInstance().getPose().getY() > 0.5;
+        };
+        
+        double armAngle = 36;
+        double shooterSpeed = 4000;
+        double shooterTriggerSpeed = 3960;
 
         return CombinedCommands.visionScoreTeleopSimple(
             driver, 
