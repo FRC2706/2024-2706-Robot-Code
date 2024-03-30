@@ -528,6 +528,7 @@ public static enum ArmSetPoints {
                                kFF1 = 0.00027,
                                kMaxOutput = 1.0,
                                kMinOutput = -1.0,
-                               maxRPM = 5700.0;
+                               maxRPM = 5700.0,
+                               subwooferRPM = 2750;
   }
 }

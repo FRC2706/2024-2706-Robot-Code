@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.lib2706.SelectByAllianceCommand;
+import frc.robot.Config;
 import frc.robot.Config.ArmSetPoints;
 import frc.robot.Config.PhotonConfig;
 import frc.robot.Config.PhotonConfig.PhotonPositions;
@@ -44,7 +45,7 @@ public class CombinedCommands {
      * backing up note, waiting a bit, then feeding the note.
      */
     public static Command simpleShootNoteSpeaker(double intakeTimeout) {
-        return(simpleShootNoteSpeaker(intakeTimeout, () -> 2750, 100));
+        return(simpleShootNoteSpeaker(intakeTimeout, () -> Config.ShooterConstants.subwooferRPM, 100));
     }
 
     /**

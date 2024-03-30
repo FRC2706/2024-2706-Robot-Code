@@ -73,6 +73,8 @@ public class AutoRoutines extends SubsystemBase {
             new WaitCommand(1)
         ));
 
+        NamedCommands.registerCommand("IntakeControlFalse", new IntakeControl(false));
+
         NamedCommands.registerCommand("SetModeIntake", 
             Commands.runOnce(() -> IntakeSubsystem.getInstance().setMode(IntakeModes.INTAKE)));
 
@@ -88,6 +90,8 @@ public class AutoRoutines extends SubsystemBase {
 
         NamedCommands.registerCommand("simpleShooter", CombinedCommands.simpleShootNoteSpeaker(0.4));
         
+        NamedCommands.registerCommand("MakeShooterSpin", new Shooter_PID_Tuner(() -> Config.ShooterConstants.subwooferRPM));
+
         // Commands.deadline(
         //       Commands.sequence(
         //         new IntakeControl(false).withTimeout(0.3), 
