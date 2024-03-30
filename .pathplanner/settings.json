@@ -5,11 +5,13 @@
   "pathFolders": [
     "1NoteSourceSide",
     "2NoteLeft",
+    "2NoteSourceSideFar",
     "3NoteSourceSideAllFar",
     "4NoteCenter",
-    "2NoteSourceSideFar"
+    "2NoteAmpAdvanced"
   ],
   "autoFolders": [
+    "New Folder",
     "StartingFromBottom",
     "StartingFromSpeaker",
     "StartingFromTop"

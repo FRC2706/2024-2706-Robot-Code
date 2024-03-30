@@ -63,6 +63,12 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
           "type": "deadline",
           "data": {
             "commands": [
