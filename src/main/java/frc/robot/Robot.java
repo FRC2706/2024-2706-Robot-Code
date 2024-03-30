@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.lib3512.config.CTREConfigs;
 import frc.robot.robotcontainers.BeetleContainer;
 import frc.robot.robotcontainers.ClutchContainer;
-import frc.robot.robotcontainers.ContainerForTest;
+import frc.robot.robotcontainers.ContainerForTesting;
 import frc.robot.robotcontainers.CosmobotContainer;
 import frc.robot.robotcontainers.NewRobotContainer;
 import frc.robot.robotcontainers.PoseidonContainer;
@@ -57,7 +57,7 @@ public class Robot extends TimedRobot {
 
     switch (Config.getRobotId()) {
       case 0:
-        //m_robotContainer = new ContainerForTest(); break; //competition
+        // m_robotContainer = new ContainerForTesting(); break; // testing
         m_robotContainer = new NewRobotContainer(); break; //competition
         
       case 1:
@@ -73,7 +73,7 @@ public class Robot extends TimedRobot {
         m_robotContainer = new NewRobotContainer();
         DriverStation.reportError(
             String.format("ISSUE WITH CONSTRUCTING THE ROBOT CONTAINER. \n " +
-                          "PoseidonContainer constructed by default. RobotID: %d", Config.getRobotId()), 
+                          "NewRobotContainer constructed by default. RobotID: %d", Config.getRobotId()), 
             true);
     }
 
