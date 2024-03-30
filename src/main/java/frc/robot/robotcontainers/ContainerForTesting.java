@@ -137,10 +137,10 @@ public class ContainerForTesting extends RobotContainer {
      */
     // Arm
       operator.y().onTrue(new SetArm(()->armAngleDeg.get())).onFalse(new SetArm(()->-0.1)); // Amp
-      operator.x().whileTrue(new Shooter_PID_Tuner(()->shooterTargetRPM.get()))
-                  .whileFalse(Commands.run(()->shooter.setVoltage(0)));
+      operator.x().whileTrue(new Shooter_PID_Tuner(()->4000))//()->shooterTargetRPM.get()))
+                  .onFalse(Commands.run(()->shooter.setVoltage(0)));
       operator.a().whileTrue(Commands.run(()->shooter.setVoltage(12)))
-                  .whileFalse(Commands.run(()->shooter.setVoltage(0)));
+                  .onFalse(Commands.run(()->shooter.setVoltage(0)));
       operator.rightBumper().onTrue(new MakeIntakeMotorSpin(9.0, 0)).onFalse(new MakeIntakeMotorSpin(0.0, 0));
       operator.leftBumper().onTrue(new MakeIntakeMotorSpin(-4.0, 0)).onFalse(new MakeIntakeMotorSpin(0.0, 0));
     }

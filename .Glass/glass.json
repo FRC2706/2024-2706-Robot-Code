@@ -5,6 +5,9 @@
         "ArmData": {
           "open": true
         },
+        "ArmTuning": {
+          "open": true
+        },
         "open": true
       },
       "Shooter": {

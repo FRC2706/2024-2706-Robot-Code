@@ -74,7 +74,7 @@ public class ShooterSubsystem extends SubsystemBase {
         m_encoder = m_motor.getEncoder();
 
         //Voltage compensation
-        m_motor.enableVoltageCompensation(9); //adjust on final robot
+        m_motor.enableVoltageCompensation(10); //adjust on final robot
         m_motor.setSmartCurrentLimit(80);  
         setBrake(true);
 
@@ -84,6 +84,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
         setPIDGains(kP1.get(), kI1.get(), kD1.get(), 1);
         setFFGains(kFF1.get(), 1);
+
+        m_motor.burnFlash();
 
         NetworkTable shooterTable = NetworkTableInstance.getDefault().getTable("Shooter");
         velocityPub = shooterTable.getDoubleTopic("Shooter Velocity RPM").publish(PubSubOption.periodic(0.02));
