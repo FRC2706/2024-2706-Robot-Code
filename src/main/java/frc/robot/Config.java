@@ -155,7 +155,7 @@ public final class Config {
     // public static final Pose2d cameraOffsetRed = new Pose2d(new Translation2d(-0.1, 0), Rotation2d.fromDegrees(0));
 
     public static final Transform3d cameraTransform = new Transform3d(
-      cameraOffset.getX(), cameraOffset.getY(), .3, new Rotation3d(0, CAMERA_PITCH.getRadians(), cameraOffset.getRotation().getRadians()));
+      -(0.865/2 - 0.095), 0, 0.23, new Rotation3d(0, Math.toRadians(-33), Math.toRadians(180)));
 
     //networkTableName
     public static final String apriltagCameraName = "FrontApriltagOV9281";
@@ -182,16 +182,19 @@ public final class Config {
       AMP_RED(5, new Translation2d(0,-0.70), new Translation2d(0,-0.5), Rotation2d.fromDegrees(90)),
       AMP_BLUE(6, new Translation2d(0,-0.30), new Translation2d(0,0.05),  Rotation2d.fromDegrees(90)),
 
-      FAR_SPEAKER_RED(4, new Translation2d(-2.1,0), Rotation2d.fromDegrees(180)),
-      FAR_SPEAKER_BLUE(7, new Translation2d(2.1, 0), Rotation2d.fromDegrees(0)),
+      // COMPETITION USE
+      FAR_SPEAKER_RED(4, new Translation2d(-3.6,0), Rotation2d.fromDegrees(180)),
+      FAR_SPEAKER_BLUE(7, new Translation2d(3.6, 0), Rotation2d.fromDegrees(0)),
+
+      PODIUM_SOURCESIDE_BLUE(8, new Translation2d(3.2, -1.5), Rotation2d.fromDegrees(-33)),
+      PODIUM_SOURCESIDE_RED(3, new Translation2d(-3.2, -1.5), Rotation2d.fromDegrees(180+33)),
+
+      // NOT FULLY TESTED
       FAR_SPEAKER_RED_SIDE_TAG(3, new Translation2d(-2.5,0), new Translation2d(-2.1,0.58), Rotation2d.fromDegrees(0)),
       FAR_SPEAKER_BLUE_SIDE_TAG(8, new Translation2d(2.4,0), new Translation2d(2.1,-0.58 ), Rotation2d.fromDegrees(0)),
 
-      PODIUM_AMPSIDE_BLUE(7, new Translation2d(2.35, -0.65), Rotation2d.fromDegrees(-20)),
-      PODIUM_AMPSIDE_RED(4, new Translation2d(-2.35, -0.65), Rotation2d.fromDegrees(180+20)),
-
-      PODIUM_SOURCESIDE_BLUE(8, new Translation2d(2.5, -1.1), new Translation2d(2.2, -1.1), Rotation2d.fromDegrees(-38)),
-      PODIUM_SOURCESIDE_RED(3, new Translation2d(-2.5, -1.1), new Translation2d(-2.2, -1.1), Rotation2d.fromDegrees(180+38)),
+      PODIUM_AMPSIDE_BLUE(7, new Translation2d(3.35, -0.65), Rotation2d.fromDegrees(-20)),
+      PODIUM_AMPSIDE_RED(4, new Translation2d(-3.35, -0.65), Rotation2d.fromDegrees(180+20)),
 
       RIGHT_SPEAKER_BLUE(8, new Translation2d(1,-1.1), Rotation2d.fromDegrees(-55)),
       LEFT_SPEAKER_RED(3, new Translation2d(-1,-1.1), Rotation2d.fromDegrees(180+55));
