@@ -136,12 +136,13 @@ public class ContainerForTesting extends RobotContainer {
      * KingstonV1: https://drive.google.com/file/d/18HyIpIeW08CC6r6u-Z74xBWRv9opHnoZ
      */
     // Arm
-      operator.y().whileTrue(new SetArm(()->armAngleDeg.get())).whileFalse(new SetArm(()->5.0)); // Amp
-      operator.x().whileTrue(
-        new Shooter_PID_Tuner(()->shooterTargetRPM.get()).alongWith(new ScheduleCommand(new IntakeControl(false))))
-        .whileFalse(new Shooter_PID_Tuner(()->0));
+      operator.y().onTrue(new SetArm(()->armAngleDeg.get())).onFalse(new SetArm(()->-0.1)); // Amp
+      operator.x().whileTrue(new Shooter_PID_Tuner(()->shooterTargetRPM.get()))
+                  .whileFalse(Commands.run(()->shooter.setVoltage(0)));
+      operator.a().whileTrue(Commands.run(()->shooter.setVoltage(12)))
+                  .whileFalse(Commands.run(()->shooter.setVoltage(0)));
       operator.rightBumper().onTrue(new MakeIntakeMotorSpin(9.0, 0)).onFalse(new MakeIntakeMotorSpin(0.0, 0));
-      operator.leftBumper().onTrue(new MakeIntakeMotorSpin(-7.0, 0)).onFalse(new MakeIntakeMotorSpin(0.0, 0));
+      operator.leftBumper().onTrue(new MakeIntakeMotorSpin(-4.0, 0)).onFalse(new MakeIntakeMotorSpin(0.0, 0));
     }
 
   /**

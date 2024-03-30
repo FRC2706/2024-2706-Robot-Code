@@ -58,8 +58,8 @@ public class Robot extends TimedRobot {
 
     switch (Config.getRobotId()) {
       case 0:
-        //m_robotContainer = new ContainerForTesting(); break; //competition
-        m_robotContainer = new NewRobotContainer(); break; //competition
+        m_robotContainer = new ContainerForTesting(); break; //competition
+        //m_robotContainer = new NewRobotContainer(); break; //competition
         
       case 1:
         m_robotContainer = new ClutchContainer(); break; //simulation

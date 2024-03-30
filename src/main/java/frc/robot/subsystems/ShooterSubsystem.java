@@ -75,7 +75,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         //Voltage compensation
         m_motor.enableVoltageCompensation(9); //adjust on final robot
-        m_motor.setSmartCurrentLimit(65);  
+        m_motor.setSmartCurrentLimit(80);  
         setBrake(true);
 
         m_pidController.setOutputRange(Config.ShooterConstants.kMinOutput, Config.ShooterConstants.kMaxOutput);
