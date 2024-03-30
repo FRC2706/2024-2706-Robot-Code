@@ -137,6 +137,7 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
 
+    ArmSubsystem.getInstance().resetProfiledPIDController();
     PhotonSubsystem.getInstance().resetTagAtBootup();
   }
 
