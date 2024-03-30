@@ -4,12 +4,16 @@ import java.io.BufferedReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -141,11 +145,17 @@ public final class Config {
   public static int ANALOG_SELECTOR_PORT = robotSpecific(3, -1, -1, 0);
 
   public static final class PhotonConfig{
+    public static boolean USE_3D_TAGS = true;
+    public static final List<Integer> ALLOWED_TAGS_3D = List.of(3,4,7,8);
+
     public static final double CAMERA_HEIGHT = 0.215;
     public static final Rotation2d CAMERA_PITCH = Rotation2d.fromDegrees(33);
     //x is forwards, y is sideways with +y being left, rotation probobly if + left too
     public static final Pose2d cameraOffset = new Pose2d(new Translation2d(-0.1,0), Rotation2d.fromDegrees(180));
     // public static final Pose2d cameraOffsetRed = new Pose2d(new Translation2d(-0.1, 0), Rotation2d.fromDegrees(0));
+
+    public static final Transform3d cameraTransform = new Transform3d(
+      cameraOffset.getX(), cameraOffset.getY(), .3, new Rotation3d(0, CAMERA_PITCH.getRadians(), cameraOffset.getRotation().getRadians()));
 
     //networkTableName
     public static final String apriltagCameraName = "FrontApriltagOV9281";
@@ -442,8 +452,8 @@ public final class Config {
 public static enum ArmSetPoints {
   //@todo: to be calibrated
   IDLE(60),
-  INTAKE(-2.5),
-  SPEAKER_KICKBOT_SHOT(13),
+  INTAKE(-0.1),
+  SPEAKER_KICKBOT_SHOT(15.5),
   NO_INTAKE(5.0),
   SPEAKER_VISION_SHOT(33),
   AMP(100);
@@ -508,11 +518,11 @@ public static enum ArmSetPoints {
     public static final double kP = 0.0002,
                                kI = 0.0,
                                kD = 0.0,
-                               kFF = 0.00025,
-                               kP1 = 0.001,
+                               kFF = 0.0003,
+                               kP1 = 0.00027,
                                kI1 = 0.0,
-                               kD1 = 0.0,
-                               kFF1 = 0.00025,
+                               kD1 = 0.00015,
+                               kFF1 = 0.00027,
                                kMaxOutput = 1.0,
                                kMinOutput = -1.0,
                                maxRPM = 5700.0;

@@ -177,9 +177,9 @@ public class ArmSubsystem extends SubsystemBase {
     int pidSlot = 0;
     if (angleDeg < 25) {
       pidSlot = 0;
-    } else if (angleDeg >= 25 && angleDeg < 45) {
+    } else if (angleDeg >= 25 && angleDeg < 55) {
       pidSlot = 1;
-    } else if (angleDeg >= 45) {
+    } else if (angleDeg >= 55) {
       pidSlot = 0;
     }
 

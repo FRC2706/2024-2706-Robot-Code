@@ -7,8 +7,8 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import static frc.robot.subsystems.IntakeStatesMachine.IntakeModes.*;
-import static frc.robot.subsystems.IntakeStatesMachine.IntakeStates.*;
+import static frc.robot.subsystems.IntakeStateMachine.IntakeModes.*;
+import static frc.robot.subsystems.IntakeStateMachine.IntakeStates.*;
 import static frc.robot.subsystems.ShooterStateMachine.States.SPEAKER_LAUNCH_READY;
 
 import com.revrobotics.CANSparkMax;
@@ -24,14 +24,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Config;
-import frc.robot.subsystems.IntakeStatesMachine.IntakeModes;
-import frc.robot.subsystems.IntakeStatesMachine.IntakeStates;
+import frc.robot.subsystems.IntakeStateMachine.IntakeModes;
+import frc.robot.subsystems.IntakeStateMachine.IntakeStates;
 
 /** Add your docs here. */
 public class IntakeSubsystem extends SubsystemBase{
     private CANSparkMax m_intake;
     private boolean stateFulControl = true;
-    private IntakeStatesMachine intakeStates = new IntakeStatesMachine();
+    private IntakeStateMachine intakeStates = new IntakeStateMachine();
 
     private DigitalInput frontSensor;//  -> 0 
     private DigitalInput centerSensor;// -> 1

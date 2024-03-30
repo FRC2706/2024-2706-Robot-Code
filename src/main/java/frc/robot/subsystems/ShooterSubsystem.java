@@ -76,8 +76,8 @@ public class ShooterSubsystem extends SubsystemBase {
         m_encoder = m_motor.getEncoder();
 
         //Voltage compensation
-        m_motor.enableVoltageCompensation(9); //adjust on final robot
-        m_motor.setSmartCurrentLimit(65);  
+        m_motor.enableVoltageCompensation(10); //adjust on final robot
+        m_motor.setSmartCurrentLimit(80);  
         setBrake(true);
 
         m_pidController.setOutputRange(Config.ShooterConstants.kMinOutput, Config.ShooterConstants.kMaxOutput);
@@ -86,6 +86,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
         setPIDGains(kP1.get(), kI1.get(), kD1.get(), 1);
         setFFGains(kFF1.get(), 1);
+
+        m_motor.burnFlash();
 
         NetworkTable shooterTable = NetworkTableInstance.getDefault().getTable("Shooter");
         velocityPub = shooterTable.getDoubleTopic("Shooter Velocity RPM").publish(PubSubOption.periodic(0.02));
@@ -100,12 +102,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void setRPM(double setPoint) {
-        int slotID = 0;
-
-        if (setPoint > 3500) {
-            slotID = 1;
-        }
-
+        int slotID = 1;
         m_pidController.setReference(setPoint, ControlType.kVelocity, slotID);
     }
 

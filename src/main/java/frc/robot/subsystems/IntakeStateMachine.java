@@ -4,13 +4,14 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.subsystems.IntakeStatesMachine.IntakeModes.*;
-import static frc.robot.subsystems.IntakeStatesMachine.IntakeStates.*;
+import static frc.robot.subsystems.IntakeStateMachine.IntakeModes.*;
+import static frc.robot.subsystems.IntakeStateMachine.IntakeStates.*;
 
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.function.BooleanSupplier;
 
 /** Add your docs here. */
-public class IntakeStatesMachine {
+public class IntakeStateMachine {
     private Boolean isForntActive = false;
     private Boolean isBackActive = false;
     private Boolean isCenterActive = null;
@@ -23,11 +24,11 @@ public class IntakeStatesMachine {
     */
     public static enum IntakeModes {
         STOP_INTAKE(0.0),
-        INTAKE(6.0),
-        POSITION_NOTE(1.5),
-        BACK_NOTE(-2.5),
-        RELEASE(-7.0),
-        SHOOT(8.0);
+        INTAKE(9.0),
+        POSITION_NOTE(2.0),
+        BACK_NOTE(-2.0),
+        RELEASE(-9.0),
+        SHOOT(9.0);
 
         double v;
 
@@ -90,7 +91,7 @@ public class IntakeStatesMachine {
     /**
      * Method used by the state machine to switch from states
      * This should be called every loop cycle
-     * @param toRun First Argument must be the Back Sensor, Second Front, Third the center
+     * @param toRun First Argument must be the Back Sensor, Second Center, Third the Front
      */
     public void updateSensors(BooleanSupplier... toRun) {
         if(toRun.length > 3 || toRun == null){
@@ -98,13 +99,13 @@ public class IntakeStatesMachine {
         }
         
         if(toRun.length >= 2){
-            isForntActive = toRun[1].getAsBoolean();
+            isCenterActive = toRun[1].getAsBoolean();
         }
 
         isBackActive = toRun[0].getAsBoolean();
 
         if(toRun.length == 3){
-            isCenterActive = toRun[2].getAsBoolean();
+            isForntActive = toRun[2].getAsBoolean();
         }
         
     }
@@ -121,12 +122,8 @@ public class IntakeStatesMachine {
                     break;
                 }
 
-                if(isCenterActive == null){
-                    if(isForntActive)currentState = NOTE_ENTERING_IDLE;//This state would be affected if suddenly stopped
-                }else if(isCenterActive){
+                if(isCenterActive && !isBackActive){
                     currentState = NOTE_IN_POS_IDLE;
-                }else if(isForntActive){
-                    currentState =  NOTE_ENTERING_IDLE;
                 }else currentState = EMPTY_IDLE; 
             break;
              
@@ -134,27 +131,7 @@ public class IntakeStatesMachine {
             case INTAKE:
                 if(isCenterActive){//Check if this works now
                     setMode(STOP_INTAKE);
-                }
-
-                if(isBackActive){
-                    setMode(BACK_NOTE); 
-                    break;
-                }
-
-                if(isForntActive && !currentState.equals(NOTE_ENTERING_IDLE)){
-                    currentState = NOTE_ENTERING;
-                    setMode(POSITION_NOTE);
                 } else currentState = INTAKING;
-            break;
-
-            //Position the note once its being intaked
-            case POSITION_NOTE:
-            currentState = POSITIONING_NOTE;
-                if(isCenterActive != null){
-                    if(isCenterActive)setMode(STOP_INTAKE);
-                }else if(isBackActive){
-                    setMode(BACK_NOTE); 
-                }
             break;
 
             //Release the note
@@ -165,28 +142,32 @@ public class IntakeStatesMachine {
             //Back the note if overshooted
             case BACK_NOTE:
                 //If we dont have a front intake, this will not work
-                if(!isBackActive && isForntActive)setMode(STOP_INTAKE);
+                if(!isBackActive && isCenterActive)setMode(STOP_INTAKE);
+                else if(!isBackActive && !isCenterActive)setMode(POSITION_NOTE);
                 else currentState = BACKING_NOTE;
+            break;
+
+            //Position the note once its being intaked
+            case POSITION_NOTE:
+                if(isCenterActive){
+                    setMode(STOP_INTAKE); 
+                }else currentState = POSITIONING_NOTE;
+
             break;
 
             //Shooting the Note
             case SHOOT:
-            if(isCenterActive == null){
-                if(!isForntActive && !isBackActive)
-                currentState = SHOOTED;
-                setMode(STOP_INTAKE);
-                break;
-            }else if(!isBackActive && !isCenterActive && !isForntActive){
-                currentState = SHOOTED;
-                setMode(STOP_INTAKE);
-                break;
-            }else currentState = SHOOTING;
+                if(!isBackActive && !isCenterActive){
+                    currentState = SHOOTED;
+                    setMode(STOP_INTAKE);
+                    break;
+                }else currentState = SHOOTING;
             break;
 
             //Default
             default:
-            setMode(STOP_INTAKE);
-                break;
+                setMode(STOP_INTAKE);
+            break;
         }
     }
 } 
