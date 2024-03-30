@@ -25,6 +25,9 @@ import frc.robot.robotcontainers.NewRobotContainer;
 import frc.robot.robotcontainers.PoseidonContainer;
 import frc.robot.robotcontainers.RobotContainer;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.IntakeStateMachine;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -116,6 +119,9 @@ public class Robot extends TimedRobot {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     ArmSubsystem.getInstance().resetProfiledPIDController();
+    //This is to cancel the default commands and disable the state machine
+    IntakeSubsystem.getInstance().getDefaultCommand().cancel();
+    ShooterSubsystem.getInstance().getDefaultCommand().cancel();
     
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {

@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7296371484973552,
-        "y": 4.38240635879768
-      },
-      "prevControl": null,
-      "nextControl": {
-        "x": 3.2294604940087073,
-        "y": 2.283789229232594
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
         "x": 5.791007872742562,
         "y": 1.6356868803963172
       },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.408248204967588,
+        "y": 1.5945375249146494
+      },
+      "isLocked": false,
+      "linkedName": "AfterNotePickUpWithVision"
+    },
+    {
+      "anchor": {
+        "x": 7.406120075398046,
+        "y": 2.26321455149176
+      },
       "prevControl": {
-        "x": 2.9722770222482797,
-        "y": 1.759134946841322
+        "x": 6.788879743173021,
+        "y": 1.7282729302300717
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "AfterNotePickUpWithVision"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -39,13 +39,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
-    "rotateFast": true
+    "rotation": 9.819300638757957,
+    "rotateFast": false
   },
   "reversed": false,
   "folder": "CoolAutos",
   "previewStartingState": {
-    "rotation": -58.276397042315985,
+    "rotation": 1.7534048600715495,
     "velocity": 0
   },
   "useDefaultConstraints": true

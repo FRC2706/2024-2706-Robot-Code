@@ -151,6 +151,14 @@ public class AutoRoutines extends SubsystemBase {
             Commands.parallel(/** here add the command to aim to the speaker */)
         );
 
+        NamedCommands.registerCommand("CoolNoteIntakingWithVision", 
+            Commands.parallel(/** here add the command to auto pick the note */)
+        );
+
+        NamedCommands.registerCommand("CoolDetectRobotBumpers", 
+            Commands.parallel(/** here add the command to Detect The bumpers of robots */)
+        );
+
 
         /**********************End of Cool Commands************************/
 
