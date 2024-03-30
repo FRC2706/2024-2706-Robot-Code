@@ -33,6 +33,7 @@ import frc.robot.commands.RotateAngleToVisionSupplier;
 import frc.robot.commands.RotateToAngle;
 import frc.robot.commands.RumbleJoystick;
 import frc.robot.commands.SetArm;
+import frc.robot.commands.SubwooferShot;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.auto.AutoRoutines;
 import frc.robot.commands.auto.AutoSelector;
@@ -193,8 +194,15 @@ public class NewRobotContainer extends RobotContainer {
       //NOTE: right Trigger has been assigned to climber
       operator.rightTrigger(0.3).whileTrue(CombinedCommands.simpleShootNoteAmp());
       // Shoot note with leftBumper
-      operator.rightBumper().whileTrue(CombinedCommands.simpleShootNoteSpeaker(1))
-                            .onTrue(new SetArm(()->ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg));
+      // operator.rightBumper().whileTrue(CombinedCommands.simpleShootNoteSpeaker(1))
+      //                       .onTrue(new SetArm(()->ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg));
+
+      operator.rightBumper().onTrue(new SubwooferShot(
+        operator.rightBumper(), 
+        ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg, 
+        2820, 
+        2700));
+
 
     // State based shooter and intake
     } else {
