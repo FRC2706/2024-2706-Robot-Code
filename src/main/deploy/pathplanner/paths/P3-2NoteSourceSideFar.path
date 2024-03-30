@@ -8,27 +8,33 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.752898434706823,
-        "y": 0.009726654524398089
+        "x": 6.743171780182424,
+        "y": 0.3015262902563708
       },
       "isLocked": false,
       "linkedName": "P2-2NoteSourceSideFarEnd"
     },
     {
       "anchor": {
-        "x": 0.8585457929209694,
-        "y": 4.775787371479956
+        "x": 0.5959261207621938,
+        "y": 4.6493408626627675
       },
       "prevControl": {
-        "x": 3.86408204096064,
-        "y": 0.894852216241867
+        "x": 3.6014623688018643,
+        "y": 0.7684057074246781
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.8,
+      "rotationDegrees": -56.08907979213394,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -40,7 +46,7 @@
   "goalEndState": {
     "velocity": 0,
     "rotation": -60.572543596810256,
-    "rotateFast": true
+    "rotateFast": false
   },
   "reversed": false,
   "folder": "2NoteSourceSideFar",

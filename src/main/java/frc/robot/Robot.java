@@ -24,6 +24,7 @@ import frc.robot.robotcontainers.NewRobotContainer;
 import frc.robot.robotcontainers.PoseidonContainer;
 import frc.robot.robotcontainers.RobotContainer;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.PhotonSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -114,6 +115,7 @@ public class Robot extends TimedRobot {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     ArmSubsystem.getInstance().resetProfiledPIDController();
+    PhotonSubsystem.getInstance().resetTagAtBootup();
     
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -134,7 +136,9 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+
     ArmSubsystem.getInstance().resetProfiledPIDController();
+    PhotonSubsystem.getInstance().resetTagAtBootup();
   }
 
   /** This function is called periodically during operator control. */
