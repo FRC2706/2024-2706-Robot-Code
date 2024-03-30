@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.lib2706.ErrorCheck;
 import frc.lib.lib2706.TunableNumber;
 import frc.robot.Config;
 import frc.robot.subsystems.ShooterStateMachine.ShooterModes;
@@ -75,7 +76,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         //Voltage compensation
         m_motor.enableVoltageCompensation(10); //adjust on final robot
-        m_motor.setSmartCurrentLimit(80);  
+        m_motor.setSmartCurrentLimit(70);  
         setBrake(true);
 
         m_pidController.setOutputRange(Config.ShooterConstants.kMinOutput, Config.ShooterConstants.kMaxOutput);
@@ -85,7 +86,7 @@ public class ShooterSubsystem extends SubsystemBase {
         setPIDGains(kP1.get(), kI1.get(), kD1.get(), 1);
         setFFGains(kFF1.get(), 1);
 
-        m_motor.burnFlash();
+        ErrorCheck.sparkBurnFlash("Shooter", m_motor);
 
         NetworkTable shooterTable = NetworkTableInstance.getDefault().getTable("Shooter");
         velocityPub = shooterTable.getDoubleTopic("Shooter Velocity RPM").publish(PubSubOption.periodic(0.02));
