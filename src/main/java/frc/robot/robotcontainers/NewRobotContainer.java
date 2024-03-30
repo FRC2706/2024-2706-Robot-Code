@@ -7,14 +7,15 @@ package frc.robot.robotcontainers;
 
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.lib.lib2706.SelectByAllianceCommand;
 import frc.lib.lib2706.TunableNumber;
 import frc.lib.lib2706.XBoxControllerUtil;
 import frc.robot.Config;
@@ -32,11 +33,10 @@ import frc.robot.commands.RotateAngleToVisionSupplier;
 import frc.robot.commands.RotateToAngle;
 import frc.robot.commands.RumbleJoystick;
 import frc.robot.commands.SetArm;
-import frc.robot.commands.Shooter_PID_Tuner;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.auto.AutoRoutines;
 import frc.robot.commands.auto.AutoSelector;
-import frc.robot.subsystems.IntakeStatesMachine.IntakeModes;
+import frc.robot.subsystems.IntakeStateMachine.IntakeModes;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.ShooterStateMachine.ShooterModes;
@@ -142,6 +142,10 @@ public class NewRobotContainer extends RobotContainer {
             .onTrue(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.SLOW)))
             .onFalse(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.MAX)));
 
+    // driver.leftTrigger().whileTrue(CombinedCommands.podiumSourceSideSpeakerVisionShot(driver, PhotonPositions.PODIUM_SOURCESIDE_BLUE, PhotonPositions.PODIUM_SOURCESIDE_RED))
+    //         .onTrue(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.SLOW)))
+    //         .onFalse(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.MAX)));
+
     // Complete vision scoring commands with all subsystems
     // if (Config.disableStateBasedProgramming) {
     //   // Score in amp with vision using simple intake/shooter
@@ -222,6 +226,25 @@ public class NewRobotContainer extends RobotContainer {
     /**
      * Testing button bindings
      */
+    // SwerveModuleState[] moduleStatesForwards = {
+    //   new SwerveModuleState(0, Rotation2d.fromDegrees(0)),
+    //   new SwerveModuleState(0, Rotation2d.fromDegrees(0)),
+    //   new SwerveModuleState(0, Rotation2d.fromDegrees(0)),
+    //   new SwerveModuleState(0, Rotation2d.fromDegrees(0)),
+    // };
+    // testJoystick.a().whileTrue(Commands.run(
+    //   () -> SwerveSubsystem.getInstance().setModuleStates(moduleStatesForwards, true, true)
+    // ));
+
+    // SwerveModuleState[] moduleStatesSideways = {
+    //   new SwerveModuleState(0, Rotation2d.fromDegrees(90)),
+    //   new SwerveModuleState(0, Rotation2d.fromDegrees(90)),
+    //   new SwerveModuleState(0, Rotation2d.fromDegrees(90)),
+    //   new SwerveModuleState(0, Rotation2d.fromDegrees(90)),
+    // };
+    // testJoystick.a().whileTrue(Commands.run(
+    //   () -> SwerveSubsystem.getInstance().setModuleStates(moduleStatesSideways, true, true)
+    // ));
     // Let testJoystick control swerve. Note disables driver joystick swerve. Never commit this line.
     // s_Swerve.setDefaultCommand(new TeleopSwerve(testJoystick));
     // testJoystick.back().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d()));
@@ -241,6 +264,9 @@ public class NewRobotContainer extends RobotContainer {
     // testJoystick.rightBumper().whileTrue(CombinedCommands.simpleShootNoteSpeaker(1, () -> shooterTargetRPM.getAsDouble(), 50)); 
 
     // testJoystick.rightTrigger().whileTrue(new Shooter_PID_Tuner(()->shooterTargetRPM.getAsDouble()));
+ 
+    // testJoystick.a().onTrue(PhotonSubsystem.getInstance().getResetCommand(4));
+    // testJoystick.b().onTrue(SwerveSubsystem.getInstance().setOdometryCommand(new Pose2d(3, 3, Rotation2d.fromDegrees(0))));
   }
 
   /**

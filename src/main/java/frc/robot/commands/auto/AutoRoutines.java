@@ -28,9 +28,9 @@ import frc.robot.commands.MakeIntakeMotorSpin;
 import frc.robot.commands.PhotonMoveToTarget;
 import frc.robot.commands.SetArm;
 import frc.robot.commands.Shooter_PID_Tuner;
-import frc.robot.subsystems.IntakeStatesMachine.IntakeModes;
+import frc.robot.subsystems.IntakeStateMachine.IntakeModes;
 import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.IntakeStatesMachine.IntakeModes;
+import frc.robot.subsystems.IntakeStateMachine.IntakeModes;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.ShooterStateMachine.ShooterModes;
@@ -73,6 +73,8 @@ public class AutoRoutines extends SubsystemBase {
             new WaitCommand(1)
         ));
 
+        NamedCommands.registerCommand("IntakeControlFalse", new IntakeControl(false));
+
         NamedCommands.registerCommand("SetModeIntake", 
             Commands.runOnce(() -> IntakeSubsystem.getInstance().setMode(IntakeModes.INTAKE)));
 
@@ -88,6 +90,8 @@ public class AutoRoutines extends SubsystemBase {
 
         NamedCommands.registerCommand("simpleShooter", CombinedCommands.simpleShootNoteSpeaker(0.4));
         
+        NamedCommands.registerCommand("MakeShooterSpin", new Shooter_PID_Tuner(() -> Config.ShooterConstants.subwooferRPM));
+
         // Commands.deadline(
         //       Commands.sequence(
         //         new IntakeControl(false).withTimeout(0.3), 

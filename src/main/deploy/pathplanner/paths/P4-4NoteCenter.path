@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.5885043118686752,
-        "y": 6.653081194203101
+        "x": 2.6871568435079998,
+        "y": 6.760024894457372
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.212506002620149,
-        "y": 6.099528127809436
+        "x": 2.3111585342594734,
+        "y": 6.206471828063707
       },
       "isLocked": false,
       "linkedName": "4NoteCenter-FirstNotePickup"

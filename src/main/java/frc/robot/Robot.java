@@ -18,12 +18,13 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.lib3512.config.CTREConfigs;
 import frc.robot.robotcontainers.BeetleContainer;
 import frc.robot.robotcontainers.ClutchContainer;
-import frc.robot.robotcontainers.ContainerForTest;
+import frc.robot.robotcontainers.ContainerForTesting;
 import frc.robot.robotcontainers.CosmobotContainer;
 import frc.robot.robotcontainers.NewRobotContainer;
 import frc.robot.robotcontainers.PoseidonContainer;
 import frc.robot.robotcontainers.RobotContainer;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.PhotonSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -57,7 +58,7 @@ public class Robot extends TimedRobot {
 
     switch (Config.getRobotId()) {
       case 0:
-        //m_robotContainer = new ContainerForTest(); break; //competition
+        // m_robotContainer = new ContainerForTesting(); break; // testing
         m_robotContainer = new NewRobotContainer(); break; //competition
         
       case 1:
@@ -73,7 +74,7 @@ public class Robot extends TimedRobot {
         m_robotContainer = new NewRobotContainer();
         DriverStation.reportError(
             String.format("ISSUE WITH CONSTRUCTING THE ROBOT CONTAINER. \n " +
-                          "PoseidonContainer constructed by default. RobotID: %d", Config.getRobotId()), 
+                          "NewRobotContainer constructed by default. RobotID: %d", Config.getRobotId()), 
             true);
     }
 
@@ -114,6 +115,7 @@ public class Robot extends TimedRobot {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     ArmSubsystem.getInstance().resetProfiledPIDController();
+    PhotonSubsystem.getInstance().resetTagAtBootup();
     
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -134,7 +136,9 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+
     ArmSubsystem.getInstance().resetProfiledPIDController();
+    PhotonSubsystem.getInstance().resetTagAtBootup();
   }
 
   /** This function is called periodically during operator control. */
