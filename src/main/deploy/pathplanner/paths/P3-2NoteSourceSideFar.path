@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.752898434706823,
-        "y": 0.009726654524398089
+        "x": 6.743171780182424,
+        "y": 0.3015262902563708
       },
       "isLocked": false,
       "linkedName": "P2-2NoteSourceSideFarEnd"
@@ -30,9 +30,9 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.15,
-      "rotationDegrees": 114.34108993669261,
-      "rotateFast": true
+      "waypointRelativePos": 0.8,
+      "rotationDegrees": -56.08907979213394,
+      "rotateFast": false
     }
   ],
   "constraintZones": [],
@@ -46,7 +46,7 @@
   "goalEndState": {
     "velocity": 0,
     "rotation": -60.572543596810256,
-    "rotateFast": true
+    "rotateFast": false
   },
   "reversed": false,
   "folder": "2NoteSourceSideFar",
