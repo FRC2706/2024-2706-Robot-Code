@@ -155,7 +155,7 @@ public final class Config {
     // public static final Pose2d cameraOffsetRed = new Pose2d(new Translation2d(-0.1, 0), Rotation2d.fromDegrees(0));
 
     public static final Transform3d cameraTransform = new Transform3d(
-      -0.35, 0, 0.215, new Rotation3d(0, Math.toRadians(-33), Math.toRadians(180)));
+      -(0.865/2 - 0.095), 0, 0.23, new Rotation3d(0, Math.toRadians(-33), Math.toRadians(180)));
 
     //networkTableName
     public static final String apriltagCameraName = "FrontApriltagOV9281";
