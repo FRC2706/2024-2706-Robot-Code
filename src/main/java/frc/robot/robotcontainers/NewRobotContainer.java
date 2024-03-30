@@ -222,25 +222,25 @@ public class NewRobotContainer extends RobotContainer {
     /**
      * Testing button bindings
      */
-    SwerveModuleState[] moduleStatesForwards = {
-      new SwerveModuleState(0, Rotation2d.fromDegrees(0)),
-      new SwerveModuleState(0, Rotation2d.fromDegrees(0)),
-      new SwerveModuleState(0, Rotation2d.fromDegrees(0)),
-      new SwerveModuleState(0, Rotation2d.fromDegrees(0)),
-    };
-    testJoystick.a().whileTrue(Commands.run(
-      () -> SwerveSubsystem.getInstance().setModuleStates(moduleStatesForwards, true, true)
-    ));
+    // SwerveModuleState[] moduleStatesForwards = {
+    //   new SwerveModuleState(0, Rotation2d.fromDegrees(0)),
+    //   new SwerveModuleState(0, Rotation2d.fromDegrees(0)),
+    //   new SwerveModuleState(0, Rotation2d.fromDegrees(0)),
+    //   new SwerveModuleState(0, Rotation2d.fromDegrees(0)),
+    // };
+    // testJoystick.a().whileTrue(Commands.run(
+    //   () -> SwerveSubsystem.getInstance().setModuleStates(moduleStatesForwards, true, true)
+    // ));
 
-    SwerveModuleState[] moduleStatesSideways = {
-      new SwerveModuleState(0, Rotation2d.fromDegrees(90)),
-      new SwerveModuleState(0, Rotation2d.fromDegrees(90)),
-      new SwerveModuleState(0, Rotation2d.fromDegrees(90)),
-      new SwerveModuleState(0, Rotation2d.fromDegrees(90)),
-    };
-    testJoystick.a().whileTrue(Commands.run(
-      () -> SwerveSubsystem.getInstance().setModuleStates(moduleStatesSideways, true, true)
-    ));
+    // SwerveModuleState[] moduleStatesSideways = {
+    //   new SwerveModuleState(0, Rotation2d.fromDegrees(90)),
+    //   new SwerveModuleState(0, Rotation2d.fromDegrees(90)),
+    //   new SwerveModuleState(0, Rotation2d.fromDegrees(90)),
+    //   new SwerveModuleState(0, Rotation2d.fromDegrees(90)),
+    // };
+    // testJoystick.a().whileTrue(Commands.run(
+    //   () -> SwerveSubsystem.getInstance().setModuleStates(moduleStatesSideways, true, true)
+    // ));
     // Let testJoystick control swerve. Note disables driver joystick swerve. Never commit this line.
     // s_Swerve.setDefaultCommand(new TeleopSwerve(testJoystick));
     // testJoystick.back().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d()));
