@@ -9,6 +9,7 @@ import java.util.function.BooleanSupplier;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
 public class SubwooferShot extends Command {
@@ -77,6 +78,8 @@ public class SubwooferShot extends Command {
     public void end(boolean interrupted) {
         reverseIntakeCommand.cancel();
         feedNoteCommand.cancel();
+        ShooterSubsystem.getInstance().setRPM(0);
+        IntakeSubsystem.getInstance().setVoltage(0);
     }
 
     // Returns true when the command should end.
