@@ -9,6 +9,7 @@ package frc.robot.robotcontainers;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -35,7 +36,7 @@ import frc.robot.commands.SetArm;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.auto.AutoRoutines;
 import frc.robot.commands.auto.AutoSelector;
-import frc.robot.subsystems.IntakeStatesMachine.IntakeModes;
+import frc.robot.subsystems.IntakeStateMachine.IntakeModes;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.ShooterStateMachine.ShooterModes;
@@ -223,6 +224,25 @@ public class NewRobotContainer extends RobotContainer {
     /**
      * Testing button bindings
      */
+    // SwerveModuleState[] moduleStatesForwards = {
+    //   new SwerveModuleState(0, Rotation2d.fromDegrees(0)),
+    //   new SwerveModuleState(0, Rotation2d.fromDegrees(0)),
+    //   new SwerveModuleState(0, Rotation2d.fromDegrees(0)),
+    //   new SwerveModuleState(0, Rotation2d.fromDegrees(0)),
+    // };
+    // testJoystick.a().whileTrue(Commands.run(
+    //   () -> SwerveSubsystem.getInstance().setModuleStates(moduleStatesForwards, true, true)
+    // ));
+
+    // SwerveModuleState[] moduleStatesSideways = {
+    //   new SwerveModuleState(0, Rotation2d.fromDegrees(90)),
+    //   new SwerveModuleState(0, Rotation2d.fromDegrees(90)),
+    //   new SwerveModuleState(0, Rotation2d.fromDegrees(90)),
+    //   new SwerveModuleState(0, Rotation2d.fromDegrees(90)),
+    // };
+    // testJoystick.a().whileTrue(Commands.run(
+    //   () -> SwerveSubsystem.getInstance().setModuleStates(moduleStatesSideways, true, true)
+    // ));
     // Let testJoystick control swerve. Note disables driver joystick swerve. Never commit this line.
     // s_Swerve.setDefaultCommand(new TeleopSwerve(testJoystick));
     // testJoystick.back().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d()));
