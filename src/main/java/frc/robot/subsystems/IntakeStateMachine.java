@@ -24,11 +24,11 @@ public class IntakeStateMachine {
     */
     public static enum IntakeModes {
         STOP_INTAKE(0.0),
-        INTAKE(6.0),
-        POSITION_NOTE(1.5),
-        BACK_NOTE(-2.5),
-        RELEASE(-7.0),
-        SHOOT(8.0);
+        INTAKE(9.0),
+        POSITION_NOTE(2.0),
+        BACK_NOTE(-2.0),
+        RELEASE(-9.0),
+        SHOOT(9.0);
 
         double v;
 
