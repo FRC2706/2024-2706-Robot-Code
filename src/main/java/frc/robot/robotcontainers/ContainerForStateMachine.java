@@ -1,8 +1,10 @@
-// Copyright (c) FIRST and other WPILib contributors.
+  
+  // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.robotcontainers;
+
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -10,11 +12,14 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.lib.lib2706.SelectByAllianceCommand;
 import frc.lib.lib2706.TunableNumber;
 import frc.lib.lib2706.XBoxControllerUtil;
 import frc.robot.Config;
+import frc.robot.Config.ArmConfig;
 import frc.robot.Config.ArmSetPoints;
 import frc.robot.Config.PhotonConfig;
 import frc.robot.Config.PhotonConfig.PhotonPositions;
@@ -24,22 +29,32 @@ import frc.robot.commands.BlingCommand;
 import frc.robot.commands.BlingCommand.BlingColour;
 import frc.robot.commands.ClimberRPM;
 import frc.robot.commands.CombinedCommands;
+import frc.robot.commands.IntakeControl;
 import frc.robot.commands.MakeIntakeMotorSpin;
 import frc.robot.commands.RotateAngleToVisionSupplier;
 import frc.robot.commands.RotateToAngle;
 import frc.robot.commands.RumbleJoystick;
 import frc.robot.commands.SetArm;
+import frc.robot.commands.Shooter_PID_Tuner;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.auto.AutoRoutines;
 import frc.robot.commands.auto.AutoSelector;
-import frc.robot.subsystems.IntakeStatesMachine.IntakeModes;
+import frc.robot.subsystems.IntakeStateMachine.IntakeModes;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.ShooterStateMachine.ShooterModes;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
-/** Add your docs here. */
-public class ProvincialsFeaturesTest extends RobotContainer {
+/**
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a "declarative" paradigm, very little robot logic
+ * should actually be handled in the {@link Robot} periodic methods
+ * (other than the scheduler calls). Instead, the structure of the robot
+ * (including subsystems, commands, and button mappings) should be declared
+ * here.
+ */
+public class ContainerForStateMachine extends RobotContainer {
   /* Controllers */
   private final CommandXboxController driver = new CommandXboxController(0);
   private final CommandXboxController operator = new CommandXboxController(1);
@@ -54,21 +69,25 @@ public class ProvincialsFeaturesTest extends RobotContainer {
   private AutoRoutines m_autoRoutines;
   private AutoSelector m_autoSelector;
 
+  /* Default Command */
+  private Command m_swerveDefaultCommand;
+
   private TunableNumber shooterTargetRPM = new TunableNumber("Shooter/Target RPM", 0);
   private TunableNumber shooterDesiredVoltage = new TunableNumber("Shooter/desired Voltage", 0);
   private TunableNumber armAngleDeg = new TunableNumber("Arm/ArmTuning/setAngleDeg", 5.0);
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
-  public ProvincialsFeaturesTest() {
+  public ContainerForStateMachine() {
     /*  Setup default commands */
-    s_Swerve.setDefaultCommand(new TeleopSwerve(driver));
+    m_swerveDefaultCommand = new TeleopSwerve(driver);
+    s_Swerve.setDefaultCommand(m_swerveDefaultCommand);
     intake.setDefaultCommand(intake.defaultIntakeCommand());
     shooter.setDefaultCommand(shooter.defaultShooterCommand(()-> intake.isNoteIn(), ()->0));
-
+    
     configureButtonBindings();
 
-    // Setup auto
+     // Setup auto
     m_autoRoutines = new AutoRoutines();
     m_autoSelector = new AutoSelector();
   }
@@ -108,71 +127,54 @@ public class ProvincialsFeaturesTest extends RobotContainer {
     driver.a().whileTrue(new RotateToAngle(driver, Rotation2d.fromDegrees(180)));
     driver.b().whileTrue(new RotateToAngle(driver, Rotation2d.fromDegrees(270)));   
     driver.rightTrigger().whileTrue(new RotateAngleToVisionSupplier(driver, "photonvision/" + PhotonConfig.frontCameraName));
-    
-    driver.leftTrigger().whileTrue(CombinedCommands.centerSpeakerVisionShot(driver, PhotonPositions.FAR_SPEAKER_BLUE, PhotonPositions.FAR_SPEAKER_RED))
-            .onTrue(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.SLOW)))
-            .onFalse(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.MAX)));
-
-
+   
     /**
      * Operator Controls
-     * KingstonV1: https://drive.google.com/file/d/18HyIpIeW08CC6r6u-Z74xBWRv9opHnoZ
+     * y -> moves the arm alone
+     * x -> prepares kickbot speaker scoring
+     * a -> preapres to score from further away to speaker
+     * b -> prepares to score at amp
+     * right bumper -> to intake a note from the ground
+     * left bumper -> shoots the note
+     * back -> releases the note from idle pos
      */
-    // Arm
-    operator.y().onTrue(new SetArm(()->ArmSetPoints.AMP.angleDeg)); // Amp
-    operator.b().onTrue(new SetArm(()->ArmSetPoints.IDLE.angleDeg)); // Idle
-    operator.a().onTrue(new SetArm(()->ArmSetPoints.NO_INTAKE.angleDeg)); // Pickup
-    operator.x().onTrue(new SetArm(()->ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg));
-    // Climber
-    operator.leftTrigger(0.10).and(operator.back()).whileTrue(new ClimberRPM(()-> MathUtil.applyDeadband(operator.getLeftTriggerAxis(), 0.35) * 0.5));
 
-    // Eject the note from the front with start
-    operator.start()
-      .whileTrue(Commands.run(() -> intake.setVoltage(-12), intake))
-      .onFalse(Commands.runOnce(() -> intake.stop()));
-  
-    
-    // Simple shooter and intake
-    if (Config.disableStateBasedProgramming) {
-      intake.setStateMachineOff();
-      shooter.setStateMachineOff();
+      //Moves the arm relative to a Network Tables entry
+      operator.y().onTrue(new SetArm(()->armAngleDeg.get()))
+      //operator.y().onTrue(new SetArm(()->ArmSetPoints.INTERPOLATED_SHOOT.getInterpolatedAngle.getAsDouble()))
+      .onFalse(new SetArm(()->ArmSetPoints.IDLE.angleDeg)); // Amp
 
-      // Intake note with leftTrigger
+      //Spins the Shooter to Score at Speaker
+      operator.x().whileTrue(shooter.speedUpForCloseSpeakerCommand())
+                  .whileTrue(new SetArm(()->ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg))
+                  .onFalse(new SetArm(()->ArmSetPoints.IDLE.angleDeg))
+                  .onFalse(shooter.stopShooterCommand());
+
+      //Spins the Shooter to score at Amp, and moves the arm to score
+      operator.b().whileTrue(shooter.speedUpForAmpCommand())
+                  .whileTrue(new SetArm(()->ArmSetPoints.AMP.angleDeg))
+                  .onFalse(new SetArm(()->ArmSetPoints.IDLE.angleDeg))
+                  .onFalse(shooter.stopShooterCommand());
+
+      //Spins the Shooter to score at Amp, and moves the arm to score
+      operator.a().whileTrue(shooter.speedUpFarShootCommand())
+                  .onTrue(new SetArm(()->armAngleDeg.get()))
+                  .onFalse(shooter.stopShooterCommand());
       
-      //operator.leftTrigger(0.3).whileTrue(
-      operator.leftBumper()
-        .whileTrue(CombinedCommands.armIntake())
-        .onFalse(new SetArm(()->ArmSetPoints.NO_INTAKE.angleDeg))
-        .onFalse(new MakeIntakeMotorSpin(9.0,0).withTimeout(1).until(() -> intake.isBackSensorActive()));
+      //Intakes the Note, and moves the arm to pick the note
+      operator.rightBumper().onTrue(intake.intakeNoteCommand())
+              .whileTrue(new SetArm(()->ArmSetPoints.INTAKE.angleDeg))
+              .onFalse(new SetArm(()->ArmSetPoints.IDLE.angleDeg))
+              .onFalse(intake.stopIntakeCommand());
 
+      //Shoots the Note
+      operator.leftBumper().onTrue(intake.shootNoteCommand())
+              .onFalse(intake.stopIntakeCommand());
 
-      //NOTE: right Trigger has been assigned to climber
-      operator.rightTrigger(0.3).whileTrue(CombinedCommands.simpleShootNoteAmp());
-      // Shoot note with leftBumper
-      operator.rightBumper().whileTrue(CombinedCommands.simpleShootNoteSpeaker(1))
-                            .onTrue(new SetArm(()->ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg));
-
-    // State based shooter and intake
-    } else {
-      intake.setStateMachineOn();
-      shooter.setStateMachineOn();
-
-      // Intake note with leftTrigger
-      operator.leftTrigger(0.3) //Intake the Note
-          .whileTrue(Commands.runOnce(()-> intake.setMode(IntakeModes.INTAKE)))
-          .whileFalse(Commands.runOnce(()->intake.setMode(IntakeModes.STOP_INTAKE)));   
-
-      // Toggle to spin up or spin down the shooter with rightBumper
-      operator.rightBumper().onTrue(shooter.toggleSpinUpCommand(ShooterModes.SHOOT_SPEAKER));  
-          
-      // Shoot note with leftBumper
-      // operator.leftBumper().onTrue(CombinedCommands.statefulShootNote());
-
-      // Eject the note from the front with leftPOV
-      XBoxControllerUtil.leftPOV(operator).debounce(0.1)
-        .whileTrue(Commands.runOnce(()-> intake.setMode(IntakeModes.RELEASE)))
-        .whileFalse(Commands.runOnce(()->intake.setMode(IntakeModes.STOP_INTAKE))); 
-    }
+      //Releases the Note
+      operator.back().onTrue(intake.releaseNoteCommand())
+              .onTrue(new SetArm(()->ArmSetPoints.IDLE.angleDeg))
+              .onFalse(intake.stopIntakeCommand());
   }
 
   /**

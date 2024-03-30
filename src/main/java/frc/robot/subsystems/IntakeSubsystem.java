@@ -11,6 +11,8 @@ import static frc.robot.subsystems.IntakeStateMachine.IntakeModes.*;
 import static frc.robot.subsystems.IntakeStateMachine.IntakeStates.*;
 import static frc.robot.subsystems.ShooterStateMachine.States.SPEAKER_LAUNCH_READY;
 
+import java.util.function.Consumer;
+
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.math.filter.Debouncer;
@@ -22,6 +24,8 @@ import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Config;
 import frc.robot.subsystems.IntakeStateMachine.IntakeModes;
@@ -151,7 +155,8 @@ public class IntakeSubsystem extends SubsystemBase{
     }
 
     public boolean isNoteIn(){
-        return getCurrentState().equals(NOTE_IN_POS_IDLE);
+        return getCurrentState().equals(NOTE_IN_POS_IDLE) || getCurrentState().equals(BACKING_NOTE) 
+            || getCurrentState().equals(POSITIONING_NOTE);
     }
 
     public void setStateMachineOff(){
@@ -161,7 +166,7 @@ public class IntakeSubsystem extends SubsystemBase{
     public void setStateMachineOn(){
         stateFulControl = true;
     }
-
+    
     /*---------------------------Commands---------------------------*/
 
     /**
@@ -193,9 +198,7 @@ public class IntakeSubsystem extends SubsystemBase{
      * @return Intake Command
      */
     public Command intakeNoteCommand(){
-        return Commands.startEnd(
-            ()->setMode(INTAKE), ()->setMode(STOP_INTAKE)
-        );
+        return Commands.runOnce(()->setMode(INTAKE));
     }
 
     /**
@@ -205,9 +208,17 @@ public class IntakeSubsystem extends SubsystemBase{
      * @return Release Command
      */
     public Command releaseNoteCommand(){
-        return Commands.startEnd(
-            ()->setMode(RELEASE), ()->setMode(STOP_INTAKE)
-        );
+        return Commands.runOnce(()->setMode(RELEASE));
+    }
+
+    /**
+     * Sets the mode of the Intake's state machine to "RELEASE" mode when scheduled
+     * If is interrupted it sets the mode to "STOP_INTAKE"
+     * <-This is for TeleOp Only->
+     * @return Release Command
+     */
+    public Command stopIntakeCommand(){
+        return Commands.runOnce(()->setMode(STOP_INTAKE));
     }
 
     @Override

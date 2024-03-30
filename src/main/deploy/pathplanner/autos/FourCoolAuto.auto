@@ -1,0 +1,37 @@
+{
+  "version": 1.0,
+  "startingPose": null,
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ShootPreLoadedNote"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "AfterAmpNoteSequence"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "GetCenterNote"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "GetPodiumNote"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "CoolAutos",
+  "choreoAuto": false
+}

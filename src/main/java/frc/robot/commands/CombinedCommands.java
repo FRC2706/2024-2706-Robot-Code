@@ -246,7 +246,7 @@ public class CombinedCommands {
         // Prepare the robot to score
         Command driveToPositionAndPrepare = Commands.parallel(
             new SetArm(()->armAngleDeg),
-            new WaitCommand(0.1).andThen(ShooterSubsystem.getInstance().speedUpForSpeakerCommand()),
+            new WaitCommand(0.1).andThen(ShooterSubsystem.getInstance().speedUpForCloseSpeakerCommand()),
             Commands.sequence(
                 new SelectByAllianceCommand(
                     PhotonSubsystem.getInstance().getAprilTagCommand(bluePosition, driverJoystick, false), 

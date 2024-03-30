@@ -38,10 +38,11 @@ public class ShooterStateMachine {
     */
     public static enum ShooterModes {
         STOP_SHOOTER(0.0, 0.0),
-        PRE_HEAT(4.0, 500.0),
+        WARM_UP(4.0, 1200.0),
         INTERPOLATED_SHOOT(0.0, interpolation.get(distanceFromSpeaker)),
-        SHOOT_AMP(6.0, 800.0),
-        SHOOT_SPEAKER(9.0, 1700.0);//MAX 2500 with 9 v
+        SHOOT_AMP(6.0, 1000.0),
+        SHOOT_SPEAKER(9.0, 3000.0),//MAX 3800 with 10 v
+        FAR_SHOOT(10.0, 4000);
 
         double v, RPM;
 
@@ -69,6 +70,8 @@ public class ShooterStateMachine {
         REACHING_SET_POINT,//-
         AMP_LAUNCH_READY,
         SPEAKER_LAUNCH_READY,
+        INTERPOLATED_LAUNCH_READY,
+        FAR_SHOOT_LAUNCH_READY
     }
 
     /**
@@ -136,7 +139,7 @@ public class ShooterStateMachine {
             case STOP_SHOOTER:
                 currentState = IN_IDLE;
                 break;
-            case PRE_HEAT:
+            case WARM_UP:
                 currentState = isInRange ? PRE_HEATED : PRE_HEATING;
                 break;
             case SHOOT_AMP:
@@ -144,6 +147,12 @@ public class ShooterStateMachine {
                 break;
             case SHOOT_SPEAKER:
                 currentState = isInRange ? SPEAKER_LAUNCH_READY: REACHING_SET_POINT;
+                break;
+            case FAR_SHOOT:
+                currentState = isInRange ? FAR_SHOOT_LAUNCH_READY: REACHING_SET_POINT;
+                break;
+            case INTERPOLATED_SHOOT:
+                currentState = isInRange ? INTERPOLATED_LAUNCH_READY: REACHING_SET_POINT;
                 break;
             default:
                 break;

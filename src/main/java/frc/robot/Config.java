@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -15,12 +16,16 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
+import edu.wpi.first.math.interpolation.Interpolator;
+import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.lib.lib3512.config.SwerveModuleConstants;
+import frc.robot.subsystems.PhotonSubsystem;
 
 public final class Config {
   /**
@@ -449,6 +454,14 @@ public final class Config {
     public static final double MOMENT_TO_VOLTAGE = 0.000005;    
 }
 
+private static InterpolatingTreeMap<Double, Double> interpolation = new InterpolatingTreeMap<Double, Double>(
+            InverseInterpolator.forDouble(), Interpolator.forDouble());
+static{
+  interpolation.put(0.0, 0.0);// startPoint
+  interpolation.put(0.0, 0.0);// query (could and should add more points)
+  interpolation.put(0.0, 0.0);// Last pos
+}
+
 public static enum ArmSetPoints {
   //@todo: to be calibrated
   IDLE(60),
@@ -456,12 +469,18 @@ public static enum ArmSetPoints {
   SPEAKER_KICKBOT_SHOT(15.5),
   NO_INTAKE(5.0),
   SPEAKER_VISION_SHOT(33),
-  AMP(100);
+  AMP(100),
+  INTERPOLATED_SHOOT(()->interpolation.get(PhotonSubsystem.getInstance().getTargetPos().getDistance(null))); //Check this
 
   public final double angleDeg;
+  public DoubleSupplier getInterpolatedAngle;
 
   ArmSetPoints(double angleDeg) {
     this.angleDeg = angleDeg;
+  }
+
+  ArmSetPoints(DoubleSupplier angleDeg) {
+    this.angleDeg = angleDeg.getAsDouble();
   }
 }
 

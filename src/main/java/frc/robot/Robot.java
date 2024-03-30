@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.lib3512.config.CTREConfigs;
 import frc.robot.robotcontainers.BeetleContainer;
 import frc.robot.robotcontainers.ClutchContainer;
+import frc.robot.robotcontainers.ContainerForStateMachine;
 import frc.robot.robotcontainers.ContainerForTesting;
 import frc.robot.robotcontainers.CosmobotContainer;
 import frc.robot.robotcontainers.NewRobotContainer;
@@ -58,7 +59,8 @@ public class Robot extends TimedRobot {
     switch (Config.getRobotId()) {
       case 0:
         // m_robotContainer = new ContainerForTesting(); break; // testing
-        m_robotContainer = new NewRobotContainer(); break; //competition
+        //m_robotContainer = new NewRobotContainer(); break; //competition
+        m_robotContainer = new ContainerForStateMachine(); break; //competition
         
       case 1:
         m_robotContainer = new ClutchContainer(); break; //simulation

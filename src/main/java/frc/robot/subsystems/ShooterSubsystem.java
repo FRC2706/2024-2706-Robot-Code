@@ -147,7 +147,8 @@ public class ShooterSubsystem extends SubsystemBase {
     }   
 
     public boolean isReadyToShoot(){
-        return getCurrentState().equals(SPEAKER_LAUNCH_READY) || getCurrentState().equals(AMP_LAUNCH_READY);
+        return getCurrentState().equals(SPEAKER_LAUNCH_READY) || getCurrentState().equals(AMP_LAUNCH_READY)
+            || getCurrentState().equals(INTERPOLATED_LAUNCH_READY) || getCurrentState().equals(FAR_SHOOT_LAUNCH_READY);
     }
 
     public void setStateMachineOff(){
@@ -170,15 +171,61 @@ public class ShooterSubsystem extends SubsystemBase {
             runOnce(()->setMode(STOP_SHOOTER)), 
             run(()->{allowAutoMovement(isThereNote.getAsBoolean()); this.distanceToAprilTag = distanceToAprilTag.getAsDouble();}));
     }
+    
     /**
      * Sets the mode of the Shooter's state nachine to "SHOOT_SPEAKER"
      * This will set the velocity to the 
      * @return
      */
-    public Command speedUpForSpeakerCommand(){
+    public Command speedUpForCloseSpeakerCommand(){
         return Commands.deadline(
                 Commands.waitUntil(()->isReadyToShoot()), 
                 Commands.runOnce(()->setMode(SHOOT_SPEAKER))
+            );
+    }
+    
+    /**
+     * Sets the mode of the Shooter's state nachine to "SHOOT_AMP"
+     * This will set the velocity to the 
+     * @return
+     */
+    public Command speedUpForAmpCommand(){
+        return Commands.deadline(
+                Commands.waitUntil(()->isReadyToShoot()), 
+                Commands.runOnce(()->setMode(SHOOT_AMP))
+            );
+    }
+    
+    /**
+     * Sets the mode of the Shooter's state nachine to "FAR_SHOOT"
+     * This will set the velocity to the 
+     * @return
+     */
+    public Command speedUpFarShootCommand(){
+        return Commands.deadline(
+                Commands.waitUntil(()->isReadyToShoot()), 
+                Commands.runOnce(()->setMode(FAR_SHOOT))
+            );
+    }
+    
+    /**
+     * Sets the mode of the Shooter's state nachine to "WARM_UP"
+     * This will set the velocity to the 
+     * @return
+     */
+    public Command warmUpShooterCommand(){
+        return Commands.runOnce(()->setMode(WARM_UP));
+    }
+    
+    /**
+     * Sets the mode of the Shooter's state nachine to "STOP_SHOOTER"
+     * This will set the velocity to the 
+     * @return
+     */
+    public Command stopShooterCommand(){
+        return Commands.deadline(
+                Commands.waitUntil(()->isReadyToShoot()), 
+                Commands.runOnce(()->setMode(STOP_SHOOTER))
             );
     }
 
@@ -211,7 +258,7 @@ public class ShooterSubsystem extends SubsystemBase {
         //Check if this method would work like this
         if(stateFulControl == true) {
             shooterStates.isInRange(()->getVelocityRPM() > shooterStates.getDesiredVelocityRPM() - shooterTreshHold.get());
-            shooterStates.updateDistance(distanceToAprilTag);
+            //shooterStates.updateDistance(distanceToAprilTag);
             shooterStates.updateState();
         }
         

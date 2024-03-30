@@ -1,0 +1,76 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.3571648195927977,
+        "y": 5.58602500663648
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.6657849857053102,
+        "y": 5.812346461785655
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.9368932613798853,
+        "y": 6.273355326967168
+      },
+      "prevControl": {
+        "x": 1.7105718062307094,
+        "y": 5.985309838595489
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "AfterShootingPreloaded"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 1.0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "CoolAimToSpeaker"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "CoolNoteShooting"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 2.7,
+    "maxAcceleration": 3.3,
+    "maxAngularVelocity": 320.0,
+    "maxAngularAcceleration": 400.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 36.86989764584397,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "CoolAutos",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

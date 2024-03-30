@@ -1,0 +1,52 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.9368932613798853,
+        "y": 6.273355326967168
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.9868932613798844,
+        "y": 6.273355326967168
+      },
+      "isLocked": false,
+      "linkedName": "AfterShootingPreloaded"
+    },
+    {
+      "anchor": {
+        "x": 2.325440612577963,
+        "y": 6.5378982043786245
+      },
+      "prevControl": {
+        "x": 2.275440612577963,
+        "y": 6.5378982043786245
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "AfterPickAmpNoteAndShoot"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 2.7,
+    "maxAcceleration": 3.3,
+    "maxAngularVelocity": 320.0,
+    "maxAngularAcceleration": 400.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 33.56808822133751,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "CoolAutos",
+  "previewStartingState": {
+    "rotation": 34.77783136636373,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

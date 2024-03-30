@@ -1,0 +1,50 @@
+{
+  "version": 1.0,
+  "startingPose": null,
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ShootPreLoadedNote"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "CoolNoteIntaking"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "AfterAmpNoteSequence"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "CoolAimToSpeaker"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "CoolNoteShooting"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "folder": "CoolAutos",
+  "choreoAuto": false
+}

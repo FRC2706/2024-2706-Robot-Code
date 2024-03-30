@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.lib.lib2706.SelectByAllianceCommand;
 import frc.robot.Config;
 import frc.robot.Config.ArmConfig;
+import frc.robot.Config.ArmSetPoints;
 import frc.robot.Config.PhotonConfig;
 import frc.robot.Config.PhotonConfig.PhotonPositions;
 import frc.robot.commands.CombinedCommands;
@@ -49,6 +50,7 @@ public class AutoRoutines extends SubsystemBase {
                     threeNoteCenterSourceSideNote,
                     threeNoteCenterAmpSideNote,
                     oneNoteSourceSide,
+                    FirstStepToCoolFour,
                     twoNoteSourceSide;
     
 
@@ -64,6 +66,7 @@ public class AutoRoutines extends SubsystemBase {
         threeNoteCenterSourceSideNote = new PathPlannerAuto("3NoteCenterSourceSideNote");
         threeNoteCenterAmpSideNote = new PathPlannerAuto("3NoteCenterAmpSideNote");
         oneNoteSourceSide = new PathPlannerAuto("1NoteSourceSide");
+        FirstStepToCoolFour = new PathPlannerAuto("1stStepToFour");
         twoNoteSourceSide = new PathPlannerAuto("2NoteSourceSideFar");
     }
 
@@ -79,7 +82,7 @@ public class AutoRoutines extends SubsystemBase {
         NamedCommands.registerCommand("ShootNoteStateful", 
         Commands.sequence(
             Commands.runOnce(() -> {System.out.println("STEP1");}),
-            ShooterSubsystem.getInstance().speedUpForSpeakerCommand(),
+            ShooterSubsystem.getInstance().speedUpForCloseSpeakerCommand(),
             Commands.runOnce(() -> {System.out.println("STEP2");}),
             IntakeSubsystem.getInstance().shootNoteCommand(),
             Commands.runOnce(() -> {System.out.println("STEP3");}),
@@ -127,6 +130,29 @@ public class AutoRoutines extends SubsystemBase {
         NamedCommands.registerCommand("ArmStartConfig", new SetArm(() -> 90).until(() -> ArmSubsystem.getInstance().getPosition() > Math.toRadians(82)));
         NamedCommands.registerCommand("ArmPickup", new SetArm(() -> Config.ArmSetPoints.INTAKE.angleDeg));
         NamedCommands.registerCommand("ArmKitbotShot", new SetArm(() -> Config.ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg));
+        
+        /**********************Cool Commands*******************************/
+        NamedCommands.registerCommand("CoolNoteIntaking", 
+            Commands.deadline(Commands.waitUntil(()->IntakeSubsystem.getInstance().isNoteIn()) , 
+                Commands.parallel(
+                    new SetArm(()->Config.ArmSetPoints.INTAKE.angleDeg),
+                    IntakeSubsystem.getInstance().intakeNoteCommand())
+                ).andThen(new SetArm(()->Config.ArmSetPoints.IDLE.angleDeg))
+        );
+
+        NamedCommands.registerCommand("CoolNoteShooting", 
+            Commands.deadline(
+                new SetArm(()->ArmSetPoints.INTERPOLATED_SHOOT.getInterpolatedAngle.getAsDouble()),
+                ShooterSubsystem.getInstance().speedUpFarShootCommand()
+            ).andThen(IntakeSubsystem.getInstance().shootNoteCommand())
+        );
+
+        NamedCommands.registerCommand("CoolAimToSpeaker", 
+            Commands.parallel(/** here add the command to aim to the speaker */)
+        );
+
+
+        /**********************End of Cool Commands************************/
 
         // Working but behaves weirdly with pathplanner
         NamedCommands.registerCommand("VisionScoreSourceSideClose",
@@ -163,6 +189,7 @@ public class AutoRoutines extends SubsystemBase {
             case 5:
                 return threeNoteCenterSourceSideNote;
             case 6:
+                return FirstStepToCoolFour;
             case 7:
                 var alliance = DriverStation.getAlliance();
 

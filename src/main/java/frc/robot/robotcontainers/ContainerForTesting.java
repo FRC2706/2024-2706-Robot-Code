@@ -83,7 +83,7 @@ public class ContainerForTesting extends RobotContainer {
     s_Swerve.setDefaultCommand(m_swerveDefaultCommand);
     if (!Config.disableStateBasedProgramming) {
       intake.setDefaultCommand(intake.defaultIntakeCommand());
-      shooter.setDefaultCommand(shooter.defaultShooterCommand(()-> intake.isNoteIn()));
+      shooter.setDefaultCommand(shooter.defaultShooterCommand(()-> intake.isNoteIn(), ()->0));
     } else {
       // shooter.setDefaultCommand(new Shooter_PID_Tuner(() -> 0));
     }
