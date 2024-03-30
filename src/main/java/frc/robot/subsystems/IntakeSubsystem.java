@@ -220,7 +220,6 @@ public class IntakeSubsystem extends SubsystemBase{
         if(stateFulControl){
             intakeStates.updateSensors(
                 ()->{return backSensorResult;}, 
-                ()->{return frontSensorResult;}, 
                 ()->{return centerSensorResult;});
             intakeStates.updateStates();
         }
