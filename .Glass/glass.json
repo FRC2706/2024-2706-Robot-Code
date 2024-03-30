@@ -1,6 +1,15 @@
 {
   "NetworkTables": {
     "transitory": {
+      "Arm": {
+        "ArmData": {
+          "open": true
+        },
+        "open": true
+      },
+      "Shooter": {
+        "open": true
+      },
       "SmartDashboard": {
         "TunableNumbers": {
           "Arm": {
@@ -10,6 +19,9 @@
             "open": true
           },
           "Shooter": {
+            "PID1": {
+              "open": true
+            },
             "open": true
           },
           "open": true
