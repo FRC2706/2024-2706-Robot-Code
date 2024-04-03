@@ -36,6 +36,11 @@ public class ErrorTrackingSubsystem extends SubsystemBase {
         statusTab = Shuffleboard.getTab("CANSparkMax Status"); // Status will be displayed as a boolean variable (whether the spark max is ok)
         errorsTab = Shuffleboard.getTab("CANSparkMax Errors");
     }
+
+    public ShuffleboardTab getStatusTab() {
+        return statusTab;
+    }
+    
     @Override
     public void periodic() {
         // This method will be called once per scheduler run

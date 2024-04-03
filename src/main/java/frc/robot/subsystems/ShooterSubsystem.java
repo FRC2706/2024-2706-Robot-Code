@@ -13,15 +13,13 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
-import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.networktables.StringPublisher;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -55,6 +53,8 @@ public class ShooterSubsystem extends SubsystemBase {
     private BooleanPublisher shooterReadyPub;
     private ShooterStateMachine shooterStates = new ShooterStateMachine();
 
+    private GenericEntry pubMotorTemp;
+
     private static ShooterSubsystem shooter;
     public static ShooterSubsystem getInstance() {
         if (shooter == null)
@@ -75,7 +75,7 @@ public class ShooterSubsystem extends SubsystemBase {
         m_encoder = m_motor.getEncoder();
 
         //Voltage compensation
-        m_motor.enableVoltageCompensation(10); //adjust on final robot
+        // m_motor.enableVoltageCompensation(10); //adjust on final robot
         m_motor.setSmartCurrentLimit(70);  
         setBrake(true);
 
@@ -93,11 +93,24 @@ public class ShooterSubsystem extends SubsystemBase {
         shooterReadyPub = shooterTable.getBooleanTopic("Shooter is Ready to shoot").publish(PubSubOption.periodic(0.02));
         statePub = shooterTable.getStringTopic("Shooter state").publish(PubSubOption.periodic(0.02));
 
+        // Publish motor temperature on Shuffleboard alongside sparkmax logging for hardware to access everything they want in once place.
+        pubMotorTemp = ErrorTrackingSubsystem.getInstance().getStatusTab().add("ShooterMotorTemp", -99)
+            .withPosition(0, 2).withSize(2, 1).getEntry();
+
         ErrorTrackingSubsystem.getInstance().register(m_motor);
     }
 
     public double getVelocityRPM() {
         return m_encoder.getVelocity();
+    }
+
+    /**
+     * Get the temperature of the motor in Celsius as reported by the sparkmax.
+     * 
+     * @return Celsius
+     */
+    public double getMotorTemperature() {
+        return m_motor.getMotorTemperature();
     }
 
     public void setRPM(double setPoint) {
@@ -215,5 +228,6 @@ public class ShooterSubsystem extends SubsystemBase {
         velocityPub.accept(getVelocityRPM());
         shooterReadyPub.accept(isReadyToShoot());
         statePub.accept(getCurrentState().toString());
+        pubMotorTemp.setDouble(getMotorTemperature());
     }
 }
