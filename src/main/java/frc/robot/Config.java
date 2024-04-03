@@ -454,12 +454,13 @@ public final class Config {
 
 public static enum ArmSetPoints {
   //@todo: to be calibrated
-  IDLE(60),
-  INTAKE(-0.1),
-  SPEAKER_KICKBOT_SHOT(15.5),
-  NO_INTAKE(5.0),
-  SPEAKER_VISION_SHOT(33),
-  AMP(100);
+  IDLE(61),
+  INTAKE(-1.1),
+  SPEAKER_KICKBOT_SHOT(12.9),
+  NO_INTAKE(2.2),
+  SPEAKER_VISION_SHOT(30.2),
+  CENTER_VISION_SHOT(36.35),
+  AMP(98.2); 
 
   public final double angleDeg;
 

@@ -320,7 +320,7 @@ public class CombinedCommands {
           return PhotonSubsystem.getInstance().getTargetPos().getY() - SwerveSubsystem.getInstance().getPose().getY() < 0.5;
         };
         
-        double armAngle = 41;
+        double armAngle = ArmSetPoints.CENTER_VISION_SHOT.angleDeg;
         double shooterSpeed = 4000;
         double shooterTriggerSpeed = 3960;
 
