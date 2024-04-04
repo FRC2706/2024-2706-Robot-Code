@@ -135,6 +135,7 @@ public class Robot extends TimedRobot {
 
     SwerveSubsystem.getInstance().setVoltageCompensation(true);
     ArmSubsystem.getInstance().resetProfiledPIDController();
+    //ShooterSubsystem.getInstance().changeCurrentLimit(true);
     PhotonSubsystem.getInstance().resetTagAtBootup();
     
     // schedule the autonomous command (example)
@@ -153,6 +154,8 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+    //ShooterSubsystem.getInstance().changeCurrentLimit(false);
+
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }

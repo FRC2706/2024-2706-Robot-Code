@@ -458,8 +458,8 @@ public static enum ArmSetPoints {
   INTAKE(-1.1),
   SPEAKER_KICKBOT_SHOT(13.9),
   NO_INTAKE(2.2),
-  SPEAKER_VISION_SHOT(30.2), // 31.2
-  CENTER_VISION_SHOT(36.35),
+  SPEAKER_VISION_SHOT(49.2), // 31.2
+  CENTER_VISION_SHOT(39.35),//
   AMP(98.2); 
 
   public final double angleDeg;

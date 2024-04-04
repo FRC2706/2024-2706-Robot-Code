@@ -65,7 +65,7 @@ public class CombinedCommands {
     public static Command simpleShootNoteAmp() {
         return Commands.deadline(
             Commands.sequence(
-                new IntakeControl(false).withTimeout(0.3), 
+                //new IntakeControl(false).withTimeout(0.3), 
                 new WaitCommand(0.5),
                 new IntakeControl(true).withTimeout(0.6)),
             new Shooter_Voltage(()->6)
