@@ -166,8 +166,8 @@ public final class Config {
 
     // these are the heights for the apriltags 3, 4, 5, 6, 7, 8
     public static final double[] APRIL_HEIGHTS = {1.32,1.32,1.22,1.22,1.32,1.32};
-    public static final double POS_TOLERANCE = 0.01; // meters
-    public static final double ANGLE_TOLERANCE = Math.toRadians(1.0);
+    public static final double POS_TOLERANCE = 0.05; // meters //TODO: Change to 0.01
+    public static final double ANGLE_TOLERANCE = Math.toRadians(4.0);//Change this to: 1.0
     public static final double WAYPOINT_POS_TOLERANCE = 0.2; // meters
     public static final double WAYPOINT_ANGLE_TOLERANCE = Math.toRadians(10.0);
     public static final double VEL_TOLERANCE = 0.1*4;
@@ -456,9 +456,9 @@ public static enum ArmSetPoints {
   //@todo: to be calibrated
   IDLE(61),
   INTAKE(-1.1),
-  SPEAKER_KICKBOT_SHOT(12.9),
+  SPEAKER_KICKBOT_SHOT(13.9),
   NO_INTAKE(2.2),
-  SPEAKER_VISION_SHOT(30.2),
+  SPEAKER_VISION_SHOT(30.2), // 31.2
   CENTER_VISION_SHOT(36.35),
   AMP(98.2); 
 
