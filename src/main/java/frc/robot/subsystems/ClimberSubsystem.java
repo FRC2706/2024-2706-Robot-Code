@@ -9,32 +9,33 @@ import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import frc.lib.lib2706.SubsystemChecker;
+import frc.lib.lib2706.SubsystemChecker.SubsystemType;
 import frc.robot.Config;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ClimberSubsystem extends SubsystemBase {
 
   //Instance Variables
+  private static ClimberSubsystem instance = null; // static object that contains all movement controls  
   private CANSparkMax m_climber;
   private RelativeEncoder m_encoder;
-  //private double targetRPM = CLIMBER_RPM.getValue();
   public double kMaxOutput = 1;
   public double kMinOutput = -1;
   public double currentPosition = 0;
   public boolean m_bGoodSensors = false;
-  private static final ClimberSubsystem INSTANCE_CLIMBER = new ClimberSubsystem();
+  
+  public static ClimberSubsystem getInstance() {
+    if (instance == null) {
+      SubsystemChecker.subsystemConstructed(SubsystemType.ClimberSubsystem);
+      instance = new ClimberSubsystem();
+    }
+    return instance;
+  }  
 
   /** Creates a new ClimberSubSystem. */
   private ClimberSubsystem() {
-    
-    if (Config.Climber_CANID.CLIMBER != -1) {
-      initializeSubsystem();
-    }
-    else
-    {
-      m_climber = null;
-    }
-
+    initializeSubsystem();
   }
 
   private void initializeSubsystem() 
@@ -75,16 +76,6 @@ public class ClimberSubsystem extends SubsystemBase {
     {
         return m_climber != null;
     }
-
-     /*
-     * Returns the singleton instance for the Climber Subsystem
-     */
-    public static ClimberSubsystem getInstance() {
-      if ( INSTANCE_CLIMBER.isAvailable() == true)
-        return INSTANCE_CLIMBER;
-      else
-        return null;
-    } 
 
     //Run the climber
 
