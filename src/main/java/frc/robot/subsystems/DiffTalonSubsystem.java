@@ -85,11 +85,11 @@ public class DiffTalonSubsystem extends SubsystemBase {
                 Config.DIFF.FOLLOWER_RIGHT_INVERTED ? InvertType.OpposeMaster : InvertType.FollowMaster);
         }
 
-        if (Config.CANID.PIGEON != -1) {
-            if (Config.CANID.PIGEON == Config.DIFF.DIFF_FOLLOWER_LEFT && leftFollower != null) 
+        if (Config.CANID.PIGEON.val() != -1) {
+            if (Config.CANID.PIGEON.val() == Config.DIFF.DIFF_FOLLOWER_LEFT && leftFollower != null) 
                 pigeon = new PigeonIMU((WPI_TalonSRX) leftFollower);
             else {
-                pigeon = new PigeonIMU(Config.CANID.PIGEON);
+                pigeon = new PigeonIMU(Config.CANID.PIGEON.val());
             }
         }
 

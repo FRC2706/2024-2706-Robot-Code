@@ -5,6 +5,7 @@
 package frc.robot;
 
 import org.json.simple.parser.ContainerFactory;
+import org.littletonrobotics.urcl.URCL;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -16,6 +17,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.lib3512.config.CTREConfigs;
+import frc.robot.Config.CANID;
 import frc.robot.robotcontainers.BeetleContainer;
 import frc.robot.robotcontainers.ClutchContainer;
 import frc.robot.robotcontainers.ContainerForTesting;
@@ -45,6 +47,9 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Record both DS control and joystick data
     DriverStation.startDataLog(DataLogManager.getLog());
+
+    // Start the URCL (Unofficial REV-Compatible Logger) by 6328. Logs all messages from REV devices.
+    URCL.start(CANID.mapCanIdsToNames());
 
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.

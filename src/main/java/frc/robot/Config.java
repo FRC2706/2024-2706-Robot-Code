@@ -4,8 +4,9 @@ import java.io.BufferedReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -50,30 +51,46 @@ public final class Config {
    */
   private static int robotId = -1;
 
-  public static class CANID {
-    public static int PIGEON = robotSpecific(16, -1, 27, 30);
-    public static final int CANDLE = robotSpecific(25,-1,15,15);
-    public static final int CLIMBER = robotSpecific(18, 4, 5 ,-1);
+  public enum CANID {
+    PIGEON(robotSpecific(16, -1, 27, 30)),
+    CANDLE(robotSpecific(25, -1, 15, 15)),
+    CLIMBER(robotSpecific(18, 4, 5 ,-1)),
 
     //swerve CAN IDs
-    public static final int SWERVE_FL_DRIVE = 4; 
-    public static final int SWERVE_FL_STEERING = 5; 
-    public static final int SWERVE_FR_DRIVE = 6; 
-    public static final int SWERVE_FR_STEERING = 7; 
-    public static final int SWERVE_RL_DRIVE = 8; 
-    public static final int SWERVE_RL_STEERING = 9; 
-    public static final int SWERVE_RR_DRIVE = 10; 
-    public static final int SWERVE_RR_STEERING = 11; 
-    public static final int SWERVE_FL_CANCODER = 12; 
-    public static final int SWERVE_FR_CANCODER = 13; 
-    public static final int SWERVE_RL_CANCODER = 14;
-    public static final int SWERVE_RR_CANCODER = 15;
+    SWERVE_FL_DRIVE(4),
+    SWERVE_FL_STEERING(5),
+    SWERVE_FR_DRIVE(6),
+    SWERVE_FR_STEERING(7),
+    SWERVE_RL_DRIVE(8),
+    SWERVE_RL_STEERING(9),
+    SWERVE_RR_DRIVE(10),
+    SWERVE_RR_STEERING(11),
+    SWERVE_FL_CANCODER(12),
+    SWERVE_FR_CANCODER(13),
+    SWERVE_RL_CANCODER(14),
+    SWERVE_RR_CANCODER(15),
     
     //mechanism CAN IDs
-    public static final int ARM = 19; 
-    public static final int INTAKE = 21; 
-    public static final int SHOOTER = 22;
-    
+    ARM(19), 
+    INTAKE(21), 
+    SHOOTER(22);
+
+    private final int id;
+    CANID(int id) {
+      this.id = id;
+    }
+
+    public int val() {
+      return id;
+    }
+
+    public static Map<Integer, String> mapCanIdsToNames() {
+      HashMap<Integer, String> map = new HashMap<>();
+      for (CANID canid : CANID.values()) {
+        map.put(canid.val(), canid.name());
+      }
+      return map;
+    }
   }
 
   public static final int CANTIMEOUT_MS = 100;
@@ -229,13 +246,13 @@ public final class Config {
   }
 
   public static final class Climber_CANID {
-     public static int CLIMBER = CANID.CLIMBER;
+     public static int CLIMBER = CANID.CLIMBER.val();
   }
 
   public static final class Swerve {
     public static final double stickDeadband = 0.1;
 
-    public static final int pigeonID = CANID.PIGEON;
+    public static final int pigeonID = CANID.PIGEON.val();
     public static final boolean invertGyro = false; // Always ensure Gyro is CCW+ CW-
 
     /* Drivetrain Constants Changed */
@@ -328,9 +345,9 @@ public final class Config {
     /* Module Specific Constants */
     /* Front Left Module - Module 0 Changed*/
     public static final class Mod0 {
-      public static final int driveMotorID = CANID.SWERVE_FL_DRIVE;
-      public static final int angleMotorID = CANID.SWERVE_FL_STEERING;
-      public static final int canCoderID = CANID.SWERVE_FL_CANCODER;
+      public static final int driveMotorID = CANID.SWERVE_FL_DRIVE.val();
+      public static final int angleMotorID = CANID.SWERVE_FL_STEERING.val();
+      public static final int canCoderID = CANID.SWERVE_FL_CANCODER.val();
       public static final Rotation2d angleOffset = Rotation2d.fromDegrees(270);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, angleOffset);
@@ -338,9 +355,9 @@ public final class Config {
 
     /* Front Right Module - Module 1 Changed*/
     public static final class Mod1 {
-      public static final int driveMotorID = CANID.SWERVE_FR_DRIVE;
-      public static final int angleMotorID = CANID.SWERVE_FR_STEERING;
-      public static final int canCoderID = CANID.SWERVE_FR_CANCODER;
+      public static final int driveMotorID = CANID.SWERVE_FR_DRIVE.val();
+      public static final int angleMotorID = CANID.SWERVE_FR_STEERING.val();
+      public static final int canCoderID = CANID.SWERVE_FR_CANCODER.val();
       public static final Rotation2d angleOffset = Rotation2d.fromDegrees(157.5);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, angleOffset);
@@ -348,9 +365,9 @@ public final class Config {
 
     /* Back Left Module - Module 2 Changed*/
     public static final class Mod2 {
-      public static final int driveMotorID = CANID.SWERVE_RL_DRIVE;
-      public static final int angleMotorID = CANID.SWERVE_RL_STEERING;
-      public static final int canCoderID = CANID.SWERVE_RL_CANCODER;
+      public static final int driveMotorID = CANID.SWERVE_RL_DRIVE.val();
+      public static final int angleMotorID = CANID.SWERVE_RL_STEERING.val();
+      public static final int canCoderID = CANID.SWERVE_RL_CANCODER.val();
       public static final Rotation2d angleOffset = Rotation2d.fromDegrees(192);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, angleOffset);
@@ -358,9 +375,9 @@ public final class Config {
 
     /* Back Right Module - Module 3 Changed*/
     public static final class Mod3 {
-      public static final int driveMotorID = CANID.SWERVE_RR_DRIVE;
-      public static final int angleMotorID = CANID.SWERVE_RR_STEERING;
-      public static final int canCoderID = CANID.SWERVE_RR_CANCODER;
+      public static final int driveMotorID = CANID.SWERVE_RR_DRIVE.val();
+      public static final int angleMotorID = CANID.SWERVE_RR_STEERING.val();
+      public static final int canCoderID = CANID.SWERVE_RR_CANCODER.val();
       public static final Rotation2d angleOffset = Rotation2d.fromDegrees(6);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, angleOffset);
@@ -386,11 +403,11 @@ public final class Config {
         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
   }
   public static final class BlingConstants {
-    public static int CANDLE = CANID.CANDLE;
+    public static int CANDLE = CANID.CANDLE.val();
   }
 
   public static final class Intake {
-    public static final int INTAKE = CANID.INTAKE;
+    public static final int INTAKE = CANID.INTAKE.val();
     public static final byte frontSensor = 0;//its the same but lighter, so dtw 
     public static final byte centerSensor = 2;//its the same but lighter, so dtw 
     public static final byte backSensor = 1;//its the same but lighter, so dtw 
@@ -398,7 +415,7 @@ public final class Config {
 
 
   public class ArmConfig {
-    public static final int ARM_SPARK_CAN_ID = CANID.ARM;
+    public static final int ARM_SPARK_CAN_ID = CANID.ARM.val();
     public static final boolean SET_INVERTED = true;
     public static final boolean setInvered = true;
     public static final boolean INVERT_ENCODER = false;
@@ -517,7 +534,7 @@ public static enum ArmSetPoints {
 
   public static final boolean tuningMode = true;
   public static final class ShooterConstants{
-    public static final byte MOTOR_ID = CANID.SHOOTER;
+    public static final byte MOTOR_ID = (byte) CANID.SHOOTER.val();
     public static final double kP = 0.0002,
                                kI = 0.0,
                                kD = 0.0,
