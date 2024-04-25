@@ -9,14 +9,15 @@ package frc.robot.robotcontainers;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.lib.lib2706.SelectByAllianceCommand;
 import frc.lib.lib2706.TunableNumber;
 import frc.lib.lib2706.XBoxControllerUtil;
 import frc.robot.Config;
@@ -34,11 +35,11 @@ import frc.robot.commands.RotateAngleToVisionSupplier;
 import frc.robot.commands.RotateToAngle;
 import frc.robot.commands.RumbleJoystick;
 import frc.robot.commands.SetArm;
-import frc.robot.commands.Shooter_PID_Tuner;
+import frc.robot.commands.SubwooferShot;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.auto.AutoRoutines;
 import frc.robot.commands.auto.AutoSelector;
-import frc.robot.subsystems.IntakeStatesMachine.IntakeModes;
+import frc.robot.subsystems.IntakeStateMachine.IntakeModes;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.ShooterStateMachine.ShooterModes;
@@ -68,6 +69,9 @@ public class NewRobotContainer extends RobotContainer {
   private AutoRoutines m_autoRoutines;
   private AutoSelector m_autoSelector;
 
+  /* Default Command */
+  private Command m_swerveDefaultCommand;
+
   private TunableNumber shooterTargetRPM = new TunableNumber("Shooter/Target RPM", 0);
   private TunableNumber shooterDesiredVoltage = new TunableNumber("Shooter/desired Voltage", 0);
   private TunableNumber armAngleDeg = new TunableNumber("Arm/ArmTuning/setAngleDeg", 5.0);
@@ -76,7 +80,8 @@ public class NewRobotContainer extends RobotContainer {
    */
   public NewRobotContainer() {
     /*  Setup default commands */
-    s_Swerve.setDefaultCommand(new TeleopSwerve(driver));
+    m_swerveDefaultCommand = new TeleopSwerve(driver);
+    s_Swerve.setDefaultCommand(m_swerveDefaultCommand);
     if (!Config.disableStateBasedProgramming) {
       intake.setDefaultCommand(intake.defaultIntakeCommand());
       shooter.setDefaultCommand(shooter.defaultShooterCommand(()-> intake.isNoteIn()));
@@ -97,7 +102,8 @@ public class NewRobotContainer extends RobotContainer {
    */
   private void configureButtonBindings() { 
     // Set bling to purple when note is in
-    new Trigger(() -> intake.isBackSensorActive()).onTrue(new BlingCommand(BlingColour.PURPLESTROBE))
+
+    new Trigger(() -> intake.isBackSensorActive()).onTrue(CombinedCommands.strobeToSolidBlingCommand())
                                                   .onFalse(new BlingCommand(BlingColour.DISABLED));
 
     new Trigger(() -> intake.isBackSensorLongActive() && DriverStation.isTeleopEnabled()).onTrue(Commands.parallel(
@@ -117,13 +123,15 @@ public class NewRobotContainer extends RobotContainer {
     driver.rightBumper().onTrue(Commands.runOnce(() -> TeleopSwerve.setFieldRelative(false)))
                        .onFalse(Commands.runOnce(() -> TeleopSwerve.setFieldRelative(true)));
 
+    driver.start().onTrue(Commands.runOnce(() -> SwerveSubsystem.getInstance().synchSwerve()));
+
     // Commands that take control of the rotation stick
     driver.y().whileTrue(new RotateToAngle(driver, Rotation2d.fromDegrees(0)));
     driver.x().whileTrue(new RotateToAngle(driver, Rotation2d.fromDegrees(90)));
     driver.a().whileTrue(new RotateToAngle(driver, Rotation2d.fromDegrees(180)));
-    driver.b().whileTrue(new RotateToAngle(driver, Rotation2d.fromDegrees(270)));
-    // driver.start().whileTrue(new RotateAngleToVisionSupplier(driver, "photonvision/" + PhotonConfig.apriltagCameraName));    
-    driver.start().onTrue(Commands.runOnce(() -> SwerveSubsystem.getInstance().synchSwerve()));
+    driver.b().whileTrue(new RotateToAngle(driver, Rotation2d.fromDegrees(270)));   
+    driver.rightTrigger().whileTrue(new RotateAngleToVisionSupplier(driver, "photonvision/" + PhotonConfig.frontCameraName));
+    
     // Vision scoring commands with no intake, shooter, arm
     // driver.leftTrigger().whileTrue(new SelectByAllianceCommand( // Implement command group that also controls the arm, intake, shooter
     //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.AMP_BLUE, driver), 
@@ -134,6 +142,10 @@ public class NewRobotContainer extends RobotContainer {
     //   PhotonSubsystem.getInstance().getAprilTagCommand(PhotonPositions.LEFT_SPEAKER_RED, driver)));
 
     driver.leftTrigger().whileTrue(new RotateAngleToVisionSupplier(driver,PhotonConfig.apriltagCameraName));
+
+    // driver.leftTrigger().whileTrue(CombinedCommands.podiumSourceSideSpeakerVisionShot(driver, PhotonPositions.PODIUM_SOURCESIDE_BLUE, PhotonPositions.PODIUM_SOURCESIDE_RED))
+    //         .onTrue(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.SLOW)))
+    //         .onFalse(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.MAX)));
 
     // Complete vision scoring commands with all subsystems
     // if (Config.disableStateBasedProgramming) {
@@ -186,7 +198,15 @@ public class NewRobotContainer extends RobotContainer {
       //NOTE: right Trigger has been assigned to climber
       operator.rightTrigger(0.3).whileTrue(CombinedCommands.simpleShootNoteAmp());
       // Shoot note with leftBumper
-      operator.rightBumper().whileTrue(CombinedCommands.simpleShootNoteSpeaker(1));
+      // operator.rightBumper().whileTrue(CombinedCommands.simpleShootNoteSpeaker(1))
+      //                       .onTrue(new SetArm(()->ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg));
+
+      operator.rightBumper().onTrue(new SubwooferShot(
+        operator.rightBumper(), 
+        ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg, 
+        2820, 
+        2700));
+
 
     // State based shooter and intake
     } else {
@@ -214,6 +234,25 @@ public class NewRobotContainer extends RobotContainer {
     /**
      * Testing button bindings
      */
+    // SwerveModuleState[] moduleStatesForwards = {
+    //   new SwerveModuleState(0, Rotation2d.fromDegrees(0)),
+    //   new SwerveModuleState(0, Rotation2d.fromDegrees(0)),
+    //   new SwerveModuleState(0, Rotation2d.fromDegrees(0)),
+    //   new SwerveModuleState(0, Rotation2d.fromDegrees(0)),
+    // };
+    // testJoystick.a().whileTrue(Commands.run(
+    //   () -> SwerveSubsystem.getInstance().setModuleStates(moduleStatesForwards, true, true)
+    // ));
+
+    // SwerveModuleState[] moduleStatesSideways = {
+    //   new SwerveModuleState(0, Rotation2d.fromDegrees(90)),
+    //   new SwerveModuleState(0, Rotation2d.fromDegrees(90)),
+    //   new SwerveModuleState(0, Rotation2d.fromDegrees(90)),
+    //   new SwerveModuleState(0, Rotation2d.fromDegrees(90)),
+    // };
+    // testJoystick.a().whileTrue(Commands.run(
+    //   () -> SwerveSubsystem.getInstance().setModuleStates(moduleStatesSideways, true, true)
+    // ));
     // Let testJoystick control swerve. Note disables driver joystick swerve. Never commit this line.
     // s_Swerve.setDefaultCommand(new TeleopSwerve(testJoystick));
     // testJoystick.back().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d()));
@@ -233,6 +272,9 @@ public class NewRobotContainer extends RobotContainer {
     // testJoystick.rightBumper().whileTrue(CombinedCommands.simpleShootNoteSpeaker(1, () -> shooterTargetRPM.getAsDouble(), 50)); 
 
     // testJoystick.rightTrigger().whileTrue(new Shooter_PID_Tuner(()->shooterTargetRPM.getAsDouble()));
+ 
+    // testJoystick.a().onTrue(PhotonSubsystem.getInstance().getResetCommand(4));
+    // testJoystick.b().onTrue(SwerveSubsystem.getInstance().setOdometryCommand(new Pose2d(3, 3, Rotation2d.fromDegrees(0))));
   }
 
   /**

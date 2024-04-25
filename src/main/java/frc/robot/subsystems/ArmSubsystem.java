@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import static frc.lib.lib2706.ErrorCheck.configureSpark;
+import static frc.lib.lib2706.ErrorCheck.errSpark;
 
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -78,8 +79,8 @@ public class ArmSubsystem extends SubsystemBase {
     configureSpark("arm set CANTimeout", () -> m_arm.setCANTimeout(Config.CANTIMEOUT_MS));
     configureSpark("Arm set current limits", () -> m_arm.setSmartCurrentLimit(Config.ArmConfig.CURRENT_LIMIT));
     m_arm.setInverted(Config.ArmConfig.SET_INVERTED); // sets movement direction
-    configureSpark("Arm set brakes when idle", () -> (m_arm.setIdleMode(IdleMode.kBrake))); // sets brakes when there is
-                                                                                            // no motion
+    configureSpark("Arm set brakes when idle", () -> (m_arm.setIdleMode(IdleMode.kBrake))); // sets brakes when there is  no motion
+    configureSpark("Arm voltage compesentation", () -> m_arm.enableVoltageCompensation(6));                                                                                           
 
     configureSpark("Arm set soft limits forward",
         () -> (m_arm.setSoftLimit(SoftLimitDirection.kForward, (float) (Config.ArmConfig.arm_forward_limit))));
@@ -133,20 +134,31 @@ public class ArmSubsystem extends SubsystemBase {
     m_armFFTestingVolts= ArmDataTable.getDoubleTopic("FFTestingVolts").publish(PubSubOption.periodic(0.02));
     m_targetAngle = ArmDataTable.getDoubleTopic("TargetAngleDeg").publish(PubSubOption.periodic(0.02));
 
-    updatePIDSettings();
+    updatePID0Settings();
+    updatePID1Settings();
+
+    burnFlash();
     configureSpark("Arm set CANTimeout", () -> m_arm.setCANTimeout(0));
 
     ErrorTrackingSubsystem.getInstance().register(m_arm);
   }
 
-  public void updatePIDSettings() {
-    configureSpark("Arm set FF", () -> (m_pidControllerArm.setFF(m_armFFSubs.get())));
-    configureSpark("Arm set P", () -> (m_pidControllerArm.setP(m_armPSubs.get())));
-    configureSpark("Arm set I", () -> (m_pidControllerArm.setI(m_armISubs.get())));
-    configureSpark("Arm set D", () -> (m_pidControllerArm.setD(m_armDSubs.get())));
-    configureSpark("Arm set Iz", () -> (m_pidControllerArm.setIZone(m_armIzSubs.get())));
+  public void updatePID0Settings() {
+    configureSpark("Arm set FF", () -> (m_pidControllerArm.setFF(m_armFFSubs.get(), 0)));
+    configureSpark("Arm set P", () -> (m_pidControllerArm.setP(m_armPSubs.get(), 0)));
+    configureSpark("Arm set I", () -> (m_pidControllerArm.setI(m_armISubs.get(), 0)));
+    configureSpark("Arm set D", () -> (m_pidControllerArm.setD(m_armDSubs.get(), 0)));
+    configureSpark("Arm set Iz", () -> (m_pidControllerArm.setIZone(m_armIzSubs.get(), 0)));
     configureSpark("Arm set Output Range",
         () -> (m_pidControllerArm.setOutputRange(Config.ArmConfig.min_output, Config.ArmConfig.max_output)));
+  }
+
+  public void updatePID1Settings() {
+    configureSpark("Arm set far FF", () -> m_pidControllerArm.setFF(ArmConfig.arm_far_kFF, 1));
+    configureSpark("Arm set far P", () -> m_pidControllerArm.setP(ArmConfig.arm_far_kP, 1));
+    configureSpark("Arm set far I", () -> m_pidControllerArm.setI(ArmConfig.arm_far_kI, 1));
+    configureSpark("Arm set far D", () -> m_pidControllerArm.setD(ArmConfig.arm_far_kD, 1));
+    configureSpark("Arm set far Iz", () -> m_pidControllerArm.setIZone(ArmConfig.arm_far_iZone, 1));
   }
 
   @Override
@@ -160,11 +172,22 @@ public class ArmSubsystem extends SubsystemBase {
     double clampedAngle = MathUtil.clamp(angle, Math.toRadians(Config.ArmConfig.MIN_ARM_ANGLE_DEG),
         Math.toRadians(Config.ArmConfig.MAX_ARM_ANGLE_DEG));
 
+    // pidSlot 1 is tuned well for setpoints between 25 deg and 45 deg
+    double angleDeg = Math.toDegrees(angle);
+    int pidSlot = 0;
+    if (angleDeg < 25) {
+      pidSlot = 0;
+    } else if (angleDeg >= 25 && angleDeg < 55) {
+      pidSlot = 1;
+    } else if (angleDeg >= 55) {
+      pidSlot = 0;
+    }
+
     m_ProfiledPIDController.calculate(getPosition(), clampedAngle);
     double targetPos = m_ProfiledPIDController.getSetpoint().position;
 
     //m_pidControllerArm.setReference((targetPos), ControlType.kPosition, 0, calculateFF(clampedAngle));
-    m_pidControllerArm.setReference(targetPos + Math.toRadians(ArmConfig.shiftEncoderRange), ControlType.kPosition, 0, 0);
+    m_pidControllerArm.setReference(targetPos + Math.toRadians(ArmConfig.shiftEncoderRange), ControlType.kPosition, pidSlot, 0);
 
      m_targetAngle.accept(Math.toDegrees(targetPos));
   }
@@ -183,9 +206,16 @@ public class ArmSubsystem extends SubsystemBase {
     public void stopMotors() {
       m_arm.stopMotor();
     }
+
     public void burnFlash() {
-      configureSpark("arm burn flash", () -> (m_arm.burnFlash()));
+      try {
+        Thread.sleep(200);
+      } 
+      catch (Exception e) {}
+
+      errSpark("Arm burn flash", m_arm.burnFlash());      
     }
+
     private double calculateFF(double encoder1Rad) {
       //double ArmMoment = Config.ArmConfig.ARM_FORCE * (Config.ArmConfig.LENGTH_ARM_TO_COG*Math.cos(encoder1Rad));
       //return (ArmMoment) * m_armMomentToVoltage.get();

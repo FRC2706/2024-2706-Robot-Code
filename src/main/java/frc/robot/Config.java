@@ -4,12 +4,16 @@ import java.io.BufferedReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -135,21 +139,28 @@ public final class Config {
   /** ADD CONSTANTS BELOW THIS LINE */
 
 
-  public static final boolean swerveTuning = true; //tune swerve? Turn this to false for competition
+  public static final boolean swerveTuning = false; //tune swerve? Turn this to false for competition
   public static final boolean disableStateBasedProgramming = true; // True to disable state based programming and use only simple commands
 
   public static int ANALOG_SELECTOR_PORT = robotSpecific(3, -1, -1, 0);
 
   public static final class PhotonConfig{
+    public static boolean USE_3D_TAGS = true;
+    public static final List<Integer> ALLOWED_TAGS_3D = List.of(3,4,7,8);
+
     public static final double CAMERA_HEIGHT = 0.215;
     public static final Rotation2d CAMERA_PITCH = Rotation2d.fromDegrees(33);
     //x is forwards, y is sideways with +y being left, rotation probobly if + left too
     public static final Pose2d cameraOffset = new Pose2d(new Translation2d(-0.1,0), Rotation2d.fromDegrees(180));
     // public static final Pose2d cameraOffsetRed = new Pose2d(new Translation2d(-0.1, 0), Rotation2d.fromDegrees(0));
 
+    public static final Transform3d cameraTransform = new Transform3d(
+      -(0.865/2 - 0.095), 0, 0.23, new Rotation3d(0, Math.toRadians(-33), Math.toRadians(180)));
+
     //networkTableName
     public static final String apriltagCameraName = "FrontApriltagOV9281";
     public static final String networkTableName = "PhotonCamera";
+    public static final String frontCameraName = "HD_USB_CAMERA";
     //data max
     public static final int maxNumSamples = 10;
 
@@ -168,15 +179,26 @@ public final class Config {
       LEFT_SPEAKER_BLUE(7, new Translation2d(0.937,0.937), new Translation2d(0.637,0.637), Rotation2d.fromDegrees(-120)),
       MIDDLE_SPEAKER_BLUE(7, new Translation2d(1.20,0), new Translation2d(0.90,0), Rotation2d.fromDegrees(180)),
       TEST(4, new Translation2d(-2,0), new Translation2d(-1,0), Rotation2d.fromDegrees(0)),
-      LEFT_SPEAKER_RED(3, new Translation2d(-1.2,-1.2), Rotation2d.fromDegrees(180+56)),
-      RIGHT_SPEAKER_BLUE(8, new Translation2d(1.2,-1.2), Rotation2d.fromDegrees(-56)),
       AMP_RED(5, new Translation2d(0,-0.70), new Translation2d(0,-0.5), Rotation2d.fromDegrees(90)),
       AMP_BLUE(6, new Translation2d(0,-0.30), new Translation2d(0,0.05),  Rotation2d.fromDegrees(90)),
 
-      FAR_SPEAKER_RED(4, new Translation2d(-2.1,0), Rotation2d.fromDegrees(180)),
-      FAR_SPEAKER_BLUE(7, new Translation2d(2.1, 0), Rotation2d.fromDegrees(0)),
+      // COMPETITION USE
+      FAR_SPEAKER_RED(4, new Translation2d(-3.6,0), Rotation2d.fromDegrees(180)),
+      FAR_SPEAKER_BLUE(7, new Translation2d(3.6, 0), Rotation2d.fromDegrees(0)),
+
+      PODIUM_SOURCESIDE_BLUE(8, new Translation2d(3.2, -1.5), Rotation2d.fromDegrees(-33)),
+      PODIUM_SOURCESIDE_RED(3, new Translation2d(-3.2, -1.5), Rotation2d.fromDegrees(180+33)),
+
+      // NOT FULLY TESTED
       FAR_SPEAKER_RED_SIDE_TAG(3, new Translation2d(-2.5,0), new Translation2d(-2.1,0.58), Rotation2d.fromDegrees(0)),
-      FAR_SPEAKER_BLUE_SIDE_TAG(8, new Translation2d(2.4,0), new Translation2d(2.1,-0.58 ), Rotation2d.fromDegrees(0));
+      FAR_SPEAKER_BLUE_SIDE_TAG(8, new Translation2d(2.4,0), new Translation2d(2.1,-0.58 ), Rotation2d.fromDegrees(0)),
+
+      PODIUM_AMPSIDE_BLUE(7, new Translation2d(3.35, -0.65), Rotation2d.fromDegrees(-20)),
+      PODIUM_AMPSIDE_RED(4, new Translation2d(-3.35, -0.65), Rotation2d.fromDegrees(180+20)),
+
+      RIGHT_SPEAKER_BLUE(8, new Translation2d(1,-1.1), Rotation2d.fromDegrees(-55)),
+      LEFT_SPEAKER_RED(3, new Translation2d(-1,-1.1), Rotation2d.fromDegrees(180+55));
+      
 
       // 2.2 , 33 deg
       // FAR_SPEAKER_BLUE at new Translation2d(2.35,-0.65), arm angle of 35.8 and shooter speed at 3750
@@ -273,15 +295,19 @@ public final class Config {
 
     /* Swerve Profiling Values Changed */
     public static enum TeleopSpeeds {
-      SLOW(0.5, 0.5 * Math.PI),
-      MAX(3.0, 2.5 * Math.PI);
+      SLOW(0.5, 0.5 * Math.PI, 16, 12 * Math.PI),
+      MAX(3.0, 2.5 * Math.PI, 6, 8 * Math.PI);
 
       public final double translationalSpeed;
       public final double angularSpeed;
+      public final double translationAccelLimit;
+      public final double angularAccelLimit;
 
-      TeleopSpeeds(double translationalSpeed, double angularSpeed) {
+      TeleopSpeeds(double translationalSpeed, double angularSpeed, double translationAccelLimit, double angAccelLimit) {
         this.translationalSpeed = translationalSpeed;
         this.angularSpeed = angularSpeed;
+        this.translationAccelLimit = translationAccelLimit;
+        this.angularAccelLimit = angAccelLimit;
       }
     }
 
@@ -305,7 +331,7 @@ public final class Config {
       public static final int driveMotorID = CANID.SWERVE_FL_DRIVE;
       public static final int angleMotorID = CANID.SWERVE_FL_STEERING;
       public static final int canCoderID = CANID.SWERVE_FL_CANCODER;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(270.73);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(270);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, angleOffset);
     }
@@ -315,7 +341,7 @@ public final class Config {
       public static final int driveMotorID = CANID.SWERVE_FR_DRIVE;
       public static final int angleMotorID = CANID.SWERVE_FR_STEERING;
       public static final int canCoderID = CANID.SWERVE_FR_CANCODER;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(159.3);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(157.5);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, angleOffset);
     }
@@ -325,7 +351,7 @@ public final class Config {
       public static final int driveMotorID = CANID.SWERVE_RL_DRIVE;
       public static final int angleMotorID = CANID.SWERVE_RL_STEERING;
       public static final int canCoderID = CANID.SWERVE_RL_CANCODER;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(194.9);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(192);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, angleOffset);
     }
@@ -335,7 +361,7 @@ public final class Config {
       public static final int driveMotorID = CANID.SWERVE_RR_DRIVE;
       public static final int angleMotorID = CANID.SWERVE_RR_STEERING;
       public static final int canCoderID = CANID.SWERVE_RR_CANCODER;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(8.5);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(6);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, angleOffset);
     }
@@ -400,6 +426,13 @@ public final class Config {
     public static final double min_output = -1;
     public static final double max_output = 1;
 
+    //PID constants for far shots
+    public static final double arm_far_kP = 6.0;
+    public static final double arm_far_kI = 0;
+    public static final double arm_far_kD = 6.0;
+    public static final double arm_far_kFF = 0.06;
+    public static final double arm_far_iZone = Math.toRadians(1.5);
+
     //ff calculations
     public static final double gravitationalConstant = 389.0886; //inches/s/s which is equal to 9.81 m/s/s
     public static final double ARM_FORCE = 11.29 *gravitationalConstant; //11.29 lb
@@ -422,8 +455,8 @@ public final class Config {
 public static enum ArmSetPoints {
   //@todo: to be calibrated
   IDLE(60),
-  INTAKE(-2.5),
-  SPEAKER_KICKBOT_SHOT(13),
+  INTAKE(-0.1),
+  SPEAKER_KICKBOT_SHOT(15.5),
   NO_INTAKE(5.0),
   SPEAKER_VISION_SHOT(33),
   AMP(100);
@@ -488,13 +521,14 @@ public static enum ArmSetPoints {
     public static final double kP = 0.0002,
                                kI = 0.0,
                                kD = 0.0,
-                               kFF = 0.00025,
-                               kP1 = 0.001,
+                               kFF = 0.0003,
+                               kP1 = 0.00027,
                                kI1 = 0.0,
-                               kD1 = 0.0,
-                               kFF1 = 0.00025,
+                               kD1 = 0.00015,
+                               kFF1 = 0.00027,
                                kMaxOutput = 1.0,
                                kMinOutput = -1.0,
-                               maxRPM = 5700.0;
+                               maxRPM = 5700.0,
+                               subwooferRPM = 2750;
   }
 }

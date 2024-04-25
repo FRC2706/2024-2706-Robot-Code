@@ -27,9 +27,9 @@ public class TeleopSwerve extends Command {
   private boolean keepConstantHeading = false;
   private boolean getLastValue = false;
 
-  private SlewRateLimiter translationLimiter = new SlewRateLimiter(6);
-  private SlewRateLimiter strafeLimiter = new SlewRateLimiter(6);
-  private SlewRateLimiter rotationLimiter = new SlewRateLimiter(8 * Math.PI);
+  private static SlewRateLimiter translationLimiter = new SlewRateLimiter(6);
+  private static SlewRateLimiter strafeLimiter = new SlewRateLimiter(6);
+  private static SlewRateLimiter rotationLimiter = new SlewRateLimiter(8 * Math.PI);
 
   private double translationVal;
   private double strafeVal;
@@ -47,16 +47,29 @@ public class TeleopSwerve extends Command {
 
   public static void setSpeeds(TeleopSpeeds newSpeed) {
     speed = newSpeed;
+
+    // Change acceleration limit and reset
+    translationLimiter = new SlewRateLimiter(newSpeed.translationAccelLimit);
+    strafeLimiter = new SlewRateLimiter(newSpeed.translationAccelLimit);
+    rotationLimiter = new SlewRateLimiter(newSpeed.angularAccelLimit);
+    resetAccelerationLimiters();
   }
   public static void setFieldRelative(boolean newIsFieldRelative) {
     isFieldRelative = newIsFieldRelative;
   }
 
+  public static void resetAccelerationLimiters() {
+    // translationLimiter.reset(MathUtil.clamp(SwerveSubsystem.getInstance().getFieldRelativeSpeeds().vxMetersPerSecond, -speed.translationalSpeed, speed.translationalSpeed));
+    // strafeLimiter.reset(MathUtil.clamp(SwerveSubsystem.getInstance().getFieldRelativeSpeeds().vyMetersPerSecond, -speed.translationalSpeed, speed.translationalSpeed));
+    // rotationLimiter.reset(MathUtil.clamp(SwerveSubsystem.getInstance().getFieldRelativeSpeeds().omegaRadiansPerSecond, -speed.angularSpeed, speed.angularSpeed));
+    translationLimiter.reset(SwerveSubsystem.getInstance().getFieldRelativeSpeeds().vxMetersPerSecond);
+    strafeLimiter.reset(SwerveSubsystem.getInstance().getFieldRelativeSpeeds().vyMetersPerSecond);
+    rotationLimiter.reset(SwerveSubsystem.getInstance().getFieldRelativeSpeeds().omegaRadiansPerSecond);
+  }
+
   @Override
   public void initialize() {
-    translationLimiter.reset(s_Swerve.getFieldRelativeSpeeds().vxMetersPerSecond);
-    strafeLimiter.reset(s_Swerve.getFieldRelativeSpeeds().vyMetersPerSecond);
-    rotationLimiter.reset(s_Swerve.getFieldRelativeSpeeds().omegaRadiansPerSecond);
+    resetAccelerationLimiters();
   }
 
   protected double calculateTranslationVal() {
