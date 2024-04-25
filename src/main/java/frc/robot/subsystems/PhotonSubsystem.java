@@ -50,10 +50,13 @@ public class PhotonSubsystem extends SubsystemBase {
   private IntegerEntry subOverrideTagID;
   private PhotonCamera camera1;
   private Translation2d targetPos;
+  private double distance;
   private Rotation2d targetRotation;
   private LinearFilter filteryaw = LinearFilter.movingAverage(PhotonConfig.maxNumSamples);
   private LinearFilter filterX = LinearFilter.movingAverage(PhotonConfig.maxNumSamples);
   private LinearFilter filterY = LinearFilter.movingAverage(PhotonConfig.maxNumSamples);
+  private LinearFilter filterRange = LinearFilter.movingAverage(PhotonConfig.maxNumSamples);
+
   private int numSamples;
   private int id;
   private double recentTimeStamp = 0;
@@ -190,11 +193,8 @@ public class PhotonSubsystem extends SubsystemBase {
     return (biggestTarget);
   }
 
-  private Pose2d convertToField(double range, Rotation2d yaw, Pose2d odometryPose) {
+  private Pose2d convertToField(Pose2d robotToTargetRELATIVE, Rotation2d yaw, Pose2d odometryPose) {
     Rotation2d fieldOrientedTarget = yaw.rotateBy(odometryPose.getRotation());
-    Translation2d visionXY = new Translation2d(range, yaw);
-    Translation2d robotRotated = visionXY.rotateBy(PhotonConfig.cameraOffset.getRotation());
-    Translation2d robotToTargetRELATIVE = robotRotated.plus(PhotonConfig.cameraOffset.getTranslation());
     Translation2d robotToTarget = robotToTargetRELATIVE.rotateBy(odometryPose.getRotation());
     return new Pose2d(robotToTarget.plus(odometryPose.getTranslation()), fieldOrientedTarget);
   }
@@ -252,16 +252,25 @@ public class PhotonSubsystem extends SubsystemBase {
 
         range*=(1-va);
       }
+
+      //
+      Translation2d visionXY = new Translation2d(range, yaw);
+      Translation2d robotRotated = visionXY.rotateBy(PhotonConfig.cameraOffset.getRotation());
+      Translation2d robotToTargetRELATIVE = robotRotated.plus(PhotonConfig.cameraOffset.getTranslation());
+      range = robotToTargetRELATIVE.getDistance(); //get the distace fron the translation                         BAD BAD BAD
+
       //convert to field quordinates
-      Pose2d fieldToTarget = convertToField(range, yaw, odometryPose);
+      Pose2d fieldToTarget = convertToField(robotToTargetRELATIVE, yaw, odometryPose);
+      
       //update rolling averages
       targetPos = new Translation2d(filterX.calculate(fieldToTarget.getX()),filterY.calculate(fieldToTarget.getY()));
       targetRotation = Rotation2d.fromDegrees(filteryaw.calculate(fieldToTarget.getRotation().getDegrees()));
+      distance = filterRange.calculate(range);
       numSamples ++;
 
       //publish to networktables
       pubSetPoint.accept(new double[]{targetPos.getX(),targetPos.getY(),targetRotation.getRadians()});
-      pubRange.accept(range);
+      pubRange.accept(distance);
       pubYaw.accept(yaw.getDegrees());
     }
   }

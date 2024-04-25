@@ -12,6 +12,7 @@ import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Config.PhotonConfig;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class RotateAngleToVisionSupplier extends TeleopSwerve {
@@ -29,7 +30,7 @@ public class RotateAngleToVisionSupplier extends TeleopSwerve {
     super(driver);
 
     DoubleSubscriber yawSub = NetworkTableInstance.getDefault()
-        .getDoubleTopic(photonvisionCameraName + "/targetYaw")
+        .getDoubleTopic(PhotonConfig.networkTableName + "/Yaw")
         .subscribe(0, PubSubOption.periodic(0.02));
 
     BooleanSubscriber hasData = NetworkTableInstance.getDefault()
