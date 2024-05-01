@@ -1,0 +1,58 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 0.7515525931525792,
+        "y": 4.415901154077189
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.9868377177512648,
+        "y": 1.2936450517450786
+      },
+      "isLocked": false,
+      "linkedName": "SpeakerShotSourceSideClose"
+    },
+    {
+      "anchor": {
+        "x": 8.649596066964646,
+        "y": 1.5465380693794555
+      },
+      "prevControl": {
+        "x": 7.4629442149879575,
+        "y": 1.3714582879402712
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "2NoteSourceSideFarNote"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.85,
+      "rotationDegrees": 180.0,
+      "rotateFast": true
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 2.7,
+    "maxAcceleration": 3.3,
+    "maxAngularVelocity": 320.0,
+    "maxAngularAcceleration": 400.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 110.0,
+    "rotateFast": true
+  },
+  "reversed": false,
+  "folder": "2NoteSourceSideFar",
+  "previewStartingState": {
+    "rotation": -59.23728046576108,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

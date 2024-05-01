@@ -1,0 +1,52 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 8.649596066964646,
+        "y": 1.5465380693794555
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 8.649596066964646,
+        "y": 2.1465380693794556
+      },
+      "isLocked": false,
+      "linkedName": "2NoteSourceSideFarNote"
+    },
+    {
+      "anchor": {
+        "x": 8.610689448867051,
+        "y": 2.9763562844661227
+      },
+      "prevControl": {
+        "x": 8.610689448867051,
+        "y": 2.5763562844661227
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "P2-2NoteSourceSideFarEnd"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 2.7,
+    "maxAcceleration": 3.3,
+    "maxAngularVelocity": 320.0,
+    "maxAngularAcceleration": 400.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 110.0,
+    "rotateFast": true
+  },
+  "reversed": false,
+  "folder": "2NoteSourceSideFar",
+  "previewStartingState": {
+    "rotation": 117.75854060105999,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

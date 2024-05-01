@@ -13,8 +13,8 @@ import frc.robot.Robot;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.BlingCommand;
 import frc.robot.commands.BlingCommand.BlingColour;
+import frc.robot.commands.ClimberRPM;
 import frc.robot.subsystems.DiffTalonSubsystem;
-import frc.robot.commands.MakeIntakeMotorSpin;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -27,7 +27,7 @@ public class BeetleContainer extends RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public BeetleContainer() {
     // Configure the button bindings
-    configureButtonBindings();
+        configureButtonBindings();
   }
 
   /**    
@@ -42,9 +42,13 @@ public class BeetleContainer extends RobotContainer {
 
     driver.a().onTrue(new BlingCommand(BlingColour.HONEYDEW));
 
-      DiffTalonSubsystem.getInstance().setDefaultCommand(
+    DiffTalonSubsystem.getInstance().setDefaultCommand(
         new ArcadeDrive(driver, XboxController.Axis.kLeftY.value, XboxController.Axis.kRightX.value));
+  
+    // ()-> is double supplier, this makes the code repeat and continue updating every time so the speed is not a single value
+    driver.rightTrigger().whileTrue(new ClimberRPM(()->  driver.getRightTriggerAxis()));
   }
+
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -55,4 +59,5 @@ public class BeetleContainer extends RobotContainer {
   public Command getAutonomousCommand() {
     return new InstantCommand(); 
   }
+
 }

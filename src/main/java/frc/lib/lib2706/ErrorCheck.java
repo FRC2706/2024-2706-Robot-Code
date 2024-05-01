@@ -3,6 +3,7 @@ package frc.lib.lib2706;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix.ErrorCode;
+import com.revrobotics.CANSparkBase;
 import com.revrobotics.REVLibError;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -23,11 +24,13 @@ public class ErrorCheck {
         if (error == REVLibError.kOk) {
             return true;
         }
+        String msg = "[MergeError] - CANSparkMax error. MergeMessage:" + message;
+        msg += " Spark error code: " + error.toString() + " \nSee stack trace below.";
+
         DriverStation.reportError(
-            String.format(
-                "[MergeError] - CANSparkMax error. MergeMessage: %s. Spark error code: %s.",
-                error.toString()), 
-            PRINT_STACK_TRACE);
+            msg,
+            PRINT_STACK_TRACE_CONFIGURE);
+            
         return false;
     }
 
@@ -43,12 +46,13 @@ public class ErrorCheck {
             return true;
         }
 
+        String msg = "[MergeError] - CTRE device error. MergeMessage: " + message;
+        msg += " CTRE error code: " + error.toString() + " \nSee stack trace below.";
+
         DriverStation.reportError(
-            String.format(
-                "[MergeError] - CTRE device error. MergeMessage: %s. CTRE error code: %s.",
-                message,
-                error.toString()), 
+            msg,
             PRINT_STACK_TRACE);
+            
         return false;
     }
 
@@ -68,10 +72,11 @@ public class ErrorCheck {
             }
         }
 
-        DriverStation.reportError(String.format(
-            "[MergeError] - CANSparkMax failed to configure setting. MergeMessage: %s. Spark error code: %s \nSee stack trace below.", 
-            message,
-            err.toString()), 
+        String msg = "[MergeError] - CANSparkMax failed to configure setting. MergeMessage:" + message;
+        msg += " Spark error code: " + err.toString() + " \nSee stack trace below.";
+
+        DriverStation.reportError(
+            msg,
             PRINT_STACK_TRACE_CONFIGURE);
             
         return false;
@@ -81,9 +86,40 @@ public class ErrorCheck {
         if (error == REVLibError.kOk) {
             return true;
         }
-    DriverStation.reportError("REV DEVICE Error" + error.toString(), true);
-    return false;
+        DriverStation.reportError("REV DEVICE Error" + error.toString(), true);
+        return false;
     }
 
+    /**
+     * Run burn flash on all the given sparkmaxs.
+     * 
+     * @param sparkmaxNames A string to identify the sparkmaxs to run burnFlash on.
+     * @param sparkmaxs The sparkmaxs to run burn flash on.
+     * @return true for success, false for failure.
+     */
+    public static boolean sparkBurnFlash(String sparkmaxNames, CANSparkBase... sparkmaxs) {
+        try {
+            Thread.sleep(200);
+        } catch (Exception e) {}
+
+        boolean allOk = true;
+        for (CANSparkBase sparkmax : sparkmaxs) {
+            // Burn flash and record error
+            REVLibError error = sparkmax.burnFlash();
+
+            if (error != REVLibError.kOk) {
+                allOk = false;
+                
+                String msg = "[MergeError] - CANSparkMax failed to burn flash on sparkmax(s): " + sparkmaxNames;
+                msg += " Spark error code: " + error.toString() + " \nSee stack trace below.";
+
+                DriverStation.reportError(
+                    msg,
+                    PRINT_STACK_TRACE_CONFIGURE);
+            }
+        }
+
+        return allOk;
+    }
 
 }

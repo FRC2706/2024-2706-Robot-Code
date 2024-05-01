@@ -11,6 +11,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -20,7 +21,6 @@ import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
-import frc.lib.lib2706.UpdateSimpleFeedforward;
 import frc.lib.lib3512.config.SwerveModuleConstants;
 import frc.lib.lib3512.util.CANCoderUtil;
 import frc.lib.lib3512.util.CANCoderUtil.CCUsage;
@@ -61,7 +61,6 @@ public class SwerveModule {
   private SimpleMotorFeedforward feedforward =
       new SimpleMotorFeedforward(
         Config.Swerve.driveKS, Config.Swerve.driveKV, Config.Swerve.driveKA);
-  private UpdateSimpleFeedforward updateFeedforward;
 
   public SwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants, String ModuleName) {
     this.moduleNumber = moduleNumber;
@@ -72,7 +71,6 @@ public class SwerveModule {
     String tableName = "SwerveChassis/SwerveModule" + ModuleName;
     swerveModuleTable = NetworkTableInstance.getDefault().getTable(tableName);
     swerveTable = NetworkTableInstance.getDefault().getTable("SwerveChassis");
-    updateFeedforward = new UpdateSimpleFeedforward((ff) -> feedforward = ff, swerveModuleTable, Config.Swerve.driveKS, Config.Swerve.driveKV, Config.Swerve.driveKA);
   
     /* Angle Encoder Config */
     angleEncoder = new CANCoder(moduleConstants.cancoderID);
@@ -105,6 +103,10 @@ public class SwerveModule {
 
     resetToAbsolute();
     burnFlash();
+
+    ErrorTrackingSubsystem.getInstance().register(angleMotor);
+    ErrorTrackingSubsystem.getInstance().register(driveMotor);
+
   }
 
   public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
@@ -144,11 +146,12 @@ public class SwerveModule {
 
   private void configAngleMotor() {
     configureSpark("Angle restore factory defaults", () -> angleMotor.restoreFactoryDefaults());
-    CANSparkMaxUtil.setCANSparkMaxBusUsage(angleMotor, Usage.kPositionOnly);
+    CANSparkMaxUtil.setCANSparkMaxBusUsage(angleMotor, Usage.kAll);
     configureSpark("Angle smart current limit", () -> angleMotor.setSmartCurrentLimit(Config.Swerve.angleContinuousCurrentLimit));
     angleMotor.setInverted(Config.Swerve.angleInvert);
     configureSpark("Angle idle mode", () -> angleMotor.setIdleMode(Config.Swerve.angleNeutralMode));
     configureSpark("Angle position conversion factor", () -> integratedAngleEncoder.setPositionConversionFactor(Config.Swerve.angleConversionFactor));
+    configureSpark("Angle velocity conversion factor", () -> integratedAngleEncoder.setVelocityConversionFactor(Config.Swerve.angleVelocityConversionFactor));
     configureSpark("Angle set P", () -> angleController.setP(Config.Swerve.angleKP));
     configureSpark("Angle set I", () -> angleController.setI(Config.Swerve.angleKI));
     configureSpark("Angle set D", () -> angleController.setD(Config.Swerve.angleKD));
@@ -167,10 +170,10 @@ public class SwerveModule {
     configureSpark("Drive idle mode", () -> driveMotor.setIdleMode(Config.Swerve.driveNeutralMode));
     configureSpark("Drive velocity conversion factor", () -> driveEncoder.setVelocityConversionFactor(Config.Swerve.driveConversionVelocityFactor));
     configureSpark("Drive position conversion factor", () -> driveEncoder.setPositionConversionFactor(Config.Swerve.driveConversionPositionFactor));
-    configureSpark("Drive set P", () -> driveController.setP(Config.Swerve.angleKP));
-    configureSpark("Drive set I", () -> driveController.setI(Config.Swerve.angleKI));
-    configureSpark("Drive set D", () -> driveController.setD(Config.Swerve.angleKD));
-    configureSpark("Drive set FF", () -> driveController.setFF(Config.Swerve.angleKFF));
+    configureSpark("Drive set P", () -> driveController.setP(Config.Swerve.driveKP));
+    configureSpark("Drive set I", () -> driveController.setI(Config.Swerve.driveKI));
+    configureSpark("Drive set D", () -> driveController.setD(Config.Swerve.driveKD));
+    configureSpark("Drive set FF", () -> driveController.setFF(Config.Swerve.driveKFF));
     configureSpark("Drive set pid wrap min", () -> driveController.setPositionPIDWrappingMinInput(0));
     configureSpark("Drive set pid wrap max", () -> driveController.setPositionPIDWrappingMaxInput(2 * Math.PI));
     configureSpark("Drive set pid wrap", () -> driveController.setPositionPIDWrappingEnabled(true));
@@ -198,19 +201,20 @@ public class SwerveModule {
    * @param isOpenLoop Op
    */
   private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop) {
+    double speed = desiredState.speedMetersPerSecond * desiredState.angle.minus(getAngle()).getCos();
+
     if (isOpenLoop) {
       // original implementation
       // double percentOutput = desiredState.speedMetersPerSecond / Config.Swerve.maxSpeed;
-      double speed = desiredState.speedMetersPerSecond * desiredState.angle.minus(getAngle()).getCos();
       double percentOutput = speed / Config.Swerve.maxSpeed;
       driveMotor.set(percentOutput);
     } else {
       errSpark("Drive set FF", 
         driveController.setReference(
-          desiredState.speedMetersPerSecond,
+          speed,
           ControlType.kVelocity,
           0,
-          feedforward.calculate(desiredState.speedMetersPerSecond)));
+          feedforward.calculate(speed)));
     }
   }
 
@@ -258,11 +262,19 @@ public class SwerveModule {
     return new SwerveModulePosition(driveEncoder.getPosition(), getAngle());
   }
 
+  public double getSteeringVelocity() {
+    return integratedAngleEncoder.getVelocity();  
+  }
+
+  public void setFeedforward(SimpleMotorFeedforward newFeedforward) {
+    feedforward = newFeedforward;
+  }
+
   public void periodic() {
     //update network tables
     currentSpeedEntry.accept(driveEncoder.getVelocity());
     currentAngleEntry.accept(getAngle().getRadians());
-    updateFeedforward.checkForUpdates();
+    
     canCoderAngleEntry.accept(getCanCoder().getDegrees());
 
     if (Config.swerveTuning) {  
@@ -271,7 +283,11 @@ public class SwerveModule {
   }
 
   public boolean isModuleSynced(){
-    if (Math.abs(getAngle().getDegrees() - (getCanCoder().getDegrees() - angleOffset.getDegrees())) < Config.Swerve.synchTolerance) {
+    // Calculate the angle error between the NEO encoder and cancoder
+    double angleError = getAngle().getDegrees() - (getCanCoder().getDegrees() - angleOffset.getDegrees());
+
+    // Wrap the angle to (-180, 180], get the absolute value, then check if the error is less than the tolerance
+    if (Math.abs(MathUtil.inputModulus(angleError, -180, 180)) < Config.Swerve.synchTolerance) {
       return true;
     }
     else{
@@ -279,4 +295,8 @@ public class SwerveModule {
     }
   }
 
+  public void stopMotors() {
+    driveMotor.stopMotor();
+    angleMotor.stopMotor();
+  }
 }
