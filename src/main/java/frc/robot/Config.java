@@ -452,23 +452,6 @@ public final class Config {
     public static final double MOMENT_TO_VOLTAGE = 0.000005;    
   }
 
-  public class ShooterConfig
-  {
-    public static final double TARGET_PRM_TOLERANCE = 100;
-
-    //PID constants
-    public static final double shooter_kP = 6e-5;
-    public static final double shooter_kI = 0.0;
-    public static final double shooter_kD = 0.0;
-    public static final double shooter_kIz = 0.0;
-    public static final double shooter_kFF = 0;
-    public static final double min_output = -1;
-    public static final double max_output = 1;
-
-    public static final double maxRPM = 5700; 
-
-  }
-
 public static enum ArmSetPoints {
   //@todo: to be calibrated
   IDLE(60),
