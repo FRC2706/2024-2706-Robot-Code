@@ -31,6 +31,7 @@ import frc.robot.subsystems.ShooterStateMachine.States;
 
 public class ShooterSubsystem extends SubsystemBase {
     private CANSparkMax m_motor;
+    private CANSparkMax m_motor2;
     private SparkPIDController m_pidController;
     private RelativeEncoder m_encoder;
     private boolean closedLoopControl = false;
@@ -54,6 +55,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private ShooterStateMachine shooterStates = new ShooterStateMachine();
 
     private GenericEntry pubMotorTemp;
+    private GenericEntry pubMotorTemp2;
 
     private static ShooterSubsystem shooter;
     public static ShooterSubsystem getInstance() {
@@ -70,6 +72,16 @@ public class ShooterSubsystem extends SubsystemBase {
         m_motor.setCANTimeout(500);//Units in miliseconds
         m_motor.setIdleMode(IdleMode.kBrake);
         m_motor.setInverted(false);
+
+        m_motor2 = new CANSparkMax(Config.ShooterConstants.MOTOR_ID2, MotorType.kBrushless);
+        m_motor2.restoreFactoryDefaults();
+
+        m_motor2.setCANTimeout(500);//Units in miliseconds
+        m_motor2.setIdleMode(IdleMode.kBrake);
+        m_motor2.setInverted(false);
+
+        m_motor2.follow(m_motor);
+
 
         m_pidController = m_motor.getPIDController();
         m_encoder = m_motor.getEncoder();
@@ -97,7 +109,12 @@ public class ShooterSubsystem extends SubsystemBase {
         pubMotorTemp = ErrorTrackingSubsystem.getInstance().getStatusTab().add("ShooterMotorTemp", -99)
             .withPosition(0, 2).withSize(2, 1).getEntry();
 
+        pubMotorTemp2 = ErrorTrackingSubsystem.getInstance().getStatusTab().add("ShooterMotorTemp2", -99)
+            .withPosition(0, 3).withSize(2, 1).getEntry();
+
         ErrorTrackingSubsystem.getInstance().register(m_motor);
+        ErrorTrackingSubsystem.getInstance().register(m_motor2);
+
     }
 
     public double getVelocityRPM() {
@@ -118,6 +135,10 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public double getMotorTemperature() {
         return m_motor.getMotorTemperature();
+    }
+
+    public double getMotorTemperature2() {
+        return m_motor2.getMotorTemperature();
     }
 
     public void setRPM(double setPoint) {
@@ -236,5 +257,7 @@ public class ShooterSubsystem extends SubsystemBase {
         shooterReadyPub.accept(isReadyToShoot());
         statePub.accept(getCurrentState().toString());
         pubMotorTemp.setDouble(getMotorTemperature());
+        pubMotorTemp2.setDouble(getMotorTemperature2());
+
     }
 }
