@@ -76,7 +76,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         //Voltage compensation
         // m_motor.enableVoltageCompensation(10); //adjust on final robot
-        m_motor.setSmartCurrentLimit(70);  
+        m_motor.setSmartCurrentLimit(60);//Change this back to 70
         setBrake(true);
 
         m_pidController.setOutputRange(Config.ShooterConstants.kMinOutput, Config.ShooterConstants.kMaxOutput);
@@ -103,7 +103,14 @@ public class ShooterSubsystem extends SubsystemBase {
     public double getVelocityRPM() {
         return m_encoder.getVelocity();
     }
-
+/*
+    public void changeCurrentLimit(boolean isAuto){
+        if(isAuto){
+            m_motor.setSmartCurrentLimit(70);//Change this back to 70
+        }else{
+            m_motor.setSmartCurrentLimit(60);//Change this back to 70
+        }
+    }
     /**
      * Get the temperature of the motor in Celsius as reported by the sparkmax.
      * 
