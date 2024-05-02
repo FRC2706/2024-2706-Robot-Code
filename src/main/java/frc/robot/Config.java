@@ -450,7 +450,7 @@ public final class Config {
     public static final double MAX_ACCEL = Math.PI * 1.5;
 
     public static final double MOMENT_TO_VOLTAGE = 0.000005;    
- }
+}
 
 public static enum ArmSetPoints {
   //@todo: to be calibrated
