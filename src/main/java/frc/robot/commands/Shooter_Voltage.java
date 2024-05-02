@@ -33,7 +33,7 @@ public class Shooter_Voltage extends Command {
   public void execute() {
     shooter.setVoltage(setVoltage.getAsDouble());
 
-    }
+  }
   
 
   // Called once the command ends or is interrupted.
