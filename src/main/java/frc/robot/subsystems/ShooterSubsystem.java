@@ -80,8 +80,8 @@ public class ShooterSubsystem extends SubsystemBase {
         m_motor2.setIdleMode(IdleMode.kBrake);
         m_motor2.setInverted(false);
 
+        //set the second motor as a follower of the first motor
         m_motor2.follow(m_motor);
-
 
         m_pidController = m_motor.getPIDController();
         m_encoder = m_motor.getEncoder();
@@ -109,6 +109,7 @@ public class ShooterSubsystem extends SubsystemBase {
         pubMotorTemp = ErrorTrackingSubsystem.getInstance().getStatusTab().add("ShooterMotorTemp", -99)
             .withPosition(0, 2).withSize(2, 1).getEntry();
 
+        // Publish the second motor temperature on Shufferboard
         pubMotorTemp2 = ErrorTrackingSubsystem.getInstance().getStatusTab().add("ShooterMotorTemp2", -99)
             .withPosition(0, 3).withSize(2, 1).getEntry();
 
@@ -120,14 +121,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public double getVelocityRPM() {
         return m_encoder.getVelocity();
     }
-/*
-    public void changeCurrentLimit(boolean isAuto){
-        if(isAuto){
-            m_motor.setSmartCurrentLimit(70);//Change this back to 70
-        }else{
-            m_motor.setSmartCurrentLimit(60);//Change this back to 70
-        }
-    }
+
     /**
      * Get the temperature of the motor in Celsius as reported by the sparkmax.
      * 
