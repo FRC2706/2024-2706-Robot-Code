@@ -396,6 +396,14 @@ public final class Config {
     public static final byte backSensor = 1;//its the same but lighter, so dtw 
   }
 
+  public static final class ShooterRPM {
+    public static final int NORMAL_SUBWOOFERSHOT = 2820;
+    public static final int NORMAL_SUBWOOFERSHOT_TRIGGER = 2700;
+
+    public static final int DEMO_SUBWOOFERSHOT = 1820;
+    public static final int DEMO_SUBWOOFERSHOT_TRIGGER = 1700;
+
+  }
 
   public class ArmConfig {
     public static final int ARM_SPARK_CAN_ID = CANID.ARM;
