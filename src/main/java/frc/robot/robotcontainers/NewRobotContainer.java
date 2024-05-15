@@ -68,6 +68,7 @@ public class NewRobotContainer extends RobotContainer {
   private AutoRoutines m_autoRoutines;
   private AutoSelector m_autoSelector;
   private int m_analogSelectorIndex;
+  private boolean m_bDemoMode;
 
   /* Demo/Normal */
   private int m_subwooferShotRpm = 0;
@@ -103,12 +104,16 @@ public class NewRobotContainer extends RobotContainer {
       //Demo mode
       m_subwooferShotRpm = Config.ShooterRPM.DEMO_SUBWOOFERSHOT;
       m_subwooferShotRpmTrigger = Config.ShooterRPM.DEMO_SUBWOOFERSHOT_TRIGGER;
+
+      m_bDemoMode = true;
     }
     else
     {
       //Normal competition mode
       m_subwooferShotRpm = Config.ShooterRPM.NORMAL_SUBWOOFERSHOT;
       m_subwooferShotRpmTrigger = Config.ShooterRPM.NORMAL_SUBWOOFERSHOT_TRIGGER;
+
+      m_bDemoMode = false;
     }
 
     configureButtonBindings();
@@ -135,8 +140,18 @@ public class NewRobotContainer extends RobotContainer {
      */
     // Core Swerve Buttons
     driver.back().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d(0)));
-    driver.leftBumper().onTrue(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.SLOW)))
-                       .onFalse(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.MAX)));
+
+    if ( m_bDemoMode == true )
+    {
+        driver.leftBumper().onTrue(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.SLOW)))
+                       .onFalse(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.DEMO)));
+
+    }
+    else
+    {
+        driver.leftBumper().onTrue(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.SLOW)))
+                            .onFalse(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.MAX)));
+    }   
 
     driver.rightBumper().onTrue(Commands.runOnce(() -> TeleopSwerve.setFieldRelative(false)))
                        .onFalse(Commands.runOnce(() -> TeleopSwerve.setFieldRelative(true)));
