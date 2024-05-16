@@ -73,6 +73,7 @@ public final class Config {
     public static final int ARM = 19; 
     public static final int INTAKE = 21; 
     public static final int SHOOTER = 22;
+    public static final int SHOOTER2 = 23;
     
   }
 
@@ -528,6 +529,7 @@ public static enum ArmSetPoints {
   public static final boolean tuningMode = true;
   public static final class ShooterConstants{
     public static final byte MOTOR_ID = CANID.SHOOTER;
+    public static final byte MOTOR_ID2 = CANID.SHOOTER2;
     public static final double kP = 0.0002,
                                kI = 0.0,
                                kD = 0.0,
