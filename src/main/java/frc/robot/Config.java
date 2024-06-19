@@ -248,7 +248,10 @@ public final class Config {
     public static final double openLoopRamp = 0.25;
     public static final double closedLoopRamp = 0.0;
 
-    public static final double driveGearRatio = (8.14 / 1.0);
+    //to update for L2 upgrade
+    //L1: 8.14
+    //L2: 6.75
+    public static final double driveGearRatio = (6.75 / 1.0);
     public static final double angleGearRatio = (12.8 / 1.0);
 
     public static final double synchTolerance = 1;
