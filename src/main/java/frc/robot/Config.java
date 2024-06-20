@@ -301,7 +301,7 @@ public final class Config {
     public static enum TeleopSpeeds {
       SLOW(0.5, 0.5 * Math.PI, 16, 12 * Math.PI),
       MAX(3.0, 2.5 * Math.PI, 6, 8 * Math.PI),
-      DEMO(0.5, 0.5 * Math.PI, 3, 4 * Math.PI);
+      DEMO(0.2, 0.2 * Math.PI, 0.3, 0.3 * Math.PI);
 
       public final double translationalSpeed;
       public final double angularSpeed;
