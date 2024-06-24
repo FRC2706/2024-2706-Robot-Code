@@ -107,6 +107,8 @@ public class NewRobotContainer extends RobotContainer {
       m_subwooferShotRpm = Config.ShooterRPM.DEMO_SUBWOOFERSHOT;
       m_subwooferShotRpmTrigger = Config.ShooterRPM.DEMO_SUBWOOFERSHOT_TRIGGER;
 
+      TeleopSwerve.setSpeeds(TeleopSpeeds.DEMO);
+
       m_bDemoMode = true;
     }
     else

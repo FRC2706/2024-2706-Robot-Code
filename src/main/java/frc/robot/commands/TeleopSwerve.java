@@ -22,7 +22,7 @@ public class TeleopSwerve extends Command {
   private final int strafeAxis = XboxController.Axis.kLeftX.value;
   private final int rotationAxis = XboxController.Axis.kRightX.value;
 
-  private static TeleopSpeeds speed = TeleopSpeeds.DEMO;
+  private static TeleopSpeeds speed = TeleopSpeeds.MAX;
   private static boolean isFieldRelative = true;
   private boolean keepConstantHeading = false;
   private boolean getLastValue = false;
