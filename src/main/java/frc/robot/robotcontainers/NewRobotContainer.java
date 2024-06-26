@@ -34,6 +34,7 @@ import frc.robot.commands.RumbleJoystick;
 import frc.robot.commands.SetArm;
 import frc.robot.commands.Shooter_PID_Tuner;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.commands.ToggleDemo;
 import frc.robot.commands.auto.AutoRoutines;
 import frc.robot.commands.auto.AutoSelector;
 import frc.robot.subsystems.IntakeStatesMachine.IntakeModes;
@@ -125,7 +126,8 @@ public class NewRobotContainer extends RobotContainer {
     // Commands that take control of the rotation stick
     driver.y().whileTrue(new RotateToAngle(driver, Rotation2d.fromDegrees(0)));
     driver.x().whileTrue(new RotateToAngle(driver, Rotation2d.fromDegrees(90)));
-    driver.a().whileTrue(new RotateToAngle(driver, Rotation2d.fromDegrees(180)));
+    //driver.a().whileTrue(new RotateToAngle(driver, Rotation2d.fromDegrees(180)));
+    driver.a().onTrue(new ToggleDemo());
     driver.b().whileTrue(new RotateToAngle(driver, Rotation2d.fromDegrees(270)));   
     driver.rightTrigger().whileTrue(new RotateAngleToVisionSupplier(driver, "photonvision/" + PhotonConfig.frontCameraName));
     
