@@ -17,6 +17,9 @@ import frc.robot.subsystems.SwerveSubsystem;
 public class RotateAngleToVisionSupplier extends TeleopSwerve {
   DoubleSupplier m_supplier;
   double m_setpoint;
+
+  DoubleSubscriber yawSub;
+  BooleanSubscriber hasData;
   
   /** Creates a new RotateAngleToVisionSupplier. */
   public RotateAngleToVisionSupplier(CommandXboxController driver, DoubleSupplier supplier) {
@@ -28,11 +31,11 @@ public class RotateAngleToVisionSupplier extends TeleopSwerve {
   public RotateAngleToVisionSupplier(CommandXboxController driver, String photonvisionCameraName){
     super(driver);
 
-    DoubleSubscriber yawSub = NetworkTableInstance.getDefault()
+     yawSub = NetworkTableInstance.getDefault()
         .getDoubleTopic(photonvisionCameraName + "/targetYaw")
         .subscribe(0, PubSubOption.periodic(0.02));
 
-    BooleanSubscriber hasData = NetworkTableInstance.getDefault()
+     hasData = NetworkTableInstance.getDefault()
         .getBooleanTopic(photonvisionCameraName + "/hasTarget")
         .subscribe(false, PubSubOption.periodic(0.02));
 
@@ -56,6 +59,15 @@ public class RotateAngleToVisionSupplier extends TeleopSwerve {
 
   @Override
   protected double calculateRotationVal() {
+
+    //check if vision has data before we use it ...
+    m_supplier = () -> {
+      if (!hasData.get(false)) {
+        return 0;
+      }
+      return Math.toRadians(-1 * yawSub.get(0));
+    };
+
     m_setpoint = SwerveSubsystem.getInstance().getHeading().getRadians() + m_supplier.getAsDouble();
 
     return SwerveSubsystem.getInstance().calculateRotation(new Rotation2d(m_setpoint));
