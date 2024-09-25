@@ -467,7 +467,7 @@ public final class Config {
 
 public static enum ArmSetPoints {
   //@todo: to be calibrated
-  IDLE(61),
+  IDLE(35), //61
   INTAKE(-1.1),
   SPEAKER_KICKBOT_SHOT(13.9),
   NO_INTAKE(2.2),

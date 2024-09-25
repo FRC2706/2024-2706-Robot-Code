@@ -234,8 +234,9 @@ public class NewRobotContainer extends RobotContainer {
       .onFalse(new MakeIntakeMotorSpin(9.0,0).withTimeout(1).until(() -> intake.isBackSensorActive()));
 
 
-      //NOTE: right Trigger has been assigned to climber
-      operator.rightTrigger(0.3).whileTrue(CombinedCommands.simpleShootNoteAmp());
+      //right trigger for shooter with speaker RPM
+      operator.rightTrigger(0.3).whileTrue(CombinedCommands.simpleShootNoteSpeaker(0.4));
+      //operator.rightTrigger(0.3).whileTrue(CombinedCommands.simpleShootNoteAmp());
       // Shoot note with leftBumper
       // operator.rightBumper().whileTrue(CombinedCommands.simpleShootNoteSpeaker(1))
       //                       .onTrue(new SetArm(()->ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg));
@@ -249,24 +250,24 @@ public class NewRobotContainer extends RobotContainer {
 
     // State based shooter and intake
     } else {
-      intake.setStateMachineOn();
-      shooter.setStateMachineOn();
+      // intake.setStateMachineOn();
+      // shooter.setStateMachineOn();
 
-      // Intake note with leftTrigger
-      operator.leftTrigger(0.3) //Intake the Note
-          .whileTrue(Commands.runOnce(()-> intake.setMode(IntakeModes.INTAKE)))
-          .whileFalse(Commands.runOnce(()->intake.setMode(IntakeModes.STOP_INTAKE)));   
+      // // Intake note with leftTrigger
+      // operator.leftTrigger(0.3) //Intake the Note
+      //     .whileTrue(Commands.runOnce(()-> intake.setMode(IntakeModes.INTAKE)))
+      //     .whileFalse(Commands.runOnce(()->intake.setMode(IntakeModes.STOP_INTAKE)));   
 
-      // Toggle to spin up or spin down the shooter with rightBumper
-      operator.rightBumper().onTrue(shooter.toggleSpinUpCommand(ShooterModes.SHOOT_SPEAKER));  
+      // // Toggle to spin up or spin down the shooter with rightBumper
+      // operator.rightBumper().onTrue(shooter.toggleSpinUpCommand(ShooterModes.SHOOT_SPEAKER));  
           
-      // Shoot note with leftBumper
-      // operator.leftBumper().onTrue(CombinedCommands.statefulShootNote());
+      // // Shoot note with leftBumper
+      // // operator.leftBumper().onTrue(CombinedCommands.statefulShootNote());
 
-      // Eject the note from the front with leftPOV
-      XBoxControllerUtil.leftPOV(operator).debounce(0.1)
-        .whileTrue(Commands.runOnce(()-> intake.setMode(IntakeModes.RELEASE)))
-        .whileFalse(Commands.runOnce(()->intake.setMode(IntakeModes.STOP_INTAKE))); 
+      // // Eject the note from the front with leftPOV
+      // XBoxControllerUtil.leftPOV(operator).debounce(0.1)
+      //   .whileTrue(Commands.runOnce(()-> intake.setMode(IntakeModes.RELEASE)))
+      //   .whileFalse(Commands.runOnce(()->intake.setMode(IntakeModes.STOP_INTAKE))); 
     }
 
 
