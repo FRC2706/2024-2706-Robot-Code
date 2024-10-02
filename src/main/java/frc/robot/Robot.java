@@ -133,11 +133,15 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-    SwerveSubsystem.getInstance().setVoltageCompensation(true);
-    ArmSubsystem.getInstance().resetProfiledPIDController();
-    //ShooterSubsystem.getInstance().changeCurrentLimit(true);
-    PhotonSubsystem.getInstance().resetTagAtBootup();
-    
+    //for robots which only have these subsystems
+    if (Config.getRobotId() == 0)
+    {
+      SwerveSubsystem.getInstance().setVoltageCompensation(true);
+      ArmSubsystem.getInstance().resetProfiledPIDController();
+      //ShooterSubsystem.getInstance().changeCurrentLimit(true);
+      PhotonSubsystem.getInstance().resetTagAtBootup();
+    }
+
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
