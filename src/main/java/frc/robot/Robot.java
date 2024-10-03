@@ -167,9 +167,12 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
 
+    if( Config.getRobotId()==0)
+    {
     SwerveSubsystem.getInstance().setVoltageCompensation(false);
     ArmSubsystem.getInstance().resetProfiledPIDController();
     PhotonSubsystem.getInstance().resetTagAtBootup();
+    }
   }
 
   /** This function is called periodically during operator control. */
