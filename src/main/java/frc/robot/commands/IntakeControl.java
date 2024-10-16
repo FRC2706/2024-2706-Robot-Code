@@ -15,12 +15,12 @@ public class IntakeControl extends Command {
 
   /**
    * @brief
-   * @param direction forward with true 
+   * @param feedNote true to feed it, false to back it 
    * @param bUseSensor true with sensor
    * @return
    */
-  public IntakeControl(boolean direction) {
-    this.direction = direction;
+  public IntakeControl(boolean feedNote) {
+    this.direction = feedNote;
     intakeSubsystem = IntakeSubsystem.getInstance();
 
     // Use addRequirements() here to declare subsystem dependencies.

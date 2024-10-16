@@ -26,6 +26,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.IntegerArrayPublisher;
 import edu.wpi.first.networktables.IntegerEntry;
 import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.NetworkTable;
@@ -61,6 +62,8 @@ public class PhotonSubsystem extends SubsystemBase {
   private DoublePublisher pubRange, pubYaw;
   private IntegerPublisher pubSetTagId;
   private StringPublisher pub3DTagsDebugMsg;
+  //private IntegerArrayPublisher pub3DTagIdsArray;
+  private StringPublisher pub3DTargetTags;
   private IntegerEntry subOverrideTagID;
   private PhotonCamera camera1;
   private Translation2d targetPos;
@@ -71,6 +74,7 @@ public class PhotonSubsystem extends SubsystemBase {
   private int numSamples;
   private int id;
   private double recentTimeStamp = 0;
+  private ArrayList<Boolean> aprilTagsId = new ArrayList<>();
 
   private IntegerEntry intakeCameraInputSaveImgEntry;
 
@@ -97,10 +101,17 @@ public class PhotonSubsystem extends SubsystemBase {
     pubYaw = photonTable.getDoubleTopic("Yaw").publish(PubSubOption.periodic(0.02));
     pubSetTagId = photonTable.getIntegerTopic("SetTagId").publish();
     pub3DTagsDebugMsg = photonTable.getStringTopic("3DTagsDebugMsg").publish(PubSubOption.periodic(0.02));
+    pub3DTargetTags = photonTable.getStringTopic("3DTagsTargetID's").publish(PubSubOption.periodic(0.02));
+    //pub3DTagIdsArray = photonTable.getIntegerArrayTopic("3DTagsTargetID's").publish(PubSubOption.periodic(0.02));
     subOverrideTagID = photonTable.getIntegerTopic("OVERIDEID").getEntry(-1);
     subOverrideTagID.setDefault(-1);
     SmartDashboard.putData("command reset id",Commands.runOnce(()->reset((int)subOverrideTagID.get())));
     reset(-1);
+
+    aprilTagsId.add(0, false);
+    aprilTagsId.add(1, false);
+    aprilTagsId.add(2, false);
+    aprilTagsId.add(3, false);
 
     try {
       aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
@@ -246,7 +257,11 @@ public class PhotonSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     pubSetTagId.accept(id);
-
+    pub3DTargetTags.accept(
+        "Sees Target 3: " + aprilTagsId.get(0) + 
+        ", Sees Target 4: " + aprilTagsId.get(1) + 
+        ", Sees Target 7: " + aprilTagsId.get(2) + 
+        ", Sees Target 8: " + aprilTagsId.get(3));
     // Must be set by 2D or 3D mode
     Pose2d fieldToTarget = null;
     
@@ -266,15 +281,23 @@ public class PhotonSubsystem extends SubsystemBase {
       // Create a list of tags seen
       ArrayList<Integer> tagsInFrame = new ArrayList<>();
       for (PhotonTrackedTarget target : optEstPose.get().targetsUsed) {
-        tagsInFrame.add(target.getFiducialId());
+        tagsInFrame.add(target.getFiducialId()); //************************************** */
       }
 
+
+          //aprilTagsId
+          
       // Only procede if tag 3 and 4 or 7 and 8 are seen in the same frame
       if (! ((tagsInFrame.contains(3) && tagsInFrame.contains(4)) || (tagsInFrame.contains(7) && tagsInFrame.contains(8)))) {
         pub3DTagsDebugMsg.accept("3&4 or 7&8 not in frame. Tags in frame: " + tagsInFrame.toString());
           return;
       }
-
+      aprilTagsId.add(0, tagsInFrame.contains(3));
+      aprilTagsId.add(1, tagsInFrame.contains(4));
+      aprilTagsId.add(2, tagsInFrame.contains(7));
+      aprilTagsId.add(3, tagsInFrame.contains(8));
+          //pub3DTagIdsArray.accept(tagsInFrame.toArray());
+      
 
       Optional<Pose3d> tagPose = aprilTagFieldLayout.getTagPose(id);
       if (tagPose.isEmpty()) {
