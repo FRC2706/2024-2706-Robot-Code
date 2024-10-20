@@ -46,7 +46,7 @@ public class BeetleContainer extends RobotContainer {
         new ArcadeDrive(driver, XboxController.Axis.kLeftY.value, XboxController.Axis.kRightX.value));
   
     // ()-> is double supplier, this makes the code repeat and continue updating every time so the speed is not a single value
-    driver.rightTrigger().whileTrue(new ClimberRPM(()->  driver.getRightTriggerAxis()));
+    //driver.rightTrigger().whileTrue(new ClimberRPM(()->  driver.getRightTriggerAxis()));
   }
 
 
