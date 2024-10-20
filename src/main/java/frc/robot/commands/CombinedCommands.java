@@ -62,10 +62,10 @@ public class CombinedCommands {
         );
     }
 
-    public static Command simpleShootNoteAmp() {
+       public static Command simpleShootNoteAmp() {
         return Commands.deadline(
             Commands.sequence(
-                new IntakeControl(false).withTimeout(0.3), 
+                //new IntakeControl(false).withTimeout(0.3), 
                 new WaitCommand(0.5),
                 new IntakeControl(true).withTimeout(0.6)),
             new Shooter_Voltage(()->6)
@@ -320,7 +320,7 @@ public class CombinedCommands {
           return PhotonSubsystem.getInstance().getTargetPos().getY() - SwerveSubsystem.getInstance().getPose().getY() < 0.5;
         };
         
-        double armAngle = 41;
+        double armAngle = ArmSetPoints.CENTER_VISION_SHOT.angleDeg;
         double shooterSpeed = 4000;
         double shooterTriggerSpeed = 3960;
 

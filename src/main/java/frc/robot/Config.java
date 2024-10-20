@@ -73,6 +73,7 @@ public final class Config {
     public static final int ARM = 19; 
     public static final int INTAKE = 21; 
     public static final int SHOOTER = 22;
+    public static final int SHOOTER2 = 23;
     
   }
 
@@ -166,8 +167,8 @@ public final class Config {
 
     // these are the heights for the apriltags 3, 4, 5, 6, 7, 8
     public static final double[] APRIL_HEIGHTS = {1.32,1.32,1.22,1.22,1.32,1.32};
-    public static final double POS_TOLERANCE = 0.01; // meters
-    public static final double ANGLE_TOLERANCE = Math.toRadians(1.0);
+    public static final double POS_TOLERANCE = 0.05; // meters //TODO: Change to 0.01
+    public static final double ANGLE_TOLERANCE = Math.toRadians(4.0);//Change this to: 1.0
     public static final double WAYPOINT_POS_TOLERANCE = 0.2; // meters
     public static final double WAYPOINT_ANGLE_TOLERANCE = Math.toRadians(10.0);
     public static final double VEL_TOLERANCE = 0.1*4;
@@ -247,7 +248,10 @@ public final class Config {
     public static final double openLoopRamp = 0.25;
     public static final double closedLoopRamp = 0.0;
 
-    public static final double driveGearRatio = (8.14 / 1.0);
+    //to update for L2 upgrade
+    //L1: 8.14
+    //L2: 6.75
+    public static final double driveGearRatio = (6.75 / 1.0);
     public static final double angleGearRatio = (12.8 / 1.0);
 
     public static final double synchTolerance = 1;
@@ -296,7 +300,8 @@ public final class Config {
     /* Swerve Profiling Values Changed */
     public static enum TeleopSpeeds {
       SLOW(0.5, 0.5 * Math.PI, 16, 12 * Math.PI),
-      MAX(3.0, 2.5 * Math.PI, 6, 8 * Math.PI);
+      MAX(3.0, 2.5 * Math.PI, 6, 8 * Math.PI),
+      DEMO(0.2, 0.2 * Math.PI, 0.3, 0.3 * Math.PI);
 
       public final double translationalSpeed;
       public final double angularSpeed;
@@ -396,6 +401,14 @@ public final class Config {
     public static final byte backSensor = 1;//its the same but lighter, so dtw 
   }
 
+  public static final class ShooterRPM {
+    public static final int NORMAL_SUBWOOFERSHOT = 2820;
+    public static final int NORMAL_SUBWOOFERSHOT_TRIGGER = 2700;
+
+    public static final int DEMO_SUBWOOFERSHOT = 1820;
+    public static final int DEMO_SUBWOOFERSHOT_TRIGGER = 1700;
+
+  }
 
   public class ArmConfig {
     public static final int ARM_SPARK_CAN_ID = CANID.ARM;
@@ -454,12 +467,13 @@ public final class Config {
 
 public static enum ArmSetPoints {
   //@todo: to be calibrated
-  IDLE(60),
-  INTAKE(-0.1),
-  SPEAKER_KICKBOT_SHOT(15.5),
-  NO_INTAKE(5.0),
-  SPEAKER_VISION_SHOT(33),
-  AMP(100);
+  IDLE(35), //61
+  INTAKE(-1.1),
+  SPEAKER_KICKBOT_SHOT(13.9),
+  NO_INTAKE(2.2),
+  SPEAKER_VISION_SHOT(49.2), // 31.2
+  CENTER_VISION_SHOT(39.35),//
+  AMP(98.2); 
 
   public final double angleDeg;
 
@@ -518,6 +532,7 @@ public static enum ArmSetPoints {
   public static final boolean tuningMode = true;
   public static final class ShooterConstants{
     public static final byte MOTOR_ID = CANID.SHOOTER;
+    public static final byte MOTOR_ID2 = CANID.SHOOTER2;
     public static final double kP = 0.0002,
                                kI = 0.0,
                                kD = 0.0,
