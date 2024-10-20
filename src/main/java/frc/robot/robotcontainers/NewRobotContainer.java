@@ -67,6 +67,12 @@ public class NewRobotContainer extends RobotContainer {
   /* Auto */
   private AutoRoutines m_autoRoutines;
   private AutoSelector m_autoSelector;
+  private int m_analogSelectorIndex;
+  private boolean m_bDemoMode;
+
+  /* Demo/Normal */
+  private int m_subwooferShotRpm = 0;
+  private int m_subwooferShotRpmTrigger = 0;
 
   /* Default Command */
   private Command m_swerveDefaultCommand;
@@ -88,11 +94,33 @@ public class NewRobotContainer extends RobotContainer {
       // shooter.setDefaultCommand(new Shooter_PID_Tuner(() -> 0));
     }
 
-    configureButtonBindings();
-
      // Setup auto
     m_autoRoutines = new AutoRoutines();
     m_autoSelector = new AutoSelector();
+    m_analogSelectorIndex = m_autoSelector.getAnalogSelectorIndex();
+
+    System.out.println("Analog Selector Index: " + m_analogSelectorIndex);
+
+    if(m_analogSelectorIndex == 0)
+    {
+      //Demo mode
+      m_subwooferShotRpm = Config.ShooterRPM.DEMO_SUBWOOFERSHOT;
+      m_subwooferShotRpmTrigger = Config.ShooterRPM.DEMO_SUBWOOFERSHOT_TRIGGER;
+
+      TeleopSwerve.setSpeeds(TeleopSpeeds.DEMO);
+
+      m_bDemoMode = true;
+    }
+    else
+    {
+      //Normal competition mode
+      m_subwooferShotRpm = Config.ShooterRPM.NORMAL_SUBWOOFERSHOT;
+      m_subwooferShotRpmTrigger = Config.ShooterRPM.NORMAL_SUBWOOFERSHOT_TRIGGER;
+
+      m_bDemoMode = false;
+    }
+
+    configureButtonBindings();
   }
 
   /**
@@ -116,8 +144,18 @@ public class NewRobotContainer extends RobotContainer {
      */
     // Core Swerve Buttons
     driver.back().onTrue(SwerveSubsystem.getInstance().setHeadingCommand(new Rotation2d(0)));
-    driver.leftBumper().onTrue(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.SLOW)))
-                       .onFalse(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.MAX)));
+
+    if ( m_bDemoMode == true )
+    {
+        driver.leftBumper().onTrue(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.DEMO)))
+                       .onFalse(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.DEMO)));
+
+    }
+    else
+    {
+        driver.leftBumper().onTrue(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.SLOW)))
+                            .onFalse(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.MAX)));
+    }   
 
     driver.rightBumper().onTrue(Commands.runOnce(() -> TeleopSwerve.setFieldRelative(false)))
                        .onFalse(Commands.runOnce(() -> TeleopSwerve.setFieldRelative(true)));
@@ -196,39 +234,40 @@ public class NewRobotContainer extends RobotContainer {
       .onFalse(new MakeIntakeMotorSpin(9.0,0).withTimeout(1).until(() -> intake.isBackSensorActive()));
 
 
-      //NOTE: right Trigger has been assigned to climber
-      operator.rightTrigger(0.3).whileTrue(CombinedCommands.simpleShootNoteAmp());
+      //right trigger for shooter with speaker RPM
+      operator.rightTrigger(0.3).whileTrue(CombinedCommands.simpleShootNoteSpeaker(0.4));
+      //operator.rightTrigger(0.3).whileTrue(CombinedCommands.simpleShootNoteAmp());
       // Shoot note with leftBumper
       // operator.rightBumper().whileTrue(CombinedCommands.simpleShootNoteSpeaker(1))
       //                       .onTrue(new SetArm(()->ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg));
 
-      operator.rightBumper().onTrue(new SubwooferShot(
+        operator.rightBumper().onTrue(new SubwooferShot(
         operator.rightBumper(), 
         ArmSetPoints.SPEAKER_KICKBOT_SHOT.angleDeg, 
-        2820, 
-        2700));
+        m_subwooferShotRpm, 
+        m_subwooferShotRpmTrigger));
 
 
     // State based shooter and intake
     } else {
-      intake.setStateMachineOn();
-      shooter.setStateMachineOn();
+      // intake.setStateMachineOn();
+      // shooter.setStateMachineOn();
 
-      // Intake note with leftTrigger
-      operator.leftTrigger(0.3) //Intake the Note
-          .whileTrue(Commands.runOnce(()-> intake.setMode(IntakeModes.INTAKE)))
-          .whileFalse(Commands.runOnce(()->intake.setMode(IntakeModes.STOP_INTAKE)));   
+      // // Intake note with leftTrigger
+      // operator.leftTrigger(0.3) //Intake the Note
+      //     .whileTrue(Commands.runOnce(()-> intake.setMode(IntakeModes.INTAKE)))
+      //     .whileFalse(Commands.runOnce(()->intake.setMode(IntakeModes.STOP_INTAKE)));   
 
-      // Toggle to spin up or spin down the shooter with rightBumper
-      operator.rightBumper().onTrue(shooter.toggleSpinUpCommand(ShooterModes.SHOOT_SPEAKER));  
+      // // Toggle to spin up or spin down the shooter with rightBumper
+      // operator.rightBumper().onTrue(shooter.toggleSpinUpCommand(ShooterModes.SHOOT_SPEAKER));  
           
-      // Shoot note with leftBumper
-      // operator.leftBumper().onTrue(CombinedCommands.statefulShootNote());
+      // // Shoot note with leftBumper
+      // // operator.leftBumper().onTrue(CombinedCommands.statefulShootNote());
 
-      // Eject the note from the front with leftPOV
-      XBoxControllerUtil.leftPOV(operator).debounce(0.1)
-        .whileTrue(Commands.runOnce(()-> intake.setMode(IntakeModes.RELEASE)))
-        .whileFalse(Commands.runOnce(()->intake.setMode(IntakeModes.STOP_INTAKE))); 
+      // // Eject the note from the front with leftPOV
+      // XBoxControllerUtil.leftPOV(operator).debounce(0.1)
+      //   .whileTrue(Commands.runOnce(()-> intake.setMode(IntakeModes.RELEASE)))
+      //   .whileFalse(Commands.runOnce(()->intake.setMode(IntakeModes.STOP_INTAKE))); 
     }
 
 

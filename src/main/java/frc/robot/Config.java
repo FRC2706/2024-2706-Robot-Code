@@ -248,7 +248,10 @@ public final class Config {
     public static final double openLoopRamp = 0.25;
     public static final double closedLoopRamp = 0.0;
 
-    public static final double driveGearRatio = (8.14 / 1.0);
+    //to update for L2 upgrade
+    //L1: 8.14
+    //L2: 6.75
+    public static final double driveGearRatio = (6.75 / 1.0);
     public static final double angleGearRatio = (12.8 / 1.0);
 
     public static final double synchTolerance = 1;
@@ -297,7 +300,8 @@ public final class Config {
     /* Swerve Profiling Values Changed */
     public static enum TeleopSpeeds {
       SLOW(0.5, 0.5 * Math.PI, 16, 12 * Math.PI),
-      MAX(3.0, 2.5 * Math.PI, 6, 8 * Math.PI);
+      MAX(3.0, 2.5 * Math.PI, 6, 8 * Math.PI),
+      DEMO(0.2, 0.2 * Math.PI, 0.3, 0.3 * Math.PI);
 
       public final double translationalSpeed;
       public final double angularSpeed;
@@ -397,6 +401,14 @@ public final class Config {
     public static final byte backSensor = 1;//its the same but lighter, so dtw 
   }
 
+  public static final class ShooterRPM {
+    public static final int NORMAL_SUBWOOFERSHOT = 2820;
+    public static final int NORMAL_SUBWOOFERSHOT_TRIGGER = 2700;
+
+    public static final int DEMO_SUBWOOFERSHOT = 1820;
+    public static final int DEMO_SUBWOOFERSHOT_TRIGGER = 1700;
+
+  }
 
   public class ArmConfig {
     public static final int ARM_SPARK_CAN_ID = CANID.ARM;
@@ -455,7 +467,7 @@ public final class Config {
 
 public static enum ArmSetPoints {
   //@todo: to be calibrated
-  IDLE(61),
+  IDLE(35), //61
   INTAKE(-1.1),
   SPEAKER_KICKBOT_SHOT(13.9),
   NO_INTAKE(2.2),

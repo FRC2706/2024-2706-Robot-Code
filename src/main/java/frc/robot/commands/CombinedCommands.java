@@ -62,7 +62,7 @@ public class CombinedCommands {
         );
     }
 
-    public static Command simpleShootNoteAmp() {
+       public static Command simpleShootNoteAmp() {
         return Commands.deadline(
             Commands.sequence(
                 //new IntakeControl(false).withTimeout(0.3), 
