@@ -32,15 +32,18 @@ public class RotateAngleToVisionSupplier extends TeleopSwerve {
         .getDoubleTopic(photonvisionCameraName + "/targetYaw")
         .subscribe(0, PubSubOption.periodic(0.02));
 
-    BooleanSubscriber hasData = NetworkTableInstance.getDefault()
+        BooleanSubscriber hasData = NetworkTableInstance.getDefault()
         .getBooleanTopic(photonvisionCameraName + "/hasTarget")
         .subscribe(false, PubSubOption.periodic(0.02));
 
     m_supplier = () -> {
-      if (!hasData.get(false)) {
-        return 0;
+            if (!hasData.get(false)) {
+                return 0;
       }
+      else
+      {// PhotonSubsystem.getInstance().getYaw2();
       return Math.toRadians(-1 * yawSub.get(0));
+      }
     };
   }
 
@@ -57,6 +60,8 @@ public class RotateAngleToVisionSupplier extends TeleopSwerve {
   @Override
   protected double calculateRotationVal() {
     m_setpoint = SwerveSubsystem.getInstance().getHeading().getRadians() + m_supplier.getAsDouble();
+
+    System.out.println("---" + m_supplier.getAsDouble());
 
     return SwerveSubsystem.getInstance().calculateRotation(new Rotation2d(m_setpoint));
   }

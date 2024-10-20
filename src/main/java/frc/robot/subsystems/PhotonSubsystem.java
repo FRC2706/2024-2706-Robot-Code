@@ -256,6 +256,10 @@ public class PhotonSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // List<PhotonTrackedTarget> targets = camera1.getLatestResult().targets;
+    // targets.get(0).getYaw();
+    // targets.get(0).getFiducialId();
+
     pubSetTagId.accept(id);
     pub3DTargetTags.accept(
         "Sees Target 3: " + aprilTagsId.get(0) + 
