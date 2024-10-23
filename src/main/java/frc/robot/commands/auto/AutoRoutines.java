@@ -88,6 +88,7 @@ public class AutoRoutines extends SubsystemBase {
             Commands.runOnce(()->ShooterSubsystem.getInstance().setMode(ShooterModes.STOP_SHOOTER))          
         ));
 
+        
         NamedCommands.registerCommand("simpleShooter", CombinedCommands.simpleShootNoteSpeaker(0.4));
         
         NamedCommands.registerCommand("MakeShooterSpin", new Shooter_PID_Tuner(() -> Config.ShooterConstants.subwooferRPM));
