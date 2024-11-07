@@ -12,6 +12,7 @@ import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Config.PhotonConfig;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class RotateAngleToVisionSupplier extends TeleopSwerve {
@@ -28,9 +29,16 @@ public class RotateAngleToVisionSupplier extends TeleopSwerve {
   public RotateAngleToVisionSupplier(CommandXboxController driver, String photonvisionCameraName){
     super(driver);
 
+    //targetYaw from photon vision directly.
+    //todo: get TargetId = 4 or 8 and there target yaws
+    // DoubleSubscriber yawSub = NetworkTableInstance.getDefault()
+    //     .getDoubleTopic(photonvisionCameraName + "/targetYaw")
+    //     .subscribe(0, PubSubOption.periodic(0.02));
+
     DoubleSubscriber yawSub = NetworkTableInstance.getDefault()
-        .getDoubleTopic(photonvisionCameraName + "/targetYaw")
-        .subscribe(0, PubSubOption.periodic(0.02));
+         .getDoubleTopic( "/"+PhotonConfig.networkTableName + "/speakerYaw")
+         .subscribe(0, PubSubOption.periodic(0.02));
+
 
         BooleanSubscriber hasData = NetworkTableInstance.getDefault()
         .getBooleanTopic(photonvisionCameraName + "/hasTarget")
