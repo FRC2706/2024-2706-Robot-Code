@@ -36,7 +36,7 @@ public class RotateAngleToVisionSupplier extends TeleopSwerve {
     //     .subscribe(0, PubSubOption.periodic(0.02));
 
     DoubleSubscriber yawSub = NetworkTableInstance.getDefault()
-         .getDoubleTopic( "/"+PhotonConfig.networkTableName + "/speakerYaw")
+         .getDoubleTopic( PhotonConfig.networkTableName + "/SpeakerYaw")
          .subscribe(0, PubSubOption.periodic(0.02));
 
 
