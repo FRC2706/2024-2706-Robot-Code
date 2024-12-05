@@ -255,11 +255,14 @@ public class PhotonSubsystem extends SubsystemBase {
             {
               //Do something with this target.. Get the Pose2d, etc.
               //publish the yaw to the network table
-             // t.getYaw();
-          //  System.out.println(targetId);
-          //  System.out.println("+=++++" + t.getYaw());
-             
-              pubSpeakerYaw.accept(t.getYaw()*-1);
+              
+            // t.getYaw();
+            //  System.out.println(targetId);
+            //  System.out.println("+=++++" + t.getYaw());
+
+          //--pubSpeakerYaw.accept(t.getYaw()*-1);
+              pubSpeakerYaw.accept(t.getYaw());
+
               target = t;
 
               break;

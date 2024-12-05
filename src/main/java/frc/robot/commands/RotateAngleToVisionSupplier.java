@@ -18,8 +18,8 @@ import frc.robot.subsystems.SwerveSubsystem;
 public class RotateAngleToVisionSupplier extends TeleopSwerve {
   DoubleSupplier m_supplier;
   double m_setpoint;
-  
-  /** Creates a new RotateAngleToVisionSupplier. */
+
+    /** Creates a new RotateAngleToVisionSupplier. */
   public RotateAngleToVisionSupplier(CommandXboxController driver, DoubleSupplier supplier) {
     super(driver);
 
@@ -31,19 +31,21 @@ public class RotateAngleToVisionSupplier extends TeleopSwerve {
 
     //targetYaw from photon vision directly.
     //todo: get TargetId = 4 or 8 and there target yaws
-    // DoubleSubscriber yawSub = NetworkTableInstance.getDefault()
-    //     .getDoubleTopic(photonvisionCameraName + "/targetYaw")
-    //     .subscribe(0, PubSubOption.periodic(0.02));
+    //  DoubleSubscriber yawSub = NetworkTableInstance.getDefault()
+    //      .getDoubleTopic(photonvisionCameraName + "/targetYaw")
+    //      .subscribe(0, PubSubOption.periodic(0.02));
 
-    DoubleSubscriber yawSub = NetworkTableInstance.getDefault()
-         .getDoubleTopic( PhotonConfig.networkTableName + "/SpeakerYaw")
-         .subscribe(0, PubSubOption.periodic(0.02));
+    //SpeakerYaw
+     DoubleSubscriber yawSub = NetworkTableInstance.getDefault()
+          .getDoubleTopic( "/" + PhotonConfig.networkTableName + "/SpeakerYaw")
+      .subscribe(0, PubSubOption.periodic(0.02));
 
 
         BooleanSubscriber hasData = NetworkTableInstance.getDefault()
         .getBooleanTopic(photonvisionCameraName + "/hasTarget")
         .subscribe(false, PubSubOption.periodic(0.02));
 
+    
     m_supplier = () -> {
             if (!hasData.get(false)) {
                 return 0;
@@ -70,6 +72,7 @@ public class RotateAngleToVisionSupplier extends TeleopSwerve {
     m_setpoint = SwerveSubsystem.getInstance().getHeading().getRadians() + m_supplier.getAsDouble();
 
     System.out.println("---" + m_supplier.getAsDouble());
+    
 
     return SwerveSubsystem.getInstance().calculateRotation(new Rotation2d(m_setpoint));
   }
