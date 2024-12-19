@@ -107,6 +107,9 @@ public class PhotonSubsystem extends SubsystemBase {
     subOverrideTagID = photonTable.getIntegerTopic("OVERIDEID").getEntry(-1);
     subOverrideTagID.setDefault(-1);
     SmartDashboard.putData("command reset id",Commands.runOnce(()->reset((int)subOverrideTagID.get())));
+
+    //id = -1, Yaw will be biggest AprilTag
+    //++++ to set 7 or 8 to compare with SpeakerYaw and targetYaw
     reset(-1);
 
     aprilTagsId.add(0, false);
@@ -255,7 +258,7 @@ public class PhotonSubsystem extends SubsystemBase {
             {
               //Do something with this target.. Get the Pose2d, etc.
               //publish the yaw to the network table
-              
+
             // t.getYaw();
             //  System.out.println(targetId);
             //  System.out.println("+=++++" + t.getYaw());
