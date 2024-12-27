@@ -23,11 +23,8 @@ import frc.robot.Config.ArmSetPoints;
 import frc.robot.commands.SetArm;
 import frc.robot.commands.Shooter_PID_Tuner;
 import frc.robot.robotcontainers.BeetleContainer;
-import frc.robot.robotcontainers.ClutchContainer;
 import frc.robot.robotcontainers.ContainerForTesting;
-import frc.robot.robotcontainers.CosmobotContainer;
 import frc.robot.robotcontainers.NewRobotContainer;
-import frc.robot.robotcontainers.PoseidonContainer;
 import frc.robot.robotcontainers.RobotContainer;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.PhotonSubsystem;
@@ -69,15 +66,9 @@ public class Robot extends TimedRobot {
         // m_robotContainer = new ContainerForTesting(); break; // testing
         m_robotContainer = new NewRobotContainer(); break; //competition
         
-      case 1:
-        m_robotContainer = new ClutchContainer(); break; //simulation
-
       case 2:
         m_robotContainer = new BeetleContainer(); break; //beetle
-
-      case 3:
-        m_robotContainer = new NewRobotContainer(); break; //poseidon
-        
+       
       default:
         m_robotContainer = new NewRobotContainer();
         DriverStation.reportError(

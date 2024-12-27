@@ -148,26 +148,8 @@ public class ShooterSubsystem extends SubsystemBase {
         m_motor.stopMotor();
     }
 
-    public void setMode(ShooterModes desiredMode){
-        shooterStates.setMode(desiredMode);
-    }
-
-    public void allowAutoMovement(boolean isThereNote){
-        if(!isThereNote && stateFulControl)setMode(STOP_SHOOTER);//it should set to stop now when there is no note in intake
-
-        if(closedLoopControl){
-            setRPM(shooterStates.getDesiredVelocityRPM());
-        }else{
-            setVoltage(shooterStates.getDesiredVoltage());
-        }
-    }
-
     public void setBrake(boolean enableBreak){
         m_motor.setIdleMode(enableBreak ? IdleMode.kBrake: IdleMode.kCoast);
-    }
-
-    public States getCurrentState(){
-        return shooterStates.getCurrentState();
     }
 
     private void setPIDGains(double kP, double kI, double kD, int slotID){
@@ -179,10 +161,6 @@ public class ShooterSubsystem extends SubsystemBase {
     private void setFFGains(double kFF, int slotID){
         m_pidController.setFF(kFF, slotID);
     }   
-
-    public boolean isReadyToShoot(){
-        return getCurrentState().equals(SPEAKER_LAUNCH_READY) || getCurrentState().equals(AMP_LAUNCH_READY);
-    }
 
     public void setStateMachineOff(){
         stateFulControl = false;

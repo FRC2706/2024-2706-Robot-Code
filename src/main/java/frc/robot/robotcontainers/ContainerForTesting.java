@@ -81,12 +81,12 @@ public class ContainerForTesting extends RobotContainer {
     /*  Setup default commands */
     m_swerveDefaultCommand = new TeleopSwerve(driver);
     s_Swerve.setDefaultCommand(m_swerveDefaultCommand);
-    if (!Config.disableStateBasedProgramming) {
-      intake.setDefaultCommand(intake.defaultIntakeCommand());
-      shooter.setDefaultCommand(shooter.defaultShooterCommand(()-> intake.isNoteIn()));
-    } else {
-      // shooter.setDefaultCommand(new Shooter_PID_Tuner(() -> 0));
-    }
+    // if (!Config.disableStateBasedProgramming) {
+    //   intake.setDefaultCommand(intake.defaultIntakeCommand());
+    //   shooter.setDefaultCommand(shooter.defaultShooterCommand(()-> intake.isNoteIn()));
+    // } else {
+    //   // shooter.setDefaultCommand(new Shooter_PID_Tuner(() -> 0));
+    // }
 
     configureButtonBindings();
 
