@@ -141,7 +141,6 @@ public class Robot extends TimedRobot {
     {
       SwerveSubsystem.getInstance().setVoltageCompensation(true);
       ArmSubsystem.getInstance().resetProfiledPIDController();
-      //ShooterSubsystem.getInstance().changeCurrentLimit(true);
       PhotonSubsystem.getInstance().resetTagAtBootup();
     }
 
