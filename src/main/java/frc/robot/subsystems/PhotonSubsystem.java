@@ -108,8 +108,6 @@ public class PhotonSubsystem extends SubsystemBase {
     subOverrideTagID.setDefault(-1);
     SmartDashboard.putData("command reset id",Commands.runOnce(()->reset((int)subOverrideTagID.get())));
 
-    //id = -1, Yaw will be biggest AprilTag
-    //++++ to set 7 or 8 to compare with SpeakerYaw and targetYaw
     reset(-1);
 
     aprilTagsId.add(0, false);
