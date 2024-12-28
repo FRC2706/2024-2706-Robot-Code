@@ -146,7 +146,7 @@ public final class Config {
   public static int ANALOG_SELECTOR_PORT = robotSpecific(3, -1, -1, 0);
 
   public static final class PhotonConfig{
-    public static boolean USE_3D_TAGS = true;
+    public static boolean USE_3D_TAGS = false;
     public static final List<Integer> ALLOWED_TAGS_3D = List.of(3,4,7,8);
 
     public static final double CAMERA_HEIGHT = 0.215;

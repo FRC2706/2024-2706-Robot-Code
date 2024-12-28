@@ -12,13 +12,14 @@ import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Config.PhotonConfig;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class RotateAngleToVisionSupplier extends TeleopSwerve {
   DoubleSupplier m_supplier;
   double m_setpoint;
-  
-  /** Creates a new RotateAngleToVisionSupplier. */
+
+    /** Creates a new RotateAngleToVisionSupplier. */
   public RotateAngleToVisionSupplier(CommandXboxController driver, DoubleSupplier supplier) {
     super(driver);
 
@@ -28,19 +29,30 @@ public class RotateAngleToVisionSupplier extends TeleopSwerve {
   public RotateAngleToVisionSupplier(CommandXboxController driver, String photonvisionCameraName){
     super(driver);
 
-    DoubleSubscriber yawSub = NetworkTableInstance.getDefault()
-        .getDoubleTopic(photonvisionCameraName + "/targetYaw")
-        .subscribe(0, PubSubOption.periodic(0.02));
+    //targetYaw from photon vision directly.
+    //  DoubleSubscriber yawSub = NetworkTableInstance.getDefault()
+    //      .getDoubleTopic(photonvisionCameraName + "/targetYaw")
+    //      .subscribe(0, PubSubOption.periodic(0.02));
 
-    BooleanSubscriber hasData = NetworkTableInstance.getDefault()
+    //SpeakerYaw: get TargetId = 7 for now
+     DoubleSubscriber yawSub = NetworkTableInstance.getDefault()
+          .getDoubleTopic( "/" + PhotonConfig.networkTableName + "/SpeakerYaw")
+      .subscribe(0, PubSubOption.periodic(0.02));
+
+
+        BooleanSubscriber hasData = NetworkTableInstance.getDefault()
         .getBooleanTopic(photonvisionCameraName + "/hasTarget")
         .subscribe(false, PubSubOption.periodic(0.02));
 
+    
     m_supplier = () -> {
-      if (!hasData.get(false)) {
-        return 0;
+            if (!hasData.get(false)) {
+                return 0;
       }
+      else
+      {// PhotonSubsystem.getInstance().getYaw2();
       return Math.toRadians(-1 * yawSub.get(0));
+      }
     };
   }
 
@@ -58,6 +70,8 @@ public class RotateAngleToVisionSupplier extends TeleopSwerve {
   protected double calculateRotationVal() {
     m_setpoint = SwerveSubsystem.getInstance().getHeading().getRadians() + m_supplier.getAsDouble();
 
+    //System.out.println("---" + m_supplier.getAsDouble());
+    
     return SwerveSubsystem.getInstance().calculateRotation(new Rotation2d(m_setpoint));
   }
 }
