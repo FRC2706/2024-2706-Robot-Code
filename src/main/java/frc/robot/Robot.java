@@ -99,10 +99,13 @@ public class Robot extends TimedRobot {
         .withSize(2, 6)
         .withProperties(Map.of("Label position", "HIDDEN")); // hide labels for commands
 
+    if (Config.getRobotId() == 0 )
+    {
     testingCommandList.add("ArmToVisionShot", new SetArm(() -> ArmSetPoints.CENTER_VISION_SHOT.angleDeg).withName("ArmToCenterVisionShot"));
     testingCommandList.add("ArmToIntaking", new SetArm(() -> ArmSetPoints.INTAKE.angleDeg).withName("ArmToIntake"));
     testingCommandList.add("ShooterFastSpeed", new Shooter_PID_Tuner(() -> 4000).withName("ShooterFastSpeed"));
     testingCommandList.add("ShooterStop", Commands.runOnce(() -> ShooterSubsystem.getInstance().stop(), ShooterSubsystem.getInstance()).withName("ShooterStop"));
+    }
   }
 
   /**
@@ -133,11 +136,14 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-    SwerveSubsystem.getInstance().setVoltageCompensation(true);
-    ArmSubsystem.getInstance().resetProfiledPIDController();
-    //ShooterSubsystem.getInstance().changeCurrentLimit(true);
-    PhotonSubsystem.getInstance().resetTagAtBootup();
-    
+    //for robots which only have these subsystems
+    if (Config.getRobotId() == 0)
+    {
+      SwerveSubsystem.getInstance().setVoltageCompensation(true);
+      ArmSubsystem.getInstance().resetProfiledPIDController();
+      PhotonSubsystem.getInstance().resetTagAtBootup();
+    }
+
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
@@ -160,9 +166,12 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
 
+    if( Config.getRobotId()==0)
+    {
     SwerveSubsystem.getInstance().setVoltageCompensation(false);
     ArmSubsystem.getInstance().resetProfiledPIDController();
     PhotonSubsystem.getInstance().resetTagAtBootup();
+    }
   }
 
   /** This function is called periodically during operator control. */
