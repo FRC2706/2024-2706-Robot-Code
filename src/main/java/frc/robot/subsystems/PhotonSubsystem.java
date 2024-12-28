@@ -365,8 +365,6 @@ public class PhotonSubsystem extends SubsystemBase {
         PhotonTrackedTarget target = null;
         PhotonTrackedTarget speakerTarget = null;
 
-        //currently chooses lowest id if sees two april tags
-
         List<PhotonTrackedTarget> allTargets = result.getTargets();
         if (allTargets.size()==0){
           return;
