@@ -30,12 +30,11 @@ public class RotateAngleToVisionSupplier extends TeleopSwerve {
     super(driver);
 
     //targetYaw from photon vision directly.
-    //todo: get TargetId = 4 or 8 and there target yaws
     //  DoubleSubscriber yawSub = NetworkTableInstance.getDefault()
     //      .getDoubleTopic(photonvisionCameraName + "/targetYaw")
     //      .subscribe(0, PubSubOption.periodic(0.02));
 
-    //SpeakerYaw
+    //SpeakerYaw: get TargetId = 7 for now
      DoubleSubscriber yawSub = NetworkTableInstance.getDefault()
           .getDoubleTopic( "/" + PhotonConfig.networkTableName + "/SpeakerYaw")
       .subscribe(0, PubSubOption.periodic(0.02));
@@ -73,7 +72,6 @@ public class RotateAngleToVisionSupplier extends TeleopSwerve {
 
     System.out.println("---" + m_supplier.getAsDouble());
     
-
     return SwerveSubsystem.getInstance().calculateRotation(new Rotation2d(m_setpoint));
   }
 }

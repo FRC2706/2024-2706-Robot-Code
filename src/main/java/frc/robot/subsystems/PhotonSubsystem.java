@@ -254,20 +254,13 @@ public class PhotonSubsystem extends SubsystemBase {
 
     for (PhotonTrackedTarget t:targets) {
        int targetId = t.getFiducialId();
-            if (targetId == 8 )//|| targetId == 4)
+            if (targetId == 7 )//|| targetId == 4)
             {
               //Do something with this target.. Get the Pose2d, etc.
               //publish the yaw to the network table
-
-            // t.getYaw();
-            //  System.out.println(targetId);
-            //  System.out.println("+=++++" + t.getYaw());
-
-          //--pubSpeakerYaw.accept(t.getYaw()*-1);
               pubSpeakerYaw.accept(t.getYaw());
 
               target = t;
-
               break;
             }
       
@@ -317,15 +310,7 @@ public class PhotonSubsystem extends SubsystemBase {
       for (PhotonTrackedTarget target : optEstPose.get().targetsUsed) {
         tagsInFrame.add(target.getFiducialId()); //************************************** */
       }
-
-
-      // speakerTarget = getSpeakerTarget(allTargets);
-      //   if(speakerTarget == null)
-      //   {
-      //     System.out.println("speakerTarget is null");
-      //   }
-          //aprilTagsId
-          
+         
       // Only procede if tag 3 and 4 or 7 and 8 are seen in the same frame
       if (! ((tagsInFrame.contains(3) && tagsInFrame.contains(4)) || (tagsInFrame.contains(7) && tagsInFrame.contains(8)))) {
         pub3DTagsDebugMsg.accept("3&4 or 7&8 not in frame. Tags in frame: " + tagsInFrame.toString());
