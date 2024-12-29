@@ -26,6 +26,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.IntegerArrayPublisher;
 import edu.wpi.first.networktables.IntegerEntry;
 import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.NetworkTable;
@@ -59,8 +60,11 @@ public class PhotonSubsystem extends SubsystemBase {
   private static PhotonSubsystem instance;
   private DoubleArrayPublisher pubSetPoint;
   private DoublePublisher pubRange, pubYaw;
+  public DoublePublisher pubSpeakerRange, pubSpeakerYaw;
   private IntegerPublisher pubSetTagId;
   private StringPublisher pub3DTagsDebugMsg;
+  //private IntegerArrayPublisher pub3DTagIdsArray;
+  private StringPublisher pub3DTargetTags;
   private IntegerEntry subOverrideTagID;
   private PhotonCamera camera1;
   private Translation2d targetPos;
@@ -71,13 +75,12 @@ public class PhotonSubsystem extends SubsystemBase {
   private int numSamples;
   private int id;
   private double recentTimeStamp = 0;
+  private ArrayList<Boolean> aprilTagsId = new ArrayList<>();
 
   private IntegerEntry intakeCameraInputSaveImgEntry;
 
   private AprilTagFieldLayout aprilTagFieldLayout;
   private PhotonPoseEstimator photonPoseEstimator;
-
-  
 
   public static PhotonSubsystem getInstance(){
     if (instance == null){
@@ -95,12 +98,22 @@ public class PhotonSubsystem extends SubsystemBase {
     pubSetPoint = photonTable.getDoubleArrayTopic("PhotonAprilPoint").publish(PubSubOption.periodic(0.02));
     pubRange = photonTable.getDoubleTopic("Range").publish(PubSubOption.periodic(0.02));
     pubYaw = photonTable.getDoubleTopic("Yaw").publish(PubSubOption.periodic(0.02));
+    pubSpeakerRange = photonTable.getDoubleTopic("SpeakerRange").publish(PubSubOption.periodic(0.02));
+    pubSpeakerYaw = photonTable.getDoubleTopic("SpeakerYaw").publish(PubSubOption.periodic(0.02));
     pubSetTagId = photonTable.getIntegerTopic("SetTagId").publish();
     pub3DTagsDebugMsg = photonTable.getStringTopic("3DTagsDebugMsg").publish(PubSubOption.periodic(0.02));
+    pub3DTargetTags = photonTable.getStringTopic("3DTagsTargetID's").publish(PubSubOption.periodic(0.02));
+    //pub3DTagIdsArray = photonTable.getIntegerArrayTopic("3DTagsTargetID's").publish(PubSubOption.periodic(0.02));
     subOverrideTagID = photonTable.getIntegerTopic("OVERIDEID").getEntry(-1);
     subOverrideTagID.setDefault(-1);
     SmartDashboard.putData("command reset id",Commands.runOnce(()->reset((int)subOverrideTagID.get())));
+
     reset(-1);
+
+    aprilTagsId.add(0, false);
+    aprilTagsId.add(1, false);
+    aprilTagsId.add(2, false);
+    aprilTagsId.add(3, false);
 
     try {
       aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
@@ -234,6 +247,25 @@ public class PhotonSubsystem extends SubsystemBase {
     return (biggestTarget);
   }
 
+  private PhotonTrackedTarget getSpeakerTarget(List<PhotonTrackedTarget> targets) {
+    PhotonTrackedTarget target=null;
+
+    for (PhotonTrackedTarget t:targets) {
+       int targetId = t.getFiducialId();
+            if (targetId == 7 )//|| targetId == 4)
+            {
+              //Do something with this target.. Get the Pose2d, etc.
+              //publish the yaw to the network table
+              pubSpeakerYaw.accept(t.getYaw());
+
+              target = t;
+              break;
+            }
+      
+    }
+    return (target);
+  }
+
   private Pose2d convertToField(double range, Rotation2d yaw, Pose2d odometryPose) {
     Rotation2d fieldOrientedTarget = yaw.rotateBy(odometryPose.getRotation());
     Translation2d visionXY = new Translation2d(range, yaw);
@@ -245,8 +277,16 @@ public class PhotonSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    pubSetTagId.accept(id);
+    // List<PhotonTrackedTarget> targets = camera1.getLatestResult().targets;
+    // targets.get(0).getYaw();
+    // targets.get(0).getFiducialId();
 
+    pubSetTagId.accept(id);
+    pub3DTargetTags.accept(
+        "Sees Target 3: " + aprilTagsId.get(0) + 
+        ", Sees Target 4: " + aprilTagsId.get(1) + 
+        ", Sees Target 7: " + aprilTagsId.get(2) + 
+        ", Sees Target 8: " + aprilTagsId.get(3));
     // Must be set by 2D or 3D mode
     Pose2d fieldToTarget = null;
     
@@ -266,14 +306,20 @@ public class PhotonSubsystem extends SubsystemBase {
       // Create a list of tags seen
       ArrayList<Integer> tagsInFrame = new ArrayList<>();
       for (PhotonTrackedTarget target : optEstPose.get().targetsUsed) {
-        tagsInFrame.add(target.getFiducialId());
+        tagsInFrame.add(target.getFiducialId()); //************************************** */
       }
-
+         
       // Only procede if tag 3 and 4 or 7 and 8 are seen in the same frame
       if (! ((tagsInFrame.contains(3) && tagsInFrame.contains(4)) || (tagsInFrame.contains(7) && tagsInFrame.contains(8)))) {
         pub3DTagsDebugMsg.accept("3&4 or 7&8 not in frame. Tags in frame: " + tagsInFrame.toString());
           return;
       }
+      aprilTagsId.add(0, tagsInFrame.contains(3));
+      aprilTagsId.add(1, tagsInFrame.contains(4));
+      aprilTagsId.add(2, tagsInFrame.contains(7));
+      aprilTagsId.add(3, tagsInFrame.contains(8));
+          //pub3DTagIdsArray.accept(tagsInFrame.toArray());
+      
 
 
       Optional<Pose3d> tagPose = aprilTagFieldLayout.getTagPose(id);
@@ -315,12 +361,19 @@ public class PhotonSubsystem extends SubsystemBase {
         Pose2d odometryPose = optPose.get();
 
         PhotonTrackedTarget target = null;
-        //currently chooses lowest id if sees two april tags
+        PhotonTrackedTarget speakerTarget = null;
 
         List<PhotonTrackedTarget> allTargets = result.getTargets();
         if (allTargets.size()==0){
           return;
         }
+
+        speakerTarget = getSpeakerTarget(allTargets);
+        if(speakerTarget == null)
+        {
+          System.out.println("speakerTarget is null");
+        }
+
         if (id == -1){
           target = biggestTarget(allTargets);
 
@@ -328,7 +381,9 @@ public class PhotonSubsystem extends SubsystemBase {
             return;
           }
           id = target.getFiducialId();
-        } else{
+        } 
+        else
+        {
           for (PhotonTrackedTarget t:allTargets){
             if (t.getFiducialId() == id){
             target = t;
@@ -339,7 +394,14 @@ public class PhotonSubsystem extends SubsystemBase {
             return;
           }
         }
+
         
+        // if (camera.hasTargets())
+        // {
+        //   List<PhotonTrackedTarget>targets = camer.getTargets();
+        //   
+        // } // end hasTarget
+
         //get tag info
         //calculate yaw
         Rotation2d yaw = Rotation2d.fromDegrees(target.getYaw()*-1);

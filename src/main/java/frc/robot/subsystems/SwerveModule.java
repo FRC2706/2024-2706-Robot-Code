@@ -146,6 +146,7 @@ public class SwerveModule {
 
   private void configAngleMotor() {
     configureSpark("Angle restore factory defaults", () -> angleMotor.restoreFactoryDefaults());
+    configureSpark("Angle set can timeout", () -> angleMotor.setCANTimeout(Config.CANTIMEOUT_MS));
     CANSparkMaxUtil.setCANSparkMaxBusUsage(angleMotor, Usage.kAll);
     configureSpark("Angle smart current limit", () -> angleMotor.setSmartCurrentLimit(Config.Swerve.angleContinuousCurrentLimit));
     angleMotor.setInverted(Config.Swerve.angleInvert);
@@ -160,10 +161,12 @@ public class SwerveModule {
     configureSpark("Angle set pid wrap max", () -> angleController.setPositionPIDWrappingMaxInput(2 * Math.PI));
     configureSpark("Angle set pid wrap", () -> angleController.setPositionPIDWrappingEnabled(true));
     configureSpark("Angle enable Volatage Compensation", () -> angleMotor.enableVoltageCompensation(Config.Swerve.voltageComp));
+    configureSpark("Angle remove can timeout", () -> angleMotor.setCANTimeout(0));
   }
 
   private void configDriveMotor() {
     configureSpark("Drive factory defaults", () -> driveMotor.restoreFactoryDefaults());
+    configureSpark("Drive set can timeout", () -> driveMotor.setCANTimeout(Config.CANTIMEOUT_MS));
     CANSparkMaxUtil.setCANSparkMaxBusUsage(driveMotor, Usage.kAll);
     configureSpark("Drive smart current limit", () -> driveMotor.setSmartCurrentLimit(Config.Swerve.driveContinuousCurrentLimit));
     driveMotor.setInverted(Config.Swerve.driveInvert);
@@ -179,6 +182,7 @@ public class SwerveModule {
     configureSpark("Drive set pid wrap", () -> driveController.setPositionPIDWrappingEnabled(true));
     configureSpark("Drive voltage comp", () -> driveMotor.enableVoltageCompensation(Config.Swerve.voltageComp));
     configureSpark("Drive set position", () -> driveEncoder.setPosition(0.0));
+    configureSpark("Drive remove can timeout", () -> driveMotor.setCANTimeout(0));
   }
 
   /**
@@ -192,6 +196,19 @@ public class SwerveModule {
 
     driveMotor.burnFlash();
     angleMotor.burnFlash();
+  }
+
+  /**
+   * Enable/disable voltage compensation on the drive motors. 
+   * 
+   * @param enable True to enable, false to disable.
+   */
+  public void setVoltageCompensation(boolean enable) {
+    if (enable) {
+      errSpark("Drive enable volt comp", driveMotor.enableVoltageCompensation(Config.Swerve.voltageComp));
+    } else {
+      errSpark("Drive disable volt comp", driveMotor.disableVoltageCompensation());
+    }
   }
 
   /*

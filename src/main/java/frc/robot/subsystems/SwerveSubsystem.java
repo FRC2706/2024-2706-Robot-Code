@@ -24,6 +24,10 @@ import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
+import edu.wpi.first.wpilibj.BuiltInAccelerometer;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -39,6 +43,8 @@ import frc.robot.Config.Swerve;
 
 public class SwerveSubsystem extends SubsystemBase {
   private final PigeonIMU gyro;
+
+  private BuiltInAccelerometer rioAccelerometer;
 
   private SwerveDriveOdometry swerveOdometry;
   private SwerveModule[] mSwerveMods;
@@ -58,6 +64,15 @@ public class SwerveSubsystem extends SubsystemBase {
   private DoublePublisher pubDesiredX = visionPidTable.getDoubleTopic("DesiredX (m)").publish(PubSubOption.periodic(0.02));
   private DoublePublisher pubDesiredY = visionPidTable.getDoubleTopic("DesiredY (m)").publish(PubSubOption.periodic(0.02));
   private DoublePublisher pubDesiredRot = visionPidTable.getDoubleTopic("DesiredRot (deg)").publish(PubSubOption.periodic(0.02));
+
+  DataLog log = DataLogManager.getLog();
+  private DoubleLogEntry pubPigeonAccelX = new DoubleLogEntry(log, "Acceleratometers/Pigeon1/X (G)");
+  private DoubleLogEntry pubPigeonAccelY = new DoubleLogEntry(log, "Acceleratometers/Pigeon1/Y (G)");
+  private DoubleLogEntry pubPigeonAccelZ = new DoubleLogEntry(log, "Acceleratometers/Pigeon1/Z (G)");
+
+  private DoubleLogEntry pubRioAccelX = new DoubleLogEntry(log, "Acceleratometers/RoboRio/X (G)");
+  private DoubleLogEntry pubRioAccelY = new DoubleLogEntry(log, "Acceleratometers/RoboRio/Y (G)");
+  private DoubleLogEntry pubRioAccelZ = new DoubleLogEntry(log, "Acceleratometers/RoboRio/Z (G)");
 
   // ProfiledPIDControllers for the pid control
   ProfiledPIDController pidControlX;
@@ -94,7 +109,7 @@ public class SwerveSubsystem extends SubsystemBase {
     gyro.configFactoryDefault();
     // zeroGyro();
 
-    
+    rioAccelerometer = new BuiltInAccelerometer();    
 
     mSwerveMods =
         new SwerveModule[] {
@@ -380,6 +395,8 @@ public class SwerveSubsystem extends SubsystemBase {
     pubMeasuredSpeedX.accept(speeds.vxMetersPerSecond);
     pubMeasuredSpeedY.accept(speeds.vyMetersPerSecond);
     pubMeasuredSpeedRot.accept(Math.toDegrees(speeds.omegaRadiansPerSecond));
+
+    logAcceleratometerData();
   }
   
   public void driveRobotRelative(ChassisSpeeds robotRelativeSpeeds) {
@@ -454,6 +471,30 @@ public class SwerveSubsystem extends SubsystemBase {
     for (SwerveModule mod : mSwerveMods) {
       mod.stopMotors();
     }
+  }
+
+  /**
+   * Enable/disable voltage compensation on the drive motors. 
+   * 
+   * @param enable True to enable, false to disable.
+   */
+  public void setVoltageCompensation(boolean enable) {
+    for (SwerveModule mod : mSwerveMods) {
+      mod.setVoltageCompensation(enable);
+    }
+  }
+
+  public void logAcceleratometerData() {
+    short[] xyz_dps = new short[]{0, 0, 0};
+    gyro.getBiasedAccelerometer(xyz_dps);
+
+    pubPigeonAccelX.append(xyz_dps[0] / 16384);
+    pubPigeonAccelY.append(xyz_dps[1] / 16384);
+    pubPigeonAccelZ.append(xyz_dps[2] / 16384);
+
+    pubRioAccelX.append(rioAccelerometer.getX());
+    pubRioAccelY.append(rioAccelerometer.getY());
+    pubRioAccelZ.append(rioAccelerometer.getZ());
   }
 
   /**

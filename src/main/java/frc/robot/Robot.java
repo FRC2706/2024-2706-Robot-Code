@@ -4,18 +4,24 @@
 
 package frc.robot;
 
-import org.json.simple.parser.ContainerFactory;
+import java.util.Map;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.lib.lib3512.config.CTREConfigs;
+import frc.robot.Config.ArmSetPoints;
+import frc.robot.commands.SetArm;
+import frc.robot.commands.Shooter_PID_Tuner;
 import frc.robot.robotcontainers.BeetleContainer;
 import frc.robot.robotcontainers.ClutchContainer;
 import frc.robot.robotcontainers.ContainerForTesting;
@@ -25,6 +31,8 @@ import frc.robot.robotcontainers.PoseidonContainer;
 import frc.robot.robotcontainers.RobotContainer;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.PhotonSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -84,6 +92,20 @@ public class Robot extends TimedRobot {
       .add("CommandScheduler", CommandScheduler.getInstance())
       .withPosition(3, 0)
       .withSize(3, 6);
+
+    ShuffleboardLayout testingCommandList =
+      basicDebuggingTab.getLayout("TestingCommands", BuiltInLayouts.kList)
+      .withPosition(1, 0)
+        .withSize(2, 6)
+        .withProperties(Map.of("Label position", "HIDDEN")); // hide labels for commands
+
+    if (Config.getRobotId() == 0 )
+    {
+    testingCommandList.add("ArmToVisionShot", new SetArm(() -> ArmSetPoints.CENTER_VISION_SHOT.angleDeg).withName("ArmToCenterVisionShot"));
+    testingCommandList.add("ArmToIntaking", new SetArm(() -> ArmSetPoints.INTAKE.angleDeg).withName("ArmToIntake"));
+    testingCommandList.add("ShooterFastSpeed", new Shooter_PID_Tuner(() -> 4000).withName("ShooterFastSpeed"));
+    testingCommandList.add("ShooterStop", Commands.runOnce(() -> ShooterSubsystem.getInstance().stop(), ShooterSubsystem.getInstance()).withName("ShooterStop"));
+    }
   }
 
   /**
@@ -114,9 +136,14 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-    ArmSubsystem.getInstance().resetProfiledPIDController();
-    PhotonSubsystem.getInstance().resetTagAtBootup();
-    
+    //for robots which only have these subsystems
+    if (Config.getRobotId() == 0)
+    {
+      SwerveSubsystem.getInstance().setVoltageCompensation(true);
+      ArmSubsystem.getInstance().resetProfiledPIDController();
+      PhotonSubsystem.getInstance().resetTagAtBootup();
+    }
+
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
@@ -133,12 +160,18 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+    //ShooterSubsystem.getInstance().changeCurrentLimit(false);
+
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
 
+    if( Config.getRobotId()==0)
+    {
+    SwerveSubsystem.getInstance().setVoltageCompensation(false);
     ArmSubsystem.getInstance().resetProfiledPIDController();
     PhotonSubsystem.getInstance().resetTagAtBootup();
+    }
   }
 
   /** This function is called periodically during operator control. */
