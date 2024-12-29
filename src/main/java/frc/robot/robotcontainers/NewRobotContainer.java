@@ -180,11 +180,11 @@ public class NewRobotContainer extends RobotContainer {
 
     driver.leftTrigger().whileTrue(CombinedCommands.centerSpeakerVisionShot(driver, PhotonPositions.FAR_SPEAKER_BLUE, PhotonPositions.FAR_SPEAKER_RED))
             .onTrue(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.SLOW)))
-            .onFalse(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.MAX)));
+          .onFalse(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.MAX)));
 
-    // driver.leftTrigger().whileTrue(CombinedCommands.podiumSourceSideSpeakerVisionShot(driver, PhotonPositions.PODIUM_SOURCESIDE_BLUE, PhotonPositions.PODIUM_SOURCESIDE_RED))
-    //         .onTrue(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.SLOW)))
-    //         .onFalse(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.MAX)));
+    //driver.leftTrigger().whileTrue(CombinedCommands.podiumSourceSideSpeakerVisionShot(driver, PhotonPositions.PODIUM_SOURCESIDE_BLUE, PhotonPositions.PODIUM_SOURCESIDE_RED))
+      //       .onTrue(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.SLOW)))
+        //     .onFalse(Commands.runOnce(() -> TeleopSwerve.setSpeeds(TeleopSpeeds.MAX)));
 
     // Complete vision scoring commands with all subsystems
     // if (Config.disableStateBasedProgramming) {
